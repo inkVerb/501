@@ -3,8 +3,6 @@
 
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
 echo $_POST['go'];
 
 echo '<br>';
@@ -16,8 +14,6 @@ echo '<br>';
 echo $_POST['time'];
 
 echo '<br>';
-
-}
 
 ?>
 
