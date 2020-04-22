@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
+  `status` ENUM('live', 'draft', 'dead') NOT NULL,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
