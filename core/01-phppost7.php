@@ -5,11 +5,11 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  $goPost = (isset($_POST['go']) && ($_POST['go'] != '')) ? $_POST['go'] : '';
+  $goPost = ( (isset($_POST['go'])) && ($_POST['go'] != '') ) ? $_POST['go'] : '';
 
-  $hPost = (isset($_POST['h']) && ($_POST['h'] != '')) ? $_POST['h'] : '';
+  $hPost = ( (isset($_POST['h'])) && ($_POST['h'] != '')) ? $_POST['h'] : '';
 
-  $timePost = (isset($_POST['time']) && ($_POST['time'] != '')) ? $_POST['time'] : '';
+  $timePost = ( (isset($_POST['time'])) && ($_POST['time'] != '') ) ? $_POST['time'] : '';
 
 }
 

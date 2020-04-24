@@ -5,17 +5,17 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  if (isset($_POST['go']) && ($_POST['go'] != '')) {
+  if ( (isset($_POST['go'])) && ($_POST['go'] != '') ) {
     $goPost = $_POST['go'];
     echo "Go is set to: $goPost<br>";
   }
 
-  if (isset($_POST['h']) && ($_POST['h'] != '')) {
+  if ( (isset($_POST['h'])) && ($_POST['h'] != '') ) {
     $hPost = $_POST['h'];
     echo "H is set to: $hPost<br>";
   }
 
-  if (isset($_POST['time']) && ($_POST['time'] != '')) {
+  if ( (isset($_POST['time'])) && ($_POST['time'] != '') ) {
     $timePost = $_POST['time'];
     echo "Time is set to: $timePost<br>";
   }
