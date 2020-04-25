@@ -47,9 +47,9 @@ echo '
 
   <input type="submit" value="Submit Button">
 </form>
-
-</body>
-</html>
 ';
 
 ?>
+
+</body>
+</html>

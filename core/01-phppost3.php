@@ -20,9 +20,9 @@ echo '
   Time: <input type="text" name="time" placeholder="What time is it?" value="'.$_POST['time'].'"><br><br>
   <input type="submit" value="Submit Button">
 </form>
-
-</body>
-</html>
 ';
 
 ?>
+
+</body>
+</html>
