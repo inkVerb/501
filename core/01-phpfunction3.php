@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <body>
 
@@ -67,7 +68,7 @@ function formInput($name, $value) {
     $result = 'Email: (valid email address) <input type="text" name="email" placeholder="johndoe@verb.vip..." value="'.$value.'"><br><br>';
 
   } elseif ($name == 'number') {
-    $result = 'Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="123456..." value="'.$value.'"><br><br>';
+    $result = 'Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="12..." value="'.$value.'"><br><br>';
 
   } elseif ($name == 'name') {
     $result = 'Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$value.'"><br><br>';
@@ -77,7 +78,7 @@ function formInput($name, $value) {
 
   } elseif ($name == 'password') {
     $result = 'Password: (6-32 characters, one lowercase letter, one uppercase letter, one number, also allowed: ! @ & # $ %)<br>
-    <input type="password" name="password" placeholder="123456..."><br><br>';
+    <input type="password" name="password" placeholder="Abcd123..."><br><br>';
 
   } // Finish $name if
 

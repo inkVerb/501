@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <body>
 
@@ -43,7 +44,7 @@ echo '
   Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$name.'"><br><br>
   Username: (any length, only letters, numbers, and underscore) <input type="text" name="username" placeholder="abc123..." value="'.$username.'"><br><br>
   Password: (6-32 characters, one lowercase letter, one uppercase letter, one number, also allowed: ! @ & # $ %)<br>
-  <input type="text" name="password" placeholder="123456..." value="'.$password.'"><br><br>
+  <input type="text" name="password" placeholder="Abcd123..." value="'.$password.'"><br><br>
 
   <input type="submit" value="Submit Button">
 </form>

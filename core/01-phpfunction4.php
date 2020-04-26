@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <!-- CSS to make our class="error" stuff red -->

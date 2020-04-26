@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <body>
 
@@ -49,11 +50,11 @@ echo '
 <form action="phppost.php" method="post">
   Website: <input type="text" name="website" placeholder="http://..." value="'.$website.'"><br><br>
   Email: (valid email address) <input type="text" name="email" placeholder="johndoe@verb.vip..." value="'.$email.'"><br><br>
-  Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="123456..." value="'.$number.'"><br><br>
+  Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="12..." value="'.$number.'"><br><br>
   Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$name.'"><br><br>
   Username: (6-32 characters, only letters, numbers, and underscore) <input type="text" name="username" placeholder="abc123..." value="'.$username.'"><br><br>
   Password: (6-32 characters, one lowercase letter, one uppercase letter, one number, also allowed: ! @ & # $ %)<br>
-  <input type="text" name="password" placeholder="123456..." value="'.$password.'"><br><br>
+  <input type="text" name="password" placeholder="Abcd123..." value="'.$password.'"><br><br>
   <input type="submit" value="Submit Button">
 </form>
 ';
