@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   //(filter_var($_POST['variable'], FILTER_VALIDATE_INT, array("options"=>array('min_range'=>0, 'max_range'=>100)))) )
   ? $_POST['number'] : 'Not a valid number!';
 
-  $name = ( (isset($_POST['name'])) &&
-  (preg_match('/^[a-zA-Z]{6,32}$/i', $_POST['name'])) )
-  ? $_POST['name'] : 'Not a valid name!';
+  $fullname = ( (isset($_POST['fullname'])) &&
+  (preg_match('/^[a-zA-Z ]{6,32}$/i', $_POST['fullname'])) )
+  ? $_POST['fullname'] : 'Not a valid name!';
 
   $username = ( (isset($_POST['username'])) &&
   (preg_match('/[a-zA-Z0-9_]$/i', $_POST['username'])) )
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   (preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@&#$%]{6,32}$/', $_POST['password'])) )
   ? $_POST['password'] : 'Not a valid password!';
 
-  echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$name</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
+  echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$fullname</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
 
 }
 
@@ -41,7 +41,7 @@ echo '
   Website: <input type="text" name="website" placeholder="http://..." value="'.$website.'"><br><br>
   Email: (valid email address) <input type="text" name="email" placeholder="johndoe@verb.vip..." value="'.$email.'"><br><br>
   Favorite number: (6-32 characters, numbers only) <input type="text" name="number" placeholder="123456..." value="'.$number.'"><br><br>
-  Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$name.'"><br><br>
+  Name: (6-32 characters, letters only) <input type="text" name="fullname" placeholder="John Doe..." value="'.$fullname.'"><br><br>
   Username: (any length, only letters, numbers, and underscore) <input type="text" name="username" placeholder="abc123..." value="'.$username.'"><br><br>
   Password: (6-32 characters, one lowercase letter, one uppercase letter, one number, also allowed: ! @ & # $ %)<br>
   <input type="text" name="password" placeholder="Abcd123..." value="'.$password.'"><br><br>

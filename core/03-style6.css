@@ -1,0 +1,15 @@
+form input.error {
+	border: 2px solid #cc3333;
+}
+.error {
+	color: #cc3333;
+}
+.green {
+	color: #33cc33;
+}
+table, tr, td, th {
+	border: 1px inset black;
+	border-collapse: collapse;
+	border-spacing: 0;
+	padding: 0.25em;
+}
