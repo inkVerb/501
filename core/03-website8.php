@@ -22,8 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Include our POST checks
   include ('./in.checks.php');
 
+  // If delete: RUN THIS FIRST so other checks don't matter
+  if (isset($delete_fruit)) {
+    // Query to DELETE the row
+    $query = "DELETE FROM fruit WHERE id='$delete_fruit'";
+    $call = mysqli_query($database, $query);
+    // mysqli_affected_rows() will also recognize deleted rows
+    if (mysqli_affected_rows($database) == 1) {
+      echo '<p class="green">Fruit deleted!</p>';
+    } else {
+      echo '<p class="error">Database error!</p>';
+    }
+    echo '<p>SQL query: <code>'.$query.'</code></p>';
+
   // If update: Update the database if everything checks out
-  if (($checks_out == true) && (!empty($update_fruit))) {
+  } elseif (($checks_out == true) && (!empty($update_fruit))) {
     $query = "UPDATE fruit SET name='$fruitname', type='$type', have=$have, count='$count', prepared='$prepared' WHERE id='$fruitid'";
     $call = mysqli_query($database, $query);
     // Check to see that our SQL query worked out
@@ -89,8 +102,9 @@ echo "
       <td>Count:</td>
       <td>Prepared:</td>
       <td>Created:</td>
+      <td>Delete?</td>
       <td>Update:</td>
-    </tr>";
+    </tr>"; // Note we just added the "Delete?" column to our HTML table
 
 //// Each SQL row as a new row in the HTML table
 
@@ -104,7 +118,6 @@ while ( $rows = mysqli_fetch_array($call, MYSQLI_NUM) ) {
   $fruit_date = "$rows[5]";
   $fruit_id = "$rows[6]";
 
-  // formInput() has an extra argument so our errors only show for the right item
   echo '
     <tr>
       <form action="website.php" method="post">
@@ -115,10 +128,11 @@ while ( $rows = mysqli_fetch_array($call, MYSQLI_NUM) ) {
         <td>'.formInput('count', $fruit_count, $check_err, $fruit_id).'</td>
         <td>'.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</td>
         <td>'.$fruit_date.'</td>
+        <td><input type="checkbox" name="deletefruit" value="'.$fruit_id.'"></td>
         <td><input type="submit" value="Update"></td>
       </form>
     </tr>
-    ';
+    '; // Note the value of our "delete" checkbox is the ID of the item we would delete
 } //// End SQL loop
 
 // Finish our table
