@@ -10,31 +10,7 @@ function checkPost($name, $value) {
   global $check_err;
 
   // Use an if test to run the proper check for each value
-  if ($name == 'website') {
-    $result = (filter_var($value,FILTER_VALIDATE_URL))
-    ? preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value) : '';
-    // Add an entry to $check_err array if there is an error
-    if ($result == '') {
-      $check_err[$name] = 'Not a website!';
-    }
-
-  } elseif ($name == 'email') {
-    $result = (filter_var($value,FILTER_VALIDATE_EMAIL))
-    ? preg_replace("/[^a-zA-Z0-9-_@.]/","", $value) : '';
-    // Add an entry to $check_err array if there is an error
-    if ($result == '') {
-      $check_err[$name] = 'Not an email!';
-    }
-
-  } elseif ($name == 'number') {
-    $result = (filter_var($value, FILTER_VALIDATE_INT, array("options"=>array('min_range'=>0, 'max_range'=>100))))
-    ? preg_replace("/[^0-9]/"," ", $value) : '';
-    // Add an entry to $check_err array if there is an error
-    if ($result == '') {
-      $check_err[$name] = 'Not a valid number!';
-    }
-
-  } elseif ($name == 'fullname') {
+  if ($name == 'fullname') {
     $result = (preg_match('/^[a-zA-Z ]{6,32}$/i', $value))
     ? preg_replace("/[^a-zA-Z ]/","", $value) : '';
     // Add an entry to $check_err array if there is an error
@@ -56,6 +32,30 @@ function checkPost($name, $value) {
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
       $check_err[$name] = 'Not a valid password!';
+    }
+
+  } elseif ($name == 'number') {
+    $result = (filter_var($value, FILTER_VALIDATE_INT, array("options"=>array('min_range'=>0, 'max_range'=>100))))
+    ? preg_replace("/[^0-9]/"," ", $value) : '';
+    // Add an entry to $check_err array if there is an error
+    if ($result == '') {
+      $check_err[$name] = 'Not a valid number!';
+    }
+
+  } elseif ($name == 'website') {
+    $result = ((filter_var($value,FILTER_VALIDATE_URL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value),0,128) : '';
+    // Add an entry to $check_err array if there is an error
+    if ($result == '') {
+      $check_err[$name] = 'Not a website!';
+    }
+
+  } elseif ($name == 'email') {
+    $result = ((filter_var($value,FILTER_VALIDATE_EMAIL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_@.]/","", $value),0,128) : '';
+    // Add an entry to $check_err array if there is an error
+    if ($result == '') {
+      $check_err[$name] = 'Not an email!';
     }
 
   } // Finish $name if

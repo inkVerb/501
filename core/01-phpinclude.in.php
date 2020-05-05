@@ -11,7 +11,7 @@ function checkPost($name, $value) {
 
   // Use an if test to run the proper check for each value
   if ($name == 'website') {
-    $result = (filter_var($value,FILTER_VALIDATE_URL))
+    $result = ((filter_var($value,FILTER_VALIDATE_URL)) && (strlen($value) <= 128))
     ? preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
@@ -19,7 +19,7 @@ function checkPost($name, $value) {
     }
 
   } elseif ($name == 'email') {
-    $result = (filter_var($value,FILTER_VALIDATE_EMAIL))
+    $result = ((filter_var($value,FILTER_VALIDATE_EMAIL)) && (strlen($value) <= 128))
     ? preg_replace("/[^a-zA-Z0-9-_@.]/","", $value) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
@@ -34,8 +34,8 @@ function checkPost($name, $value) {
       $check_err[$name] = 'Not a valid number!';
     }
 
-  } elseif ($name == 'name') {
-    $result = (preg_match('/^[a-zA-Z]{6,32}$/i', $value))
+  } elseif ($name == 'fullname') {
+    $result = (preg_match('/^[a-zA-Z ]{6,32}$/i', $value))
     ? preg_replace("/[^a-zA-Z]/","", $value) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
@@ -76,8 +76,8 @@ function formInput($name, $value, $errors) {
   } elseif ($name == 'number') {
     $result = 'Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="12..." value="'.$value.'"';
 
-  } elseif ($name == 'name') {
-    $result = 'Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$value.'"';
+  } elseif ($name == 'fullname') {
+    $result = 'Name: (6-32 characters, letters only) <input type="text" name="fullname" placeholder="John Doe..." value="'.$value.'"';
 
   } elseif ($name == 'username') {
     $result = 'Username: (6-32 characters, only letters, numbers, and underscore) <input type="text" name="username" placeholder="abc123..." value="'.$value.'"';

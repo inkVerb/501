@@ -11,17 +11,15 @@ function checkPost($name, $value) {
 
   // Use an if test to run the proper check for each value
   if ($name == 'website') {
-    $result = (filter_var($value,FILTER_VALIDATE_URL))
-    // Note preg_replace() is inside substr($Variable,0,10) to truncate after 90 characters
-    ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value),0,90) : '';
+    $result = ((filter_var($value,FILTER_VALIDATE_URL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value),0,128) : '';
     if ($result == '') {
       $check_err[$name] = 'Not a website!';
     }
 
   } elseif ($name == 'email') {
-    $result = (filter_var($value,FILTER_VALIDATE_EMAIL))
-    // Note preg_replace() is inside substr($Variable,0,10) to truncate after 90 characters
-    ? substr(preg_replace("/[^a-zA-Z0-9-_@.]/","", $value),0,90) : '';
+    $result = ((filter_var($value,FILTER_VALIDATE_EMAIL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_@.]/","", $value),0,128) : '';
     if ($result == '') {
       $check_err[$name] = 'Not an email!';
     }

@@ -7,7 +7,7 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $website = ( (isset($_POST['website'])) &&
-  (filter_var($_POST['website'],FILTER_VALIDATE_URL)) )
+  ((filter_var($_POST['website'],FILTER_VALIDATE_URL)) && (strlen($_POST['website']) <= 128)) )
   ? preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $_POST['website']) : 'Not a website!';
 
   echo "Website: <b>$website</b><br><br>";

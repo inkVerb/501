@@ -42,10 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $check_err['number'] = 'Enter your favorite number!';
   }
 
-  if (!empty($_POST['name'])) {
-    $name = checkPost('name',$_POST['name']);
+  if (!empty($_POST['fullname'])) {
+    $fullname = checkPost('fullname',$_POST['fullname']);
   } else {
-    $check_err['name'] = 'Enter your name!';
+    $check_err['fullname'] = 'Enter your name!';
   }
 
   if (!empty($_POST['username'])) {
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Show our results if $check_err is empty
   if (empty($check_err)) {
-    echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$name</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
+    echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$fullname</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
   }
 
 } // Finish POST if
@@ -79,7 +79,7 @@ echo '
 echo formInput('website', $website, $check_err);
 echo formInput('email', $email, $check_err);
 echo formInput('number', $number, $check_err);
-echo formInput('name', $name, $check_err);
+echo formInput('fullname', $fullname, $check_err);
 echo formInput('username', $username, $check_err);
 echo formInput('password', $password, $check_err);
 echo formInput('password2', $password2, $check_err);

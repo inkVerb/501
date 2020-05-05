@@ -27,16 +27,16 @@ function checkPost($name, $value) {
 
   // Use an if test to run the proper check for each value
   if ($name == 'website') {
-    $result = (filter_var($value,FILTER_VALIDATE_URL))
-    ? preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value) : '';
+    $result = ((filter_var($value,FILTER_VALIDATE_URL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value),0,128) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
       $check_err[$name] = 'Not a website!';
     }
 
   } elseif ($name == 'email') {
-    $result = (filter_var($value,FILTER_VALIDATE_EMAIL))
-    ? preg_replace("/[^a-zA-Z0-9-_@.]/","", $value) : '';
+    $result = ((filter_var($value,FILTER_VALIDATE_EMAIL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_@.]/","", $value),0,128) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
       $check_err[$name] = 'Not an email!';
@@ -50,9 +50,9 @@ function checkPost($name, $value) {
       $check_err[$name] = 'Not a valid number!';
     }
 
-  } elseif ($name == 'name') {
-    $result = (preg_match('/^[a-zA-Z]{6,32}$/i', $value))
-    ? preg_replace("/[^a-zA-Z]/","", $value) : '';
+  } elseif ($name == 'fullname') {
+    $result = (preg_match('/^[a-zA-Z ]{6,32}$/i', $value))
+    ? preg_replace("/[^a-zA-Z ]/","", $value) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
       $check_err[$name] = 'Not a valid name!';
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $number = checkPost('number',$_POST['number']);
 
-  $name = checkPost('name',$_POST['name']);
+  $fullname = checkPost('fullname',$_POST['fullname']);
 
   $username = checkPost('username',$_POST['username']);
 
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Show our results if $check_err is empty
   if (empty($check_err)) {
-    echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$name</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
+    echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$fullname</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
   }
 
 } // Finish POST if
@@ -114,8 +114,8 @@ function formInput($name, $value, $errors) {
   } elseif ($name == 'number') {
     $result = 'Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="12..." value="'.$value.'"';
 
-  } elseif ($name == 'name') {
-    $result = 'Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$value.'"';
+  } elseif ($name == 'fullname') {
+    $result = 'Name: (6-32 characters, letters only) <input type="text" name="fullname" placeholder="John Doe..." value="'.$value.'"';
 
   } elseif ($name == 'username') {
     $result = 'Username: (6-32 characters, only letters, numbers, and underscore) <input type="text" name="username" placeholder="abc123..." value="'.$value.'"';
@@ -144,7 +144,7 @@ echo '
 echo formInput('website', $website, $check_err);
 echo formInput('email', $email, $check_err);
 echo formInput('number', $number, $check_err);
-echo formInput('name', $name, $check_err);
+echo formInput('fullname', $fullname, $check_err);
 echo formInput('username', $username, $check_err);
 echo formInput('password', $password, $check_err);
 

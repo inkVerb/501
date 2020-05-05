@@ -9,20 +9,20 @@ function checkPost($name, $value) {
 
   // Use an if test to run the proper check for each value
   if ($name == 'website') {
-    $result = (filter_var($value,FILTER_VALIDATE_URL))
-    ? preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value) : 'Not a website!';
+    $result = ((filter_var($value,FILTER_VALIDATE_URL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value),0,128) : 'Not a website!';
 
   } elseif ($name == 'email') {
-    $result = (filter_var($value,FILTER_VALIDATE_EMAIL))
-    ? preg_replace("/[^a-zA-Z0-9-_@.]/","", $value) : 'Not an email!';
+    $result = ((filter_var($value,FILTER_VALIDATE_EMAIL)) && (strlen($value) <= 128))
+    ? substr(preg_replace("/[^a-zA-Z0-9-_@.]/","", $value),0,128) : 'Not an email!';
 
   } elseif ($name == 'number') {
     $result = (filter_var($value, FILTER_VALIDATE_INT, array("options"=>array('min_range'=>0, 'max_range'=>100))))
     ? preg_replace("/[^0-9]/"," ", $value) : 'Not a valid number!';
 
-  } elseif ($name == 'name') {
-    $result = (preg_match('/^[a-zA-Z]{6,32}$/i', $value))
-    ? preg_replace("/[^a-zA-Z]/","", $value) : 'Not a valid name!';
+  } elseif ($name == 'fullname') {
+    $result = (preg_match('/^[a-zA-Z ]{6,32}$/i', $value))
+    ? preg_replace("/[^a-zA-Z ]/","", $value) : 'Not a valid name!';
 
   } elseif ($name == 'username') {
     $result = (preg_match('/[a-zA-Z0-9_]{6,32}$/i', $value))
@@ -45,14 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $number = checkPost('number',$_POST['number']);
 
-  $name = checkPost('name',$_POST['name']);
+  $fullname = checkPost('fullname',$_POST['fullname']);
 
   $username = checkPost('username',$_POST['username']);
 
   $password = checkPost('password',$_POST['password']);
 
 
-  echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$name</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
+  echo "Website: <b>$website</b><br>Email: <b>$email</b><br>Favorite number: <b>$number</b><br>Name: <b>$fullname</b><br>Username: <b>$username</b><br>Password: <b>$password</b><br><br>";
 
 } // Finish POST if
 
@@ -70,8 +70,8 @@ function formInput($name, $value) {
   } elseif ($name == 'number') {
     $result = 'Favorite number: (between 1 and 100) <input type="text" name="number" placeholder="12..." value="'.$value.'"><br><br>';
 
-  } elseif ($name == 'name') {
-    $result = 'Name: (6-32 characters, letters only) <input type="text" name="name" placeholder="John Doe..." value="'.$value.'"><br><br>';
+  } elseif ($name == 'fullname') {
+    $result = 'Name: (6-32 characters, letters only) <input type="text" name="fullname" placeholder="John Doe..." value="'.$value.'"><br><br>';
 
   } elseif ($name == 'username') {
     $result = 'Username: (6-32 characters, only letters, numbers, and underscore) <input type="text" name="username" placeholder="abc123..." value="'.$value.'"><br><br>';
@@ -88,12 +88,12 @@ function formInput($name, $value) {
 echo '
 <form action="phppost.php" method="post">';
 
-formInput('website', $website);
-formInput('email', $email);
-formInput('number', $number);
-formInput('name', $name);
-formInput('username', $username);
-formInput('password', $password);
+echo formInput('website', $website);
+echo formInput('email', $email);
+echo formInput('number', $number);
+echo formInput('fullname', $fullname);
+echo formInput('username', $username);
+echo formInput('password', $password);
 
 echo '
   <input type="submit" value="Submit Button">

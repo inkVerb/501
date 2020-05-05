@@ -8,7 +8,7 @@
 function checkPostWebsite($formWebsite) {
 
   // Run our Validation and Sanitizing checks
-  $result = (filter_var($formWebsite,FILTER_VALIDATE_URL))
+  $result = ((filter_var($formWebsite,FILTER_VALIDATE_URL)) && (strlen($formWebsite) <= 128))
   ? preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $formWebsite) : 'Not a website!';
 
   return $result;
