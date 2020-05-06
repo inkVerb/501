@@ -111,10 +111,12 @@ EOF;
 
     // Prepare our database values for entry
     $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    $fullname_sqlesc = mysqli_real_escape_string($database, $fullname_sqlesc);
-    $username_sqlesc = mysqli_real_escape_string($database, $username_sqlesc);
-    $email_sqlesc = mysqli_real_escape_string($database, $email_sqlesc);
-    $favnumber_sqlesc = mysqli_real_escape_string($database, $favnumber_sqlesc);
+    // mysqli_real_escape_string() prepares it for security
+    $fullname_sqlesc = mysqli_real_escape_string($database, $fullname);
+    $username_sqlesc = mysqli_real_escape_string($database, $username);
+    // Our config function escape_sql() does the same thing, but better
+    $email_sqlesc = escape_sql($email);
+    $favnumber_sqlesc = escape_sql($favnumber);
 
     // Run the query
     $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
@@ -145,20 +147,20 @@ echo '<h1>Admin signup</h1>';
 echo '
 <form action="install.php" method="post">';
 
-echo '<b>Database info</b><br>
-Name: <input type="text" name="db_name"><br>
-Username: <input type="text" name="db_user"><br>
-Password: <input type="text" name="db_pass"><br>
-Host: <input type="text" name="db_host" value="localhost"> (leave as <i>localhost</i> unless told otherwise)<br>
-<br>
-<b>Admin user</b><br>';
+echo '<b>Database info</b><br><br>
+Name: <input type="text" name="db_name"><br><br>
+Username: <input type="text" name="db_user"><br><br>
+Password: <input type="text" name="db_pass"><br><br>
+Host: <input type="text" name="db_host" value="localhost"> (leave as <i>localhost</i> unless told otherwise)<br><br>
+<br><br>
+<b>Admin user</b><br><br>';
 
-echo formInput('fullname', $name, $check_err);
-echo formInput('username', $username, $check_err);
-echo formInput('email', $email, $check_err);
-echo formInput('favnumber', $favnumber, $check_err);
-echo formInput('password', $password, $check_err);
-echo formInput('password2', $password2, $check_err);
+echo 'Name: '.formInput('fullname', $name, $check_err).'<br><br>';
+echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
+echo 'Email: '.formInput('email', $email, $check_err).'<br><br>';
+echo 'Favorite number: '.formInput('favnumber', $favnumber, $check_err).' (1-100 security question)<br><br>';
+echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
+echo 'Confirm password: '.formInput('password2', $password2, $check_err).'<br><br>';
 
 echo '
   <input type="submit" value="Install web app">

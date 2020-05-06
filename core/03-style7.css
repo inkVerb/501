@@ -10,6 +10,9 @@ form input.error {
 .orange {
 	color: #cc8833;
 }
+.blue {
+	color: #3333cc;
+}
 table, tr, td, th {
 	border: 1px inset black;
 	border-collapse: collapse;

@@ -20,11 +20,13 @@
     $username = checkPost('username',$_POST['username']);
   }
 
-  if ((!empty($_POST['password'])) && (!empty($_POST['password2']))) {
-    // Second test to see if passwords match
-    if ($_POST['password'] == $_POST['password2']) {
-      $password = checkPost('password',$_POST['password']);
-    } else { // Error if no match for double-check password
+  if (!empty($_POST['password'])) {
+    $password = checkPost('password',$_POST['password']);
+  }
+
+  // Test only to see if passwords match
+  if ((!empty($_POST['password2'])) && (!empty($_POST['password']))) {
+    if ($_POST['password'] != $_POST['password2']) {
       $check_err['password2'] = 'Passwords much match!';
     }
   }
