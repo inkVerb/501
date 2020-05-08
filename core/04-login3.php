@@ -19,10 +19,34 @@ if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == tr
   echo '<p class="blue">Logged out!</p>';
   // We don't want to see this again
   unset($_SESSION['just_logged_out']);
+
 }
 
+
+// See if we have a cookie
+if (isset($_COOKIE['username'])) {
+  $username = $_COOKIE['username'];
+  $query = "SELECT id, fullname FROM users WHERE username='$username'";
+  $call = mysqli_query($database, $query);
+  // Check to see that our SQL query returned exactly 1 row
+  if (mysqli_num_rows($call) == 1) {
+    // Assign the values
+    $row = mysqli_fetch_array($call, MYSQLI_NUM);
+      $user_id = "$row[0]";
+      $fullname = "$row[1]";
+
+      // Set the $_SESSION array
+      $_SESSION['user_id'] = $user_id;
+      $_SESSION['user_name'] = $fullname;
+
+      // Show a message
+      echo "<h1>Cookie</h1>
+      <p>$fullname, you are already logged in from a cookie!</p>";
+    }
+
+
 // See if we are already logged in
-if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
   $user_id = $_SESSION['user_id'];
   $fullname = $_SESSION['user_name'];
 
@@ -40,12 +64,12 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
     $checks_out = true;
     $password_to_check = escape_sql($password);
 
-    // If update: Update the database if everything checks out
+    // if SELECT: Query user info from the database if everything checks out
     if ($checks_out == true) {
       $query = "SELECT id, fullname, pass FROM users WHERE username='$username'";
       $call = mysqli_query($database, $query);
-      // Check to see that our SQL query worked out
-      if ($call) {
+      // Check to see that our SQL query returned exactly 1 row
+      if (mysqli_num_rows($call) == 1) {
         // Assign the values
         $row = mysqli_fetch_array($call, MYSQLI_NUM);
           $user_id = "$row[0]";
@@ -58,6 +82,16 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
           // Set the $_SESSION array
           $_SESSION['user_id'] = $user_id;
           $_SESSION['user_name'] = $fullname;
+
+          // Remember me for $_COOKIE['username'] ?
+          if (isset($_POST['rememberme'])) {
+            // Calculate the time
+            $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
+
+            // Set the cookie $_COOKIE['username'] // WRONG WAY, just an example
+            setcookie("username", $username, $cookie_expires); // Never set username or password as the cookie value!
+
+          }
 
           // Show a message
           echo "<h1>Login success!</h1>
@@ -88,7 +122,9 @@ echo '<h1>Login</h1>
 
 echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
 echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
-echo '<input type="checkbox" name="rememberme" /> Use cookies to stay logged in 30 days.';
+
+// Checkbox to set $_COOKIE['username']
+echo '<input type="checkbox" name="rememberme" /> Remember me (use cookies to stay logged in 30 days)';
 
 echo '
   <input type="submit" value="Submit Button">

@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Make a MySQLi database call
 $query = "SELECT name, type, have, count, prepared, date_created FROM fruit";
 $call = mysqli_query($database, $query);
-// $rows loop below from $call
+// $row loop below from $call
 
 // Our actual website
 
@@ -68,14 +68,14 @@ echo "
 
 //// Each SQL row as a new row in the HTML table
 
-while ( $rows = mysqli_fetch_array($call, MYSQLI_NUM) ) {
+while ( $row = mysqli_fetch_array($call, MYSQLI_NUM) ) {
 
-  $fruit_name = "$rows[0]";
-  $fruit_type = "$rows[1]";
-  $fruit_have = "$rows[2]";
-  $fruit_count = "$rows[3]";
-  $fruit_prepared = "$rows[4]";
-  $fruit_date = "$rows[5]";
+  $fruit_name = "$row[0]";
+  $fruit_type = "$row[1]";
+  $fruit_have = "$row[2]";
+  $fruit_count = "$row[3]";
+  $fruit_prepared = "$row[4]";
+  $fruit_date = "$row[5]";
 
   echo "
     <tr>

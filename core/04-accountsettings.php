@@ -8,13 +8,72 @@
 
 <?php
 
-////// SQL //////
-
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
 // Include our functions
 include ('./in.functions.php');
+
+// We must be logged in!
+// See if we have a cookie
+if (isset($_COOKIE['username'])) {
+  $username = $_COOKIE['username'];
+  $query = "SELECT id, fullname FROM users WHERE username='$username'";
+  $call = mysqli_query($database, $query);
+  // Check to see that our SQL query returned exactly 1 row
+  if (mysqli_num_rows($call) == 1) {
+    // Assign the values
+    $row = mysqli_fetch_array($call, MYSQLI_NUM);
+      $user_id = "$row[0]";
+      $fullname = "$row[1]";
+
+      // Set the $_SESSION array
+      $_SESSION['user_id'] = $user_id;
+      $_SESSION['user_name'] = $fullname;
+
+      // Show a message
+      echo "<h1>Cookie</h1>
+      <p>$fullname, you are already logged in from a cookie!</p>";
+
+    } else { // Back-up plan just in case the impossible happens
+      echo '<p class="error">Serious error.</p>';
+
+      // We must finish the HTML page before we exit
+      echo '
+      </body>
+      </html>';
+
+      // We could just redirect to the main page instead
+      //header("Location: webapp.php");
+      exit();
+    }
+
+
+// See if we are already logged in
+} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+  $user_id = $_SESSION['user_id'];
+  $fullname = $_SESSION['user_name'];
+
+  // Show a message
+  echo "<h1>Logged In</h1>
+  <p>$fullname, you are logged in and ready to do stuff!</p>";
+
+} else {
+  // Show a message
+  echo "<h1>Not logged in</h1>
+  <p>You are not logged in!</p>";
+
+  // We must finish the HTML page before we exit
+  echo '
+  </body>
+  </html>';
+
+  // We could just redirect to the main page instead
+  //header("Location: webapp.php");
+  exit();
+}
+
+
 
 // POSTed form?
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,103 +81,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Include our POST checks
   include ('./in.checks.php');
 
+  // No errors, all ready
+  if (($no_form_errors == true)) {
 
-  // If update: Update the database if everything checks out
-  if (($checks_out == true) && (!empty($update_fruit))) {
-    $query = "UPDATE fruit SET name='$fruitname' WHERE id='$fruitid'";
+    // Update the user
+
+    // Prepare our database values for entry
+    $password_hashed = password_hash($password, PASSWORD_BCRYPT);
+    // mysqli_real_escape_string() prepares it for security
+    $fullname_sqlesc = mysqli_real_escape_string($database, $fullname);
+    $username_sqlesc = mysqli_real_escape_string($database, $username);
+    // Our config function escape_sql() does the same thing, but better
+    $email_sqlesc = escape_sql($email);
+    $favnumber_sqlesc = escape_sql($favnumber);
+
+"UPDATE ads SET epoch_wk_reset='$resetEpoch', week_view_count=0, week_cat_count=0, week_tag_count=0, week_search_count=0, WHERE ad_id='$ad_id'";
+
+    // Prepare the query
+    if (isset($password)) { // Changing password?
+      $query = "UPDATE users SET fullname='$fullname_sqlesc', username='$username_sqlesc', email='$email_sqlesc', favnumber='$favnumber_sqlesc', pass='$password_hashed' WHERE id='$user_id'";
+  		// inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+    } else { // Not changing password
+      $query = "UPDATE users SET fullname='$fullname_sqlesc', username='$username_sqlesc', email='$email_sqlesc', favnumber='$favnumber_sqlesc' WHERE id='$user_id'";
+    }
+    // Run the query
     $call = mysqli_query($database, $query);
-    // Check to see that our SQL query worked out
+    // Test the query
     if ($call) {
-
-      // See if it actually changed something
+      // Change
       if (mysqli_affected_rows($database) == 1) {
-        echo '<p class="green">Fruit updated!</p>';
-      } else {
-        echo '<p class="orange">No change!</p>';
+        echo '<p class="green">Updated!</p>';
+      // No change
+      } elseif (mysqli_affected_rows($database) == 0) {
+        echo '<p class="orange">No change.</p>';
       }
-      echo '<p>SQL query: <code>'.$query.'</code></p>';
-
-    } else { // Database fail
-      echo '<p class="error">Database error!</p>
-      <p>SQL query: <code>'.$query.'</code></p>';
-    } // End database check
-
-
-  // If delete: RUN THIS FIRST so other checks don't matter
-  } elseif (isset($delete_fruit)) {
-      // Query to DELETE the row
-      $query = "DELETE FROM fruit WHERE id='$delete_fruit'";
-      $call = mysqli_query($database, $query);
-      // mysqli_affected_rows() will also recognize deleted rows
-      if (mysqli_affected_rows($database) == 1) {
-        echo '<p class="green">Fruit deleted!</p>';
-      } else {
-        echo '<p class="error">Database error!</p>';
-      }
-      echo '<p>SQL query: <code>'.$query.'</code></p>';
-
-
-    // If new: Insert the new entry if everything checks out
-  } elseif (($checks_out == true) && (!empty($new_fruit))) {
-    $query = "INSERT INTO fruit (name, type) VALUES ('$fruitname', '$type')";
-    $call = mysqli_query($database, $query);
-    // Check to see that our SQL query worked out
-    if ($call) {
-
     } else {
-      echo '<p class="error">Database error!</p>
-      <p>SQL query: <code>'.$query.'</code></p>';
-    } // End database check
-
-    // If errors in entry
-    } else {
-        echo '<p class="error">Errors! Try again.</p>';
+      echo '<p class="error">Serious error.</p>';
     }
 
+  } else {
+    echo '<p class="error">Errors, try again.</p>';
+  }
 
 } // Finish POST if
 
-// Make a MySQLi database call
-$query = "SELECT name, type, have, count, prepared, date_created, id FROM fruit";
+
+// Retrieve the user info from the database
+$query = "SELECT fullname, username, email, favnumber FROM users WHERE id='$user_id'";
+// Run the query
 $call = mysqli_query($database, $query);
-$row = mysqli_fetch_array($call, MYSQLI_NUM);
-// Assign the values
-  $fruit_name = "$row[0]";
-  $fruit_type = "$row[1]";
-  $fruit_have = "$row[2]";
-  $fruit_count = "$row[3]";
-  $fruit_prepared = "$row[4]";
-  $fruit_date = "$row[5]";
-  $fruit_id = "$row[6]";
-
-// Our actual website
-
-// Start our HTML table
-echo '
-  <label for="NAME">Name: '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME">Username: '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME">Email: '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME">Website: '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME">Favorite Number: '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME">Password: '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME">Delete? '.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</label><br><br>
-  <label for="NAME"><input type="submit" value="Update"></label><br><br>
-';
+// Test the query
+if (mysqli_num_rows($call) == 1) {
+  $row = mysqli_fetch_array($call, MYSQLI_NUM);
+		$fullname = "$row[0]";
+		$username = "$row[1]";
+    $email = "$row[2]";
+    $favnumber = "$row[3]";
 
 
-// Our form
-echo '<h1>Add a new fruit</h1>
-<form action="website.php" method="post">
-<input type="hidden" name="newfruit" value="true">'; // Add this hidden value to double-check which form to process
-// We must put the labels outside because we removed them from the function
-echo 'Name: '.formInput('fruitname', $fruitname, $check_err, "new"); // formInput() has an extra argument so our errors only show for the right item
-echo 'Type: '.formInput('type', $type, $check_err, "new");
-echo 'Prepared:'.formInput('prepared', $prepared, $check_err, "new");
+  // Our actual settings page
 
-echo '
-  <input type="submit" value="Submit Button">
-</form>
-';
+  echo '<h1>Account Settings</h1>';
+  echo '
+  <form action="account.php" method="post">';
+
+  echo 'Name: '.formInput('fullname', $fullname, $check_err).'<br><br>';
+  echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
+  echo 'Email: '.formInput('email', $email, $check_err).'<br><br>';
+  echo 'Favorite number: '.formInput('favnumber', $favnumber, $check_err).' (1-100 security question)<br><br>';
+  echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
+  echo 'Confirm password: '.formInput('password2', $password2, $check_err).'<br><br>';
+
+  echo '
+    <input type="submit" value="Save changes">
+  </form>
+  ';
+
+} else {
+  echo '<p class="errors">No account detected!</p>';
+}
 
 ?>
 

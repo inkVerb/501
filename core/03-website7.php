@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Include our POST checks
   include ('./in.checks.php');
 
-  // If update: Update the database if everything checks out
+  // if UPDATE: Update the database if everything checks out
   if (($checks_out == true) && (!empty($update_fruit))) {
     $query = "UPDATE fruit SET name='$fruitname', type='$type', have=$have, count='$count', prepared='$prepared' WHERE id='$fruitid'";
     $call = mysqli_query($database, $query);
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } // End database check
 
 
-  // If new: Insert the new entry if everything checks out
+  // if INSERT: Insert the new entry if everything checks out
   } elseif (($checks_out == true) && (!empty($new_fruit))) {
     $query = "INSERT INTO fruit (name, type, prepared) VALUES ('$fruitname', '$type', '$prepared')";
     $call = mysqli_query($database, $query);
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Make a MySQLi database call
 $query = "SELECT name, type, have, count, prepared, date_created, id FROM fruit";
 $call = mysqli_query($database, $query);
-// $rows loop below from $call
+// $row loop below from $call
 
 // Our actual website
 
@@ -94,15 +94,15 @@ echo "
 
 //// Each SQL row as a new row in the HTML table
 
-while ( $rows = mysqli_fetch_array($call, MYSQLI_NUM) ) {
+while ( $row = mysqli_fetch_array($call, MYSQLI_NUM) ) {
 
-  $fruit_name = "$rows[0]";
-  $fruit_type = "$rows[1]";
-  $fruit_have = "$rows[2]";
-  $fruit_count = "$rows[3]";
-  $fruit_prepared = "$rows[4]";
-  $fruit_date = "$rows[5]";
-  $fruit_id = "$rows[6]";
+  $fruit_name = "$row[0]";
+  $fruit_type = "$row[1]";
+  $fruit_have = "$row[2]";
+  $fruit_count = "$row[3]";
+  $fruit_prepared = "$row[4]";
+  $fruit_date = "$row[5]";
+  $fruit_id = "$row[6]";
 
   // formInput() has an extra argument so our errors only show for the right item
   echo '

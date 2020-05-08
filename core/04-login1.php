@@ -38,12 +38,12 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
     $checks_out = true;
     $password_to_check = escape_sql($password);
 
-    // If update: Update the database if everything checks out
+    // if SELECT: Query user info from the database if everything checks out
     if ($checks_out == true) {
       $query = "SELECT id, fullname, pass FROM users WHERE username='$username'";
       $call = mysqli_query($database, $query);
-      // Check to see that our SQL query worked out
-      if ($call) {
+      // Check to see that our SQL query returned exactly 1 row
+      if (mysqli_num_rows($call) == 1) {
         // Assign the values
         $row = mysqli_fetch_array($call, MYSQLI_NUM);
           $user_id = "$row[0]";

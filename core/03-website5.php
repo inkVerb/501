@@ -16,7 +16,7 @@ include ('./in.config.php');
 //// Make a MySQLi database call
 $query = "SELECT name, type, date_created FROM fruit";
 $call = mysqli_query($database, $query);
-// $row became the while ($rows... ) loop below
+// $row became the while ($row... ) loop below
 
 ////// SQL End //////
 
@@ -35,11 +35,11 @@ echo "
 
 //// Each SQL row as a new row in the HTML table
 
-while ( $rows = mysqli_fetch_array($call, MYSQLI_NUM) ) {
+while ( $row = mysqli_fetch_array($call, MYSQLI_NUM) ) {
 
-  $fruit_name = "$rows[0]";
-  $fruit_type = "$rows[1]";
-  $fruit_date = "$rows[2]";
+  $fruit_name = "$row[0]";
+  $fruit_type = "$row[1]";
+  $fruit_date = "$row[2]";
 
   echo "
     <tr>

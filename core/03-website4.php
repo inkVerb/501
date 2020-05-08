@@ -18,7 +18,7 @@ include ('./in.config.php');
 $query = "SELECT name, type, have, count, prepared FROM fruit"; // Removed "WHERE name='bananas'" so we get multiple rows
 // Tell our $query to use our database connection (from in.config.php)
 $call = mysqli_query($database, $query);
-// $row became the while ($rows... ) loop below
+// $row became the while ($row... ) loop below
 
 ////// SQL End //////
 
@@ -39,13 +39,13 @@ echo "
 
 //// Each SQL row as a new row in the HTML table
 // Loop the SQL response rows through an auto-indexed array
-while ( $rows = mysqli_fetch_array($call, MYSQLI_NUM) ) {
+while ( $row = mysqli_fetch_array($call, MYSQLI_NUM) ) {
   // Assign each array item to a variable (loops many times)
-  $fruit_name = "$rows[0]";
-  $fruit_type = "$rows[1]";
-  $fruit_have = "$rows[2]";
-  $fruit_count = "$rows[3]";
-  $fruit_prepared = "$rows[4]";
+  $fruit_name = "$row[0]";
+  $fruit_type = "$row[1]";
+  $fruit_have = "$row[2]";
+  $fruit_count = "$row[3]";
+  $fruit_prepared = "$row[4]";
   // echo each item as a table row <tr> (loops many times)
   echo "
     <tr>
