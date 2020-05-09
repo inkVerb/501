@@ -26,7 +26,8 @@ if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == tr
 // See if we have a cookie
 if (isset($_COOKIE['username'])) {
   $username = $_COOKIE['username'];
-  $query = "SELECT id, fullname FROM users WHERE username='$username'";
+  $username_sqlesc = escape_sql($username);
+  $query = "SELECT id, fullname FROM users WHERE username='$username_sqlesc'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -62,11 +63,12 @@ if (isset($_COOKIE['username'])) {
   include ('./in.checks.php');
   if (($no_form_errors == true) && (!empty($password)) && (!empty($username))) {
     $checks_out = true;
-    $password_to_check = escape_sql($password);
 
     // if SELECT: Query user info from the database if everything checks out
     if ($checks_out == true) {
-      $query = "SELECT id, fullname, pass FROM users WHERE username='$username'";
+      $username_sqlesc = escape_sql($username);
+      $password_to_check = escape_sql($password);
+      $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
       $call = mysqli_query($database, $query);
       // Check to see that our SQL query returned exactly 1 row
       if (mysqli_num_rows($call) == 1) {

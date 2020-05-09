@@ -18,7 +18,8 @@ include ('./in.functions.php');
 // See if we have a cookie
 if (isset($_COOKIE['username'])) {
   $username = $_COOKIE['username'];
-  $query = "SELECT id, fullname FROM users WHERE username='$username'";
+  $username_sqlesc = escape_sql($username);
+  $query = "SELECT id, fullname FROM users WHERE username='$username_sqlesc'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -89,7 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // if SELECT: Query user info from the database if everything checks out
     if ($checks_out == true) {
       // SELECT ... WHERE [col1='$some' AND col2='$also'] // This is a way to double check
-      $query = "SELECT id, fullname FROM users WHERE favnumber='$favnumber' AND email='$email'";
+      $email_sqlesc = escape_sql($email);
+      $favnumber_sqlesc = escape_sql($favnumber);
+      $query = "SELECT id, fullname FROM users WHERE favnumber='$favnumber_sqlesc' AND email='$email_sqlesc'";
       $call = mysqli_query($database, $query);
       // Check to see that our SQL query returned exactly 1 row
       if (mysqli_num_rows($call) == 1) {

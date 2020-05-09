@@ -18,7 +18,8 @@ include ('./in.functions.php');
 // See if we have a cookie
 if (isset($_COOKIE['username'])) {
   $username = $_COOKIE['username'];
-  $query = "SELECT id, fullname FROM users WHERE username='$username'";
+  $username_sqlesc = escape_sql($username);
+  $query = "SELECT id, fullname FROM users WHERE username='$username_sqlesc'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -88,10 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Prepare our database values for entry
     $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    // mysqli_real_escape_string() prepares it for security
-    $fullname_sqlesc = mysqli_real_escape_string($database, $fullname);
-    $username_sqlesc = mysqli_real_escape_string($database, $username);
-    // Our config function escape_sql() does the same thing, but better
+    $fullname_sqlesc = escape_sql($fullname);
+    $username_sqlesc = escape_sql($username);
     $email_sqlesc = escape_sql($email);
     $favnumber_sqlesc = escape_sql($favnumber);
 
