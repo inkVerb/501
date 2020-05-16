@@ -1,24 +1,3 @@
-<?php
-// Start a SESSION to survive page reloads
-session_start();
-
-// Set our variables
-$post_go = 'Render this AJAX JavaScript code';
-$post_time = "The 'Time' is: whenever you're ready";
-
-// Start a counter first time
-if (!isset($_SESSION['count'])) {
-  $_SESSION['count'] = 1;
-
-// Increse the counter on each reload
-} else {
-  $_SESSION['count'] = $_SESSION['count'] + 1;
-}
-
-$count = $_SESSION['count'];
-
-// Echo our entire page so we can put variables into the JavaScript function
-echo '
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +12,7 @@ echo '
       return ajax;
     }
 
-    function doAjax() { // doAjax can be anything
+    function doAjax(oFormElement) { // doAjax can be anything
       var ajaxHandler = vipAjax();
       ajaxHandler.onreadystatechange = function() {
         if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
@@ -45,22 +24,44 @@ echo '
       }
 
       ajaxHandler.open("POST", "ajax_source.php", true); // GET changed to POST
+      //ajaxHandler.open(oFormElement.method, oFormElement.action, true); // GET changed to POST
       ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      ajaxHandler.send("go='.$post_go.'&time='.$post_time.'");
+      ajaxHandler.send(new FormData (oFormElement));
     }
   </script>
 
 </head>
 <body>
 
-SESSION count: '.$count.'<br>
+<?php
+// Start a SESSION to survive page reloads
+session_start();
 
+// Start a counter first time
+if (!isset($_SESSION['count'])) {
+  $_SESSION['count'] = 1;
+
+// Increse the counter on each reload
+} else {
+  $_SESSION['count'] = $_SESSION['count'] + 1;
+}
+
+$count = $_SESSION['count'];
+
+echo "SESSION count: $count<br>";
+
+echo '
 <div id="some_thing">Here always</div>
 <div id="ajax_thing">Replace me with AJAX</div>
-<button onclick="doAjax();">Go AJAX!</button>
 
-</body>
-</html>
+<form onsubmit="return doAjax(this);">
+  <input type="text" value="AJAX" name="go" />
+  <input type="text" value="5" name="time" />
+  <input type="submit" value="Go AJAX!"/>
+</form>
+
 ';
 
 ?>
+</body>
+</html>
