@@ -1,26 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- CSS file included as <link> -->
-  <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-
 <?php
 
-// Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
+// Just logged out?
+if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == true)) {
+  echo '<p class="blue">Logged out!</p>';
+  // We don't want to see this again
+  unset($_SESSION['just_logged_out']);
 
-// Include our functions
-include ('./in.functions.php');
+}
 
-// THREE possibilities:
-/// Logged in
-/// Login attempt
-/// Neither
+// See if we have a cookie
+if (isset($_COOKIE['username'])) {
+  $username = $_COOKIE['username'];
+  $username_sqlesc = escape_sql($username);
+  $query = "SELECT id, fullname FROM users WHERE username='$username_sqlesc'";
+  $call = mysqli_query($database, $query);
+  // Check to see that our SQL query returned exactly 1 row
+  if (mysqli_num_rows($call) == 1) {
+    // Assign the values
+    $row = mysqli_fetch_array($call, MYSQLI_NUM);
+      $user_id = "$row[0]";
+      $fullname = "$row[1]";
+
+      // Set the $_SESSION array
+      $_SESSION['user_id'] = $user_id;
+      $_SESSION['user_name'] = $fullname;
+
+      // Show a message
+      echo "<h1>Cookie</h1>
+      <p>$fullname, you are already logged in from a cookie!</p>";
+    }
+
 
 // See if we are already logged in
-if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
   $user_id = $_SESSION['user_id'];
   $fullname = $_SESSION['user_name'];
 
@@ -57,6 +69,16 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
         $_SESSION['user_id'] = $user_id;
         $_SESSION['user_name'] = $fullname;
 
+        // Remember me for $_COOKIE['username'] ?
+        if (isset($_POST['rememberme'])) {
+          // Calculate the time
+          $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
+
+          // Set the cookie $_COOKIE['username'] // WRONG WAY, just an example
+          setcookie("username", $username, $cookie_expires); // Never set username or password as the cookie value!
+
+        }
+
         // Show a message
         echo "<h1>Login success!</h1>
         <p>$fullname, you are logged in.</p>";
@@ -85,14 +107,24 @@ echo '<h1>Login</h1>
 echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
 echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
 
+// Checkbox to set $_COOKIE['username']
+echo '<input type="checkbox" name="rememberme" /> Remember me (use cookies to stay logged in 30 days)';
+
 echo '
   <input type="submit" value="Submit Button">
 </form>
 ';
 
+// Recover login
+echo '<p>Forget your password and need to <a href="recover.php">recover your login</a>?</p>';
+
 }
 
-?>
+// Account settings link
+if (isset($user_id)) {
+  echo '<p><a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+}
 
-</body>
-</html>
+
+
+?>

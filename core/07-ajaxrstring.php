@@ -14,6 +14,19 @@ include ('./in.config.php');
 // Include our functions
 include ('./in.functions.php');
 
+// Include our string functions
+include ('./in.string_functions.php');
+
+
+// Create our string
+$random_string = alnumString(32);
+
+
+// Our form
+echo "<h1>This is a random string:</h1>
+<p>$random_string</p>";
+
+
 // Just logged out?
 if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == true)) {
   echo '<p class="blue">Logged out!</p>';
@@ -21,7 +34,6 @@ if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == tr
   unset($_SESSION['just_logged_out']);
 
 }
-
 
 // See if we have a cookie
 if (isset($_COOKIE['username'])) {
@@ -107,8 +119,6 @@ if (isset($_COOKIE['username'])) {
         echo '<p class="error">Login error!</p>';
       } // End database check
 
-    } else {
-        echo '<p class="error">Errors! Try again.</p>';
     }
 
   // If errors in form

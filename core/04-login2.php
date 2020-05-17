@@ -41,39 +41,36 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
     $checks_out = true;
 
     // if SELECT: Query user info from the database if everything checks out
-    if ($checks_out == true) {
-      $username_sqlesc = escape_sql($username);
-      $password_to_check = escape_sql($password);
-      $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
-      $call = mysqli_query($database, $query);
-      // Check to see that our SQL query returned exactly 1 row
-      if (mysqli_num_rows($call) == 1) {
-        // Assign the values
-        $row = mysqli_fetch_array($call, MYSQLI_NUM);
-          $user_id = "$row[0]";
-          $fullname = "$row[1]";
-          $hashed_password = "$row[2]";
+    $username_sqlesc = escape_sql($username);
+    $password_to_check = escape_sql($password);
+    $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
+    $call = mysqli_query($database, $query);
+    // Check to see that our SQL query returned exactly 1 row
+    if (mysqli_num_rows($call) == 1) {
+      // Assign the values
+      $row = mysqli_fetch_array($call, MYSQLI_NUM);
+        $user_id = "$row[0]";
+        $fullname = "$row[1]";
+        $hashed_password = "$row[2]";
 
-        // Test our password against the hash
-        if (password_verify($password_to_check, $hashed_password)) {
+      // Test our password against the hash
+      if (password_verify($password_to_check, $hashed_password)) {
 
-          // Set the $_SESSION array
-          $_SESSION['user_id'] = $user_id;
-          $_SESSION['user_name'] = $fullname;
+        // Set the $_SESSION array
+        $_SESSION['user_id'] = $user_id;
+        $_SESSION['user_name'] = $fullname;
 
-          // Show a message
-          echo "<h1>Login success!</h1>
-          <p>$fullname, you are logged in.</p>";
+        // Show a message
+        echo "<h1>Login success!</h1>
+        <p>$fullname, you are logged in.</p>";
 
-        } else { // Password fail
-          echo '<p class="error">Login error!</p>';
-        }
-
-      } else { // Username fail
+      } else { // Password fail
         echo '<p class="error">Login error!</p>';
-      } // End database check
+      }
 
-    }
+    } else { // Username fail
+      echo '<p class="error">Login error!</p>';
+    } // End database check
 
   // If errors in form
   } else {
