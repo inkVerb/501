@@ -2,5 +2,5 @@ RewriteEngine on
 
 # Relative path destination
 
-# 4. Valye_One/Value_Maybe
+# 4. Value_One/Value_Maybe
 RewriteRule ^/?([a-zA-Z0-9_-]+)(.*/)?([a-zA-Z0-9_-]+)?$ pretty_page.php?n=$1&o=$3 [L]

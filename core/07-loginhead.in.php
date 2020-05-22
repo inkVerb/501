@@ -28,6 +28,9 @@ if (isset($_COOKIE['username'])) {
       // Show a message
       echo "<h1>Cookie</h1>
       <p>$fullname, you are already logged in from a cookie!</p>";
+    } else {
+      echo "Database error!";
+      exit();
     }
 
 
