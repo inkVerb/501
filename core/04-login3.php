@@ -87,7 +87,7 @@ if (isset($_COOKIE['user_id'])) {
 
           // Remember me for $_COOKIE['user_id'] ?
           if (isset($_POST['rememberme'])) {
-            // Calculate the time
+            // Calculate the expiration date
             $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
 
             // Set the cookie $_COOKIE['user_id'] // WRONG WAY, just an example

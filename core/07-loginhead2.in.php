@@ -10,9 +10,37 @@ if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == tr
 
 // See if we have a cookie
 if (isset($_COOKIE['user_key'])) {
-  $user_id = $_COOKIE['user_id'];
-  $user_id_sqlesc = escape_sql($user_id);
-  $query = "SELECT fullname FROM users WHERE id='$user_id_sqlesc'";
+  // Assign the current time
+  $time_now = date("Y-m-d H:i:s");
+
+  // Get the user ID from the key strings table
+  $user_key = $_COOKIE['user_key'];
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key' AND usable='cookie_login' AND  date_expires > '$time_now'";
+  $call = mysqli_query($database, $query);
+  if (mysqli_num_rows($call) == 1) {
+    // Assign the values
+    $row = mysqli_fetch_array($call, MYSQLI_NUM);
+      $user_id = "$row[0]";
+  } else { // Destroy cookies, SESSION, and redirect
+    $user_key = $_COOKIE['user_key'];
+    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key'";
+    $call = mysqli_query($database, $query);
+    if (!$call) { // It doesn't matter if the key is there or not, just that SQL is working
+      echo '<p class="error">SQL key error!</p>';
+    } else {
+      $_SESSION = array(); // Reset the `_SESSION` array
+      session_destroy();
+      setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
+      unset($_COOKIE['user_key']);
+      setcookie('user_key', null, 86401);
+    }
+    // exit and redirect in one line
+    exit(header("Location: webapp.php"));
+  }
+
+
+  // Get the user's info from the users table
+  $query = "SELECT fullname FROM users WHERE id='$user_id'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -26,7 +54,7 @@ if (isset($_COOKIE['user_key'])) {
 
       // Show a message
       echo "<h1>Cookie</h1>
-      <p>$fullname, you are already logged in from a cookie!</p>";
+      <p>$fullname, you are already logged in from this cookie: <code>$user_key</code></p>";
     } else {
       echo "Database error!";
       exit();
@@ -73,11 +101,41 @@ if (isset($_COOKIE['user_key'])) {
 
         // Remember me for $_COOKIE['user_id'] ?
         if (isset($_POST['rememberme'])) {
-          // Calculate the time
+          // Calculate the expiration date
           $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
 
-          // Set the cookie $_COOKIE['user_id'] // WRONG WAY, just an example
-          setcookie("user_id", $username, $cookie_expires); // Never set user_id, username, or password as the cookie value!
+          // Create a key for the cookie value
+            // Include our string functions
+            include ('./in.string_functions.php');
+
+            // Create the key
+            $random_string = alnumString(255);
+
+            // Check to see if the string already exists in the database
+            $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
+            $call = mysqli_query($database, $query);
+            while ($dup = mysqli_fetch_array($call)) {
+              // Do it again if so
+              $random_string = alnumString(255);
+            }
+
+            // Expiration date to SQL format
+            $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
+
+            // Add the string to the database
+            $query = "INSERT INTO strings (userid, random_string, usable, date_expires) VALUES ('$userID', '$random_string', 'cookie_login', '$date_expires')";
+            $call = mysqli_query($database, $query);
+
+            // Database error or success?
+            if (mysqli_affected_rows($database) != 1) { // If it didn't run okay
+              echo "There was a database error!<br>$query";
+            } else {
+              // Set the cookie $_COOKIE['user_key']
+              setcookie("user_key", $random_string, $cookie_expires);
+
+              // Teaching purposes
+              echo '<p class="green">Cookie login using: <code>'.$random_string.'</code></p>';
+            }
         }
 
         // Show a message

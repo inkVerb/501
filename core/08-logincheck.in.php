@@ -2,28 +2,36 @@
 
 // See if we have a cookie
 if (isset($_COOKIE['user_key'])) {
+  // Assign the current time
+  $time_now = date("Y-m-d H:i:s");
+
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
-  $user_key_sqlesc = escape_sql($user_key);
-  $query = "SELECT userid FROM strings WHERE random_string='$user_key_sqlesc'";
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key' AND usable='cookie_login' AND  date_expires > '$time_now'";
   $call = mysqli_query($database, $query);
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
       $user_id = "$row[0]";
   } else { // Destroy cookies, SESSION, and redirect
-    $_SESSION = array(); // Reset the `_SESSION` array
-    session_destroy();
-    setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
-    unset($_COOKIE['user_key']);
-    setcookie('user_key', null, 86401);
-
+    $user_key = $_COOKIE['user_key'];
+    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key'";
+    $call = mysqli_query($database, $query);
+    if (!$call) { // It doesn't matter if the key is there or not, just that SQL is working
+      echo '<p class="error">SQL key error!</p>';
+    } else {
+      $_SESSION = array(); // Reset the `_SESSION` array
+      session_destroy();
+      setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
+      unset($_COOKIE['user_key']);
+      setcookie('user_key', null, 86401);
+    }
     // exit and redirect in one line
     exit(header("Location: webapp.php"));
   }
 
   // Get the user's info from the users table
-  $query = "SELECT fullname FROM users WHERE id='$username_sqlesc'";
+  $query = "SELECT fullname FROM users WHERE id='$user_id'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {

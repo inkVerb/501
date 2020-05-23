@@ -8,13 +8,13 @@ if (isset($_GET['s'])) {
 
   // Assign the GET value
   $secure_string = $_GET['s'];
-  $secure_string_sqlesc = escape_sql($secure_string);
+  $secure_string_sqlesc = escape_sql($secure_string); // We need to SQL escape this because it is a user input
 
   // Assign the current time
   $time_now = date("Y-m-d H:i:s");
 
   // See if the string is in the database and has not yet expired
-  $query = "SELECT userid FROM strings WHERE random_string='$secure_string_sqlesc' AND date_expires > '$time_now'";
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$secure_string_sqlesc' AND date_expires > '$time_now'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {

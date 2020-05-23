@@ -3,12 +3,22 @@
 // We must start the session in this file before we can destroy it
 session_start();
 
+// Delete the cookie in the database if one exists
+if (isset($_COOKIE['user_key'])) {
+  $user_key = $_COOKIE['user_key'];
+  $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key'";
+  $call = mysqli_query($database, $query);
+  if (!$call) {
+    echo '<p class="error">SQL key error!</p>';
+  }
+}
+
 // Logout with Session Destroy Team Three
 $_SESSION = array(); // Reset the `_SESSION` array
 session_destroy(); // Destroy the session itself
 setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
 
-// Remove our "Remember me" user_id cookie
+// Remove our "Remember me" user_key cookie
 unset($_COOKIE['user_key']); // Unset the cookie so if tests don't find it later
 setcookie('user_key', null, 86401); // Set our cookie value to "null" (nothing) and expire in Jan 1970
 
