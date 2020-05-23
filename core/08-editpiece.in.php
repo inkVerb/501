@@ -1,12 +1,33 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
 
   // POST checks
     // Only sanitize, no errors
-  if (!empty($_POST['email'])) {
-    $email = checkPost('email',$_POST['email']);
-  }
+
+  // Empty first
+  if ((!isset($_POST['p_title'])) || ($_POST['p_title'] == '')) {
+
+    // Only process a Date Live if Publishing or it is set
+    if (($_POST['p_submit'] == 'Publish') || (!empty($_POST['p_live']))) {
+      $p_live = checkPiece('p_live',$_POST['p_live']);
+    }
+
+    // Title now because we will use it in the Slug
+    $p_title = checkPiece('p_title',$_POST['p_title']);
+
+    // Apply Title to Slug if empty
+    if (empty($_POST['p_slug'])) {
+      $p_slug = checkPiece('p_slug',$p_title);
+    } else {
+      $p_slug = checkPiece('p_slug',$_POST['p_slug']);
+    }
+
+    // All other fields
+    $p_type = checkPiece('p_type',$_POST['p_type']);
+    $p_status = checkPiece('p_status',$_POST['p_status']);
+    $p_content = checkPiece('p_content',$_POST['p_content']);
+    $p_after = checkPiece('p_after',$_POST['p_after']);
 
 
 

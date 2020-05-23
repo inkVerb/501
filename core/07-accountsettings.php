@@ -16,17 +16,16 @@ include ('./in.functions.php');
 
 // We must be logged in!
 // See if we have a cookie
-if (isset($_COOKIE['username'])) {
-  $username = $_COOKIE['username'];
-  $username_sqlesc = escape_sql($username);
-  $query = "SELECT id, fullname FROM users WHERE username='$username_sqlesc'";
+if (isset($_COOKIE['user_id'])) {
+  $user_id = $_COOKIE['user_id'];
+  $user_id_sqlesc = escape_sql($user_id);
+  $query = "SELECT fullname FROM users WHERE id='$user_id_sqlesc'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]";
-      $fullname = "$row[1]";
+      $fullname = "$row[0]";
 
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;

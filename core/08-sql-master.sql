@@ -37,6 +37,17 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO users (name, username, email, type) VALUES ('Inky', 'inkyuser123', 'inkyuser@verb.ink', 'admin');
 
+CREATE TABLE IF NOT EXISTS `strings` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` INT UNSIGNED NOT NULL,
+  `random_string` VARCHAR(255) DEFAULT NULL,
+  `usable` ENUM('live', 'cookie_login', 'dead') NOT NULL,
+  `date_expires` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+GRANT ALL PRIVILEGES ON webapp_db.* TO webapp_db_user@localhost IDENTIFIED BY 'webappdbpassword';
+FLUSH PRIVILEGES;
+
 CREATE TABLE IF NOT EXISTS `pieces` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` ENUM('post', 'page') NOT NULL,

@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- CSS file included as <link> -->
-  <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-
 <?php
-
-// Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
-
-// Include our functions
-include ('./in.functions.php');
 
 // Just logged out?
 if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == true)) {
@@ -22,9 +8,8 @@ if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == tr
 
 }
 
-
 // See if we have a cookie
-if (isset($_COOKIE['user_id'])) {
+if (isset($_COOKIE['user_key'])) {
   $user_id = $_COOKIE['user_id'];
   $user_id_sqlesc = escape_sql($user_id);
   $query = "SELECT fullname FROM users WHERE id='$user_id_sqlesc'";
@@ -33,8 +18,7 @@ if (isset($_COOKIE['user_id'])) {
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]";
-      $fullname = "$row[1]";
+      $fullname = "$row[0]";
 
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
@@ -43,6 +27,9 @@ if (isset($_COOKIE['user_id'])) {
       // Show a message
       echo "<h1>Cookie</h1>
       <p>$fullname, you are already logged in from a cookie!</p>";
+    } else {
+      echo "Database error!";
+      exit();
     }
 
 
@@ -65,51 +52,45 @@ if (isset($_COOKIE['user_id'])) {
     $checks_out = true;
 
     // if SELECT: Query user info from the database if everything checks out
-    if ($checks_out == true) {
-      $username_sqlesc = escape_sql($username);
-      $password_to_check = escape_sql($password);
-      $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
-      $call = mysqli_query($database, $query);
-      // Check to see that our SQL query returned exactly 1 row
-      if (mysqli_num_rows($call) == 1) {
-        // Assign the values
-        $row = mysqli_fetch_array($call, MYSQLI_NUM);
-          $user_id = "$row[0]";
-          $fullname = "$row[1]";
-          $hashed_password = "$row[2]";
+    $username_sqlesc = escape_sql($username);
+    $password_to_check = escape_sql($password);
+    $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
+    $call = mysqli_query($database, $query);
+    // Check to see that our SQL query returned exactly 1 row
+    if (mysqli_num_rows($call) == 1) {
+      // Assign the values
+      $row = mysqli_fetch_array($call, MYSQLI_NUM);
+        $user_id = "$row[0]";
+        $fullname = "$row[1]";
+        $hashed_password = "$row[2]";
 
-        // Test our password against the hash
-        if (password_verify($password_to_check, $hashed_password)) {
+      // Test our password against the hash
+      if (password_verify($password_to_check, $hashed_password)) {
 
-          // Set the $_SESSION array
-          $_SESSION['user_id'] = $user_id;
-          $_SESSION['user_name'] = $fullname;
+        // Set the $_SESSION array
+        $_SESSION['user_id'] = $user_id;
+        $_SESSION['user_name'] = $fullname;
 
-          // Remember me for $_COOKIE['user_id'] ?
-          if (isset($_POST['rememberme'])) {
-            // Calculate the time
-            $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
+        // Remember me for $_COOKIE['user_id'] ?
+        if (isset($_POST['rememberme'])) {
+          // Calculate the time
+          $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
 
-            // Set the cookie $_COOKIE['user_id'] // WRONG WAY, just an example
-            setcookie("user_id", $user_id, $cookie_expires); // Never set user_id, username, or password as the cookie value!
-
-          }
-
-          // Show a message
-          echo "<h1>Login success!</h1>
-          <p>$fullname, you are logged in.</p>";
-
-        } else { // Password fail
-          echo '<p class="error">Login error!</p>';
+          // Set the cookie $_COOKIE['user_id'] // WRONG WAY, just an example
+          setcookie("user_id", $username, $cookie_expires); // Never set user_id, username, or password as the cookie value!
         }
 
-      } else { // Username fail
-        echo '<p class="error">Login error!</p>';
-      } // End database check
+        // Show a message
+        echo "<h1>Login success!</h1>
+        <p>$fullname, you are logged in.</p>";
 
-    } else {
-        echo '<p class="error">Errors! Try again.</p>';
-    }
+      } else { // Password fail
+        echo '<p class="error">Login error!</p>';
+      }
+
+    } else { // Username fail
+      echo '<p class="error">Login error!</p>';
+    } // End database check
 
   // If errors in form
   } else {
@@ -135,9 +116,16 @@ echo '
 </form>
 ';
 
+// Recover login
+echo '<p>Forget your password and need to <a href="recover.php">recover your login</a>?</p>';
+
 }
 
-?>
+// Account settings link
+if (isset($user_id)) {
+  echo '<p><a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+}
 
-</body>
-</html>
+
+
+?>

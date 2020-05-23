@@ -35,6 +35,12 @@ if (isset($_GET['s'])) {
       $_SESSION['user_id'] = $user_id;
       $_SESSION['user_name'] = $fullname;
 
+      // Set the key to "dead" so it can't be used again
+      $query = "UPDATE strings SET usable='dead' WHERE random_string='$secure_string_sqlesc' AND userid='$user_id'";
+      $call = mysqli_query($database, $query);
+      if (!$call) {
+        echo '<p class="error">Strange error killing a real key!</p>';
+      }
       // Redirect to the webapp page
       header("Location: webapp.php");
 

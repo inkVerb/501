@@ -9,17 +9,16 @@ if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == tr
 }
 
 // See if we have a cookie
-if (isset($_COOKIE['username'])) {
-  $username = $_COOKIE['username'];
-  $username_sqlesc = escape_sql($username);
-  $query = "SELECT id, fullname FROM users WHERE username='$username_sqlesc'";
+if (isset($_COOKIE['user_id'])) {
+  $user_id = $_COOKIE['user_id'];
+  $user_id_sqlesc = escape_sql($user_id);
+  $query = "SELECT fullname FROM users WHERE id='$user_id_sqlesc'";
   $call = mysqli_query($database, $query);
   // Check to see that our SQL query returned exactly 1 row
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]";
-      $fullname = "$row[1]";
+      $fullname = "$row[0]";
 
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
@@ -72,14 +71,13 @@ if (isset($_COOKIE['username'])) {
         $_SESSION['user_id'] = $user_id;
         $_SESSION['user_name'] = $fullname;
 
-        // Remember me for $_COOKIE['username'] ?
+        // Remember me for $_COOKIE['user_id'] ?
         if (isset($_POST['rememberme'])) {
           // Calculate the time
           $cookie_expires_30_days_later = time() + (30 * 24 * 60 * 60); // epoch 30 days from now
 
-          // Set the cookie $_COOKIE['username'] // WRONG WAY, just an example
-          setcookie("username", $username, $cookie_expires); // Never set username or password as the cookie value!
-
+          // Set the cookie $_COOKIE['user_id'] // WRONG WAY, just an example
+          setcookie("user_id", $username, $cookie_expires); // Never set user_id, username, or password as the cookie value!
         }
 
         // Show a message
@@ -110,7 +108,7 @@ echo '<h1>Login</h1>
 echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
 echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
 
-// Checkbox to set $_COOKIE['username']
+// Checkbox to set $_COOKIE['user_id']
 echo '<input type="checkbox" name="rememberme" /> Remember me (use cookies to stay logged in 30 days)';
 
 echo '

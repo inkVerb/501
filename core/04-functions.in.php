@@ -32,22 +32,28 @@ function checkPost($name, $value) {
     }
 
   } elseif ($name == 'fullname') {
-    $result = (preg_match('/^[a-zA-Z ]{6,32}$/i', $value))
-    ? preg_replace("/[^a-zA-Z ]/","", $value) : '';
+    $regex_match = '/^[a-zA-Z ]{6,32}$/i';
+    $regex_replace = "/[^a-zA-Z ]/";
+    $result = (preg_match($regex_match, $value))
+    ? preg_replace($regex_replace,"", $value) : '';
     if ($result == '') {
       $check_err[$name] = 'Not a valid name! (6-32 characters, letters and spaces only)';
     }
 
   } elseif ($name == 'username') {
-    $result = (preg_match('/[a-zA-Z0-9_]{6,32}$/i', $value))
-    ? preg_replace("/[^a-zA-Z0-9_]/","", strtolower($value)) : '';
+    $regex_match = '/[a-zA-Z0-9_]{6,32}$/i';
+    $regex_replace = "/[^a-zA-Z0-9_]/";
+    $result = (preg_match($regex_match, $value))
+    ? preg_replace($regex_replace,"", strtolower($value)) : '';
     if ($result == '') {
       $check_err[$name] = 'Not a valid username! (6-32 characters, only letters, numbers, and underscore)';
     }
 
   } elseif ($name == 'password') {
-    $result = (preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@&#$%]{6,32}$/', $value))
-    ? preg_replace("/[^a-zA-Z0-9!@&#$%]/","", $value) : '';
+    $regex_match = '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@&#$%]{6,32}$/';
+    $regex_replace = "/[^a-zA-Z0-9!@&#$%]/";
+    $result = (preg_match($regex_match, $value))
+    ? preg_replace($regex_replace,"", $value) : '';
     if ($result == '') {
       $check_err[$name] = 'Not a valid password! (6-32 characters, one lowercase letter, one uppercase letter, one number, also allowed: ! @ & # $ %)';
     }

@@ -9,8 +9,8 @@ session_destroy(); // Destroy the session itself
 setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
 
 // Remove our "Remember me" user_id cookie
-unset($_COOKIE['user_id']); // Unset the cookie so if tests don't find it later
-setcookie('user_id', null, 86401); // Set our cookie value to "null" (nothing) and expire in Jan 1970
+unset($_COOKIE['user_key']); // Unset the cookie so if tests don't find it later
+setcookie('user_key', null, 86401); // Set our cookie value to "null" (nothing) and expire in Jan 1970
 
 // Start the session again so variables work
 session_start();
