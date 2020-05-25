@@ -128,7 +128,8 @@ echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
 echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
 
 // Checkbox to set $_COOKIE['user_id']
-echo '<input type="checkbox" name="rememberme" /> Remember me (use cookies to stay logged in 30 days)';
+// Tip: <label for="CHECKBOX_ID"> makes the label clickable
+echo '<input type="checkbox" id="rememberme" name="rememberme" /><label for="rememberme"> Remember me (use cookies to stay logged in 30 days)</label>';
 
 echo '
   <input type="submit" value="Submit Button">

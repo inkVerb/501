@@ -15,15 +15,15 @@ if (isset($_COOKIE['user_key'])) {
 
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
-  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key' AND usable='cookie_login' AND  date_expires > '$time_now'";
+  $user_key_sqlesc = escape_sql($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_sqlesc' AND usable='cookie_login' AND  date_expires > '$time_now'";
   $call = mysqli_query($database, $query);
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
       $user_id = "$row[0]";
   } else { // Destroy cookies, SESSION, and redirect
-    $user_key = $_COOKIE['user_key'];
-    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key'";
+    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key_sqlesc'";
     $call = mysqli_query($database, $query);
     if (!$call) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
@@ -123,12 +123,12 @@ if (isset($_COOKIE['user_key'])) {
             $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
 
             // Add the string to the database
-            $query = "INSERT INTO strings (userid, random_string, usable, date_expires) VALUES ('$userID', '$random_string', 'cookie_login', '$date_expires')";
+            $query = "INSERT INTO strings (userid, random_string, usable, date_expires) VALUES ('$user_id', '$random_string', 'cookie_login', '$date_expires')";
             $call = mysqli_query($database, $query);
 
             // Database error or success?
             if (mysqli_affected_rows($database) != 1) { // If it didn't run okay
-              echo "There was a database error!<br>$query";
+              echo "There was a database error!";
             } else {
               // Set the cookie $_COOKIE['user_key']
               setcookie("user_key", $random_string, $cookie_expires);
@@ -167,7 +167,8 @@ echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
 echo 'Password: '.formInput('password', $password, $check_err).'<br><br>';
 
 // Checkbox to set $_COOKIE['user_id']
-echo '<input type="checkbox" name="rememberme" /> Remember me (use cookies to stay logged in 30 days)';
+// Tip: <label for="CHECKBOX_ID"> makes the label clickable
+echo '<input type="checkbox" id="rememberme" name="rememberme" /><label for="rememberme"> Remember me (use cookies to stay logged in 30 days)</label>';
 
 echo '
   <input type="submit" value="Submit Button">

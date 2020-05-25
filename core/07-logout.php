@@ -1,12 +1,13 @@
 <?php
 
-// We must start the session in this file before we can destroy it
-session_start();
+// Using SQL requires our config, which also includes session_start()
+include ('./in.config.php');
 
 // Delete the cookie in the database if one exists
 if (isset($_COOKIE['user_key'])) {
   $user_key = $_COOKIE['user_key'];
-  $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key'";
+  $user_key_sqlesc = escape_sql($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key_sqlesc'";
   $call = mysqli_query($database, $query);
   if (!$call) {
     echo '<p class="error">SQL key error!</p>';

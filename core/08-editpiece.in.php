@@ -5,33 +5,52 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   // POST checks
     // Only sanitize, no errors
 
-  // Empty first
-  if ((!isset($_POST['p_title'])) || ($_POST['p_title'] == '')) {
-
-    // Only process a Date Live if Publishing or it is set
-    if (($_POST['p_submit'] == 'Publish') || (!empty($_POST['p_live']))) {
-      $p_live = checkPiece('p_live',$_POST['p_live']);
-    }
-
-    // Title now because we will use it in the Slug
+  // Title now because we will use it in the Slug
+  if ((isset($_POST['p_title'])) && ($_POST['p_title'] != '')) {
     $p_title = checkPiece('p_title',$_POST['p_title']);
+  }
 
-    // Apply Title to Slug if empty
-    if (empty($_POST['p_slug'])) {
-      $p_slug = checkPiece('p_slug',$p_title);
-    } else {
-      $p_slug = checkPiece('p_slug',$_POST['p_slug']);
-    }
+  // Apply Title to Slug if empty
+  if (empty($_POST['p_slug'])) {
+    $p_slug = checkPiece('p_slug',$p_title);
+  } else {
+    $p_slug = checkPiece('p_slug',$_POST['p_slug']);
+  }
 
-    // All other fields
-    $p_type = checkPiece('p_type',$_POST['p_type']);
-    $p_status = checkPiece('p_status',$_POST['p_status']);
-    $p_content = checkPiece('p_content',$_POST['p_content']);
-    $p_after = checkPiece('p_after',$_POST['p_after']);
+  // Only process a Date Live if Publishing or it is set
+  if (($_POST['p_submit'] == 'Publish') || (!empty($_POST['p_live']))) {
+    $p_live = checkPiece('p_live',$_POST['p_live']);
+  }
+
+  // Date-time Live
+  $p_live_now = checkPiece('p_live_now',$_POST['p_live_now']);
+  $p_live_yr = checkPiece('p_live_yr',$_POST['p_live_yr']);
+  $p_live_mo = checkPiece('p_live_mo',$_POST['p_live_mo']);
+  $p_live_day = checkPiece('p_live_day',$_POST['p_live_day']);
+  $p_live_hr = checkPiece('p_live_hr',$_POST['p_live_hr']);
+  $p_live_min = checkPiece('p_live_min',$_POST['p_live_min']);
+  $p_live_sec = checkPiece('p_live_sec',$_POST['p_live_sec']);
+
+  // All other fields
+  $p_type = checkPiece('p_type',$_POST['p_type']);
+  $p_status = checkPiece('p_status',$_POST['p_status']);
+  $p_content = checkPiece('p_content',$_POST['p_content']);
+  $p_after = checkPiece('p_after',$_POST['p_after']);
 
 
+XX Pick up here...
+- Check non-date fields such as htmlentities
 
-
+  // Create our time
+  //DEV// This should work:
+  $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
+  /* ...if not...
+  if ($p_live_now == true) {
+    $p_live = date("Y-m-d H:i:s");
+  } else {
+    $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
+  }
+  */
 
   // Update the user
 

@@ -7,15 +7,15 @@ if (isset($_COOKIE['user_key'])) {
 
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
-  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key' AND usable='cookie_login' AND  date_expires > '$time_now'";
+  $user_key_sqlesc = escape_sql($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_sqlesc' AND usable='cookie_login' AND  date_expires > '$time_now'";
   $call = mysqli_query($database, $query);
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
       $user_id = "$row[0]";
   } else { // Destroy cookies, SESSION, and redirect
-    $user_key = $_COOKIE['user_key'];
-    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key'";
+    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key_sqlesc'";
     $call = mysqli_query($database, $query);
     if (!$call) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
@@ -79,8 +79,8 @@ if (isset($_COOKIE['user_key'])) {
 <body>
 
 <?php // Restart php
-
-echo '<p>Hello '.$fullname.'! <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+echo '<h1>501 Blog</h1>';
+echo '<p>Hi, '.$fullname.'! <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
 
 
 ?>

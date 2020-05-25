@@ -25,16 +25,58 @@ echo '<form action="edit.php" method="post">';
 echo '<input type="hidden" name="piece"><br>';
 
 // Create the fields
-echo 'Title: '.pieceInput('p_title', $p_title, $check_err).'<br><br>';
-echo 'Slug: '.pieceInput('p_slug', $p_slug, $check_err).'<br><br>';
-echo 'Type:<br>'.pieceInput('p_type', $p_type, $check_err).'<br><br>';
-echo 'Status: '.pieceInput('p_status', $p_status, $check_err).'<br><br>';
-echo 'Date live: '.pieceInput('p_live', $p_live, $check_err).'<br><br>';
-echo 'Content: '.pieceInput('p_content', $p_content, $check_err).'<br><br>';
-echo 'After: '.pieceInput('p_after', $p_after, $check_err).'<br><br>';
+echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
+echo 'Slug: '.pieceInput('p_slug', $p_slug).'<br><br>';
+echo 'Type:<br>'.pieceInput('p_type', $p_type).'<br><br>';
+echo 'Status: '.pieceInput('p_status', $p_status).'<br><br>';
+// Tip: <label for="CHECKBOX_ID"> makes the label clickable
+echo pieceInput('p_live_now', $p_live_now).'<label onclick="showGoLiveOptionsLabel()"> Schedule...</label><br><br>';
+echo '<div id="goLiveOptions" '.($p_live_now == true ? 'style="display:block"' : 'style="display:none"').'>';
+  echo 'Date live: '.
+  pieceInput('p_live_yr', $p_live_yr).', '.
+  pieceInput('p_live_mo', $p_live_mo).' '.
+  pieceInput('p_live_day', $p_live_day).' @ '.
+  pieceInput('p_live_hr', $p_live_hr).':'.
+  pieceInput('p_live_min', $p_live_min).':'.
+  pieceInput('p_live_sec', $p_live_sec).'<br><br>';
+echo '
+</div>
+  <script>
+  // Check/uncheck the box = hide/show the Date Live schedule (p_live_now) <div>
+  function showGoLiveOptionsBox() {
+    var x = document.getElementById("goLiveOptions");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+  }
+  // JavaScript does not allow onClick action for both the label and the checkbox
+  // So, we make the label open the Date Live schedule div AND check the box...
+  function showGoLiveOptionsLabel() {
+    // Show the Date Live schedule div
+    var x = document.getElementById("goLiveOptions");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+    // Use JavaScript to check the box
+    var y = document.getElementById("p_live_now");
+    if (y.checked === false) {
+      y.checked = true;
+    } else {
+      y.checked = false;
+    }
+  }
+  </script>';
+
+echo 'Content: '.pieceInput('p_content', $p_content).'<br><br>';
+echo 'After: '.pieceInput('p_after', $p_after).'<br><br>';
 
 // Two submit buttons
 echo '<input type="submit" name="p_submit" value="Save draft">';
+echo '&nbsp;'; // Space between the buttons
 echo '<input type="submit" name="p_submit" value="Publish">';
 echo '</form>';
 
