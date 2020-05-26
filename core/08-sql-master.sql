@@ -56,14 +56,14 @@ CREATE TABLE IF NOT EXISTS `pieces` (
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
   `after` TINYTEXT DEFAULT NULL,
-  `date_live` TIMESTAMP DEFAULT NULL,
-  `date_created` TIMESTAMP NOT NULL,
-  `date_updated` TIMESTAMP NOT NULL,
+  `date_live` TIMESTAMP NULL,
+  `date_created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO pieces (type, status, title, slug, content) VALUES ('post', 'live', 'Hello World!', 'hello-world', 'I am the first post! Ink is a verb. So, get inking!');
-INSERT INTO pieces (type, status, title, slug, content) VALUES ('page', 'live', 'About', 'about', 'This is all about Blog 501. I am a demo to be updated.');
+INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('post', 'live', 'Hello World!', 'hello-world', 'I am the first post! Ink is a verb. So, get inking!', '', NOW());
+INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('page', 'live', 'About', 'about', 'This is all about Blog 501. I am a demo to be updated.', '', NOW());
 
 CREATE TABLE IF NOT EXISTS `history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `history` (
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
   `after` TINYTEXT DEFAULT NULL,
-  `date_updated` TIMESTAMP NOT NULL,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
