@@ -26,31 +26,23 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   $p_live_min = checkPiece('p_live_min',$_POST['p_live_min']);
   $p_live_sec = checkPiece('p_live_sec',$_POST['p_live_sec']);
 
+  // Status ("Save draft" = INSERT/UPDATE with status='draft' only)
+  if ($_POST['p_live_sec'] == 'Save draft') {
+    $p_status = 'draft';
+  } elseif ($_POST['p_live_sec'] == 'Publish') {
+    $p_status = checkPiece('p_status',$_POST['p_status']);
+  }
+
   // All other fields
   $p_type = checkPiece('p_type',$_POST['p_type']);
-  $p_status = checkPiece('p_status',$_POST['p_status']);
+
   $p_content = checkPiece('p_content',$_POST['p_content']);
   $p_after = checkPiece('p_after',$_POST['p_after']);
 
-
-XX Pick up here...
-- Check non-date fields such as htmlentities
-- All is done, but only for INSERT
-  - we need a separate file for UPDATE
-
-  // Create our time
-  //DEV// This should work:
+  // Create our timestamp
   $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
-  /* ...if not...
-  if ($p_live_now == true) {
-    $p_live = date("Y-m-d H:i:s");
-  } else {
-    $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
-  }
-  */
 
   // Prepare our database values for entry
-
   $p_type_sqlesc = escape_sql($p_type);
   $p_status_sqlesc = escape_sql($p_status);
   $p_title_sqlesc = escape_sql($p_title);
@@ -63,8 +55,7 @@ XX Pick up here...
   $query = "INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_status_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc')";
 
   // Updating piece
-  $query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated='0' WHERE id='$p_id'";
-
+  //$query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated='0' WHERE id='$p_id'";
 
   // Run the query
   $call = mysqli_query($database, $query);
