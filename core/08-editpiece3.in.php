@@ -51,13 +51,14 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
    $piece_id = $_POST['piece_id'];
 
    // Update the old piece
-   if ($p_live_schedule == true) { // Keep it unset
-     $p_live = NULL;
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_updated='0' WHERE id='$p_id'";
-   } elseif ($p_live_schedule == false) {
+   if ($p_live_schedule == false) {
+     // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
+     $p_live = NULL; // Keep it invalid, we won't use it
+     $query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
+   } elseif ($p_live_schedule == true) {
      $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
      $p_live_sqlesc = escape_sql($p_live);
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated='0' WHERE id='$p_id'";
+     $query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
    }
 
    // Run the query
@@ -80,10 +81,11 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
 
  } elseif (!isset($_POST['piece_id'])) { // New piece
     // Create our timestamp
-    if ($p_live_schedule == true) { // Keep it unset
-      $p_live = NULL;
-      $query = "INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_status_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc')";
-    } elseif ($p_live_schedule == false) {
+    if ($p_live_schedule == false) {
+      // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
+      $p_live = NULL; // Keep it invalid, we won't use it
+      $query = "INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_status_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', NULL)";
+    } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_sqlesc = escape_sql($p_live);
       $query = "INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_status_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc')";
