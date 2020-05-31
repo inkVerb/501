@@ -50,30 +50,30 @@ function checkPiece($name, $value) {
 
 
   // Date-time Live
-  } elseif ($name == 'p_live_now') {
+  } elseif ($name == 'p_live_schedule') {
     $result = ($value == true)
     ? true : false;
-    define (p_live_now, $result); // Define a constant to allow scheduling so it edures multiple function calls
+    define (p_live_schedule, $result); // Define a constant to allow scheduling so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app
 
   } elseif ($name == 'p_live_yr') {
     $regex = '/[0-9]{4}$/i';
     // Our date range is from the creation of the Gutenberg press through the millenium of Christ
-    $result = (((preg_match($regex, $value)) && (1500 <= $value) && (3300 >= $max)) && (p_live_now == true))
+    $result = (((preg_match($regex, $value)) && (1500 <= $value) && (3300 >= $max)) && (p_live_schedule == true))
     ? $value : $p_live_yr_curr;
     define (limit_day_yr, $result); // Define a constant for date-range so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app
 
   } elseif ($name == 'p_live_mo') {
     $regex = '/(0[1-9]|1[0-2])$/i';
-    $result = ((preg_match($regex, $value)) && (p_live_now == true))
+    $result = ((preg_match($regex, $value)) && (p_live_schedule == true))
     ? $value : $p_live_mo_curr;
     define (limit_day_mo, $result); // Define a constant for date-range so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app
 
   } elseif ($name == 'p_live_day') {
     $regex = '/(0[1-9]|1[0-9]|2[0-9]|3[01])$/i';
-    $result = ((preg_match($regex, $value)) && (p_live_now == true))
+    $result = ((preg_match($regex, $value)) && (p_live_schedule == true))
     ? $value : $p_live_day_curr;
 
     // Check date range per month
@@ -89,17 +89,17 @@ function checkPiece($name, $value) {
 
   } elseif ($name == 'p_live_hr') {
     $regex = '/([0-1][0-9]|2[0-3])$/i';
-    $result = ((preg_match($regex, $value)) && (p_live_now == true))
+    $result = ((preg_match($regex, $value)) && (p_live_schedule == true))
     ? $value : $p_live_hr_curr;
 
   } elseif ($name == 'p_live_min') {
     $regex = '/([0-5][0-9])$/i';
-    $result = ((preg_match($regex, $value)) && (p_live_now == true))
+    $result = ((preg_match($regex, $value)) && (p_live_schedule == true))
     ? $value : $p_live_min_curr;
 
   } elseif ($name == 'p_live_sec') {
     $regex = '/([0-5][0-9])$/i';
-    $result = ((preg_match($regex, $value)) && (p_live_now == true))
+    $result = ((preg_match($regex, $value)) && (p_live_schedule == true))
     ? $value : $p_live_sec_curr;
 
   } // Finish $name if
@@ -215,11 +215,11 @@ function pieceInput($name, $value) {
     $value = ( $value == '' ) ? $p_live_sec_curr : $value;
     $result = '<input type="text" id="p_live_sec" name="p_live_sec" style="width: 1.2em" maxlength="2" value="'.$value.'">';
 
-  } elseif ($name == 'p_live_now') {
+  } elseif ($name == 'p_live_schedule') {
     if ($value == true) {
-      $result = '<input type="checkbox" id="p_live_now" name="p_live_now" onclick="showGoLiveOptionsBox()" checked>';
+      $result = '<input type="checkbox" id="p_live_schedule" name="p_live_schedule" onclick="showGoLiveOptionsBox()" checked>';
     } else {
-      $result = '<input type="checkbox" id="p_live_now" name="p_live_now" onclick="showGoLiveOptionsBox()">';
+      $result = '<input type="checkbox" id="p_live_schedule" name="p_live_schedule" onclick="showGoLiveOptionsBox()">';
     }
 
   } // Finish $name if

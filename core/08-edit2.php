@@ -30,8 +30,8 @@ echo 'Slug: '.pieceInput('p_slug', $p_slug).'<br><br>';
 echo 'Type:<br>'.pieceInput('p_type', $p_type).'<br><br>';
 echo 'Status: '.pieceInput('p_status', $p_status).'<br><br>';
 // Tip: Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
-echo pieceInput('p_live_now', $p_live_now).'<label onclick="showGoLiveOptionsLabel()"> Schedule...</label><br><br>';
-echo '<div id="goLiveOptions" '.($p_live_now == true ? 'style="display:block"' : 'style="display:none"').'>';
+echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Schedule...</label><br><br>';
+echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
   echo 'Date live: '.
   pieceInput('p_live_yr', $p_live_yr).', '.
   pieceInput('p_live_mo', $p_live_mo).' '.
@@ -42,7 +42,7 @@ echo '<div id="goLiveOptions" '.($p_live_now == true ? 'style="display:block"' :
 echo '
 </div>
   <script>
-  // Check/uncheck the box = hide/show the Date Live schedule (p_live_now) <div>
+  // Check/uncheck the box = hide/show the Date Live schedule (p_live_schedule) <div>
   function showGoLiveOptionsBox() {
     var x = document.getElementById("goLiveOptions");
     if (x.style.display === "block") {
@@ -62,7 +62,7 @@ echo '
       x.style.display = "block";
     }
     // Use JavaScript to check the box
-    var y = document.getElementById("p_live_now");
+    var y = document.getElementById("p_live_schedule");
     if (y.checked === false) {
       y.checked = true;
     } else {
