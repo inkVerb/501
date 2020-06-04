@@ -127,22 +127,20 @@ function pieceInput($name, $value) {
 
   } elseif ($name == 'p_type') {
     // type_post checked or not?
-    if (($value == 'type_post') || ($value == '')) {
-      $input_post = '<input type="radio" id="type_post" name="p_type" value="type_post" checked>';
+    if (($value == 'post') || ($value == '')) {
+      $input_post = '<input type="radio" id="type_post" name="p_type" value="post" checked>';
     } else {
-      $input_post = '<input type="radio" id="type_post" name="p_type" value="type_post">';
+      $input_post = '<input type="radio" id="type_post" name="p_type" value="post">';
     }
     // type_page checked or not?
-    if ($value == 'type_page') {
-      $input_page = '<input type="radio" id="type_page" name="p_type" value="type_page" checked>';
+    if ($value == 'page') {
+      $input_page = '<input type="radio" id="type_page" name="p_type" value="page" checked>';
     } else {
-      $input_page = '<input type="radio" id="type_page" name="p_type" value="type_page">';
+      $input_page = '<input type="radio" id="type_page" name="p_type" value="page">';
     }
     // Create the full set of radio options
-    $result = $input_post.'
-      <label for="male">Post</label><br>
-      '.$input_page.'
-      <label for="female">Page</label>';
+    $result = '<label for="type_post">'.$input_post.' Post</label><br>
+      <label for="type_page">'.$input_page.' Page</label>';
 
   } elseif ($name == 'p_status') {
     // live selected?
