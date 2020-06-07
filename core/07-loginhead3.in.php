@@ -114,9 +114,14 @@ if (isset($_COOKIE['user_key'])) {
             // Check to see if the string already exists in the database
             $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
             $call = mysqli_query($database, $query);
-            while ($dup = mysqli_fetch_array($call)) {
-              // Do it again if so
-              $random_string = alnumString(255);
+            while (mysqli_num_rows($call) !=0) {
+              $random_string = alnumString(32);
+              // Check again
+              $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
+              $call = mysqli_query($database, $query);
+              if (mysqli_num_rows($call) == 0) {
+                break;
+              }
             }
 
             // Expiration date to SQL format

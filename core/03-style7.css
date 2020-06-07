@@ -13,6 +13,9 @@ form input.error {
 .blue {
 	color: #3333cc;
 }
+.gray {
+	color: #777;
+}
 table, tr, td, th {
 	border: 1px inset black;
 	border-collapse: collapse;

@@ -26,13 +26,6 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   $p_live_min = checkPiece('p_live_min',$_POST['p_live_min']);
   $p_live_sec = checkPiece('p_live_sec',$_POST['p_live_sec']);
 
-  // Status ("Save draft" = INSERT/UPDATE with status='draft' only)
-  if ($_POST['p_submit'] == 'Save draft') {
-    $p_status = 'draft';
-  } elseif ($_POST['p_submit'] == 'Publish') {
-    $p_status = checkPiece('p_status',$_POST['p_status']);
-  }
-
   // All other fields
   $p_type = checkPiece('p_type',$_POST['p_type']);
   $p_content = checkPiece('p_content',$_POST['p_content']);
@@ -40,7 +33,6 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
 
   // Prepare our database values for entry
   $p_type_sqlesc = escape_sql($p_type);
-  $p_status_sqlesc = escape_sql($p_status);
   $p_title_sqlesc = escape_sql($p_title);
   $p_slug_sqlesc = escape_sql($p_slug);
   $p_content_sqlesc = escape_sql($p_content);
@@ -51,11 +43,11 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   if ($p_live_schedule == false) {
     // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
     $p_live = NULL; // Keep it invalid, we won't use it
-    $query = "INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_status_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', NULL)";
+    $query = "INSERT INTO pieces (type, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', NULL)";
   } elseif ($p_live_schedule == true) {
     $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
     $p_live_sqlesc = escape_sql($p_live);
-    $query = "INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_status_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc')";
+    $query = "INSERT INTO pieces (type, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc')";
   }
   // Updating piece
   //$query = "UPDATE pieces SET type='$p_type_sqlesc', status='$p_status_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated='0' WHERE id='$p_id'";

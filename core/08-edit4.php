@@ -19,7 +19,13 @@ include ('./in.editprocess.php');
 echo '<h1>Editor</h1>';
 
 // Our edit form
-echo '<form action="edit.php" method="post">';
+// New or update?
+if (isset($piece_id)) { // Updating piece
+  echo '<form action="edit.php?p='.$piece_id.'" method="post">';
+  echo '<input type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
+} else { // New piece
+  echo '<form action="edit.php" method="post">';
+}
 
 // Tell in.checks.php that this is a "Piece" form
 echo '<input type="hidden" name="piece"><br>';
@@ -70,11 +76,21 @@ echo '
   }
   </script>';
 
-echo 'Content: '.pieceInput('p_content', $p_content).'<br><br>';
-echo 'After: '.pieceInput('p_after', $p_after).'<br><br>';
+echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
+echo 'After:<br>'.pieceInput('p_after', $p_after).'<br><br>';
 
 // Two submit buttons
-echo '<input type="submit" name="p_submit" value="Save">';
+echo '<input type="submit" name="p_submit" value="Save draft">';
+echo '&nbsp;'; // Space between the buttons
+// Existing piece? (can't publish without saving once first)
+if ((isset($editing_existing_piece)) && ($editing_existing_piece == true)) {
+  // Editing a published piece?
+  if ((isset($editing_published_piece)) && ($editing_published_piece == true)) {
+    echo '<input type="submit" name="p_submit" value="Update">';
+  } else {
+    echo '<input type="submit" name="p_submit" value="Publish">';
+  }
+}
 echo '</form>';
 
 ?>

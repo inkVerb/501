@@ -51,7 +51,7 @@ FLUSH PRIVILEGES;
 CREATE TABLE IF NOT EXISTS `pieces` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` ENUM('post', 'page') NOT NULL,
-  `status` ENUM('live', 'draft', 'dead') NOT NULL,
+  `status` ENUM('live', 'dead') NOT NULL,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
@@ -65,18 +65,33 @@ CREATE TABLE IF NOT EXISTS `pieces` (
 INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('post', 'live', 'Hello World!', 'hello-world', 'I am the first post! Ink is a verb. So, get inking!', '', NOW());
 INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('page', 'live', 'About', 'about', 'This is all about Blog 501. I am a demo to be updated.', '', NOW());
 
-CREATE TABLE IF NOT EXISTS `history` (
+CREATE TABLE IF NOT EXISTS `publications` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
-  `status` ENUM('live', 'draft', 'dead') NOT NULL,
+  `pubstatus` ENUM('published', 'drafting') NOT NULL,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
   `after` TINYTEXT DEFAULT NULL,
+  `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `publication_history` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `piece_id` INT UNSIGNED NOT NULL,
+  `type` ENUM('page', 'post') NOT NULL,
+  `title` VARCHAR(90) NOT NULL,
+  `slug` VARCHAR(90) NOT NULL,
+  `content` LONGTEXT DEFAULT NULL,
+  `after` TINYTEXT DEFAULT NULL,
+  `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
 
 CREATE TABLE IF NOT EXISTS `social` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

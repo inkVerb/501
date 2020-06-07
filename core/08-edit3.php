@@ -12,7 +12,7 @@ $head_title = "Editor"; // Set a <title> name used next
 include ('./in.login_check.php');
 
 // Include our POST processor
-include ('./in.editpiece.php');
+include ('./in.editprocess.php');
 
 // Title the page so we know where we are
 
@@ -26,6 +26,7 @@ if (isset($piece_id)) { // Updating piece
 } else { // New piece
   echo '<form action="edit.php" method="post">';
 }
+
 // Tell in.checks.php that this is a "Piece" form
 echo '<input type="hidden" name="piece"><br>';
 
@@ -33,7 +34,6 @@ echo '<input type="hidden" name="piece"><br>';
 echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
 echo 'Slug: '.pieceInput('p_slug', $p_slug).'<br><br>';
 echo 'Type:<br>'.pieceInput('p_type', $p_type).'<br><br>';
-echo 'Status: '.pieceInput('p_status', $p_status).'<br><br>';
 // Tip: Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
 echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Schedule...</label><br><br>';
 echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
@@ -76,13 +76,11 @@ echo '
   }
   </script>';
 
-echo 'Content: '.pieceInput('p_content', $p_content).'<br><br>';
-echo 'After: '.pieceInput('p_after', $p_after).'<br><br>';
+echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
+echo 'After:<br>'.pieceInput('p_after', $p_after).'<br><br>';
 
 // Two submit buttons
-echo '<input type="submit" name="p_submit" value="Save draft">';
-echo '&nbsp;'; // Space between the buttons
-echo '<input type="submit" name="p_submit" value="Publish">';
+echo '<input type="submit" name="p_submit" value="Save">';
 echo '</form>';
 
 ?>

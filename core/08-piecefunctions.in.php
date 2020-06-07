@@ -35,13 +35,6 @@ function checkPiece($name, $value) {
       $result = 'post';
     }
 
-  } elseif ($name == 'p_status') {
-    if (($value == 'live') || ($value == 'dead')) {
-      $result = $value;
-    } else {
-      $result = 'draft';
-    }
-
   } elseif ($name == 'p_content') {
     $result = htmlentities($value);
 
@@ -142,27 +135,22 @@ function pieceInput($name, $value) {
     $result = '<label for="type_post">'.$input_post.' Post</label><br>
       <label for="type_page">'.$input_page.' Page</label>';
 
-  } elseif ($name == 'p_status') {
-    // live selected?
-    if (($value == 'live')) {
-      $status_live = '<option value="live" selected>Live</option>';
+  } elseif ($name == 'p_pubstatus') {
+    // published selected?
+    if (($value == 'published')) {
+      $status_live = '<option value="published" selected>Published</option>';
     } else {
-      $status_live = '<option value="live">Live</option>';
+      $status_live = '<option value="published">Published</option>';
     }
-    // draft selected?
-    if ($value == 'draft' || ($value == '')) {
-      $status_draft = '<option value="draft" selected>Draft</option>';
+    // drafting selected?
+    if ($value == 'drafting' || ($value == '')) {
+      $status_draft = '<option value="drafting" selected>Drafting</option>';
     } else {
-      $status_draft = '<option value="draft">Draft</option>';
+      $status_draft = '<option value="drafting">Draftting</option>';
     }
-    // draft selected?
-    if ($value == 'type_page') {
-      $status_dead = '<option value="dead" selected>Dead</option>';
-    } else {
-      $status_dead = '<option value="dead">Dead</option>';
-    }
+
     $result = '
-    <select name="p_status" id="p_status">
+    <select name="p_pubstatus" id="p_pubstatus">
       '.$status_live.'
       '.$status_draft.'
       '.$status_dead.'
