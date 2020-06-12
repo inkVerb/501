@@ -29,6 +29,10 @@ $fruit_prepared = "$row[4]";
 
 ////// SQL End //////
 
+// Tip: If you ever have trouble with your code, simply echo the $query in your PHP script to try it manually
+//eg:
+//echo "<pre>$query</pre>";
+
 
 // The functions, POST, and the form from the last step are gone, but they started here
 

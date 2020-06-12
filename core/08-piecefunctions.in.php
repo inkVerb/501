@@ -21,7 +21,7 @@ function checkPiece($name, $value) {
 
   // Only sanitize, no errors
   if ($name == 'p_title') {
-    $result = htmlentities($value);
+    $result = filter_var($value, FILTER_SANITIZE_STRING); // Remove any HTML tags
 
   } elseif ($name == 'p_slug') {
     $regex_replace = "/[^a-zA-Z0-9-]/";
@@ -36,10 +36,10 @@ function checkPiece($name, $value) {
     }
 
   } elseif ($name == 'p_content') {
-    $result = htmlentities($value);
+    $result = htmlspecialchars($value); // Convert HTML tags to their HTML entities
 
   } elseif ($name == 'p_after') {
-    $result = htmlentities($value);
+    $result = filter_var($value, FILTER_SANITIZE_STRING); // Remove any HTML tags
 
 
   // Date-time Live
