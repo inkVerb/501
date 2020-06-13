@@ -7,37 +7,15 @@
   <!-- One line of PHP with our <title> -->
   <title><?php echo $head_title; ?></title>
 
-  <!-- TinyMCE -->
-  <script
-    type="text/javascript"
-    src='https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js'
-    referrerpolicy="origin">
-  </script>
-  <script type="text/javascript">
-  tinymce.init({
-    selector: '#p_content', // This is the id for our "Content" <textarea>
-    width: 600,
-    height: 300,
-    plugins: [
-      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-      'table emoticons template paste help'
-    ],
-    toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | ' +
-      'bullist numlist outdent indent | link image | print preview media fullpage | ' +
-      'forecolor backcolor emoticons | help',
-    menu: {
-      favs: {title: 'My Favorites', items: 'code visualaid | searchreplace | spellchecker | emoticons'}
-    },
-    menubar: 'favs file edit view insert format tools table help',
-    content_css: 'css/content.css'
-  });
-  </script>
-  <!-- TinyMCE end -->
+  <!-- Medium editor -->
+  <link rel="stylesheet" href="medium/css/medium-editor.css">
+  <link rel="stylesheet" href="medium/css/themes/default.css">
+  <!-- Medium editor -->
 
 
 </head>
 <body>
+  
 <h1>501 Blog</h1>
 
 <?php
