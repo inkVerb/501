@@ -12,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $timePost = ( (isset($_POST['time'])) && ($_POST['time'] != '') ) ? $_POST['time'] : '';
 
+  echo "POST test true, that's all.<br><br>";
+
 }
 
 echo '

@@ -16,6 +16,8 @@ echo $_POST['time'];
 
 echo '<br>';
 
+echo "<hr><br><br>";
+
 ?>
 
 <form action="phppost.php" method="post">

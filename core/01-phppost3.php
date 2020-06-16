@@ -12,6 +12,8 @@ echo $_POST['h'].'<br>';
 
 echo $_POST['time'].'<br>';
 
+echo "<hr><br><br>";
+
 }
 
 echo '

@@ -12,6 +12,8 @@ $hPost = $_POST['h'];
 
 $timePost = $_POST['time'];
 
+echo "POST test true, that's all.<br><br>";
+
 }
 
 echo '

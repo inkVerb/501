@@ -27,7 +27,7 @@ $assocArray['key_one'] = "Donuts";
 $assocArray['twokeys'] = "Coffee";
 $assocArray['badBoys'] = "Whatcha gonna do";
 
-echo "<br>assocArray:<br>";
+echo "<br>foreach assocArray:<br>";
 
 foreach ($assocArray as $item) {
 
@@ -35,7 +35,7 @@ foreach ($assocArray as $item) {
 
 }
 
-echo "<br>assocArray with keys:<br>";
+echo "<br>foreach assocArray with keys:<br>";
 
 foreach ($assocArray as $key => $item) {
 

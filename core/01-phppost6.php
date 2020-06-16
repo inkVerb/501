@@ -20,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $timePost = $_POST['time'];
     echo "Time is set to: $timePost<br>";
   }
+
+  echo "<hr><br><br>";
+
 }
 
 echo '
