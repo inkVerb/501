@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `pieces` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` ENUM('post', 'page') NOT NULL,
   `status` ENUM('live', 'dead') NOT NULL,
+  `pub_yn` BOOLEAN NOT NULL DEFAULT false,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,

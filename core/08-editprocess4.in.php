@@ -26,10 +26,10 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     $p_status = 'draft';
   } elseif ($_POST['p_submit'] == 'Publish') {
     $p_status = 'publish';
-    $p_live_schedule = true; // Once published, the piece remains scheduled; uncheck "Schedule..." to adjust date_live to NOW
+    $p_live_schedule = true; // Once published, the piece remains scheduled; uncheck "Scheduled..." to adjust date_live to NOW
   } elseif ($_POST['p_submit'] == 'Update') {
     $p_status = 'update';
-    $p_live_schedule = true; // Once published, the piece remains scheduled; uncheck "Schedule..." to adjust date_live to NOW
+    $p_live_schedule = true; // Once published, the piece remains scheduled; uncheck "Scheduled..." to adjust date_live to NOW
   }
 
   // Check that the slug isn't already used
@@ -63,12 +63,16 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
 
   // Date-time Live
   $p_live_schedule = checkPiece('p_live_schedule',$_POST['p_live_schedule']);
-  $p_live_yr = checkPiece('p_live_yr',$_POST['p_live_yr']);
-  $p_live_mo = checkPiece('p_live_mo',$_POST['p_live_mo']);
-  $p_live_day = checkPiece('p_live_day',$_POST['p_live_day']);
-  $p_live_hr = checkPiece('p_live_hr',$_POST['p_live_hr']);
-  $p_live_min = checkPiece('p_live_min',$_POST['p_live_min']);
-  $p_live_sec = checkPiece('p_live_sec',$_POST['p_live_sec']);
+  if ($p_live_schedule == true) {
+    $p_live_yr = checkPiece('p_live_yr',$_POST['p_live_yr']);
+    $p_live_mo = checkPiece('p_live_mo',$_POST['p_live_mo']);
+    $p_live_day = checkPiece('p_live_day',$_POST['p_live_day']);
+    $p_live_hr = checkPiece('p_live_hr',$_POST['p_live_hr']);
+    $p_live_min = checkPiece('p_live_min',$_POST['p_live_min']);
+    $p_live_sec = checkPiece('p_live_sec',$_POST['p_live_sec']);
+  } else {
+    $p_live = date("Y-m-d H:i:s");
+  }
 
   // All other fields
   $p_type = checkPiece('p_type',$_POST['p_type']);
@@ -83,7 +87,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   $p_after_sqlesc = escape_sql($p_after);
 
   // New or update?
-  if (isset($piece_id)) { // Updating piece
+  if (isset($piece_id)) { // Editing piece
 
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
     $query = "SELECT date_live FROM pieces WHERE BINARY id='$piece_id' AND BINARY type='$p_type_sqlesc' AND BINARY title='$p_title_sqlesc' AND BINARY slug='$p_slug_sqlesc' AND BINARY content='$p_content_sqlesc' AND BINARY after='$p_after_sqlesc'";
@@ -93,7 +97,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     // Get the date_live to see if that is the only change
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
        $p_live_found = $row[0];
-       // A NULL value can fool some tests, if the date_live is NULL and Schedule is not set, set $p_live_found as a dummy string so it doesn't fool us
+       // A NULL value can fool some tests, if the date_live is NULL and Scheduled... not set, set $p_live_found as a dummy string so it doesn't fool us
        if ((is_null($p_live_found)) && ($p_live_schedule == false)) {
          $p_live_found = 'found';
        }
@@ -113,12 +117,12 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     }
 
    // Prepare the query to update the old piece, including the proposed live date to test for changes
-   if (($p_live_schedule == false) && ($p_status == 'draft')) { // No empty live date for publishing pieces
-     // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
-     $p_live = NULL; // Keep it invalid, we won't use it
+   if ($p_status == 'draft') { // No empty live date for publishing pieces
+     $p_live = ($p_live_schedule == true) ? $p_live_sqlesc = escape_sql("$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec") : NULL;
      $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
-   } elseif (($p_live_schedule == true) || ($p_status == 'publish') || ($p_status == 'update')) { // Unscheduled publish goes live now
-     $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
+   } elseif (($p_status == 'publish') || ($p_status == 'update')) { // Unscheduled publish goes live now
+     $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
+     $p_live_schedule = true;
      $p_live_sqlesc = escape_sql($p_live);
      $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
    }
@@ -161,15 +165,19 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
           $callp = mysqli_query($database, $query);
           $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
+          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
+          $callu = mysqli_query($database, $query);
         } elseif ($p_status == 'update') {
           $query = "UPDATE publications SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
           $callp = mysqli_query($database, $query);
           $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
+          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
+          $callu = mysqli_query($database, $query);
         }
 
         // Test the query
-        if (($callp) && ($callh)) {
+        if (($callp) && ($callh) && ($callu)) {
            echo '<p class="green">Piece published!</p>';
         } else {
           echo '<p class="error">Serious error.</p>';
@@ -179,19 +187,17 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
         echo '<p class="orange">No change to publication.</p>';
       }
     }
-    // Regardless, we are now editing a published piece
-    $editing_published_piece = true;
 
  } elseif (!isset($_POST['piece_id'])) { // New piece
     // Create our timestamp
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = "INSERT INTO pieces (type, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', NULL)";
+      $query = "INSERT INTO pieces (type, pub_yn, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', true, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', NULL)";
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_sqlesc = escape_sql($p_live);
-      $query = "INSERT INTO pieces (type, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc')";
+      $query = "INSERT INTO pieces (type, pub_yn, title, slug, content, after, date_live) VALUES ('$p_type_sqlesc', true, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc')";
     }
 
     // Run the query
@@ -218,6 +224,13 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
 
   } // End new/update if
 
+  // Look for a publications piece by that ID, regardless of what happened, after everything happened
+  $query = "SELECT id FROM publications WHERE piece_id='$piece_id'";
+  $call = mysqli_query($database, $query);
+  // Shoule be 1 row
+  if (mysqli_num_rows($call) == 1) {
+    $editing_published_piece = true;
+  }
 
 // Opening old piece to edit
 // Check for GET and validate in one if test
@@ -225,7 +238,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
 
-  // Look for a publications piece
+  // Look for a publications piece, regardless of what happens, before anything else happens
   $query = "SELECT id FROM publications WHERE piece_id='$piece_id'";
   $call = mysqli_query($database, $query);
   // Shoule be 1 row

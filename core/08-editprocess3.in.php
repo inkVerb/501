@@ -82,7 +82,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
    // Get the date_live to see if that is the only change
    $row = mysqli_fetch_array($call, MYSQLI_NUM);
       $p_live_found = $row[0];
-      // A NULL value can fool some tests, if the date_live is NULL and Schedule is not set, set $p_live_found as true so it doesn't fool us
+      // A NULL value can fool some tests, if the date_live is NULL and Scheduled... not set, set $p_live_found as true so it doesn't fool us
       if ((is_null($p_live_found)) && ($p_live_schedule == false)) {
         $p_live_found = 'found';
       }

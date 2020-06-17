@@ -35,7 +35,7 @@ echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
 echo 'Slug: '.pieceInput('p_slug', $p_slug).'<br><br>';
 echo 'Type:<br>'.pieceInput('p_type', $p_type).'<br><br>';
 // Tip: Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
-echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Schedule...</label><br><br>';
+echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Scheduled...</label><br><br>';
 echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
   echo 'Date live: '.
   pieceInput('p_live_yr', $p_live_yr).', '.
