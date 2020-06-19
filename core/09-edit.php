@@ -10,14 +10,11 @@ include ('./in.piecefunctions.php');
 // Include our login cluster
 $head_title = "Editor"; // Set a <title> name used next
 $edit_page_yn = true; // Include JavaScript for TinyMCE?
+$nologin_allowed = false; // Login requires this page
 include ('./in.login_check.php');
 
 // Include our POST processor
 include ('./in.editprocess.php');
-
-// Title the page so we know where we are
-
-echo '<h1>Editor</h1>';
 
 // Our edit form
 // New or update?
@@ -94,7 +91,5 @@ if ((isset($editing_existing_piece)) && ($editing_existing_piece == true)) {
 }
 echo '</form>';
 
-?>
-
-</body>
-</html>
+// Footer
+include ('./in.footer.php');

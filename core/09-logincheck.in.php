@@ -1,44 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- CSS file included as <link> -->
-  <link href="style.css" rel="stylesheet" type="text/css" />
-
-  <!-- One line of PHP with our <title> -->
-  <title><?php echo $head_title; ?></title>
-
-  <!-- TinyMCE -->
-  <?php if ($edit_page_yn == true) {
-    echo "
-    <script src='tinymce/tinymce.min.js'></script>
-    <script type='text/javascript'>
-    tinymce.init({
-      selector: '#p_content',
-      width: 600,
-      height: 300,
-      plugins: [
-        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-        'table emoticons template paste help'
-      ],
-      toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | ' +
-        'bullist numlist outdent indent | link image | print preview media fullpage | ' +
-        'forecolor backcolor emoticons | help',
-      menu: {
-        favs: {title: 'My Favorites', items: 'code visualaid | searchreplace | spellchecker | emoticons'}
-      },
-      menubar: 'favs file edit view insert format tools table help',
-      content_css: 'css/content.css'
-    });
-    </script>";
-  } ?>
-  <!-- TinyMCE end -->
-
-
-</head>
-<body>
-<h1>501 Blog</h1>
-
 <?php
 
 // See if we have a cookie
@@ -88,17 +47,72 @@ if (isset($_COOKIE['user_key'])) {
       echo "Database error!";
       exit();
     }
-}
 
 // See if we are logged in by now
-if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
 
   // Set our variables
   $user_id = $_SESSION['user_id'];
   $fullname = $_SESSION['user_name'];
 
-echo '<p>Hi, '.$fullname.'! <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
-
+} elseif ((!isset($nologin_allowed)) || ($nologin_allowed != true)) {
+  exit(header("Location: webapp.php"));
 }
 
+// We're still here, start the head
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- CSS file included as <link> -->
+  <link href="style.css" rel="stylesheet" type="text/css" />
+
+  <!-- One line of PHP with our <title> -->
+  <title><?php echo $head_title.' :: 501 Blog'; ?></title>
+
+  <!-- TinyMCE -->
+  <?php if ($edit_page_yn == true) {
+    echo "
+    <script src='tinymce/tinymce.min.js'></script>
+    <script type='text/javascript'>
+    tinymce.init({
+      selector: '#p_content',
+      width: 600,
+      height: 300,
+      plugins: [
+        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+        'table emoticons template paste help'
+      ],
+      toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | link image | print preview media fullpage | ' +
+        'forecolor backcolor emoticons | help',
+      menu: {
+        favs: {title: 'My Favorites', items: 'code visualaid | searchreplace | spellchecker | emoticons'}
+      },
+      menubar: 'favs file edit view insert format tools table help',
+      content_css: 'css/content.css'
+    });
+    </script>";
+  } ?>
+  <!-- TinyMCE end -->
+
+
+</head>
+<body>
+  <header>
+
+<?php
+// Head finished
+
+if ((isset($user_id)) && (isset($fullname))) {
+  echo '<p><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="pieces.php">Pieces</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+}
+
+// Title the page so we know where we are
+echo '<h1>'.$head_title.'</h1>';
+
+?>
+
+</header>

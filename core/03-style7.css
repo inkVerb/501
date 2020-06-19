@@ -1,17 +1,20 @@
 form input.error {
 	border: 2px solid #cc3333;
 }
-.error {
+.error { /* Harsh, plain red */
 	color: #cc3333;
 }
+.red {
+	color: #cc4433;
+}
 .green {
-	color: #33cc33;
+	color: #33aa33;
 }
 .orange {
 	color: #cc8833;
 }
 .blue {
-	color: #3333cc;
+	color: #2266bb;
 }
 .gray {
 	color: #777;
