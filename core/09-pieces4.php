@@ -4,10 +4,16 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
+// Include our post functions
+include ('./in.postfunctions.php');
+
 // Include our login cluster
 $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
+
+// Trash link
+echo '<a class="red" href="trash.php">View trash</a>';
 
 // Simple line
 echo '<br><hr><br>';
@@ -74,21 +80,21 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Status
   echo '<td class='.$status_class.'>'.$p_status.'<br>';
   if ($p_status == 'dead') {
-    echo '<a class="blue" href="undelete.php?p='.$p_id.'">undelete</a> | <a class="red" href="empty_delete.php?p='.$p_id.'">delete forever</a></td>';
+    echo postform('undelete', $p_id).postform('delete forever', $p_id).'</td>';
   } elseif ($p_status == 'published') {
-    echo '<a class="orange" href="unpublish.php?p='.$p_id.'">unpublish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
+    echo postform('unpublish', $p_id).postform('delete', $p_id).'</td>';
   } elseif ($p_status == 'drafting') {
-    echo '<a class="green" href="republish.php?p='.$p_id.'">republish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
+    echo postform('republish', $p_id).postform('delete', $p_id).'</td>';
   } elseif ($p_status == 'pre-draft') {
-    echo '<a class="green" href="newpublish.php?p='.$p_id.'">publish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
+    echo postform('publish', $p_id).postform('delete', $p_id).'</td>';
   }
 
   // Type
   echo '<td>'.$p_type.'<br>';
   if ($p_type == 'page') {
-    echo '<a class="blue" href="postify.php?p='.$p_id.'">make post</a></td>';
+    echo postform('make post', $p_id).'</td>';
   } else {
-    echo '<a class="blue" href="pagify.php?p='.$p_id.'">make page</a></td>';
+    echo postform('make page', $p_id).'</td>';
   }
 
   // Finish piece

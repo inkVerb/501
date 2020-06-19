@@ -1,0 +1,44 @@
+form input.error {
+	border: 2px solid #cc3333;
+}
+.error {
+	color: #cc3333;
+}
+.red {
+	color: #cc4433;
+}
+.green {
+	color: #33aa33;
+}
+.orange {
+	color: #cc8833;
+}
+.blue {
+	color: #2266bb;
+}
+.gray {
+	color: #777;
+}
+table, tr, td, th {
+	border: 1px inset black;
+	border-collapse: collapse;
+	border-spacing: 0;
+	padding: 0.25em;
+}
+
+/* POST form function classes */
+form.postform .inline {
+  display: inline;
+}
+
+.postform .link-button {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: inherit;
+}
+.postform .link-button:focus {
+  outline: none;
+}
