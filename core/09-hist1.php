@@ -4,6 +4,9 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
+// Include our post functions
+include ('./in.postfunctions.php');
+
 // Include our login cluster
 $head_title = "Publication History"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
@@ -25,7 +28,6 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
 $query_p = "SELECT id, title, slug, content, after, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1";
 $call_p = mysqli_query($database, $query_p);
-// We have many entries, this will iterate one post per each
 $row = mysqli_fetch_array($call_p, MYSQLI_NUM);
   // Assign the values
   $p_id = "$row[0]";
@@ -50,7 +52,6 @@ EOP;
 
 $query_o = "SELECT id, title, slug, content, after, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1,1";
 $call_o = mysqli_query($database, $query_o);
-// We have many entries, this will iterate one post per each
 $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
   // Assign the values
   $o_id = "$row[0]";
@@ -78,6 +79,8 @@ if ((!$call_p) || (!$call_o)) {
   exit();
 }
 
+echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
+
 //// Now starts "htmdiff" ////
 // echo our diff JS
 echo '<script src="htmldiff.js"></script>';
@@ -87,14 +90,17 @@ echo '
 <div class="outercard">
   <div class="row">
     <div class="col">
+      <code>'.postform('revert', $o_id).'</code>
       <pre><h2>'.$o_update.'<br>(previous)</h2></pre>
       <div class="card" id="outputOld"></div>
     </div>
     <div class="col">
+      <code>&nbsp;</code>
       <pre><h2>Changes<br>&nbsp;</h2></pre>
       <div class="card" id="outputDif"></div>
     </div>
     <div class="col">
+      <code>'.postform('revert', $p_id).'</code>
       <pre><h2>'.$p_update.'<br>(latest)</h2></pre>
       <div class="card" id="outputCur"></div>
     </div>

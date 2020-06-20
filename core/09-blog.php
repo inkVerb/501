@@ -24,7 +24,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   $p_update = "$row[6]";
 
   // Linked title (we will create piece.php with a RewriteMod in a later lesson)
-  echo '<h2><a href="piece/'.$p_slug.'">'.$p_title.'</a></h2>';
+  echo '<h2><a href="piece.php?s='.$p_slug.'">'.$p_title.'</a></h2>';
 
   // Date published
   echo '<p class="gray"><small><i>'.$p_live.'</i>';

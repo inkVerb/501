@@ -22,11 +22,12 @@ function checkPiece($name, $value) {
   // Only sanitize, no errors
   if ($name == 'p_title') {
     $result = filter_var($value, FILTER_SANITIZE_STRING); // Remove any HTML tags
+    $result = substr($result, 0, 90); // Limit to 90 characters
 
   } elseif ($name == 'p_slug') {
     $regex_replace = "/[^a-zA-Z0-9-]/";
-    // Lowercase, all non-alnum to hyphen
-    $result = strtolower(preg_replace($regex_replace,"-", $value));
+    $result = strtolower(preg_replace($regex_replace,"-", $value)); // Lowercase, all non-alnum to hyphen
+    $result = substr($result, 0, 90); // Limit to 90 characters
 
   } elseif ($name == 'p_type') {
     if (($value == 'post') || ($value == 'page')) {
@@ -113,10 +114,10 @@ function pieceInput($name, $value) {
 
   // Use an if test to create the proper HTML input
   if ($name == 'p_title') {
-    $result = '<input type="text" id="p_title" name="p_title" value="'.$value.'" required>';
+    $result = '<input type="text" id="p_title" name="p_title" maxlength="90" value="'.$value.'" required>';
 
   } elseif ($name == 'p_slug') {
-    $result = '<input type="text" id="p_slug" name="p_slug" value="'.$value.'">';
+    $result = '<input type="text" id="p_slug" name="p_slug" maxlength="90" value="'.$value.'">';
 
   } elseif ($name == 'p_type') {
     // type_post checked or not?

@@ -44,6 +44,10 @@ function postform($name, $p_id) {
     $post_to = 'pagify.php';
     $color_class = 'blue';
     $float_ = 'left';
+  } elseif ($name == 'revert') {
+    $post_to = 'revert.php';
+    $color_class = 'blue';
+    $float_ = 'left';
   }
 
   $result = '
