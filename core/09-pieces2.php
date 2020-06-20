@@ -77,7 +77,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     echo '<a class="blue" href="undelete.php?p='.$p_id.'">undelete</a> | <a class="red" href="empty_delete.php?p='.$p_id.'">delete forever</a></td>';
   } elseif ($p_status == 'published') {
     echo '<a class="orange" href="unpublish.php?p='.$p_id.'">unpublish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
-  } elseif ($p_status == 'drafting') {
+  } elseif ($p_status == 'redrafting') {
     echo '<a class="green" href="republish.php?p='.$p_id.'">republish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
   } elseif ($p_status == 'pre-draft') {
     echo '<a class="green" href="newpublish.php?p='.$p_id.'">publish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';

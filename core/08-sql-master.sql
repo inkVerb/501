@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `publications` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
-  `pubstatus` ENUM('published', 'drafting') NOT NULL,
+  `pubstatus` ENUM('published', 'redrafting') NOT NULL,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,

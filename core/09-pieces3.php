@@ -80,7 +80,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     echo postform('undelete', $p_id).postform('delete forever', $p_id).'</td>';
   } elseif ($p_status == 'published') {
     echo postform('unpublish', $p_id).postform('delete', $p_id).'</td>';
-  } elseif ($p_status == 'drafting') {
+  } elseif ($p_status == 'redrafting') {
     echo postform('republish', $p_id).postform('delete', $p_id).'</td>';
   } elseif ($p_status == 'pre-draft') {
     echo postform('publish', $p_id).postform('delete', $p_id).'</td>';

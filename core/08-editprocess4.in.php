@@ -167,6 +167,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
           $callh = mysqli_query($database, $query);
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
           $callu = mysqli_query($database, $query);
+          $publication_message = 'Piece published!';
         } elseif ($p_status == 'update') {
           $query = "UPDATE publications SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
           $callp = mysqli_query($database, $query);
@@ -174,11 +175,12 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
           $callh = mysqli_query($database, $query);
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
           $callu = mysqli_query($database, $query);
+          $publication_message = 'Publication updated!';
         }
 
         // Test the query
         if (($callp) && ($callh) && ($callu)) {
-           echo '<p class="green">Piece published!</p>';
+           echo '<p class="green">'.$publication_message.'</p>';
         } else {
           echo '<p class="error">Serious error.</p>';
           exit();

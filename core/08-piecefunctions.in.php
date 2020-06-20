@@ -42,7 +42,6 @@ function checkPiece($name, $value) {
   } elseif ($name == 'p_after') {
     $result = filter_var($value, FILTER_SANITIZE_STRING); // Remove any HTML tags
 
-
   // Date-time Live
   } elseif ($name == 'p_live_schedule') {
     $result = ($value == true)
@@ -143,11 +142,11 @@ function pieceInput($name, $value) {
     } else {
       $status_live = '<option value="published">Published</option>';
     }
-    // drafting selected?
-    if ($value == 'drafting' || ($value == '')) {
-      $status_draft = '<option value="drafting" selected>Drafting</option>';
+    // redrafting selected?
+    if ($value == 'redrafting' || ($value == '')) {
+      $status_draft = '<option value="redrafting" selected>Drafting</option>';
     } else {
-      $status_draft = '<option value="drafting">Draftting</option>';
+      $status_draft = '<option value="redrafting">Draftting</option>';
     }
 
     $result = '
