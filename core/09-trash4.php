@@ -8,7 +8,7 @@ include ('./in.config.php');
 include ('./in.postfunctions.php');
 
 // Include our login cluster
-$head_title = "Pieces"; // Set a <title> name used next
+$head_title = "Trash"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
@@ -24,7 +24,7 @@ echo "
   <tbody>
     <tr>
       <th>Title</th>
-      <th>Status</th>
+      <th>Action</th>
       <th>Type</th>
     </tr>
 ";
@@ -56,9 +56,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<td><b>'.$p_title.'</b><br>
       '.$p_date_note.'</td>';
 
-  // Action
-  // (Teaching tip: These appear in reverse order because they float "right", check the HTML in the page)
-  echo '<td>'.postform('permanently delete', $p_id).postform('restore', $p_id).'</td>';
+  // Actions
+  echo '<td>'.postform('restore', $p_id).postform('permanently delete', $p_id).'</td>';
 
   // Type
   echo '<td>'.$p_type.'<br></td>';

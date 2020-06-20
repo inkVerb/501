@@ -12,23 +12,30 @@ $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
+// Trash link
+echo '<a class="red" href="trash.php">View trash</a>';
+
 // Simple line
 echo '<br><hr><br>';
 
 // Start our HTML table
 echo '
-<table>
+<table class="contentlib">
   <tbody>
     <tr>
-      <th>Title</th>
-      <th>Status</th>
-      <th>Type</th>
+    <th width="40%">Title</th>
+    <th width="40%">Status</th>
+    <th width="20%">Type</th>
     </tr>
 ';
 
 // Get and display each piece
 $query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces";
 $call = mysqli_query($database, $query);
+// Start our row colors
+$table_row_color = 'blues';
+// Start our show_div counter
+$show_div_count = 1;
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Assign the values
@@ -61,41 +68,80 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Date
   if ($p_date_live == NULL) {
-    $p_date_note = "Started: $p_date_created";
+    $p_date_note = '<span class="date">'."Started: $p_date_created".'</span>';
   } else {
-    $p_date_note = "Live: $p_date_live";
+    $p_date_note = '<span class="date">'."Live: $p_date_live".'</span>';
   }
 
   // Display the info in a <table>
   // Start our HTML table
-  echo '<tr class="'.$status_class.'">';
+  echo '<tr class="'."$table_row_color $status_class".'">';
 
   // Title
-  echo '<td><b><a href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
+  echo '<td><b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
       '.$p_date_note.'</td>';
 
   // Status
-  echo '<td>'.$p_status.'<br>';
+  echo '<td onmouseover="showActions'.$show_div_count.'()" onmouseout="showActions'.$show_div_count.'()">'
+  .$p_status.'<br><div id="showaction'.$show_div_count.'" style="display: none;">';
   if ($p_status == 'dead') {
-    echo postform('undelete', $p_id).postform('delete forever', $p_id).'</td>';
+    echo postform('undelete', $p_id).postform('delete forever', $p_id).'</div>';
   } elseif ($p_status == 'published') {
-    echo postform('unpublish', $p_id).postform('delete', $p_id).'</td>';
+    echo postform('unpublish', $p_id).postform('delete', $p_id).'</div>';
   } elseif ($p_status == 'drafting') {
-    echo postform('republish', $p_id).postform('delete', $p_id).'</td>';
+    echo postform('republish', $p_id).postform('delete', $p_id).'</div>';
   } elseif ($p_status == 'pre-draft') {
-    echo postform('publish', $p_id).postform('delete', $p_id).'</td>';
+    echo postform('publish', $p_id).postform('delete', $p_id).'</div>';
   }
 
-  // Type
-  echo '<td>'.$p_type.'<br>';
-  if ($p_type == 'page') {
-    echo postform('make post', $p_id).'</td>';
-  } else {
-    echo postform('make page', $p_id).'</td>';
+  // JavaScript with unique function name per row, show/hide action links
+  ?>
+  <script>
+  function showActions<?php echo $show_div_count; ?>() {
+    var x = document.getElementById("showaction<?php echo $show_div_count; ?>");
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
   }
+  </script>
+  <?php
+
+  echo '</td>';
+
+  // Type
+  echo '<td onmouseover="showTypify'.$show_div_count.'()" onmouseout="showTypify'.$show_div_count.'()">'
+  .$p_type.'<br><div id="showtypify'.$show_div_count.'" style="display: none;">';
+  if ($p_type == 'page') {
+    echo postform('make post', $p_id).'</div>';
+  } else {
+    echo postform('make page', $p_id).'</div>';
+  }
+
+  // JavaScript with unique function name per row, show/hide action links
+  ?>
+  <script>
+  function showTypify<?php echo $show_div_count; ?>() {
+    var x = document.getElementById("showtypify<?php echo $show_div_count; ?>");
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
+  }
+  </script>
+  <?php
+
+  echo '</td>';
 
   // Finish piece
   echo '</tr>';
+
+  // Toggle our row colors
+  $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';
+  // Increment our show div counter
+  ++$show_div_count;
 
 }
 

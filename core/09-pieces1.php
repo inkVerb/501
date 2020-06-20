@@ -16,7 +16,7 @@ include ('./in.login_check.php');
 echo '<br><hr><br>';
 
 // Start our HTML table
-echo "
+echo '
 <table>
   <tbody>
     <tr>
@@ -26,7 +26,7 @@ echo "
       <th>Status</th>
       <th>Created</th>
     </tr>
-";
+';
 
 // Get and display each piece
 $query = "SELECT id, type, status, title, date_created FROM pieces";

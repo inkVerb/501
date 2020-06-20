@@ -30,12 +30,12 @@ function postform($name, $p_id) {
     $float_ = 'right';
   } elseif ($name == 'restore') {
     $post_to = 'undelete_trash.php';
-    $color_class = 'red';
-    $float_ = 'right';
+    $color_class = 'orange';
+    $float_ = 'left';
   } elseif ($name == 'permanently delete') {
     $post_to = 'empty_delete_trash.php';
     $color_class = 'red';
-    $float_ = 'right';
+    $float_ = 'left';
   } elseif ($name == 'make post') {
     $post_to = 'postify.php';
     $color_class = 'blue';

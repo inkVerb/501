@@ -13,7 +13,7 @@ include ('./in.login_check.php');
 echo '<br><hr><br>';
 
 // Start our HTML table
-echo "
+echo '
 <table>
   <tbody>
     <tr>
@@ -21,7 +21,7 @@ echo "
       <th>Status</th>
       <th>Type</th>
     </tr>
-";
+';
 
 // Get and display each piece
 $query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces";
@@ -65,14 +65,14 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Display the info in a <table>
   // Start our HTML table
-  echo '<tr>';
+  echo '<tr class="'.$status_class.'">';
 
   // Title
   echo '<td><b><a href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
       '.$p_date_note.'</td>';
 
   // Status
-  echo '<td class='.$status_class.'>'.$p_status.'<br>';
+  echo '<td>'.$p_status.'<br>';
   if ($p_status == 'dead') {
     echo '<a class="blue" href="undelete.php?p='.$p_id.'">undelete</a> | <a class="red" href="empty_delete.php?p='.$p_id.'">delete forever</a></td>';
   } elseif ($p_status == 'published') {
