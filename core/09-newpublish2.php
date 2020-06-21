@@ -1,5 +1,4 @@
 <?php
-// No <head> yet because we might redirect, which uses header() and might break after the <head> tag
 
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
@@ -104,3 +103,5 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 } else {
   exit(header("Location: blog.php"));
 }
+
+?>

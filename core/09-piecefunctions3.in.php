@@ -54,6 +54,19 @@ function checkPiece($name, $value) {
     $result = str_replace('--','—',$result); // to em-dash
     $result = filter_var($result, FILTER_SANITIZE_STRING); // Remove any HTML tags
 
+  // Meta
+  } elseif ($name == 'p_tags') {
+    $regex_replace = "/[^a-zA-Z0-9, ]/";
+    $result = strtolower(preg_replace($regex_replace," ", $value)); // Lowercase, all non-alnum & comma to space
+    $result = substr($result, 0, 150); // Limit to 150 characters
+    $result = json_encode(explode(', ', $result)); // Convert into JSON objects
+
+  } elseif ($name == 'p_links') {
+    $regex_replace = "/[^a-zA-Z0-9, ]/";
+    $result = strtolower(preg_replace($regex_replace," ", $value)); // Lowercase, all non-alnum & comma to space
+    $result = substr($result, 0, 150); // Limit to 150 characters
+    $result = json_encode(explode(', ', $result)); // Convert into JSON objects
+
   // Date-time Live
   } elseif ($name == 'p_live_schedule') {
     $result = ($value == true)
@@ -173,6 +186,13 @@ function pieceInput($name, $value) {
 
   } elseif ($name == 'p_after') {
     $result = '<textarea id="p_after" name="p_after">'.$value.'</textarea>';
+
+  // Meta
+  } elseif ($name == 'p_tags') {
+    $result = '<input type="text" id="p_tags" name="p_tags" maxlength="150" value="'.$value.'">';
+
+  } elseif ($name == 'p_links') {
+    $result = '<textarea id="p_links" name="p_links">'.$value.'</textarea>';
 
   // Date-time Live
   } elseif ($name == 'p_live_yr') {

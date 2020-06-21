@@ -1,5 +1,4 @@
 <?php
-// No <head> yet because we might redirect, which uses header() and might break after the <head> tag
 
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
@@ -76,6 +75,7 @@ echo '
 
 echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
 echo 'After:<br>'.pieceInput('p_after', $p_after).'<br><br>';
+echo 'Tags:<br>'.pieceInput('p_tags', $p_tags).' (comma-separated list)<br><br>';
 
 // Two submit buttons
 echo '<input type="submit" name="p_submit" value="Save draft">';

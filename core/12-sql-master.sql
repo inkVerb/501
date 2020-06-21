@@ -37,33 +37,71 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO users (name, username, email, type) VALUES ('Inky', 'inkyuser123', 'inkyuser@verb.ink', 'admin');
 
+CREATE TABLE IF NOT EXISTS `strings` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` INT UNSIGNED NOT NULL,
+  `random_string` VARCHAR(255) DEFAULT NULL,
+  `usable` ENUM('live', 'cookie_login', 'dead') NOT NULL,
+  `date_expires` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+GRANT ALL PRIVILEGES ON webapp_db.* TO webapp_db_user@localhost IDENTIFIED BY 'webappdbpassword';
+FLUSH PRIVILEGES;
+
 CREATE TABLE IF NOT EXISTS `pieces` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` ENUM('post', 'page') NOT NULL,
-  `status` ENUM('live', 'draft', 'dead') NOT NULL,
+  `status` ENUM('live', 'dead') NOT NULL,
+  `pub_yn` BOOLEAN NOT NULL DEFAULT false,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
   `after` TINYTEXT DEFAULT NULL,
-  `date_live` TIMESTAMP DEFAULT NULL,
-  `date_created` TIMESTAMP NOT NULL,
-  `date_updated` TIMESTAMP NOT NULL,
+  `tags` JSON DEFAULT NULL,
+  `links` JSON DEFAULT NULL,
+  `date_live` TIMESTAMP NULL,
+  `date_created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO pieces (type, status, title, slug, content) VALUES ('post', 'live', 'Hello World!', 'hello-world', 'I am the first post! Ink is a verb. So, get inking!');
-INSERT INTO pieces (type, status, title, slug, content) VALUES ('page', 'live', 'About', 'about', 'This is all about Blog 501. I am a demo to be updated.');
+INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('post', 'live', 'Hello World!', 'hello-world', 'I am the first post! Ink is a verb. So, get inking!', '', NOW());
+INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('page', 'live', 'About', 'about', 'This is all about Blog 501. I am a demo to be updated.', '', NOW());
 
-CREATE TABLE IF NOT EXISTS `history` (
+CREATE TABLE IF NOT EXISTS `publications` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
-  `status` ENUM('live', 'draft', 'dead') NOT NULL,
+  `pubstatus` ENUM('published', 'redrafting') NOT NULL,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
   `after` TINYTEXT DEFAULT NULL,
-  `date_updated` TIMESTAMP NOT NULL,
+  `tags` JSON DEFAULT NULL,
+  `links` JSON DEFAULT NULL,
+  `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `publication_history` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `piece_id` INT UNSIGNED NOT NULL,
+  `type` ENUM('page', 'post') NOT NULL,
+  `title` VARCHAR(90) NOT NULL,
+  `slug` VARCHAR(90) NOT NULL,
+  `content` LONGTEXT DEFAULT NULL,
+  `after` TINYTEXT DEFAULT NULL,
+  `tags` JSON DEFAULT NULL,
+  `links` JSON DEFAULT NULL,
+  `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `reserved_names` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
