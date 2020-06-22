@@ -129,7 +129,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+)
           $host = $parsed_url['host']; // This gets just the host
         } elseif ( (isset($url)) && (!isset($credit)) ) { // If we didn't get a $credit from a cut
           $credit = substr(preg_replace($regex_replace," ", $part2), 0, 54);
-        } elseif ((isset($url)) || (isset($credit))) { // Something good has happened, we'll do what's left
+        } elseif (!isset($title)) { // Something good has happened, we'll do what's left
           $title = substr(preg_replace($regex_replace," ", $part2), 0, 91);
         } else {
           $no_url_part2 = true;
@@ -145,12 +145,14 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+)
           $parsed_url = parse_url($url); // This pulls different things from a URL
           $host = $parsed_url['host']; // This gets just the host
 
-          if (!isset($title)) { // If we don't have a Title by now, get it from the URL
+          if ( (!isset($title)) && (!isset($credit)) ) { // If we don't have a Title by now, get it from the URL
             $title = $host;
           }
-          if (!isset($credit)) {// If we don't have a Credit by now, put a placeholder
+          if ( (!isset($credit)) && (isset($url)) ) {// If we don't have a Credit by now, put a placeholder
+            $credit = $host;
+          } elseif (!isset($credit)) {
             $credit = 'link';
-            }
+          }
 
         } elseif ( (isset($url)) && (!isset($title)) ) { // No Title? set it now
             $title = substr(preg_replace($regex_replace," ", $part1), 0, 91);
@@ -208,30 +210,31 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+)
 
   }
 
+
+  // echo demo
+  echo '<pre><h1>Second, we have all our info in $links_array[]:</h1></pre>';
+  foreach ($links_array as $line_item) {
+    echo "<pre style=\"color:#225893;\"><b>$line_item</b></pre>";
+    foreach ($line_item as $key => $avalue) {
+      echo "<pre style=\"color:#227883;\">[$key] = $avalue</pre>";
+    }
+  }
+
+
+  // Send $links_array to JSON
+
+  // echo demo
+  // ...This will go into our database
+
+  // Parse JSON into <a> tag variables
+
+  // echo demo
+  // ...This came from our database to our HTML page
+
+
+
 $posted_value = $p_links; // Keep our form populated in this demo
 }
-
-
-// echo demo
-echo '<pre><h1>Second, we have all our info in $links_array[]:</h1></pre>';
-foreach ($links_array as $line_item) {
-  echo "<pre style=\"color:#225893;\"><b>$line_item</b></pre>";
-  foreach ($line_item as $key => $avalue) {
-    echo "<pre style=\"color:#227883;\">[$key] = $avalue</pre>";
-  }
-}
-
-
-
-// Send $links_array to JSON
-
-// echo demo
-// ...This will go into our database
-
-// Parse JSON into <a> tag variables
-
-// echo demo
-// ...This came from our database to our HTML page
 
 
 // Create our form (a little bigger with: cols="80" rows="8")
@@ -240,7 +243,20 @@ echo '
   <textarea id="p_links" name="p_links" cols="80" rows="8">'.$posted_value.'</textarea>
   <br><br>
   <input type="submit" value="Parse me">
-</form>
+</form>';
+
+// Add a note
+// Prep this so we see the HTML, not just what it renders
+$string1 = htmlspecialchars('<a href="https://inkisaverb.com">Ink is a verb.</a>');
+$string2 = htmlspecialchars('<a href="https://verb.vip">Get inking. // VIP Linux</a>');
+echo
+'
+<code><b>For example, try these...</b></code><br><br>
+<code>https://verb.one</code><br>
+<code>https://verb.red;;Get inking.</code><br>
+<code>https://verb.ink;;Ink is a verb.;;inkVerb</code><br>
+<code>'.$string1.'</code><br>
+<code>'.$string2.'</code><br>
 ';
 
 ?>
