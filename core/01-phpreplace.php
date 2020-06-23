@@ -24,6 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $dash = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$dash);
   $dash = preg_replace('/([0-9]+)-([0-9]+)/','$1–$2',$dash);
   $dash = str_replace(' -- ',' – ',$dash);
+  $dash = str_replace(' --','—',$dash);
+  $dash = str_replace('-- ','—',$dash);
   $dash = str_replace('---','—',$dash);
   $dash = str_replace('--','—',$dash);
 
