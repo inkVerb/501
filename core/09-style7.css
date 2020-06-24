@@ -1,0 +1,190 @@
+form input.error {
+	border: 2px solid #cc3333;
+}
+
+.error,
+a.error,
+a.error:visited {
+	color: #cc3333;
+}
+.red,
+a.red,
+a.red:visited {
+	color: #cc4433;
+}
+.green,
+a.green,
+a.green:visited {
+	color: #33aa33;
+}
+.orange,
+a.orange,
+a.orange:visited {
+	color: #cc8833;
+}
+.blue,
+a.blue,
+a.blue:visited {
+	color: #2266bb;
+}
+.purple,
+a.purple,
+a.purple:visited {
+	color: #8a5597;
+}
+.gray,
+a.gray,
+a.gray:visited {
+	color: #777;
+}
+
+section.tags {
+	font-family: monospace;
+}
+
+section.links {
+	font-family: monospace;
+	font-size: small;
+}
+
+textarea.meta {
+	width: 50em;
+	height: 8em;
+}
+
+table, tbody, tr, td, th  {
+	border:none;
+	border-collapse: collapse;
+	border-spacing: 0;
+	padding: 0.25em;
+}
+
+a, a:visited {
+	color: #198ca6;
+}
+
+a:hover,
+a.red:hover,
+a.green:hover,
+a.orange:hover,
+a.blue:hover,
+a.purple:hover,
+a.gray:hover {
+	color: #3f5275;
+}
+
+/* POST form function classes */
+form.postform .inline {
+  display: inline;
+}
+
+.postform .link-button {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: inherit;
+}
+
+.postform .link-button:focus {
+  outline: none;
+}
+
+.postform .link-button:hover {
+	color: #3f5275;
+}
+
+/* Content library */
+table.contentlib {
+	width: 100%;
+}
+
+table.contentlib tbody tr th {
+	text-align: left;
+}
+
+table.contentlib,
+table.contentlib tbody,
+table.contentlib tbody tr,
+table.contentlib tbody tr th,
+table.contentlib tbody tr td {
+	padding: 1em;
+	border:none;
+	border-collapse: collapse;
+	vertical-align: text-top;
+}
+
+table.contentlib a.piece_title,
+table.contentlib a.piece_title:visited {
+	color: #000;
+	text-decoration: none;
+}
+
+table.contentlib a:hover {
+	color: #3f5275;
+}
+
+table.contentlib span.date {
+	color: #555;
+	font-family: monospace;
+}
+
+table.contentlib tr.pieces_dead,
+table.contentlib tr.pieces_dead a {
+	font-style: italic;
+	color: #555;
+}
+
+table.contentlib tr.pieces_live {
+ /* Nothing here, placeholder because the class does exist */
+}
+
+table.contentlib tr.blues {
+	background-color: #d8effa;
+}
+
+table.contentlib tr.shady {
+	background-color: #dff8ef;
+}
+
+
+/* htmldiff.js */
+ins {
+  text-decoration: none;
+  background-color: #d4fcbc;
+}
+
+del {
+  text-decoration: line-through;
+  background-color: #fbb6c2;
+  color: #555;
+}
+
+.outercard {
+  border: none;
+  margin: 1rem;
+  padding: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin: 0;
+  padding: 1rem;
+  flex: 1 0 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-right: -8px;
+}
+
+.col {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  margin-right: 8px;
+}

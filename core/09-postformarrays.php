@@ -9,34 +9,34 @@ echo '<form action="postformarrays.php" method="post" id="apply2all">
 <table>
   <tr>
     <td>
-      <input type="checkbox" name="1" value="1" form="apply2all">
+      <label><input type="checkbox" name="n_1" value="item_1" form="apply2all"> Me too </label>
     </td>
     <td>
-      Item One
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <input type="checkbox" name="2" value="2" form="apply2all">
-    </td>
-    <td>
-      Item Two
+      | Item One
     </td>
   </tr>
   <tr>
     <td>
-      <input type="checkbox" name="3" value="3" form="apply2all">
+      <label><input type="checkbox" name="n_2" value="item_2" form="apply2all"> Me too </label>
     </td>
     <td>
-      Item Three
+      | Item Two
     </td>
   </tr>
   <tr>
     <td>
-      <input type="checkbox" name="4" value="4" form="apply2all">
+      <label><input type="checkbox" name="n_3" value="item_3" form="apply2all"> Me too </label>
     </td>
     <td>
-      Item Four
+      | Item Three
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label><input type="checkbox" name="n_4" value="item_4" form="apply2all"> Me too </label>
+    </td>
+    <td>
+      | Item Four
     </td>
   </tr>
 </table>
@@ -51,23 +51,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   echo '<p>This is how we can process each:</p>';
 
+  // Assign from which button
   if ($_POST['all'] == 'Blue all') {
-    unset($_POST['all']);
-
-    foreach($_POST as $item) {
-        echo '<pre>';
-        echo 'blue '.$item;
-        echo '</pre>';
-    }
+    $press_button = 'blue';
   } elseif ($_POST['all'] == 'Red all') {
-    unset($_POST['all']);
-
-    foreach($_POST as $item) {
-        echo '<pre>';
-        echo 'red '.$item;
-        echo '</pre>';
-    }
+    $press_button = 'red';
   }
+
+  // We don't want [all] in our foreach($_POST) loop
+  unset($_POST['all']);
+
+  // Process each entry
+  foreach($_POST as $item) {
+    echo '<pre>';
+
+    echo $press_button.' '.$item; // echo in this example
+    // or do anything else here...
+    //some_function($item, $press_button);
+    //include('some_file.php?a=$item&b=$press_button');
+
+    echo '</pre>';
+  }
+
 
   exit();
 }

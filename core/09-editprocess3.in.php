@@ -79,6 +79,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   $p_content = checkPiece('p_content',$_POST['p_content']);
   $p_after = checkPiece('p_after',$_POST['p_after']);
   $p_tags_json = checkPiece('p_tags',$_POST['p_tags']);
+  $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
   // Prepare our database values for entry
   $p_type_sqlesc = escape_sql($p_type);
@@ -87,11 +88,24 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   $p_content_sqlesc = escape_sql($p_content);
   $p_after_sqlesc = escape_sql($p_after);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+  $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
   // Process tags for use in HTML
   $p_tags = implode(', ', json_decode($p_tags_json, true));
   //echo "<pre>\$p_tags_sqljson: $p_tags_sqljson</pre>"; // uncomment to see the values
   //echo "<pre>\$p_tags: $p_tags</pre>"; // uncomment to see the
+
+  // Process links for use in HTML
+  $links_array = json_decode($p_links_sqljson);
+  if (!empty($links_array)) {
+    $links = ''; // Start the $links set
+    foreach ($links_array as $line_item) {
+      $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+      $links .= $link_item."\n";
+    }
+    // Set our final value
+    $p_links = $links;
+  }
 
   // New or update?
   if (isset($piece_id)) { // Editing piece
@@ -103,7 +117,8 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     AND BINARY slug='$p_slug_sqlesc'
     AND BINARY content='$p_content_sqlesc'
     AND BINARY after='$p_after_sqlesc'
-    AND tags=CAST('$p_tags_sqljson' AS JSON)"; // This is how to test if a JSON string matches
+    AND tags=CAST('$p_tags_sqljson' AS JSON),
+    AND tags=CAST('$p_links_sqljson' AS JSON)"; // This is how to test if a JSON string matches
     //echo "<pre>\$query: $query</pre>"; // uncomment to see the query, then run it yourself
     $call = mysqli_query($database, $query);
     // If there were no changes
@@ -133,12 +148,12 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
    // Prepare the query to update the old piece, including the proposed live date to test for changes
    if ($p_status == 'draft') { // No empty live date for publishing pieces
      $p_live = ($p_live_schedule == true) ? $p_live_sqlesc = escape_sql("$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec") : NULL;
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
+     $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
    } elseif (($p_status == 'publish') || ($p_status == 'update')) { // Unscheduled publish goes live now
      $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
      $p_live_schedule = true;
      $p_live_sqlesc = escape_sql($p_live);
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
+     $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
    }
 
     // Run the query only if the live date is not a duplicate
@@ -175,24 +190,25 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
       AND BINARY slug='$p_slug_sqlesc'
       AND BINARY content='$p_content_sqlesc'
       AND BINARY after='$p_after_sqlesc'
-      AND tags=CAST('$p_tags_sqljson' AS JSON)
+      AND tags=CAST('$p_tags_sqljson' AS JSON),
+      AND tags=CAST('$p_links_sqljson' AS JSON),
       AND BINARY date_live='$p_live_sqlesc'";
       $call = mysqli_query($database, $query);
       // If there were no changes
       if (mysqli_num_rows($call) == 0) {
         // Update or first publish?
         if ($p_status == 'publish') {
-          $query = "INSERT INTO publications (piece_id, type, title, slug, content, after, tags, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_live_sqlesc', NOW())";
+          $query = "INSERT INTO publications (piece_id, type, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
           $callp = mysqli_query($database, $query);
-          $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, tags, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_live_sqlesc', NOW())";
+          $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
           $callu = mysqli_query($database, $query);
           $publication_message = 'Piece published!';
         } elseif ($p_status == 'update') {
-          $query = "UPDATE publications SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
+          $query = "UPDATE publications SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
           $callp = mysqli_query($database, $query);
-          $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, tags, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_live_sqlesc', NOW())";
+          $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
           $callu = mysqli_query($database, $query);
@@ -216,11 +232,11 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = "INSERT INTO pieces (type, pub_yn, title, slug, content, after, tags, date_live) VALUES ('$p_type_sqlesc', false, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', NULL)";
+      $query = "INSERT INTO pieces (type, pub_yn, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_sqlesc', false, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', NULL)";
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_sqlesc = escape_sql($p_live);
-      $query = "INSERT INTO pieces (type, pub_yn, title, slug, content, after, tags, date_live) VALUES ('$p_type_sqlesc', false, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc','$p_tags_sqljson', '$p_live_sqlesc')";
+      $query = "INSERT INTO pieces (type, pub_yn, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_sqlesc', false, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc','$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc')";
     }
 
     // Run the query
@@ -270,7 +286,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     unset($_SESSION['piece_id']);
 
     // Retrieve existing piece from history
-    $query = "SELECT piece_id, type, title, slug, content, after, tags, date_live FROM publication_history WHERE id='$revert_id'";
+    $query = "SELECT piece_id, type, title, slug, content, after, tags, links, date_live FROM publication_history WHERE id='$revert_id'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
@@ -283,11 +299,24 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
         $p_content = "$row[4]";
         $p_after = "$row[5]";
         $p_tags_json = "$row[6]";
-        $p_live = "$row[7]";
+        $p_links_sqljson = "$row[7]";
+        $p_live = "$row[8]";
         $editing_published_piece = true;
 
         // Process tags for use in HTML
         $p_tags = implode(', ', json_decode($p_tags_json, true));
+
+        // Process links for use in HTML
+        $links_array = json_decode($p_links_sqljson);
+        if (!empty($links_array)) {
+          $links = ''; // Start the $links set
+          foreach ($links_array as $line_item) {
+            $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+            $links .= $link_item."\n";
+          }
+          // Set our final value
+          $p_links = $links;
+        }
 
         $query = "SELECT status FROM pieces WHERE id='$piece_id'";
         $call = mysqli_query($database, $query);
@@ -325,7 +354,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     }
 
     // Retrieve existing piece
-    $query = "SELECT type, status, title, slug, content, after, tags, date_live FROM pieces WHERE id='$piece_id'";
+    $query = "SELECT type, status, title, slug, content, after, tags, links, date_live FROM pieces WHERE id='$piece_id'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
@@ -338,10 +367,23 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
         $p_content = "$row[4]";
         $p_after = "$row[5]";
         $p_tags_json = "$row[6]";
-        $p_live = "$row[7]";
+        $p_links_sqljson = "$row[7]";
+        $p_live = "$row[8]";
 
         // Process tags for use in HTML
         $p_tags = implode(', ', json_decode($p_tags_json, true));
+
+        // Process links for use in HTML
+        $links_array = json_decode($p_links_sqljson);
+        if (!empty($links_array)) {
+          $links = ''; // Start the $links set
+          foreach ($links_array as $line_item) {
+            $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+            $links .= $link_item."\n";
+          }
+          // Set our final value
+          $p_links = $links;
+        }
 
       // We are editing a piece that has been saved, publication is allowed
       $editing_existing_piece = true;

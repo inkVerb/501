@@ -18,6 +18,7 @@ include ('./in.editprocess.php');
 // Our edit form
 // New or update?
 if (isset($piece_id)) { // Updating piece
+  echo '<a href="piece.php?p='.$piece_id.'">View on blog</a>';
   echo '<form action="edit.php?p='.$piece_id.'" method="post">';
   echo '<input type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece
@@ -87,6 +88,9 @@ if ((isset($editing_existing_piece)) && ($editing_existing_piece == true)) {
     echo '<input type="submit" name="p_submit" value="Publish">';
   }
 }
+
+// New line
+echo '<br><br>';
 
 // After & Meta
 echo 'Tags:<br>'.pieceInput('p_tags', $p_tags).' (comma-separated list)<br><br>';

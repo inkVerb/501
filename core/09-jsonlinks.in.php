@@ -7,21 +7,7 @@ https://inkisaverb.com;; Title Here;; Credit Here
 <a href="http://inkisaverb.com">Title Here // Credit Here</a>
 */
 
-////
-// Keep our form populated in this demo
-if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p_links'])) ) {
-  $posted_value = $_POST['p_links'];
-}
-////
-
-// Create our form (a little bigger with: cols="80" rows="8")
-echo '
-<form action="jsonarraylinkparse.php" method="post">
-  <textarea id="p_links" name="p_links" cols="80" rows="8">'.$posted_value.'</textarea>
-  <br><br>
-  <input type="submit" value="Parse me">
-</form>';
-
+/*
 // Add a note
 // Prep this so we see the HTML, not just what it renders
 $string1 = htmlspecialchars('<a href="https://inkisaverb.com">Ink is a verb.</a>');
@@ -47,33 +33,18 @@ $string3<br>
 <hr>
 ";
 
-// Parse a POST
-//Basic
-if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+)/i', $_POST['p_links'])) ) {
+*/
 
 
-  ////
-  // echo demo
-  echo '<pre><h1>Results</h1></pre>';
-  echo '<pre><h2>1. We get this info from our filters:</h2></pre>';
-  echo '<code>
-  Logic:<br>
-  Is it HTML?<br>
-  -  true: Use RegEx to pull what we need<br>
-  -  false: Use PHP logic to find what we need<br>
-  It is not HTML<br>
-  - a. Third item? Start process as if three items<br>
-  - b. Second item? Continue process as if more than one item<br>
-  - c. First item: Finish process based on what happened so far<br>
-  </code><br>';
-  ////
+// Basic RegEx for no brackets and coding non-link safety checks
+if (!preg_match('/([\]\[\\{\}\$\*]+)/i', $_POST['p_links'])) {
 
 
   // Prepare our values
   $links_array = array(); // Set it before the foreach loop where we use it
   $p_links = $_POST['p_links'];
   $arr = explode("\n", $p_links);
-  $regex_replace = "/[^a-zA-Z0-9-!@&#$%.'\":]/";
+  $regex_replace = "/[^a-zA-Z0-9-!@&#$%.'\":|]/"; // Pipe is here because we will cut from it later
 
   // Start our array key
   $i = 0;
@@ -136,6 +107,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
       $part2 = trim($part[1]);
       $part1 = trim($part[0]);
 
+      $part3 = trim($part[2]);
+      $part2 = trim($part[1]);
+      $part1 = trim($part[0]);
+
       // Process 3 parts in reverse order
       // Running last things first, assign values based on the remaining possible outcomes
 
@@ -146,7 +121,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
           $parsed_url = parse_url($url); // This pulls different things from a URL
           $host = $parsed_url['host']; // This gets just the host
         } else { // Third part is not a URL, it can only be a Credit
-          $credit = $part3;
+          $credit = preg_replace($regex_replace," ", $part3);
         }
       } else {
         $no_url_part3 = true;
@@ -159,9 +134,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
           $parsed_url = parse_url($url); // This pulls different things from a URL
           $host = $parsed_url['host']; // This gets just the host
         } elseif ( (isset($url)) && (!isset($credit)) ) { // If we didn't get a $credit from a cut
-          $credit = $part2;
+          $credit = preg_replace($regex_replace," ", $part2);
         } elseif (!isset($title)) { // Something good has happened, we'll do what's left
-          $title = $part2;
+          $title = preg_replace($regex_replace," ", $part2);
         } else {
           $no_url_part2 = true;
         }
@@ -191,7 +166,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
           }
 
         } elseif ( (isset($url)) && (!isset($title)) ) { // No Title? set it now
-            $title = $part1;
+            $title = preg_replace($regex_replace," ", $part1);
           if (!isset($credit)) { // If we didn't get a $credit from a cut
             $credit = $host; // We already have a URL, get its host for our Credit
             $credit_auto = true;
@@ -241,8 +216,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
     }
 
     // Sanitize
-    $credit = substr(preg_replace($regex_replace," ", $credit), 0, 54);
-    $title = substr(preg_replace($regex_replace," ", $title), 0, 91);
+    $credit = substr($credit, 0, 54);
+    $title = substr($title, 0, 91);
 
 
   // Set our final values and increment to our next final array entry
@@ -257,16 +232,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
     $links_array[$i][1] = $title;
     $links_array[$i][2] = $credit;
 
-
-    ////
-    // echo demo
-    $url_ = $links_array[$i][0];
-    $title_ = $links_array[$i][1];
-    $credit_ = $links_array[$i][2];
-    echo "<pre><i>$url_</i> <b>$title_ // $credit_</b></pre>";
-    ////
-
-
     // Next item
     $i++;
 
@@ -279,129 +244,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
 
   }
 
-
-  ////
-  // echo demo
-  echo '<pre><h2>2. We have all our info in the PHP array $links_array[]:</h2></pre>';
-  echo '<pre>In our giant loop: (our key starts as $i=0, then increases with each loop)</pre>';
-  echo '<code style="background-color:#ddd;">
-  $links_array[$i][0] = $url;<br>
-  $links_array[$i][1] = $title;<br>
-  $links_array[$i][2] = $credit;<br>
-  $i++; // Next item<br>
-  </code><br>';
-  foreach ($links_array as $line_item) {
-    echo "<pre style=\"color:#225893;\"><b>$line_item</b></pre>";
-    foreach ($line_item as $key => $avalue) {
-      echo "<pre style=\"color:#227883;\">[$key] = $avalue</pre>";
-    }
-  }
-  ////
-
-
   // Send $links_array to JSON, as we would before sending to SQL
-  $links_json = json_encode($links_array);
+  $p_links_json_in = json_encode($links_array);
 
+// Fails our non-bracket RegEx check
+} else {
 
-  ////
-  // echo demo
-  echo '<pre><h2>3. We put all our info in JSON as $links_json:</h2></pre>';
-
-  // Show code
-  echo '<pre><code style="background-color:#ddd;">$links_json = json_encode($links_array);</code></pre>';
-
-  // Objects, pretty
-  $links_json_objects = json_encode($links_array, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT);
-  echo "<pre style=\"color:#a85022;\"><b>\$json_objects = json_encode(\$array, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT):</b></pre>";
-  echo "<pre style=\"color:#a85022;\">$links_json_objects</pre>";
-
-  // Simple, pretty
-  $links_json = json_encode($links_array, JSON_PRETTY_PRINT);
-  echo "<pre style=\"color:#a85022;\"><b>\$json = json_encode(\$array, JSON_PRETTY_PRINT):</b></pre>";
-  echo "<pre style=\"color:#a85022;\">$links_json</pre>";
-
-  // ...This will go into our database
-  ////
-
-
-  // Get our array back to a PHP array from JSON, as we would after retrieving from SQL
-  $links_array =json_decode($links_json);
-  //$links_array =json_decode($links_json_objects, true); // Or this if from JSON_FORCE_OBJECT -made JSON
-
-
-  ////
-  // echo demo
-  echo "<pre><h3>Without 'JSON_PRETTY_PRINT', everything is on one line: <i>(great for SQL)</i></h3></pre>";
-
-  // JSON objects
-  $links_json_objects = json_encode($links_array, JSON_FORCE_OBJECT);
-  echo "<pre style=\"color:#a85022;\"><b>\$json_objects = json_encode(\$array, JSON_FORCE_OBJECT):</b></pre>";
-  echo "<pre style=\"color:#a85022;\">$links_json_objects</pre>";
-
-  // JSON simple
-  $links_json = json_encode($links_array);
-  echo "<pre style=\"color:#a85022;\"><b>\$json = json_encode(\$array):</b></pre>";
-  echo "<pre style=\"color:#a85022;\">$links_json</pre>";
-  echo "<pre>Without 'JSON_FORCE_OBJECT' is smaller, so we will use it for SQL because both go to SQL</pre>";
-
-  echo '<pre><h2>4. Send our JSON to SQL, get it back from the database when we need it (not shown here)</h2></pre>';
-
-  echo '<pre><h2>5. Convert JSON back into the same PHP array:</h2></pre>';
-
-  // Show code
-  echo '<pre><code style="background-color:#ddd;">$array =json_decode($json);</code> // Simple JSON 3-D PHP array</pre>';
-  echo '<pre><code style="background-color:#ddd;">$array =json_decode($json_objects, true);</code> // JSON with objects into 3-D PHP array</pre>';
-
-  foreach ($links_array as $line_item) {
-    echo "<pre style=\"color:#000;\"><b>$line_item</b></pre>";
-    foreach ($line_item as $key => $avalue) {
-      echo "<pre style=\"color:#000;\">[$key] = $avalue</pre>";
-    }
-  }
-  ////
-
-
-  // Only if we actually have links
-  if (!empty($links_array)) {
-    $links = '<span class="link_item">'; // Start the $links set
-
-    // Parse $links_array into <a> tag variables
-    foreach ($links_array as $line_item) {
-
-        $link_item = '<a href="'.$line_item[0].'" title="'.$line_item[2].' target="_blank">'.$line_item[1].' <i>// '.$line_item[2].'</i></a>';
-
-        $links .= $link_item.'<br><br>';
-
-    }
-
-    $links .= '</span>'; // End the $links set
-  }
-
-
-  ////
-  ////
-  // echo demo
-  $processed_link = htmlspecialchars('<a href="\'.$line_item[0].\'" title="\'.$line_item[2].\' target="_blank">\'.$line_item[1].\' <i>// \'.$line_item[2].\'</i></a>');
-  $br_tag = htmlspecialchars('<br>');
-  $span_start = htmlspecialchars('<span class="link_item">');
-  $span_end = htmlspecialchars('</span>');
-  echo '<pre><h2>6. Iterate our PHP array into HTML links</h2></pre>';
-  echo '<pre>In our giant loop: (our key starts as $i=0, then increases with each loop)</pre>';
-  echo '<code style="background-color:#ddd;">
-  $links = \''.$span_start.'\'; // Start the $links set<br>
-  foreach ($links_array as $line_item) {<br>
-  $link_item = \''.$processed_link.'\';<br>
-  $links .= $link_item.\''.$br_tag.$br_tag.'\';<br>
-  }<br>
-  $links .= \''.$span_start.'\'; // End the $links set<br>
-  </code><br>';
-
-  echo "<pre><b>Our links:</b></pre>
-  <p>$links</p>";
-  // ...This came from our database to our HTML page
-  ////
-
-
+  $p_links_json_in = NULL;
 }
 
 ?>

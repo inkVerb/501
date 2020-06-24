@@ -41,20 +41,26 @@ function checkPiece($name, $value) {
     }
 
   } elseif ($name == 'p_content') {
-    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$value); // to en-dash
+    $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
+    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
+    $result = str_replace(' --','—',$result); // to em-dash
+    $result = str_replace('-- ','—',$result); // to em-dash
     $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
     $result = htmlspecialchars($result); // Convert HTML tags to their HTML entities
 
+  // Meta
   } elseif ($name == 'p_after') {
-    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$value); // to en-dash
+    $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
+    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
+    $result = str_replace(' --','—',$result); // to em-dash
+    $result = str_replace('-- ','—',$result); // to em-dash
     $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
     $result = filter_var($result, FILTER_SANITIZE_STRING); // Remove any HTML tags
 
-  // Meta
   } elseif ($name == 'p_tags') {
     $regex_replace = "/[^a-zA-Z0-9, ]/";
     $result = strtolower(preg_replace($regex_replace," ", $value)); // Lowercase, all non-alnum & comma to space
@@ -62,10 +68,16 @@ function checkPiece($name, $value) {
     $result = json_encode(explode(', ', $result)); // Convert into JSON objects
 
   } elseif ($name == 'p_links') {
-    $regex_replace = "/[^a-zA-Z0-9, ]/";
-    $result = strtolower(preg_replace($regex_replace," ", $value)); // Lowercase, all non-alnum & comma to space
-    $result = substr($result, 0, 150); // Limit to 150 characters
-    $result = json_encode(explode(', ', $result)); // Convert into JSON objects
+    if (preg_match('/([\]\[\\{\}\$\*]+)/i', $value)) {$value = '';} // No hacker input
+    $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
+    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
+    $result = str_replace(' -- ',' – ',$result); // to en-dash
+    $result = str_replace(' --','—',$result); // to em-dash
+    $result = str_replace('-- ','—',$result); // to em-dash
+    $result = str_replace('---','—',$result); // to em-dash
+    $result = str_replace('--','—',$result); // to em-dash
+    include ('./in.jsonlinks.php');
+    $result = $p_links_json_in;
 
   // Date-time Live
   } elseif ($name == 'p_live_schedule') {
@@ -184,15 +196,15 @@ function pieceInput($name, $value) {
   } elseif ($name == 'p_content') {
     $result = '<textarea id="p_content" name="p_content">'.$value.'</textarea>';
 
-  } elseif ($name == 'p_after') {
-    $result = '<textarea id="p_after" name="p_after">'.$value.'</textarea>';
-
   // Meta
+  } elseif ($name == 'p_after') {
+    $result = '<textarea class="meta" id="p_after" name="p_after">'.$value.'</textarea>';
+
   } elseif ($name == 'p_tags') {
     $result = '<input type="text" id="p_tags" name="p_tags" maxlength="150" value="'.$value.'">';
 
   } elseif ($name == 'p_links') {
-    $result = '<textarea id="p_links" name="p_links">'.$value.'</textarea>';
+    $result = '<textarea class="meta" id="p_links" name="p_links">'.$value.'</textarea>';
 
   // Date-time Live
   } elseif ($name == 'p_live_yr') {
