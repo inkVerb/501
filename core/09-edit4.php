@@ -22,14 +22,16 @@ include ('./in.editprocess.php');
 // New or update?
 if (isset($piece_id)) { // Updating piece
   echo '<a href="piece.php?p='.$piece_id.'">View on blog</a>';
-  echo '<form action="edit.php?p='.$piece_id.'" method="post">';
-  echo '<input type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
+  echo '<form action="edit.php?p='.$piece_id.'" method="post" id="edit_piece">';
+  echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece
-  echo '<form action="edit.php" method="post">';
+  echo '<form action="edit.php" method="post" id="edit_piece">';
 }
+// Finish the form
+echo '</form>';
 
 // Tell in.checks.php that this is a "Piece" form
-echo '<input type="hidden" name="piece"><br>';
+echo '<input form="edit_piece" type="hidden" name="piece"><br>';
 
 // Title & Slug
 echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
@@ -39,22 +41,39 @@ echo 'Slug: '.pieceInput('p_slug', $p_slug).'<br><br>';
 echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
 
 // Two submit buttons
-echo '<input type="submit" name="p_submit" value="Save draft">';
+echo '<input form="edit_piece" type="submit" name="p_submit" value="Save draft">';
 echo '&nbsp;'; // Space between the buttons
 // Existing piece? (can't publish without saving once first)
 if ((isset($editing_existing_piece)) && ($editing_existing_piece == true)) {
   // Editing a published piece?
   if ((isset($editing_published_piece)) && ($editing_published_piece == true)) {
-    echo '<input type="submit" name="p_submit" value="Update">';
+    echo '<input form="edit_piece" type="submit" name="p_submit" value="Update">';
   } else {
-    echo '<input type="submit" name="p_submit" value="Publish">';
+    echo '<input form="edit_piece" type="submit" name="p_submit" value="Publish">';
   }
 }
 // New line
 echo '<br><br>';
 
-// Type & Schedule
-echo 'Type:<br>'.pieceInput('p_type', $p_type).'<br><br>';
+// Type
+$infomsg = '
+<b>Page</b>: hides meta (after, tags, links), works in menues, appears as prominent link in "Series lists"<br><br>
+<b>Post</b>: appears in blog lists';
+echo 'Type:'.infoPop('typt_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
+
+// Series
+$infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';
+echo 'Series:'.infoPop('series_info', $infomsg).'<br><br>';
+
+  // Set necessary values
+  // Set a default Series, probably from settings table
+  $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
+
+  // Accept any set value
+  $p_series = (isset($p_series)) ? $p_series : $de_series;
+  include ('./in.series.php');
+
+// Schedule
 // Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
 echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Scheduled...</label><br><br>';
 echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
@@ -133,8 +152,7 @@ $string3<br>
 ";
 echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_links).'<br><br>';
 
-// Finish the form
-echo '</form>';
+
 
 // Footer
 include ('./in.footer.php');

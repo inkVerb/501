@@ -68,7 +68,7 @@ function checkPiece($name, $value) {
     $result = json_encode(explode(', ', $result)); // Convert into JSON objects
 
   } elseif ($name == 'p_links') {
-    if (preg_match('/([\]\[\\{\}\$\*]+)/i', $value)) {$value = '';} // No hacker input
+    $result = preg_replace('/([\]\[\\{\}\$\*]+)/','',$value); // No hacker input
     $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
@@ -150,10 +150,10 @@ function pieceInput($name, $value) {
 
   // Use an if test to create the proper HTML input
   if ($name == 'p_title') {
-    $result = '<input type="text" id="p_title" name="p_title" maxlength="90" value="'.$value.'" required>';
+    $result = '<input type="text" class="piece" id="p_title" name="p_title" maxlength="90" value="'.$value.'" required>';
 
   } elseif ($name == 'p_slug') {
-    $result = '<input type="text" id="p_slug" name="p_slug" maxlength="90" value="'.$value.'">';
+    $result = '<input type="text" class="piece" id="p_slug" name="p_slug" maxlength="90" value="'.$value.'">';
 
   } elseif ($name == 'p_type') {
     // type_post checked or not?

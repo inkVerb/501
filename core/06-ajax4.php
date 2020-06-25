@@ -18,7 +18,7 @@ if (!isset($_SESSION['count'])) {
 $count = $_SESSION['count'];
 
 // Echo our entire page so we can put variables into the JavaScript function
-echo '
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,29 +38,26 @@ echo '
       ajaxHandler.onreadystatechange = function() {
         if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
 
-          // ajax_thing can be anything, it also is the HTML id
+          // ajax_changes can be anything, it also is the HTML id
 
-          document.getElementById("ajax_thing").innerHTML = ajaxHandler.responseText;
+          document.getElementById("ajax_changes").innerHTML = ajaxHandler.responseText;
         }
       }
 
       ajaxHandler.open("POST", "ajax_source.php", true); // GET changed to POST
       ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      ajaxHandler.send("go='.$post_go.'&time='.$post_time.'");
+      ajaxHandler.send(<?php echo '"go='.$post_go.'&time='.$post_time.'"'; ?>);
     }
   </script>
 
 </head>
 <body>
 
-SESSION count: '.$count.'<br>
+<?php echo 'SESSION count: '.$count.'<br>'; ?>
 
 <div id="some_thing">Here always</div>
-<div id="ajax_thing">Replace me with AJAX</div>
+<div id="ajax_changes">Replace me with AJAX</div>
 <button onclick="doAjax();">Go AJAX!</button>
 
 </body>
 </html>
-';
-
-?>

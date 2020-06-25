@@ -16,8 +16,8 @@
       var ajaxHandler = vipAjax();
       ajaxHandler.onreadystatechange = function() {
         if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
-          // ajax_thing can be anything, it also is the HTML id
-          document.getElementById("ajax_thing").innerHTML = ajaxHandler.responseText;
+          // ajax_changes can be anything, it also is the HTML id
+          document.getElementById("ajax_changes").innerHTML = ajaxHandler.responseText;
         }
       }
       ajaxHandler.open("GET", "ajax_source.php", true); // GET could be POST
@@ -47,7 +47,7 @@ echo "SESSION count: $count<br>";
 
 echo '
 <div id="some_thing">Here always</div>
-<div id="ajax_thing">Replace me with AJAX</div>
+<div id="ajax_changes">Replace me with AJAX</div>
 <button onclick="doAjax();">Go AJAX!</button>
 ';
 

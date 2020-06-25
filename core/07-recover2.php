@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               ajaxHandler.onreadystatechange = function() {
                 if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
 
-                  // ajax_thing can be anything, it also is the HTML id
+                  // ajax_changes can be anything, it also is the HTML id
 
-                  document.getElementById("ajax_thing").innerHTML = ajaxHandler.responseText;
+                  document.getElementById("ajax_changes").innerHTML = ajaxHandler.responseText;
                 }
               }
 
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       // echo our AJAX string button
       echo '
-      <div id="ajax_thing">[String link will appear here] <i>(replaced by the AJAX)</i></div>
+      <div id="ajax_changes">[String link will appear here] <i>(replaced by the AJAX)</i></div>
       <br>
       <button onclick="doAjax();">Get your recovery string link... (AJAX)</button>
       ';

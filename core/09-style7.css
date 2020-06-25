@@ -51,6 +51,9 @@ textarea.meta {
 	width: 50em;
 	height: 8em;
 }
+input[type=text].piece {
+	width: 50em;
+}
 
 table, tbody, tr, td, th  {
 	border:none;
@@ -187,4 +190,58 @@ del {
   flex: 1 0 0;
   flex-direction: column;
   margin-right: 8px;
+}
+
+/* infoPop() popup */
+/* Container */
+.infopop {
+ position: relative;
+ display: inline-block;
+ cursor: pointer;
+}
+
+/* The actual popup */
+.infopop .infopoptext {
+ visibility: hidden;
+ width: 30em;
+ background-color: #555;
+ color: #fff;
+ text-align: left;
+ border-radius: 6px;
+ padding: 8px;
+ position: absolute;
+ z-index: 1;
+ bottom: 125%;
+ left: 5%;
+ margin-left: -10px;
+}
+
+/* Popup arrow */
+.infopop .infopoptext::after {
+ content: "";
+ position: absolute;
+ top: 100%;
+ left: 5%;
+ margin-left: -12px;
+ border-width: 5px;
+ border-style: solid;
+ border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle hide/show the popup */
+.infopop .show {
+ visibility: visible;
+ -webkit-animation: infoPopFadeIn 1s;
+ animation: infoPopFadeIn 1s
+}
+
+/* Animation to fade in the popup */
+@-webkit-keyframes infoPopFadeIn {
+ from {opacity: 0;}
+ to {opacity: 1;}
+}
+
+@keyframes infoPopFadeIn {
+ from {opacity: 0;}
+ to {opacity:1 ;}
 }

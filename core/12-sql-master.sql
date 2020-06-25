@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `title` VARCHAR(90) NOT NULL,
   `subheading` VARCHAR(90) NOT NULL,
   `description` TINYTEXT DEFAULT NULL,
+  `default_series` INT UNSIGNED NOT NULL,
   `color_primary` INT DEFAULT CONV('444444', 16, 10),
   `color_secondary` INT DEFAULT CONV('5F5F5F', 16, 10),
   `admin_email` VARCHAR(90) DEFAULT NULL,
@@ -53,6 +54,7 @@ CREATE TABLE IF NOT EXISTS `pieces` (
   `type` ENUM('post', 'page') NOT NULL,
   `status` ENUM('live', 'dead') NOT NULL,
   `pub_yn` BOOLEAN NOT NULL DEFAULT false,
+  `series` INT UNSIGNED DEFAULT 1,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
@@ -65,14 +67,18 @@ CREATE TABLE IF NOT EXISTS `pieces` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('post', 'live', 'Hello World!', 'hello-world', 'I am the first post! Ink is a verb. So, get inking!', '', NOW());
+INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('post', 'live', 'Hello Ink World!', 'hello-ink-world', 'I am the first post! Ink is a verb. So, get inking!', '', NOW());
 INSERT INTO pieces (type, status, title, slug, content, after, date_live) VALUES ('page', 'live', 'About', 'about', 'This is all about Blog 501. I am a demo to be updated.', '', NOW());
+INSERT INTO pieces (type, status, title, slug, content, after, links, date_live) VALUES ('post', 'live', 'Code of Poetry', 'code-of-poetry',
+'<p>It is said, "Code is poetry."<br />Just as much, poetry is code!<br />Indeed, poetry is the code of humanity;<br />The human code thus programs ideology.</p> <p>We dance &amp; sing<br />To express most everything.<br />We write and read<br />Thus knowing our deeds.</p> <p>Humankind moves and thinks<br />With whatever be put in ink.<br />Books change worlds<br />As hearts chase words.</p> <p>Written code indexes, colors &amp; fills<br />Design, screen &amp; platform,<br />But psalter shall alter what wills<br />And always deem without quorum.</p> <p>Ideas encoded in a language<br />Of the heart, wordless and timeless,<br />Aluded and indicated,<br />But incomprehensible and undefinable.</p> <p>Yes, let it be said<br />that code is a poem.<br />Yet, let it be known<br />the poem, too, is a code.</p>',
+'– Jesse Steele', '[["http:\/\/poetryiscode.com","Poetry is code.","piC"]]', NOW());
 
 CREATE TABLE IF NOT EXISTS `publications` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
   `pubstatus` ENUM('published', 'redrafting') NOT NULL,
+  `series` INT UNSIGNED DEFAULT 1,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
@@ -88,6 +94,7 @@ CREATE TABLE IF NOT EXISTS `publication_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
+  `series` INT UNSIGNED DEFAULT 1,
   `title` VARCHAR(90) NOT NULL,
   `slug` VARCHAR(90) NOT NULL,
   `content` LONGTEXT DEFAULT NULL,
@@ -98,6 +105,28 @@ CREATE TABLE IF NOT EXISTS `publication_history` (
   `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `series` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(90) NOT NULL,
+  `slug` VARCHAR(90) NOT NULL,
+  `template` INT UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+INSERT INTO series (name, slug) VALUES ('Blog', 'blog');
+
+CREATE TABLE IF NOT EXISTS `templates` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(90) NOT NULL,
+  `content` LONGTEXT DEFAULT NULL,
+  `after` TINYTEXT DEFAULT NULL,
+  `tags` JSON DEFAULT NULL,
+  `links` JSON DEFAULT NULL,
+  `date_created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
 
 CREATE TABLE IF NOT EXISTS `reserved_names` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

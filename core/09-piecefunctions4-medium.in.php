@@ -144,23 +144,23 @@ function pieceInput($name, $value) {
 
   // Use an if test to create the proper HTML input
   if ($name == 'p_title') {
-    $result = '<input type="text" class="piece" id="p_title" name="p_title" maxlength="90" value="'.$value.'" required>';
+    $result = '<input form="edit_piece" type="text" class="piece" id="p_title" name="p_title" maxlength="90" value="'.$value.'" required>';
 
   } elseif ($name == 'p_slug') {
-    $result = '<input type="text" class="piece" id="p_slug" name="p_slug" maxlength="90" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" class="piece" id="p_slug" name="p_slug" maxlength="90" value="'.$value.'">';
 
   } elseif ($name == 'p_type') {
     // type_post checked or not?
     if (($value == 'post') || ($value == '')) {
-      $input_post = '<input type="radio" id="type_post" name="p_type" value="post" checked>';
+      $input_post = '<input form="edit_piece" type="radio" id="type_post" name="p_type" value="post" checked>';
     } else {
-      $input_post = '<input type="radio" id="type_post" name="p_type" value="post">';
+      $input_post = '<input form="edit_piece" type="radio" id="type_post" name="p_type" value="post">';
     }
     // type_page checked or not?
     if ($value == 'page') {
-      $input_page = '<input type="radio" id="type_page" name="p_type" value="page" checked>';
+      $input_page = '<input form="edit_piece"type="radio" id="type_page" name="p_type" value="page" checked>';
     } else {
-      $input_page = '<input type="radio" id="type_page" name="p_type" value="page">';
+      $input_page = '<input  form="edit_piece"type="radio" id="type_page" name="p_type" value="page">';
     }
     // Create the full set of radio options
     $result = '<label for="type_post">'.$input_post.' Post</label><br>
@@ -181,36 +181,36 @@ function pieceInput($name, $value) {
     }
 
     $result = '
-    <select name="p_pubstatus" id="p_pubstatus">
+    <select form="edit_piece" name="p_pubstatus" id="p_pubstatus">
       '.$status_live.'
       '.$status_draft.'
       '.$status_dead.'
     </select>';
 
   } elseif ($name == 'p_content') {
-    $result = '<textarea id="p_content" class="p_content_medium" name="p_content">'.$value.'</textarea>
+    $result = '<textarea form="edit_piece" id="p_content" class="p_content_medium" name="p_content">'.$value.'</textarea>
     <script src="medium/js/medium-editor.js"></script>
     <script>var editor = new MediumEditor(\'.p_content_medium\');</script>';
 
   } elseif ($name == 'p_after') {
-    $result = '<textarea id="p_after" name="p_after">'.$value.'</textarea>';
+    $result = '<textarea form="edit_piece" id="p_after" name="p_after">'.$value.'</textarea>';
 
   // Meta
   } elseif ($name == 'p_tags') {
-    $result = '<input type="text" id="p_tags" name="p_tags" maxlength="150" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" id="p_tags" name="p_tags" maxlength="150" value="'.$value.'">';
 
   } elseif ($name == 'p_links') {
-    $result = '<textarea id="p_links" name="p_links">'.$value.'</textarea>';
+    $result = '<textarea form="edit_piece" id="p_links" name="p_links">'.$value.'</textarea>';
 
   // Date-time Live
   } elseif ($name == 'p_live_yr') {
     $value = ( $value == '' ) ? $p_live_yr_curr : $value; // If the value is empty, use the current time
-    $result = '<input type="text" id="p_live_yr" name="p_live_yr" style="width: 2.2em" maxlength="4" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" id="p_live_yr" name="p_live_yr" style="width: 2.2em" maxlength="4" value="'.$value.'">';
 
   } elseif ($name == 'p_live_mo') {
     $value = ( $value == '' ) ? $p_live_mo_curr : $value;
     // Notice our string inline ternary statements from Lesson 1
-      $result = '<select type="text" id="p_live_mo" name="p_live_mo" value="'.$value.'">
+      $result = '<select form="edit_piece" type="text" id="p_live_mo" name="p_live_mo" value="'.$value.'">
         <option value="01"'.( $value == '01' ? ' selected>': '>').'01-Jan</option>
         <option value="02"'.( $value == '02' ? ' selected>': '>').'02-Feb</option>
         <option value="03"'.( $value == '03' ? ' selected>': '>').'03-Mar</option>
@@ -227,25 +227,25 @@ function pieceInput($name, $value) {
 
   } elseif ($name == 'p_live_day') {
     $value = ( $value == '' ) ? $p_live_day_curr : $value;
-    $result = '<input type="text" id="p_live_day" name="p_live_day" style="width: 1.2em" maxlength="2" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" id="p_live_day" name="p_live_day" style="width: 1.2em" maxlength="2" value="'.$value.'">';
 
   } elseif ($name == 'p_live_hr') {
     $value = ( $value == '' ) ? $p_live_hr_curr : $value;
-    $result = '<input type="text" id="p_live_hr" name="p_live_hr" style="width: 1.2em" maxlength="2" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" id="p_live_hr" name="p_live_hr" style="width: 1.2em" maxlength="2" value="'.$value.'">';
 
   } elseif ($name == 'p_live_min') {
     $value = ( $value == '' ) ? $p_live_min_curr : $value;
-    $result = '<input type="text" id="p_live_min" name="p_live_min" style="width: 1.2em" maxlength="2" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" id="p_live_min" name="p_live_min" style="width: 1.2em" maxlength="2" value="'.$value.'">';
 
   } elseif ($name == 'p_live_sec') {
     $value = ( $value == '' ) ? $p_live_sec_curr : $value;
-    $result = '<input type="text" id="p_live_sec" name="p_live_sec" style="width: 1.2em" maxlength="2" value="'.$value.'">';
+    $result = '<input form="edit_piece" type="text" id="p_live_sec" name="p_live_sec" style="width: 1.2em" maxlength="2" value="'.$value.'">';
 
   } elseif ($name == 'p_live_schedule') {
     if ($value == true) {
-      $result = '<input type="checkbox" id="p_live_schedule" name="p_live_schedule" onclick="showGoLiveOptionsBox()" checked>';
+      $result = '<input form="edit_piece" type="checkbox" id="p_live_schedule" name="p_live_schedule" onclick="showGoLiveOptionsBox()" checked>';
     } else {
-      $result = '<input type="checkbox" id="p_live_schedule" name="p_live_schedule" onclick="showGoLiveOptionsBox()">';
+      $result = '<input form="edit_piece" type="checkbox" id="p_live_schedule" name="p_live_schedule" onclick="showGoLiveOptionsBox()">';
     }
 
   } // Finish $name if

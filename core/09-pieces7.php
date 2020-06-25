@@ -78,8 +78,31 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<tr class="'."$table_row_color $status_class".'">';
 
   // Title
-  echo '<td><b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
-      '.$p_date_note.'</td>';
+  echo '<td onmouseover="showViews'.$show_div_count.'()" onmouseout="showViews'.$show_div_count.'()">
+  <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>'.$p_date_note.'
+  <div id="showviews'.$show_div_count.'" style="display: none;">
+  <a class="orange" style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
+
+  // No "view on blog" for non-published pieces
+  if (($status_class == 'pieces_live') && ($p_status == 'published')) {
+    echo '<a style ="float: right;" href="view.php?p='.$p_id.'">view on blog</a>';
+  }
+
+  // JavaScript with unique function name per row, show/hide action links
+  ?>
+  <script>
+  function showViews<?php echo $show_div_count; ?>() {
+    var x = document.getElementById("showviews<?php echo $show_div_count; ?>");
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
+  }
+  </script>
+  <?php
+
+  echo '</td>';
 
   // Status
   echo '<td onmouseover="showActions'.$show_div_count.'()" onmouseout="showActions'.$show_div_count.'()">'

@@ -4,30 +4,33 @@
   <!-- CSS file included as <link> -->
   <link href="style.css" rel="stylesheet" type="text/css" />
 
-  <!-- AJAX JavaScript code included as <script> -->
+  <!-- AJAX JavaScript from Mozilla Developer: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript#Using_FormData_bound_to_a_form_element -->
   <script>
-    function vipAjax() { // vipAjax can be anything
-      var ajax;
-      ajax = new XMLHttpRequest();
-      return ajax;
-    }
+  window.addEventListener( "load", function () {
+    function sendData() {
+      const AJAX = new XMLHttpRequest(); // AJAX handler
+      const FD = new FormData( form ); // Bind to-send data to form element
 
-    function doAjax(oFormElement) { // doAjax can be anything
-      var ajaxHandler = vipAjax();
-      ajaxHandler.onreadystatechange = function() {
-        if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
+      AJAX.addEventListener( "load", function(event) {
+        document.getElementById("ajax_changes").innerHTML = event.target.responseText;
+      } ); // Change HTML on successful response
 
-          // ajax_thing can be anything, it also is the HTML id
+      AJAX.addEventListener( "error", function( event ) {
+        document.getElementById("ajax_changes").innerHTML =  'Oops! Something went wrong.';
+      } );
 
-          document.getElementById("ajax_thing").innerHTML = ajaxHandler.responseText;
-        }
-      }
+      AJAX.open( "POST", "ajax_source.php" ); // Send data, ajax_source.php can be any file or URL
 
-      ajaxHandler.open("POST", "ajax_source.php", true); // GET changed to POST
-      //ajaxHandler.open(oFormElement.method, oFormElement.action, true); // GET changed to POST
-      ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      ajaxHandler.send(new FormData (oFormElement));
-    }
+      AJAX.send( FD ); // Data sent is from the form
+    } // sendData() function
+
+    const form = document.getElementById( "ajaxForm" ); // Access <form id="ajaxForm">, id="ajaxForm" can be anything
+    form.addEventListener( "submit", function ( event ) { // Takeover <input type="submit">
+      event.preventDefault();
+      sendData();
+    } );
+
+  } );
   </script>
 
 </head>
@@ -50,18 +53,15 @@ $count = $_SESSION['count'];
 
 echo "SESSION count: $count<br>";
 
-echo '
-<div id="some_thing">Here always</div>
-<div id="ajax_thing">Replace me with AJAX</div>
-
-<form onsubmit="return doAjax(this);">
-  <input type="text" value="AJAX" name="go" />
-  <input type="text" value="5" name="time" />
-  <input type="submit" value="Go AJAX!"/>
-</form>
-
-';
-
 ?>
+  <div id="some_thing">Here always</div>
+  <div id="ajax_changes">Replace me with AJAX</div>
+
+  <form id="ajaxForm">
+    <input type="text" value="AJAX" name="go">
+    <input type="text" value="5" name="time">
+    <input type="submit" value="Form AJAX!">
+  </form>
+
 </body>
 </html>
