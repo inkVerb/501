@@ -16,9 +16,11 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   exit(header("Location: blog.php"));
 }
 
-$query = "UPDATE pieces SET status='dead' WHERE id='$piece_id'";
-$call = mysqli_query($database, $query);
-if ($call) {
+$queryd = "UPDATE pieces SET status='dead' WHERE id='$piece_id'";
+$calld = mysqli_query($database, $queryd);
+$queryr = "UPDATE publications SET pubstatus='redrafting' WHERE piece_id='$piece_id'";
+$callr = mysqli_query($database, $queryr);
+if (($calld) && ($callr)) {
   exit(header("Location: pieces.php"));
 } else {
   echo '<pre>Major database error!</pre>';

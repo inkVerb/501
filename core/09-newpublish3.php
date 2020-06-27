@@ -16,7 +16,7 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p']);
 
   // Look for a publications piece, regardless of what happens, before anything else happens
-  $query = "SELECT id FROM publications WHERE piece_id='$piece_id'";
+  $query = "SELECT id FROM publications WHERE piece_id='$piece_id' AND pubstatus='published'";
   $call = mysqli_query($database, $query);
   // Shoule be 1 row
   if (mysqli_num_rows($call) == 1) {

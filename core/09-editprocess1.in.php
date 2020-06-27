@@ -21,6 +21,16 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     $piece_id = $_POST['piece_id'];
   }
 
+  // Check for existing publication
+  $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id'";
+  $call = mysqli_query($database, $query);
+  if (mysqli_num_rows($call) == 1) {
+    $row = mysqli_fetch_array($call, MYSQLI_NUM);
+      $pubstatus = "$row[0]";
+  } else {
+    $pubstatus = 'none';
+  }
+
   // Status ("Save draft" = pieces table; "Publish" = both pieces and publications tables)
   if ($_POST['p_submit'] == 'Save draft') {
     $p_status = 'draft';
@@ -160,7 +170,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
       // If there were no changes
       if (mysqli_num_rows($call) == 0) {
         // Update or first publish?
-        if ($p_status == 'publish') {
+        if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
           $query = "INSERT INTO publications (piece_id, type, title, slug, content, after, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc', NOW())";
           $callp = mysqli_query($database, $query);
           $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc', NOW())";
@@ -168,8 +178,8 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
           $callu = mysqli_query($database, $query);
           $publication_message = 'Piece published!';
-        } elseif ($p_status == 'update') {
-          $query = "UPDATE publications SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
+        } elseif ( ($p_status == 'update') || ($pubstatus = 'published') || ($pubstatus = 'redrafting') ) {
+          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', , title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
           $callp = mysqli_query($database, $query);
           $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
@@ -227,7 +237,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
   } // End new/update if
 
   // Look for a publications piece by that ID, regardless of what happened, after everything happened
-  $query = "SELECT id FROM publications WHERE piece_id='$piece_id'";
+  $query = "SELECT id FROM publications WHERE piece_id='$piece_id' AND pubstatus='published'";
   $call = mysqli_query($database, $query);
   // Shoule be 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -292,7 +302,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
     $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
 
     // Look for a publications piece, regardless of what happens, before anything else happens
-    $query = "SELECT id FROM publications WHERE piece_id='$piece_id'";
+    $query = "SELECT id FROM publications WHERE piece_id='$piece_id' AND pubstatus='published'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {

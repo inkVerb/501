@@ -21,7 +21,12 @@ include ('./in.editprocess.php');
 // Our edit form
 // New or update?
 if (isset($piece_id)) { // Updating piece
-  echo '<a href="piece.php?p='.$piece_id.'">View on blog</a>';
+  if ((isset($editing_published_piece)) && ($editing_published_piece == true)) {
+    echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
+  } else {
+    echo '<pre>(unpublished draft)</pre>';
+  }
+  echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview draft</a></pre>';
   echo '<form action="edit.php?p='.$piece_id.'" method="post" id="edit_piece">';
   echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece
@@ -57,7 +62,7 @@ echo '<br><br>';
 
 // Type
 $infomsg = '
-<b>Page</b>: hides meta (after, tags, links), works in menues, appears as prominent link in "Series lists"<br><br>
+<b>Page</b>: hides meta (After, Tags, Links), works in menues, appears as prominent link in "Series lists"<br><br>
 <b>Post</b>: appears in blog lists';
 echo 'Type:'.infoPop('typt_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
 
@@ -117,7 +122,7 @@ echo '
   </script>';
 
 // Tags
-$infomsg = 'Tags: comma-separated list';
+$infomsg = 'Tags: comma-separated list;<br>only first three tags show in excerpts & blog pages';
 echo 'Tags:'.infoPop('tags_info', $infomsg).'<br>'.pieceInput('p_tags', $p_tags).'<br><br>';
 
 // After

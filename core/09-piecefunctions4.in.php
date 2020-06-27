@@ -68,14 +68,14 @@ function checkPiece($name, $value) {
     $result = json_encode(explode(', ', $result)); // Convert into JSON objects
 
   } elseif ($name == 'p_links') {
-    $result = preg_replace('/([\]\[\\{\}\$\*]+)/','',$value); // No hacker input
-    $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
-    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
-    $result = str_replace(' -- ',' – ',$result); // to en-dash
-    $result = str_replace(' --','—',$result); // to em-dash
-    $result = str_replace('-- ','—',$result); // to em-dash
-    $result = str_replace('---','—',$result); // to em-dash
-    $result = str_replace('--','—',$result); // to em-dash
+    $p_links_check = preg_replace('/([\]\[\\{\}\$\*]+)/','',$value); // No hacker input
+    $p_links_check = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$p_links_check); // Proper noun range to en-dash
+    $p_links_check = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$p_links_check); // number range to en-dash
+    $p_links_check = str_replace(' -- ',' – ',$p_links_check); // to en-dash
+    $p_links_check = str_replace(' --','—',$p_links_check); // to em-dash
+    $p_links_check = str_replace('-- ','—',$p_links_check); // to em-dash
+    $p_links_check = str_replace('---','—',$p_links_check); // to em-dash
+    $p_links_check = str_replace('--','—',$p_links_check); // to em-dash
     include ('./in.jsonlinks.php');
     $result = $p_links_json_in;
 

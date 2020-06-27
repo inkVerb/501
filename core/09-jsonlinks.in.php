@@ -37,13 +37,12 @@ $string3<br>
 
 
 // Basic RegEx for no brackets and coding non-link safety checks
-if (!preg_match('/([\]\[\\{\}\$\*]+)/i', $_POST['p_links'])) {
+if (($p_links_check != '') && (!empty($p_links_check)) && preg_match($url,FILTER_VALIDATE_URL)) {
 
 
   // Prepare our values
   $links_array = array(); // Set it before the foreach loop where we use it
-  $p_links = $_POST['p_links'];
-  $arr = explode("\n", $p_links);
+  $arr = explode("\n", $p_links_check);
   $regex_replace = "/[^a-zA-Z0-9-!@&#$%.'\":|]/"; // Pipe is here because we will cut from it later
 
   // Start our array key
@@ -250,7 +249,8 @@ if (!preg_match('/([\]\[\\{\}\$\*]+)/i', $_POST['p_links'])) {
 // Fails our non-bracket RegEx check
 } else {
 
-  $p_links_json_in = NULL;
+  $p_links_json_in = json_encode(explode(', ', ''));
+
 }
 
 ?>

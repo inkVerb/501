@@ -21,7 +21,12 @@ include ('./in.editprocess.php');
 // Our edit form
 // New or update?
 if (isset($piece_id)) { // Updating piece
-  echo '<a href="piece.php?p='.$piece_id.'">View on blog</a>';
+  if ((isset($editing_published_piece)) && ($editing_published_piece == true)) {
+    echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
+  } else {
+    echo '<pre>(unpublished draft)</pre>';
+  }
+  echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview draft</a></pre>';
   echo '<form action="edit.php?p='.$piece_id.'" method="post">';
   echo '<input type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece
@@ -98,7 +103,7 @@ echo '
   </script>';
 
 // Tags
-$infomsg = 'Tags: comma-separated list';
+$infomsg = 'Tags: comma-separated list;<br>only first three tags show in excerpts & blog pages';
 echo 'Tags:'.infoPop('tags_info', $infomsg).'<br>'.pieceInput('p_tags', $p_tags).'<br><br>';
 
 // After

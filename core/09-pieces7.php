@@ -1,5 +1,4 @@
 <?php
-// No <head> yet because we might redirect, which uses header() and might break after the <head> tag
 
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
@@ -81,11 +80,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<td onmouseover="showViews'.$show_div_count.'()" onmouseout="showViews'.$show_div_count.'()">
   <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>'.$p_date_note.'
   <div id="showviews'.$show_div_count.'" style="display: none;">
-  <a class="orange" style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
+  <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
 
-  // No "view on blog" for non-published pieces
+  // No "view" for non-published pieces
   if (($status_class == 'pieces_live') && ($p_status == 'published')) {
-    echo '<a style ="float: right;" href="view.php?p='.$p_id.'">view on blog</a>';
+    echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a> | <a class="green" href="piece.php?p='.$p_id.'">view</a>';
+  } else {
+    echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>';
   }
 
   // JavaScript with unique function name per row, show/hide action links

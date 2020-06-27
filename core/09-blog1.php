@@ -51,3 +51,5 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
 // Footer
 include ('./in.footer.php');
+
+?>

@@ -64,8 +64,6 @@ $row = mysqli_fetch_array($call, MYSQLI_NUM);
   // Separater
   echo '<hr>';
 
-
-
 ?>
 
 </body>
