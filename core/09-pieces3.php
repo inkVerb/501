@@ -3,13 +3,13 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
-
 // Include our login cluster
 $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
+
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Simple line
 echo '<br><hr><br>';
@@ -76,21 +76,21 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Status
   echo '<td>'.$p_status.'<br>';
   if ($p_status == 'dead') {
-    echo postform('undelete', $p_id).postform('delete forever', $p_id).'</td>';
+    echo piecesform('undelete', $p_id).piecesform('delete forever', $p_id).'</td>';
   } elseif ($p_status == 'published') {
-    echo postform('unpublish', $p_id).postform('delete', $p_id).'</td>';
+    echo piecesform('unpublish', $p_id).piecesform('delete', $p_id).'</td>';
   } elseif ($p_status == 'redrafting') {
-    echo postform('republish', $p_id).postform('delete', $p_id).'</td>';
+    echo piecesform('republish', $p_id).piecesform('delete', $p_id).'</td>';
   } elseif ($p_status == 'pre-draft') {
-    echo postform('publish', $p_id).postform('delete', $p_id).'</td>';
+    echo piecesform('delete', $p_id).'</td>';
   }
 
   // Type
   echo '<td>'.$p_type.'<br>';
   if ($p_type == 'page') {
-    echo postform('make post', $p_id).'</td>';
+    echo piecesform('make post', $p_id).'</td>';
   } else {
-    echo postform('make page', $p_id).'</td>';
+    echo piecesform('make page', $p_id).'</td>';
   }
 
   // Finish piece

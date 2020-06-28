@@ -3,8 +3,8 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Include our login cluster
 $head_title = "Publication History"; // Set a <title> name used next
@@ -89,7 +89,7 @@ echo '
 <div class="outercard">
   <div class="row">
     <div class="col">
-      <code>'.postform('revert', $o_id).'</code>
+      <code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>
       <pre><h2>'.$o_update.'<br>(previous)</h2></pre>
       <div class="card" id="outputOld"></div>
     </div>
@@ -99,7 +99,7 @@ echo '
       <div class="card" id="outputDif"></div>
     </div>
     <div class="col">
-      <code>'.postform('revert', $p_id).'</code>
+      <code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>
       <pre><h2>'.$p_update.'<br>(latest)</h2></pre>
       <div class="card" id="outputCur"></div>
     </div>

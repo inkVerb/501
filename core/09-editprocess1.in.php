@@ -247,16 +247,13 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
 // Opening old piece to edit
 // Check for GET or SESSION and validate in one if test
 } elseif (((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT)))
-  || ((isset($_SESSION['piece_id'])) && (filter_var($_SESSION['piece_id'], FILTER_VALIDATE_INT)))) {
+  || ((isset($_GET['h'])) && (filter_var($_GET['h'], FILTER_VALIDATE_INT)))) {
 
   // Deal with a SESSION argument from publication_history
-  if (isset($_SESSION['piece_id'])) {
+  if (isset($_GET['h'])) {
 
     // Assign piece ID
-    $revert_id = preg_replace("/[^0-9]/"," ", $_SESSION['piece_id']);
-
-    // Done with this SESSION variable, never let them linger
-    unset($_SESSION['piece_id']);
+    $revert_id = preg_replace("/[^0-9]/"," ", $_GET['h']);
 
     // Retrieve existing piece from history
     $query = "SELECT piece_id, type, title, slug, content, after, date_live FROM publication_history WHERE id='$revert_id'";
@@ -273,6 +270,9 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
         $p_after = "$row[5]";
         $p_live = "$row[6]";
         $editing_published_piece = true;
+
+        // Indicate a historical edit
+        echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
 
         $query = "SELECT status FROM pieces WHERE id='$piece_id'";
         $call = mysqli_query($database, $query);

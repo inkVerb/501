@@ -3,19 +3,63 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
-
 // Include our login cluster
 $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
+
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
 
 // Simple line
 echo '<br><hr><br>';
+
+// Bulk actions
+echo '<div onclick="showBulkActions()" style="cursor: pointer;"><b>Bulk actions &#9660;</b></div><br>
+<div id="bulk_actions_div" style="display: none;">
+<form id="bulk_actions" method="post" action="act.bulkpieces.php">
+  <table>
+    <tr>
+      <td><b><input type="submit" class="green" name="bluksubmit" value="republish"></b></td>
+      <td><b><input type="submit" class="orange" name="bluksubmit" value="unpublish"></b></td>
+      <td><b><input type="submit" class="blue" name="bluksubmit" value="make post"></b></td>
+      <td><b><input type="submit" class="blue" name="bluksubmit" value="make page"></b></td>
+      <td><b><input type="submit" class="orange" name="bluksubmit" value="undelete"></b></td>
+      <td><b><input type="submit" class="red" name="bluksubmit" value="delete"></b></td>
+    </tr>
+  </table>
+</form>
+<label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
+</div>';
+
+// JavaScript to show/hide Bulk Actions
+?>
+<script>
+function showBulkActions() {
+  var x = document.getElementById("bulk_actions_div");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
+<?php
+// JavaScript to "Select all"
+?>
+<script>
+function toggle(source) {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+    }
+}
+</script>
+<?php
 
 // Start our HTML table
 echo '
@@ -29,12 +73,10 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces";
+$query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live'";
 $call = mysqli_query($database, $query);
 // Start our row colors
 $table_row_color = 'blues';
-// Start our show_div counter
-$show_div_count = 1;
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Assign the values
@@ -47,18 +89,19 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   $p_date_created = "$row[6]";
 
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
-  // (If pieces.status is 'dead', none of this will happen and $p_status will remain 'dead')
-  if (($p_pub_yn == true) && ($p_status == 'live')) {
+  // This does not affect dead pieces that will AJAX back, which would remain dead anyway
+  if ($p_pub_yn == true) {
     $query_pub = "SELECT pubstatus FROM publications WHERE piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
       $p_status = "$row_pub[0]";
-  } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
+  } elseif ($p_pub_yn == false) {
     $p_status = 'pre-draft';
   }
 
   // Dead or live?
+  // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
   if ($p_status == 'dead') {
     $status_class = 'pieces_dead';
   } else {
@@ -74,12 +117,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Display the info in a <table>
   // Start our HTML table
-  echo '<tr class="'."$table_row_color $status_class".'">';
+  echo '<tr class="'."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
 
   // Title
-  echo '<td onmouseover="showViews'.$show_div_count.'()" onmouseout="showViews'.$show_div_count.'()">
-  <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>'.$p_date_note.'
-  <div id="showviews'.$show_div_count.'" style="display: none;">
+  echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
+  <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.' &#9660;</a></b><br>
+  <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
+  <div id="showviews'.$p_id.'" style="display: none;">
   <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
 
   // No "view" for non-published pieces
@@ -89,11 +133,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>';
   }
 
+  echo '</div>';
+
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showViews<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showviews<?php echo $show_div_count; ?>");
+  function showViews<?php echo $p_id; ?>() {
+    var x = document.getElementById("showviews<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -106,23 +152,23 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '</td>';
 
   // Status
-  echo '<td onmouseover="showActions'.$show_div_count.'()" onmouseout="showActions'.$show_div_count.'()">'
-  .$p_status.'<br><div id="showaction'.$show_div_count.'" style="display: none;">';
-  if ($p_status == 'dead') {
-    echo postform('undelete', $p_id).postform('delete forever', $p_id).'</div>';
+  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
+  .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
+  if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
+    echo piecesform('undelete', $p_id).'</div>';
   } elseif ($p_status == 'published') {
-    echo postform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.postform('delete', $p_id).'</div>';
+    echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'redrafting') {
-    echo postform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.postform('delete', $p_id).'</div>';
+    echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'pre-draft') {
-    echo postform('publish', $p_id).postform('delete', $p_id).'</div>';
+    echo piecesform('delete', $p_id).'</div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showActions<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showaction<?php echo $show_div_count; ?>");
+  function showActions<?php echo $p_id; ?>() {
+    var x = document.getElementById("showaction<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -135,19 +181,19 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '</td>';
 
   // Type
-  echo '<td onmouseover="showTypify'.$show_div_count.'()" onmouseout="showTypify'.$show_div_count.'()">'
-  .$p_type.'<br><div id="showtypify'.$show_div_count.'" style="display: none;">';
+  echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
+  .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
-    echo postform('make post', $p_id).'</div>';
+    echo piecesform('make post', $p_id).'</div>';
   } else {
-    echo postform('make page', $p_id).'</div>';
+    echo piecesform('make page', $p_id).'</div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showTypify<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showtypify<?php echo $show_div_count; ?>");
+  function showTypify<?php echo $p_id; ?>() {
+    var x = document.getElementById("showtypify<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -164,8 +210,6 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Toggle our row colors
   $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';
-  // Increment our show div counter
-  ++$show_div_count;
 
 }
 

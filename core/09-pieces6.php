@@ -3,13 +3,13 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
-
 // Include our login cluster
 $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
+
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
@@ -33,8 +33,6 @@ $query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM p
 $call = mysqli_query($database, $query);
 // Start our row colors
 $table_row_color = 'blues';
-// Start our show_div counter
-$show_div_count = 1;
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Assign the values
@@ -77,9 +75,9 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<tr class="'."$table_row_color $status_class".'">';
 
   // Title
-  echo '<td onmouseover="showViews'.$show_div_count.'()" onmouseout="showViews'.$show_div_count.'()">
+  echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
   <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>'.$p_date_note.'
-  <div id="showviews'.$show_div_count.'" style="display: none;">
+  <div id="showviews'.$p_id.'" style="display: none;">
   <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
 
   // No "view" for non-published pieces
@@ -92,8 +90,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showViews<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showviews<?php echo $show_div_count; ?>");
+  function showViews<?php echo $p_id; ?>() {
+    var x = document.getElementById("showviews<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -106,23 +104,23 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '</td>';
 
   // Status
-  echo '<td onmouseover="showActions'.$show_div_count.'()" onmouseout="showActions'.$show_div_count.'()">'
-  .$p_status.'<br><div id="showaction'.$show_div_count.'" style="display: none;">';
+  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
+  .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
   if ($p_status == 'dead') {
-    echo postform('undelete', $p_id).postform('delete forever', $p_id).'</div>';
+    echo piecesform('undelete', $p_id).piecesform('delete forever', $p_id).'</div>';
   } elseif ($p_status == 'published') {
-    echo postform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.postform('delete', $p_id).'</div>';
+    echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'redrafting') {
-    echo postform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.postform('delete', $p_id).'</div>';
+    echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'pre-draft') {
-    echo postform('publish', $p_id).postform('delete', $p_id).'</div>';
+    echo piecesform('delete', $p_id).'</div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showActions<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showaction<?php echo $show_div_count; ?>");
+  function showActions<?php echo $p_id; ?>() {
+    var x = document.getElementById("showaction<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -135,19 +133,19 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '</td>';
 
   // Type
-  echo '<td onmouseover="showTypify'.$show_div_count.'()" onmouseout="showTypify'.$show_div_count.'()">'
-  .$p_type.'<br><div id="showtypify'.$show_div_count.'" style="display: none;">';
+  echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
+  .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
-    echo postform('make post', $p_id).'</div>';
+    echo piecesform('make post', $p_id).'</div>';
   } else {
-    echo postform('make page', $p_id).'</div>';
+    echo piecesform('make page', $p_id).'</div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showTypify<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showtypify<?php echo $show_div_count; ?>");
+  function showTypify<?php echo $p_id; ?>() {
+    var x = document.getElementById("showtypify<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -164,8 +162,6 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Toggle our row colors
   $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';
-  // Increment our show div counter
-  ++$show_div_count;
 
 }
 

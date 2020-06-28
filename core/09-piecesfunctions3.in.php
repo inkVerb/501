@@ -1,12 +1,14 @@
 <?php
 
-// Define the Validation-Sanitization check function, useable for all our checks
-function postform($name, $p_id) {
+function piecesform($name, $p_id) {
+
+  // Validate the $p_id
+  if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
 
   // Get the page we're going to
   if ($name == 'undelete') {
     $post_to = 'undelete.php';
-    $color_class = 'blue';
+    $color_class = 'orange';
     $float_ = 'left';
   } elseif ($name == 'unpublish') {
     $post_to = 'unpublish.php';
@@ -14,10 +16,6 @@ function postform($name, $p_id) {
     $float_ = 'left';
   } elseif ($name == 'republish') {
     $post_to = 'republish.php';
-    $color_class = 'green';
-    $float_ = 'left';
-  } elseif ($name == 'publish') {
-    $post_to = 'newpublish.php';
     $color_class = 'green';
     $float_ = 'left';
   } elseif ($name == 'delete') {
@@ -35,17 +33,13 @@ function postform($name, $p_id) {
   } elseif ($name == 'permanently delete') {
     $post_to = 'empty_delete_trash.php';
     $color_class = 'red';
-    $float_ = 'left';
+    $float_ = 'right';
   } elseif ($name == 'make post') {
     $post_to = 'postify.php';
     $color_class = 'blue';
     $float_ = 'left';
   } elseif ($name == 'make page') {
     $post_to = 'pagify.php';
-    $color_class = 'blue';
-    $float_ = 'left';
-  } elseif ($name == 'revert') {
-    $post_to = 'revert.php';
     $color_class = 'blue';
     $float_ = 'left';
   }

@@ -80,7 +80,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     // We use a bold non-breaking space <b>&nbsp;</b> to hold the line so other text doesn't shift when the tags show up
     echo '<br><section class="tags" id="tags'.$show_div_count.'" style="display: none;">'.$p_tags.'</section><br>';
 
-    // JavaScript with unique function name per row, show/hide action links
+    // JavaScript with unique function name per post, show/hide tags
     ?>
     <script>
     function showTags<?php echo $show_div_count; ?>() {

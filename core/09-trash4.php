@@ -3,13 +3,13 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
-
 // Include our login cluster
 $head_title = "Trash"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
+
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Trash link
 echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <a class="red" href="empty_all_trash.php">Empty all trash</a>';
@@ -56,7 +56,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       '.$p_date_note.'</td>';
 
   // Actions
-  echo '<td>'.postform('restore', $p_id).postform('permanently delete', $p_id).'</td>';
+  echo '<td>'.piecesform('restore', $p_id).piecesform('permanently delete', $p_id).'</td>';
 
   // Type
   echo '<td>'.$p_type.'<br></td>';

@@ -151,6 +151,9 @@ table.contentlib tr.shady {
 	background-color: #dff8ef;
 }
 
+table.contentlib tr.renew {
+	background-color: #faebd8;
+}
 
 /* htmldiff.js */
 ins {

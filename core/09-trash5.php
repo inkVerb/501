@@ -3,13 +3,13 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
-
 // Include our login cluster
 $head_title = "Trash"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
+
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Trash link
 echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showEmptyAll()">Empty all trash &rarr;</span> <a class="red" id="empty_all_trash" href="empty_all_trash.php" style="display:none"><i>Yes! Empty all trash</i></a>';
@@ -76,7 +76,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Actions
   echo '<td onmouseover="showActions'.$show_div_count.'()" onmouseout="showActions'.$show_div_count.'()">
     ready to delete<br><div id="showaction'.$show_div_count.'" style="display: none;">'
-    .postform('restore', $p_id).postform('permanently delete', $p_id).
+    .piecesform('restore', $p_id).piecesform('permanently delete', $p_id).
   '</div>';
 
   // JavaScript with unique function name per row, show/hide action links

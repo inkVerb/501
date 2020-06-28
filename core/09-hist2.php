@@ -3,8 +3,8 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Include our login cluster
 $head_title = "Publication History"; // Set a <title> name used next
@@ -159,7 +159,7 @@ echo '
 <div class="outercard">
   <div class="row">
     <div class="col">
-      <code>'.postform('revert', $o_id).'</code>
+      <code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>
       <pre><h3>'.$o_update.'<br>(previous)</h3></pre>
       <div class="card" id="outputOld"></div>
     </div>
@@ -173,7 +173,7 @@ echo '
     if (($diff_type == 'p') && ($p_id = "draft_")) {
       echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
     } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
-      echo '<code>'.postform('revert', $p_id).'</code>';
+      echo '<code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>';
     }
 echo '
       <pre><h3>'.$p_update.'<br>(latest)</h3></pre>

@@ -79,7 +79,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   } elseif ($p_status == 'redrafting') {
     echo '<a class="green" href="republish.php?p='.$p_id.'">republish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
   } elseif ($p_status == 'pre-draft') {
-    echo '<a class="green" href="newpublish.php?p='.$p_id.'">publish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
+    echo '<a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
   }
 
   // Type

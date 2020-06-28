@@ -3,8 +3,8 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our post functions
-include ('./in.postfunctions.php');
+// Include our pieces functions
+include ('./in.piecesfunctions.php');
 
 // Include our login cluster
 $head_title = "AJAX form select example"; // Set a <title> name used next
