@@ -3,8 +3,8 @@
 session_start();
 
 // Set our variables
-$post_go = 'Render this AJAX JavaScript code';
-$post_time = "The 'Time' is: whenever you're ready";
+$post_foo = 'Render this AJAX JavaScript code';
+$post_bar = "The 'Time' is: whenever you're ready";
 
 // Start a counter first time
 if (!isset($_SESSION['count'])) {
@@ -44,9 +44,9 @@ $count = $_SESSION['count'];
         }
       }
 
-      ajaxHandler.open("POST", "ajax_source.php", true); // GET changed to POST
+      ajaxHandler.open("POST", "ajax_responder.php", true); // GET changed to POST
       ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      ajaxHandler.send(<?php echo '"go='.$post_go.'&time='.$post_time.'"'; ?>);
+      ajaxHandler.send(<?php echo '"foo='.$post_foo.'&bar='.$post_bar.'"'; ?>);
     }
   </script>
 

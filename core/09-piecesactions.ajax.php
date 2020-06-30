@@ -101,7 +101,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
     // Status
     echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-    .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
+    .$p_status.' <i class="renew" style ="float: right;">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
     if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
       echo piecesform('undelete', $p_id).'</div>';
     } elseif ($p_status == 'published') {

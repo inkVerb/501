@@ -23,9 +23,9 @@
         }
       }
 
-      ajaxHandler.open("POST", "ajax_source.php", true); // GET changed to POST
+      ajaxHandler.open("POST", "ajax_responder.php", true); // GET changed to POST
       ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      ajaxHandler.send("go=AJAX&time=5");
+      ajaxHandler.send("foo=AJAX&bar=5");
     }
   </script>
 

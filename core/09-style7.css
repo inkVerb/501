@@ -155,6 +155,10 @@ table.contentlib tr.renew {
 	background-color: #faebd8;
 }
 
+table.contentlib tr.renew i.renew {
+	color: #ffcba8;
+}
+
 /* htmldiff.js */
 ins {
   text-decoration: none;

@@ -41,36 +41,43 @@ function piecesform($name, $p_id) {
     $slug = 'make';
   }
 
-  $slug = str_replace(' ', '_', $name);
-
   $result = '
-<form method="post" id="pa_'.$slug.'_'.$p_id.'" action="act.piecesactions.php" style ="float: '.$float_.';" class="postform inline">
+  <form method="post" id="pa_'.$slug.'_'.$p_id.'" action="act.piecesactions.php" style ="float: '.$float_.';" class="postform inline">
     <input type="hidden" name="p" value="'.$p_id.'">
     <input type="hidden" name="action" value="'.$name.'">
     <input type="submit" class="postform inline link-button '.$color_class.'" value="'.$name.'">
-  </form>
-<script>
-window.addEventListener( "load", function () {
-  function sendData() {
-    const AJAX = new XMLHttpRequest();
-    const FD = new FormData( form );
-    AJAX.addEventListener( "load", function(event) {
-      document.getElementById("prow_'.$p_id.'").innerHTML = event.target.responseText;
-      document.getElementById("prow_'.$p_id.'").className = "pieces_live renew";
-    } );
-    AJAX.addEventListener( "error", function( event ) {
-      document.getElementById("prow_'.$p_id.'").innerHTML =  \'<tr class="renew" id="prow_'.$p_id.' class="error">Error with '.$name.'</tr>\';
-    } );
-    AJAX.open( "POST", "ajax.piecesactions.php" );
-    AJAX.send( FD );
-  }
-  const form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
-  form.addEventListener( "submit", function ( event ) {
-    event.preventDefault();
-    sendData();
+  </form>';
+
+
+  $result .= '
+  <script>
+  window.addEventListener( "load", function () {
+    function sendData() {
+      const AJAX = new XMLHttpRequest();
+      const FD = new FormData( form );
+      AJAX.addEventListener( "load", function(event) {
+        document.getElementById("prow_'.$p_id.'").innerHTML = event.target.responseText;
+        document.getElementById("prow_'.$p_id.'").classList.add("renew");
+        form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
+        listenToForm();
+      } );
+      AJAX.addEventListener( "error", function( event ) {
+        document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_'.$p_id.'\" class=\"error\">Error with '.$name.'</tr>";
+      } );
+      AJAX.open( "POST", "ajax.piecesactions.php" );
+      AJAX.send( FD );
+    }
+    var form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
+    function listenToForm(){
+      form.addEventListener( "submit", function ( event ) {
+        event.preventDefault();
+        sendData();
+      } );
+    }
+    listenToForm();
   } );
-} );
-</script>';
+  </script>';
+
 
   return $result;
 } // Finish function

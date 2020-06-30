@@ -18,7 +18,7 @@ echo '<a class="red" href="trash.php">View trash</a>';
 echo '<br><hr><br>';
 
 // Bulk actions
-echo '<div onclick="showBulkActions()" style="cursor: pointer;"><b>Bulk actions &#9660;</b></div><br>
+echo '<div onclick="showBulkActions()" style="cursor: pointer; display: inline;"><b>Bulk actions &#9660;</b></div><br>
 <div id="bulk_actions_div" style="display: none;">
 <form id="bulk_actions" method="post" action="act.bulkpieces.php">
   <table>
