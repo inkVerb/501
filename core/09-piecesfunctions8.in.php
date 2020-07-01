@@ -78,7 +78,6 @@ function piecesform($name, $p_id) {
   } );
   </script>';
 
-
   return $result;
 } // Finish function
 

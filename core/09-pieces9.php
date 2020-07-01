@@ -104,8 +104,10 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
   if ($p_status == 'dead') {
     $status_class = 'pieces_dead';
+    $show_status = '<i class="gray">trashed</i>';
   } else {
     $status_class = 'pieces_live';
+    $show_status = $p_status;
   }
 
   // Date
@@ -121,10 +123,10 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Title
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-  <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
+  <b class="piece_title" onclick="metaEdit'.$p_id.'()" style ="cursor: pointer;">'.$p_title.' &#9998;</b><br>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
+  <a style ="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>';
 
   // No "view" for non-published pieces
   if (($status_class == 'pieces_live') && ($p_status == 'published')) {
@@ -148,12 +150,20 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   }
   </script>
   <?php
+  // JavaScript for metaEdit
+  ?>
+  <script>
+  function metaEdit<?php echo $p_id; ?>() {
+    // metaEdit JS goes here
+  }
+  </script>
+  <?php
 
   echo '</td>';
 
   // Status
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
+  .$show_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
   if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
     echo piecesform('undelete', $p_id).'</div>';
   } elseif ($p_status == 'published') {
@@ -174,6 +184,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     } else {
       x.style.display = "inline";
     }
+  }
+  </script>
+  <?php
+  // JavaScript to clear "changed" status
+  ?>
+  <script>
+  function clearChanged<?php echo $p_id; ?>() {
+    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
+    document.getElementById("changed_<?php echo $p_id; ?>").remove(); // Remove the "changed" clickable message added by AJAX
+    showActions<?php echo $p_id; ?>(); // We need our toggles right
   }
   </script>
   <?php

@@ -104,8 +104,10 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
   if ($p_status == 'dead') {
     $status_class = 'pieces_dead';
+    $show_status = '<i class="gray">trashed</i>';
   } else {
     $status_class = 'pieces_live';
+    $show_status = $p_status;
   }
 
   // Date
@@ -153,7 +155,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Status
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
+  .$show_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
   if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
     echo piecesform('undelete', $p_id).'</div>';
   } elseif ($p_status == 'published') {
@@ -174,6 +176,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     } else {
       x.style.display = "inline";
     }
+  }
+  </script>
+  <?php
+  // JavaScript to clear "changed" status
+  ?>
+  <script>
+  function clearChanged<?php echo $p_id; ?>() {
+    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
+    document.getElementById("changed_<?php echo $p_id; ?>").remove(); // Remove the "changed" clickable message added by AJAX
+    showActions<?php echo $p_id; ?>(); // We need our toggles right
   }
   </script>
   <?php

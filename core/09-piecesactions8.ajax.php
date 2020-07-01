@@ -25,7 +25,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
   $query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE id='$piece_id'";
   $call = mysqli_query($database, $query);
   // Start our row colors
-  $table_row_color = 'renew';
+  //$table_row_color = 'renew';
   $row = mysqli_fetch_array($call, MYSQLI_NUM);
     // Assign the values
     $p_id = "$row[0]";
@@ -52,9 +52,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
     if ($p_status == 'dead') {
       $status_class = 'pieces_dead';
+      $show_status = '<i class="gray">trashed</i>';
     } else {
       $status_class = 'pieces_live';
-    }
+      $show_status = $p_status;
+    } // $status_class will have no effect as of now, but we are keeping it as a workflow placeholder for the future
 
     // Date
     if ($p_date_live == NULL) {
@@ -65,11 +67,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
     // Display the info in a <table>
     // Start our HTML table
-    echo '<tr class="'."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
+    echo '<tr class="'."$status_class".'" id="prow_'.$p_id.'">'; // This won't matter, but it is here for reference
 
     // Title
     echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-    <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.' &#9660;</a></b><br>
+    <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
     <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
     <div id="showviews'.$p_id.'" style="display: none;">
     <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
@@ -101,7 +103,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
     // Status
     echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-    .$p_status.' <i class="renew" style ="float: right;">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
+    .$show_status.' <i class="renew" onclick="clearChanged'.$p_id.'()" style ="float: right; cursor: pointer;" id="changed_'.$p_id.'">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
     if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
       echo piecesform('undelete', $p_id).'</div>';
     } elseif ($p_status == 'published') {
@@ -111,20 +113,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     } elseif ($p_status == 'pre-draft') {
       echo piecesform('delete', $p_id).'</div>';
     }
-
-    // JavaScript with unique function name per row, show/hide action links
-    ?>
-    <script>
-    function showActions<?php echo $p_id; ?>() {
-      var x = document.getElementById("showaction<?php echo $p_id; ?>");
-      if (x.style.display === "inline") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "inline";
-      }
-    }
-    </script>
-    <?php
 
     echo '</td>';
 
