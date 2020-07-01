@@ -11,14 +11,14 @@ if (!isset($_SESSION['user_id'])) {
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
-  
+
 } else {
   exit(header("Location: blog.php"));
 }
 
 $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$piece_id'";
 $call1 = mysqli_query($database, $query1);
-$query2 = "DELETE FROM publications WHERE piece_id='$piece_id'";
+$query2 = "DELETE FROM publications WHERE status='dead' AND piece_id='$piece_id'";
 $call2 = mysqli_query($database, $query2);
 $query3 = "DELETE FROM publication_history WHERE piece_id='$piece_id'";
 $call3 = mysqli_query($database, $query3);

@@ -14,7 +14,7 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
 
   $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$piece_id'";
   $call1 = mysqli_query($database, $query1);
-  $query2 = "DELETE FROM publications WHERE piece_id='$piece_id'";
+  $query2 = "DELETE FROM publications WHERE status='dead' AND piece_id='$piece_id'";
   $call2 = mysqli_query($database, $query2);
   $query3 = "DELETE FROM publication_history WHERE piece_id='$piece_id'";
   $call3 = mysqli_query($database, $query3);

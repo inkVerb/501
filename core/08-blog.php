@@ -9,7 +9,7 @@ $head_title = "501 Blog"; // Set a <title> name used next
 include ('./in.login_check.php');
 
 // Check the database for published pieces
-$query = "SELECT piece_id, title, slug, content, after, date_live, date_updated FROM publications WHERE type='post' AND pubstatus='published'";
+$query = "SELECT piece_id, title, slug, content, after, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published'";
 $call = mysqli_query($database, $query);
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {

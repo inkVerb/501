@@ -11,14 +11,14 @@ include ('./in.login_check.php');
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
   $p_id = preg_replace("/[^0-9]/"," ", $_GET['p']); // Set $p_id via sanitize non-numbers
-  $query = "SELECT title, slug, content, after, date_live, date_updated FROM publications WHERE pubstatus='published' AND piece_id='$p_id'";
+  $query = "SELECT title, slug, content, after, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND piece_id='$p_id'";
 
 } elseif ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
 
   $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase, all non-alnum to hyphen
   $p_slug = substr($result, 0, 90); // Limit to 90 characters
-  $query = "SELECT title, piece_id, content, after, date_live, date_updated FROM publications WHERE pubstatus='published' AND slug='$p_slug'";
+  $query = "SELECT title, piece_id, content, after, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug='$p_slug'";
 
 } else {
   exit(header("Location: blog.php"));

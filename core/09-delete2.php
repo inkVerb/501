@@ -18,7 +18,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
 $queryd = "UPDATE pieces SET status='dead' WHERE id='$piece_id'";
 $calld = mysqli_query($database, $queryd);
-$queryr = "UPDATE publications SET pubstatus='redrafting' WHERE piece_id='$piece_id'";
+$queryr = "UPDATE publications SET status='dead' WHERE piece_id='$piece_id'";
 $callr = mysqli_query($database, $queryr);
 if (($calld) && ($callr)) {
   exit(header("Location: pieces.php"));

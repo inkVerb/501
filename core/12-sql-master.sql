@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `publications` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `piece_id` INT UNSIGNED NOT NULL,
   `type` ENUM('page', 'post') NOT NULL,
+  `status` ENUM('live', 'dead') NOT NULL,
   `pubstatus` ENUM('published', 'redrafting') NOT NULL,
   `series` INT UNSIGNED DEFAULT 1,
   `title` VARCHAR(90) NOT NULL,

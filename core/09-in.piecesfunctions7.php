@@ -84,7 +84,7 @@ function piecesaction($action, $p_id) {
   } elseif ($action == 'delete') {
     $queryd = "UPDATE pieces SET status='dead' WHERE id='$p_id'";
     $calld = mysqli_query($database, $queryd);
-    $queryr = "UPDATE publications SET pubstatus='redrafting' WHERE piece_id='$p_id'";
+    $queryr = "UPDATE publications SET status='dead' WHERE piece_id='$p_id'";
     $callr = mysqli_query($database, $queryr);
     if (($calld) && ($callr)) {
       $piecesactionsuccess = true;
@@ -96,9 +96,11 @@ function piecesaction($action, $p_id) {
 
   } elseif (($action == 'restore')
         ||  ($action == 'undelete')) {
-    $query = "UPDATE pieces SET status='live' WHERE id='$p_id'";
-    $call = mysqli_query($database, $query);
-    if ($call) {
+    $queryd = "UPDATE pieces SET status='live' WHERE id='$piece_id'";
+    $calld = mysqli_query($database, $queryd);
+    $queryr = "UPDATE publications SET status='live' WHERE piece_id='$piece_id'";
+    $callr = mysqli_query($database, $queryr);
+    if (($calld) && ($callr)) {
       $piecesactionsuccess = true;
     } else {
       unset($piecesactionsuccess);

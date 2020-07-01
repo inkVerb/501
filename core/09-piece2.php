@@ -13,7 +13,7 @@ if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {
   $from_where = "pieces WHERE ";
   echo '<h2><code>(Draft Preview!)</code></h2>';
 } else {
-  $from_where = "publications WHERE pubstatus='published' AND piece_";
+  $from_where = "publications WHERE status='live' AND pubstatus='published' AND piece_";
 }
 
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
@@ -26,7 +26,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase, all non-alnum to hyphen
   $p_slug = substr($result, 0, 90); // Limit to 90 characters
-  $query = "SELECT title, piece_id, content, after, tags, links, date_live, date_updated FROM publications WHERE pubstatus='published' AND slug='$p_slug'";
+  $query = "SELECT title, piece_id, content, after, tags, links, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug='$p_slug'";
 
 } else {
   exit(header("Location: blog.php"));

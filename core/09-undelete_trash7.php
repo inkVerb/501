@@ -12,9 +12,11 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p']);
 
-  $query = "UPDATE pieces SET status='live' WHERE id='$piece_id'";
-  $call = mysqli_query($database, $query);
-  if ($call) {
+  $queryd = "UPDATE pieces SET status='live' WHERE id='$piece_id'";
+  $calld = mysqli_query($database, $queryd);
+  $queryr = "UPDATE publications SET status='live' WHERE piece_id='$piece_id'";
+  $callr = mysqli_query($database, $queryr);
+  if (($calld) && ($callr)) {
     exit(header("Location: trash.php"));
   } else {
     echo '<pre>Major database error!</pre>';
