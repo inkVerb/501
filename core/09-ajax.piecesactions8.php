@@ -85,20 +85,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
     echo '</div>';
 
-    // JavaScript with unique function name per row, show/hide action links
-    ?>
-    <script>
-    function showViews<?php echo $p_id; ?>() {
-      var x = document.getElementById("showviews<?php echo $p_id; ?>");
-      if (x.style.display === "inline") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "inline";
-      }
-    }
-    </script>
-    <?php
-
     echo '</td>';
 
     // Status
@@ -124,20 +110,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     } else {
       echo piecesform('make page', $p_id).'</div>';
     }
-
-    // JavaScript with unique function name per row, show/hide action links
-    ?>
-    <script>
-    function showTypify<?php echo $p_id; ?>() {
-      var x = document.getElementById("showtypify<?php echo $p_id; ?>");
-      if (x.style.display === "inline") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "inline";
-      }
-    }
-    </script>
-    <?php
 
     echo '</td>';
 

@@ -59,7 +59,7 @@ function piecesform($name, $p_id) {
         document.getElementById("prow_'.$p_id.'").innerHTML = event.target.responseText;
         document.getElementById("prow_'.$p_id.'").classList.add("renew");
         form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
-        listenToForm();
+        listenToForm'.$slug.$p_id.'();
       } );
       AJAX.addEventListener( "error", function( event ) {
         document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_'.$p_id.'\" class=\"error\">Error with '.$name.'</tr>";
@@ -68,13 +68,13 @@ function piecesform($name, $p_id) {
       AJAX.send( FD );
     }
     var form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
-    function listenToForm(){
+    function listenToForm'.$slug.$p_id.'(){
       form.addEventListener( "submit", function ( event ) {
         event.preventDefault();
         sendData();
       } );
     }
-    listenToForm();
+    listenToForm'.$slug.$p_id.'();
   } );
   </script>';
 
