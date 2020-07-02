@@ -96,9 +96,9 @@ function piecesaction($action, $p_id) {
 
   } elseif (($action == 'restore')
         ||  ($action == 'undelete')) {
-    $queryd = "UPDATE pieces SET status='live' WHERE id='$piece_id'";
+    $queryd = "UPDATE pieces SET status='live' WHERE id='$p_id'";
     $calld = mysqli_query($database, $queryd);
-    $queryr = "UPDATE publications SET status='live' WHERE piece_id='$piece_id'";
+    $queryr = "UPDATE publications SET status='live' WHERE piece_id='$p_id'";
     $callr = mysqli_query($database, $queryr);
     if (($calld) && ($callr)) {
       $piecesactionsuccess = true;

@@ -159,6 +159,14 @@ table.contentlib tr.renew i.renew {
 	color: #ffcba8;
 }
 
+table.contentlib tr.deleting {
+	background-color: #fadbd8;
+}
+
+table.contentlib tr.deleting i.deleting {
+	color: #af5b58;
+}
+
 /* htmldiff.js */
 ins {
   text-decoration: none;

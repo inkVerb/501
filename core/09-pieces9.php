@@ -90,13 +90,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
-  if ($p_pub_yn == true) {
-    $query_pub = "SELECT pubstatus FROM publications WHERE piece_id='$p_id'";
+  if (($p_pub_yn == true) && ($p_status == 'live')) {
+    $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
-      $p_status = "$row_pub[0]";
-  } elseif ($p_pub_yn == false) {
+      $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
+  } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }
 
@@ -123,19 +123,12 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Title
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-  <b class="piece_title" onclick="metaEdit'.$p_id.'()" style ="cursor: pointer;">'.$p_title.' &#9998;</b><br>
+  <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style ="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>';
-
-  // No "view" for non-published pieces
-  if (($status_class == 'pieces_live') && ($p_status == 'published')) {
-    echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a> | <a class="green" href="piece.php?p='.$p_id.'">view</a>';
-  } else {
-    echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>';
-  }
-
-  echo '</div>';
+  <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
+  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
+  </div>';
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
@@ -163,15 +156,19 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Status
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$show_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
-  if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
-    echo piecesform('undelete', $p_id).'</div>';
-  } elseif ($p_status == 'published') {
-    echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
+  .$show_status.' <i onclick="clearChanged'.$p_id.'()" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
+  // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
+  if ($p_status == 'published') {
+    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
+    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'redrafting') {
-    echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
+    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> </div>
+    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'pre-draft') {
-    echo piecesform('delete', $p_id).'</div>';
+    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
+    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
@@ -192,8 +189,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <script>
   function clearChanged<?php echo $p_id; ?>() {
     document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
-    document.getElementById("changed_<?php echo $p_id; ?>").remove(); // Remove the "changed" clickable message added by AJAX
-    showActions<?php echo $p_id; ?>(); // We need our toggles right
+    document.getElementById("changed_<?php echo $p_id; ?>").style.display = "none"; // Hide the "changed" clickable message added by AJAX
   }
   </script>
   <?php
@@ -201,12 +197,12 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '</td>';
 
   // Type
-  echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
-  .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
+  echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">
+  <span id="ptype'.$p_id.'">'.$p_type.'</span><br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
-    echo piecesform('make post', $p_id).'</div>';
+    echo '<div id="r_make_'.$p_id.'">'.piecesform('make post', $p_id).'</div></div>';
   } else {
-    echo piecesform('make page', $p_id).'</div>';
+    echo '<div id="r_make_'.$p_id.'">'.piecesform('make page', $p_id).'</div></div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links

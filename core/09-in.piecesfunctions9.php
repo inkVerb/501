@@ -10,12 +10,16 @@ function piecesform($name, $p_id) {
   if ($name == 'undelete') {
     $color_class = 'orange';
     $float_ = 'left';
-    $slug = 'delete';
+    $slug = 'undelete';
   } elseif ($name == 'restore') {
     $color_class = 'orange';
     $float_ = 'left';
-    $slug = 'delete';
+    $slug = 'undelete';
   } elseif ($name == 'delete') {
+    $color_class = 'red';
+    $float_ = 'right';
+    $slug = 'delete';
+  } elseif ($name == 'redelete') {
     $color_class = 'red';
     $float_ = 'right';
     $slug = 'delete';
@@ -48,7 +52,6 @@ function piecesform($name, $p_id) {
     <input type="submit" class="postform inline link-button '.$color_class.'" value="'.$name.'">
   </form>';
 
-
   $result .= '
   <script>
   window.addEventListener( "load", function () {
@@ -56,8 +59,46 @@ function piecesform($name, $p_id) {
       const AJAX = new XMLHttpRequest();
       const FD = new FormData( form );
       AJAX.addEventListener( "load", function(event) {
-        document.getElementById("prow_'.$p_id.'").innerHTML = event.target.responseText;
-        document.getElementById("prow_'.$p_id.'").classList.add("renew");
+        document.getElementById("changed_'.$p_id.'").style.display = "inline";
+        document.getElementById("changed_'.$p_id.'").classList.add("renew");';
+
+// Delete actions should hide other options
+if ($name == 'delete') {
+  $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "inherit";
+              document.getElementById("r_delete_'.$p_id.'").style.display = "none";
+              document.getElementById("r_status_'.$p_id.'").style.display = "none";
+              document.getElementById("prow_'.$p_id.'").classList.add("deleting");
+              document.getElementById("changed_'.$p_id.'").classList.add("deleting");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "deleting";';
+} elseif ($name == 'undelete') {
+  $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "none";
+              document.getElementById("r_delete_'.$p_id.'").style.display = "inherit";
+              document.getElementById("r_status_'.$p_id.'").style.display = "inherit";
+              document.getElementById("prow_'.$p_id.'").classList.add("renew");
+              document.getElementById("prow_'.$p_id.'").classList.remove("deleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("deleting");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "undeleted";';
+} elseif ($slug == 'make') {
+  $result .= 'document.getElementById("r_make_'.$p_id.'").innerHTML = event.target.responseText;
+              document.getElementById("showtypify'.$p_id.'").style.display = "none";
+              document.getElementById("prow_'.$p_id.'").classList.add("renew");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "changed";
+              var x = document.getElementById("ptype'.$p_id.'");
+              if (x.innerHTML === "post") {
+                x.innerHTML = "page";
+              } else {
+                x.innerHTML = "post";
+              }
+              ';
+
+} else {
+  $result .= 'document.getElementById("r_status_'.$p_id.'").innerHTML = event.target.responseText;
+              document.getElementById("showaction'.$p_id.'").style.display = "none";
+              document.getElementById("prow_'.$p_id.'").classList.add("renew");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "changed";';
+}
+
+  $result .= '
         form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
         listenToForm'.$slug.$p_id.'();
       } );

@@ -21,8 +21,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
   // Run the action
   piecesaction($action, $piece_id);
 
+  // In the SQL query, we will not render, we will only check for proper status
   // Get the new info for the piece & rebuild the table row
-  $query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE id='$piece_id'";
+  $query = "SELECT id, type, status, pub_yn FROM pieces WHERE id='$piece_id'";
   $call = mysqli_query($database, $query);
   // Start our row colors
   //$table_row_color = 'renew';
@@ -32,89 +33,33 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     $p_type = "$row[1]";
     $p_status = "$row[2]";
     $p_pub_yn = $row[3]; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
-    $p_title = "$row[4]";
-    $p_date_live = "$row[5]";
-    $p_date_created = "$row[6]";
 
     // Determine the published status based on pieces.pup_yn and the publications.pubstatus
     // This does not affect dead pieces that will AJAX back, which would remain dead anyway
     if (($p_pub_yn == true) && ($p_status == 'live')) {
-      $query_pub = "SELECT pubstatus FROM publications WHERE piece_id='$p_id'";
+      $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
       $call_pub = mysqli_query($database, $query_pub);
       $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
         // Update the $p_status
-        $p_status = "$row_pub[0]";
+        $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
     } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
       $p_status = 'pre-draft';
     }
 
-    // Dead or live?
-    // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
-    if ($p_status == 'dead') {
-      $status_class = 'pieces_dead';
-      $show_status = '<i class="gray">trashed</i>';
-    } else {
-      $status_class = 'pieces_live';
-      $show_status = $p_status;
-    } // $status_class will have no effect as of now, but we are keeping it as a workflow placeholder for the future
-
-    // Date
-    if ($p_date_live == NULL) {
-      $p_date_note = '<span class="date">'."Started: $p_date_created".'</span>';
-    } else {
-      $p_date_note = '<span class="date">'."Live: $p_date_live".'</span>';
+    // We check both the $action and the status/type to make sure they match, then render what they would on a normal page load
+    if ( (($action == 'republish') || ($action == 'undelete')) && ($p_status == 'published') ) {
+      echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> ';
+    } elseif ( (($action == 'unpublish') || ($action == 'undelete')) && ($p_status == 'redrafting') ) {
+      echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> ';
+    } elseif (($action == 'make page') && ($p_type == 'page')) {
+      echo piecesform('make post', $p_id);
+    } elseif (($action == 'make post') && ($p_type == 'post')) {
+      echo piecesform('make page', $p_id);
+    } elseif (($action == 'restore') && ($p_status != 'dead')) {
+      echo piecesform('redelete', $p_id);
+    } elseif (($action == 'redelete') && ($p_status == 'dead')) {
+      echo piecesform('restore', $p_id).piecesform('permanently delete', $p_id);
     }
-
-    // Display the info in a <table>
-    // Start our HTML table
-    echo '<tr class="'."$status_class".'" id="prow_'.$p_id.'">'; // This won't matter, but it is here for reference
-
-    // Title
-    echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-    <b class="piece_title" onclick="metaEdit'.$p_id.'()" style ="cursor: pointer;">'.$p_title.' &#9998;</b><br>
-    <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
-    <div id="showviews'.$p_id.'" style="display: none;">
-    <a style ="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>';
-
-    // No "view" for non-published pieces
-    if (($status_class == 'pieces_live') && ($p_status == 'published')) {
-      echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a> | <a class="green" href="piece.php?p='.$p_id.'">view</a>';
-    } else {
-      echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>';
-    }
-
-    echo '</div>';
-
-    echo '</td>';
-
-    // Status
-    echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-    .$show_status.' <i class="renew" onclick="clearChanged'.$p_id.'()" style ="float: right; cursor: pointer;" id="changed_'.$p_id.'">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
-    if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
-      echo piecesform('undelete', $p_id).'</div>';
-    } elseif ($p_status == 'published') {
-      echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
-    } elseif ($p_status == 'redrafting') {
-      echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
-    } elseif ($p_status == 'pre-draft') {
-      echo piecesform('delete', $p_id).'</div>';
-    }
-
-    echo '</td>';
-
-    // Type
-    echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
-    .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
-    if ($p_type == 'page') {
-      echo piecesform('make post', $p_id).'</div>';
-    } else {
-      echo piecesform('make page', $p_id).'</div>';
-    }
-
-    echo '</td>';
-
-    // Finish piece
-    echo '</tr>';
 
 }
 ?>

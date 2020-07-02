@@ -71,36 +71,40 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
     // Title
     echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-    <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
+    <b class="piece_title" onclick="metaEdit'.$p_id.'()" styl ="cursor: pointer;">'.$p_title.' &#9998;</b><br>
     <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
     <div id="showviews'.$p_id.'" style="display: none;">
-    <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
+    <a style="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>
     <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
     </div>
     </td>';
 
     // Status
     echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-    .$show_status.' <i class="renew" onclick="clearChanged'.$p_id.'()" style="float: right; cursor: pointer;" id="changed_'.$p_id.'">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
-    if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
-      echo piecesform('undelete', $p_id).'</div>';
-    } elseif ($p_status == 'published') {
-      echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> '.piecesform('delete', $p_id).'</div>';
+    .$show_status.' <i onclick="clearChanged'.$p_id.'()" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
+    // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
+    if ($p_status == 'published') {
+      echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
+      <div id="r_status_'.$p_id.'" style="display: inherit;">'.piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
+      <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
     } elseif ($p_status == 'redrafting') {
-      echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
+      echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
+      <div id="r_status_'.$p_id.'" style="display: inherit;">'.piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> </div>
+      <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
     } elseif ($p_status == 'pre-draft') {
-      echo piecesform('delete', $p_id).'</div>';
+      echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
+      <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
     }
 
     echo '</td>';
 
     // Type
-    echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
-    .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
+    echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">
+    <span id="ptype'.$p_id.'">'.$p_type.'</span><br><div id="showtypify'.$p_id.'" style="display: none;">';
     if ($p_type == 'page') {
-      echo piecesform('make post', $p_id).'</div>';
+      echo '<div id="r_make_'.$p_id.'">'.piecesform('make post', $p_id).'</div></div>';
     } else {
-      echo piecesform('make page', $p_id).'</div>';
+      echo '<div id="r_make_'.$p_id.'">'.piecesform('make page', $p_id).'</div></div>';
     }
 
     echo '</td>';

@@ -47,11 +47,11 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // (If pieces.status is 'dead', none of this will happen and $p_status will remain 'dead')
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = "SELECT pubstatus FROM publications WHERE piece_id='$p_id'";
+    $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
-      $p_status = "$row_pub[0]";
+      $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }
@@ -80,11 +80,6 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <div id="showviews'.$p_id.'" style="display: none;">
   <a class="orange" style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
 
-  // No "view" for non-published pieces
-  if (($status_class == 'pieces_live') && ($p_status == 'published')) {
-    echo ' | <a style="float: right;" href="piece.php?p='.$p_id.'">view</a>';
-  }
-
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
@@ -107,7 +102,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   if ($p_status == 'dead') {
     echo piecesform('undelete', $p_id).piecesform('delete forever', $p_id).'</div>';
   } elseif ($p_status == 'published') {
-    echo piecesform('unpublish', $p_id).piecesform('delete', $p_id).'</div>';
+    echo piecesform('unpublish', $p_id).'&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a>'.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'redrafting') {
     echo piecesform('republish', $p_id).piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'pre-draft') {

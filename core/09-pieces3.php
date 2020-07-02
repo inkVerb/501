@@ -42,11 +42,11 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // (If pieces.status is 'dead', none of this will happen and $p_status will remain 'dead')
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = "SELECT pubstatus FROM publications WHERE piece_id='$p_id'";
+    $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
-      $p_status = "$row_pub[0]";
+      $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }

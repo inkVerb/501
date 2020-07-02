@@ -90,13 +90,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
-  if ($p_pub_yn == true) {
-    $query_pub = "SELECT pubstatus FROM publications WHERE piece_id='$p_id'";
+  if (($p_pub_yn == true) && ($p_status == 'live')) {
+    $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
-      $p_status = "$row_pub[0]";
-  } elseif ($p_pub_yn == false) {
+      $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
+  } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }
 
@@ -126,16 +126,9 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>';
-
-  // No "view" for non-published pieces
-  if (($status_class == 'pieces_live') && ($p_status == 'published')) {
-    echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a> | <a class="green" href="piece.php?p='.$p_id.'">view</a>';
-  } else {
-    echo '<a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>';
-  }
-
-  echo '</div>';
+  <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
+  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
+  </div>';
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
@@ -159,7 +152,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
     echo piecesform('undelete', $p_id).'</div>';
   } elseif ($p_status == 'published') {
-    echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
+    echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> '.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'redrafting') {
     echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
   } elseif ($p_status == 'pre-draft') {
