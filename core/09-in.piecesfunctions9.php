@@ -54,6 +54,22 @@ function piecesform($name, $p_id) {
 
   $result .= '
   <script>
+  // Debounce function
+  function debounce(func, wait, immediate) {
+	var timeout;
+  	return function() {
+  		var context = this, args = arguments;
+  		var later = function() {
+  			timeout = null;
+  			if (!immediate) func.apply(context, args);
+  		};
+  		var callNow = immediate && !timeout;
+  		clearTimeout(timeout);
+  		timeout = setTimeout(later, wait);
+  		if (callNow) func.apply(context, args);
+  	};
+  };
+
   window.addEventListener( "load", function () {
     function sendData() {
       const AJAX = new XMLHttpRequest();
@@ -69,7 +85,7 @@ if ($name == 'delete') {
               document.getElementById("r_status_'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("deleting");
               document.getElementById("changed_'.$p_id.'").classList.add("deleting");
-              document.getElementById("changed_'.$p_id.'").innerHTML = "deleting";';
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;deleting&nbsp;";';
 } elseif ($name == 'undelete') {
   $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "none";
               document.getElementById("r_delete_'.$p_id.'").style.display = "inherit";
@@ -77,25 +93,23 @@ if ($name == 'delete') {
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
               document.getElementById("prow_'.$p_id.'").classList.remove("deleting");
               document.getElementById("changed_'.$p_id.'").classList.remove("deleting");
-              document.getElementById("changed_'.$p_id.'").innerHTML = "undeleted";';
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;undeleted&nbsp;";';
 } elseif ($slug == 'make') {
   $result .= 'document.getElementById("r_make_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showtypify'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").innerHTML = "changed";
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed&nbsp;";
               var x = document.getElementById("ptype'.$p_id.'");
               if (x.innerHTML === "post") {
                 x.innerHTML = "page";
               } else {
                 x.innerHTML = "post";
-              }
-              ';
-
+              }';
 } else {
   $result .= 'document.getElementById("r_status_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showaction'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").innerHTML = "changed";';
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed&nbsp;";';
 }
 
   $result .= '

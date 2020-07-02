@@ -123,10 +123,10 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Title
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-  <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
+  <b class="piece_title" onclick="metaEdit'.$p_id.'()" style ="cursor: pointer;">'.$p_title.' &#9998;</b><br>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
+  <a style="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
   </div>';
 
@@ -156,7 +156,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Status
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$show_status.' <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br><div id="showaction'.$p_id.'" style="display: none;">';
+  .$show_status.' <i onclick="clearChanged'.$p_id.'()" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">changed</i><br><div id="showaction'.$p_id.'" style="display: none;">';
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
@@ -189,10 +189,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <script>
   function clearChanged<?php echo $p_id; ?>() {
     document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
-    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("deleting");
     document.getElementById("changed_<?php echo $p_id; ?>").style.display = "none"; // Hide the "changed" clickable message added by AJAX
-    document.getElementById("showaction<?php echo $p_id; ?>").style.display = "inline";
-    document.getElementById("showtypify<?php echo $p_id; ?>").style.display = "none";
   }
   </script>
   <?php

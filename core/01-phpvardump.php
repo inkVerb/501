@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
-<form method="post" action="phpprintr.php">
+<form method="post" action="phpvardump.php">
   <input type="text" name="one">
   <input type="text" name="two">
   <input type="text" name="three">

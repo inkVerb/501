@@ -1,13 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-</head>
-<body>
-
 <?php
 
 // Include our config file with the constants and function
 require_once ('./in.config.php');
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title> <?php echo WEBSITE_TITLE; ?> </title>
+</head>
+<body>
+
+<?php
 
 echo "<h1>".WEBSITE_TITLE."</h1>";
 

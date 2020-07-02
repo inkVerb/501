@@ -161,7 +161,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   function clearChanged<?php echo $p_id; ?>() {
     document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
     document.getElementById("changed_<?php echo $p_id; ?>").remove(); // Remove the "changed" clickable message added by AJAX
-    showActions<?php echo $p_id; ?>(); // We need our toggles right
+    document.getElementById("showaction<?php echo $p_id; ?>").style.display = "inline";
   }
   </script>
   <?php

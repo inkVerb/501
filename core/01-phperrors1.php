@@ -18,7 +18,7 @@ function vip_error($e_number, $e_message, $e_file, $e_line, $e_vars) {
 } // End of vip_error() definition
 
 // Use the error handler
-set_error_handler ('vip_error');
+set_error_handler('vip_error');
 
 // Create our error
 echo $nothere;

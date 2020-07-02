@@ -151,6 +151,34 @@ table.contentlib tr.shady {
 	background-color: #dff8ef;
 }
 
+table.contentlib tr.renew {
+	background-color: #faebd8;
+}
+
+table.contentlib tr.renew code.renew {
+	color: #faebd8;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #ffcba8;
+	border-color: #ffcba8;
+	border-width: 1px;
+}
+
+table.contentlib tr.deleting {
+	background-color: #fadbd8;
+}
+
+table.contentlib tr.deleting code.deleting {
+	color: #fadbd8;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #af5b58;
+	border-color: #af5b58;
+	border-width: 1px;
+}
+
 /* htmldiff.js */
 ins {
   text-decoration: none;

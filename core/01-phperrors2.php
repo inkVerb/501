@@ -1,6 +1,6 @@
 <?php
 
-$live = false;
+$live = true;
 
 // Create our error handler to print errors
 function vip_error($e_number, $e_message, $e_file, $e_line, $e_vars) {
@@ -14,7 +14,7 @@ function vip_error($e_number, $e_message, $e_file, $e_line, $e_vars) {
 	$message .= "<pre>" .print_r(debug_backtrace(), 1) . "</pre>\n";
 
 
-	if ($live == true) {
+	if ($live == false) {
 		echo nl2br($message); // This is "new line to break", so lines will be seen in HTML
 	  // nl2br($string) : \n --> <br>
 	}
@@ -24,7 +24,7 @@ function vip_error($e_number, $e_message, $e_file, $e_line, $e_vars) {
 } // End of vip_error() definition
 
 // Use the error handler
-set_error_handler ('vip_error');
+set_error_handler('vip_error');
 
 // Create our error
 echo $nothere;
