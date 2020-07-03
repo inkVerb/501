@@ -218,7 +218,6 @@ function piecesaction($action, $p_id) {
     }
 
   } elseif ($action == 'purge') {
-    /*
     $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
     $call1 = mysqli_query($database, $query1);
     if ($call1) {
@@ -236,8 +235,7 @@ function piecesaction($action, $p_id) {
       echo '<pre>Major database error!</pre>';
       exit();
     }
-*/
-echo "PURGED";
+
   } elseif ($action == 'make post') {
     $query1 = "UPDATE publications SET type='post' WHERE piece_id='$p_id'";
     $call1 = mysqli_query($database, $query1);
