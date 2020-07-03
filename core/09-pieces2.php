@@ -73,7 +73,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Status
   echo '<td>'.$p_status.'<br>';
   if ($p_status == 'dead') {
-    echo '<a class="blue" href="undelete.php?p='.$p_id.'">undelete</a> | <a class="red" href="empty_delete.php?p='.$p_id.'">delete forever</a></td>';
+    echo '<a class="blue" href="undelete.php?p='.$p_id.'">undelete</a> | <a class="red" href="purge_delete.php?p='.$p_id.'">delete forever</a></td>';
   } elseif ($p_status == 'published') {
     echo '<a class="orange" href="unpublish.php?p='.$p_id.'">unpublish</a> | <a class="red" href="delete.php?p='.$p_id.'">delete</a></td>';
   } elseif ($p_status == 'redrafting') {

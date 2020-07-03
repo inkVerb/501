@@ -12,7 +12,7 @@ include ('./in.login_check.php');
 include ('./in.piecesfunctions.php');
 
 // Trash link
-echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <a class="red" href="empty_all_trash.php">Empty all trash</a>';
+echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <a class="red" href="purge_all_trash.php">Purge all trash</a>';
 
 // Simple line
 echo '<br><hr><br>';
@@ -56,7 +56,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       '.$p_date_note.'</td>';
 
   // Actions
-  echo '<td>'.piecesform('restore', $p_id).piecesform('permanently delete', $p_id).'</td>';
+  echo '<td>'.piecesform('restore', $p_id).piecesform('purge', $p_id).'</td>';
 
   // Type
   echo '<td>'.$p_type.'<br></td>';

@@ -12,13 +12,13 @@ include ('./in.login_check.php');
 include ('./in.piecesfunctions.php');
 
 // Trash link
-echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showEmptyAll()">Empty all trash &rarr;</span> <a class="red" id="empty_all_trash" href="empty_all_trash.php" style="display:none"><i>Yes! Empty all trash</i></a>';
+echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
 
-// Double-check for "Empty all trash"
+// Double-check for "Purge all trash"
 ?>
 <script>
-function showEmptyAll() {
-  var x = document.getElementById("empty_all_trash");
+function showPurgeAll() {
+  var x = document.getElementById("purge_all_trash");
   if (x.style.display === "inline") {
     x.style.display = "none";
   } else {
@@ -38,7 +38,7 @@ echo '<div onclick="showBulkActions()" style="cursor: pointer; display: inline;"
   <table>
     <tr>
       <td><b><input type="submit" class="orange" name="bluksubmit" value="restore"></b></td>
-      <td><b><input type="submit" class="red" name="bluksubmit" value="permanently delete"></b></td>
+      <td><b><input type="submit" class="red" name="bluksubmit" value="purge"></b></td>
     </tr>
   </table>
 </form>
@@ -88,8 +88,6 @@ $query = "SELECT id, type, title, date_live, date_created FROM pieces WHERE stat
 $call = mysqli_query($database, $query);
 // Start our row colors
 $table_row_color = 'blues';
-// Start our show_div counter
-$show_div_count = 1;
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Assign the values
@@ -114,10 +112,10 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<tr class="'."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
 
   // Title
-  echo '<td onmouseover="showViews'.$show_div_count.'()" onmouseout="showViews'.$show_div_count.'()">
+  echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
   <b>'.$p_title.'</b><br>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
-  <div id="showviews'.$show_div_count.'" style="display: none;">
+  <div id="showviews'.$p_id.'" style="display: none;">
   <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
   </div></td>';
@@ -125,8 +123,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showViews<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showviews<?php echo $show_div_count; ?>");
+  function showViews<?php echo $p_id; ?>() {
+    var x = document.getElementById("showviews<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -137,16 +135,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <?php
 
   // Actions
-  echo '<td onmouseover="showActions'.$show_div_count.'()" onmouseout="showActions'.$show_div_count.'()">
-    ready to delete<br><div id="showaction'.$show_div_count.'" style="display: none;">'
-    .piecesform('restore', $p_id).piecesform('permanently delete', $p_id).
+  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">
+    ready to delete<br><div id="showaction'.$p_id.'" style="display: none;">'
+    .piecesform('restore', $p_id).piecesform('purge', $p_id).
   '</div>';
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
   <script>
-  function showActions<?php echo $show_div_count; ?>() {
-    var x = document.getElementById("showaction<?php echo $show_div_count; ?>");
+  function showActions<?php echo $p_id; ?>() {
+    var x = document.getElementById("showaction<?php echo $p_id; ?>");
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -176,8 +174,6 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Toggle our row colors
   $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';
-  // Increment our show div counter
-  ++$show_div_count;
 
 }
 

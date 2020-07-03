@@ -27,8 +27,8 @@ function piecesform($name, $p_id) {
     $post_to = 'undelete_trash.php';
     $color_class = 'orange';
     $float_ = 'left';
-  } elseif ($name == 'permanently delete') {
-    $post_to = 'empty_delete_trash.php';
+  } elseif ($name == 'purge') {
+    $post_to = 'purge_delete_trash.php';
     $color_class = 'red';
     $float_ = 'right';
   } elseif ($name == 'make post') {
@@ -108,7 +108,7 @@ function piecesaction($action, $p_id) {
       exit();
     }
 
-  } elseif ($action == 'permanently delete') {
+  } elseif ($action == 'purge') {
     $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
     $call1 = mysqli_query($database, $query1);
     $query2 = "DELETE FROM publications WHERE piece_id='$p_id'";

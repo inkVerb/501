@@ -156,7 +156,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Status
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$show_status.' <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br><div id="showaction'.$p_id.'" style="display: none;">';
+  .$show_status.' <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br>
+  <div id="showaction'.$p_id.'" style="display: none;">';
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
@@ -188,8 +189,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   ?>
   <script>
   function clearChanged<?php echo $p_id; ?>() {
-    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
-    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("deleting");
+    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting"); // Remove the .renew class from the <tr> added by AJAX
     document.getElementById("changed_<?php echo $p_id; ?>").style.display = "none"; // Hide the "changed" clickable message added by AJAX
     document.getElementById("showaction<?php echo $p_id; ?>").style.display = "inline";
     document.getElementById("showtypify<?php echo $p_id; ?>").style.display = "none";

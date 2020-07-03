@@ -58,7 +58,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     } elseif (($action == 'restore') && ($p_status != 'dead')) {
       echo piecesform('redelete', $p_id);
     } elseif (($action == 'redelete') && ($p_status == 'dead')) {
-      echo piecesform('restore', $p_id).piecesform('permanently delete', $p_id);
+      echo piecesform('restore', $p_id);
     }
 
 }

@@ -179,6 +179,20 @@ table.contentlib tr.deleting code.deleting {
 	border-width: 1px;
 }
 
+table.contentlib tr.undeleting {
+	background-color: #dbfad8;
+}
+
+table.contentlib tr.undeleting code.undeleting {
+	color: #dbfad8;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #5baf58;
+	border-color: #5baf58;
+	border-width: 1px;
+}
+
 /* htmldiff.js */
 ins {
   text-decoration: none;

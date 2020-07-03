@@ -21,12 +21,12 @@ function piecesform($name, $p_id) {
     $slug = 'delete';
   } elseif ($name == 'redelete') {
     $color_class = 'red';
-    $float_ = 'right';
+    $float_ = 'left';
     $slug = 'delete';
-  } elseif ($name == 'permanently delete') {
+  } elseif ($name == 'purge') {
     $color_class = 'red';
     $float_ = 'right';
-    $slug = 'delete';
+    $slug = 'pdelete';
   } elseif ($name == 'unpublish') {
     $color_class = 'orange';
     $float_ = 'left';
@@ -54,63 +54,85 @@ function piecesform($name, $p_id) {
 
   $result .= '
   <script>
-  // Debounce function
-  function debounce(func, wait, immediate) {
-	var timeout;
-  	return function() {
-  		var context = this, args = arguments;
-  		var later = function() {
-  			timeout = null;
-  			if (!immediate) func.apply(context, args);
-  		};
-  		var callNow = immediate && !timeout;
-  		clearTimeout(timeout);
-  		timeout = setTimeout(later, wait);
-  		if (callNow) func.apply(context, args);
-  	};
-  };
-
   window.addEventListener( "load", function () {
     function sendData() {
       const AJAX = new XMLHttpRequest();
       const FD = new FormData( form );
       AJAX.addEventListener( "load", function(event) {
-        document.getElementById("changed_'.$p_id.'").style.display = "inline";
-        document.getElementById("changed_'.$p_id.'").classList.add("renew");';
+        document.getElementById("changed_'.$p_id.'").style.display = "inline";';
 
 // Delete actions should hide other options
-if ($name == 'delete') {
+if ($name == 'delete') { // Pieces
   $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "inherit";
               document.getElementById("r_delete_'.$p_id.'").style.display = "none";
               document.getElementById("r_status_'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("deleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("undeleting","renew");
               document.getElementById("changed_'.$p_id.'").classList.add("deleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("undeleting","renew");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;deleting&nbsp;";';
-} elseif ($name == 'undelete') {
+} elseif ($name == 'undelete') { // Pieces
   $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "none";
               document.getElementById("r_delete_'.$p_id.'").style.display = "inherit";
               document.getElementById("r_status_'.$p_id.'").style.display = "inherit";
-              document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting");
+              document.getElementById("prow_'.$p_id.'").classList.add("undeleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","renew");
+              document.getElementById("changed_'.$p_id.'").classList.add("undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","renew");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;undeleted&nbsp;";';
-} elseif ($slug == 'make') {
+} elseif ($name == 'redelete') { // Trash
+  $result .= 'document.getElementById("r_redelete_'.$p_id.'").style.display = "none";
+              document.getElementById("r_restore_'.$p_id.'").style.display = "inherit";
+              document.getElementById("r_pdelete_'.$p_id.'").style.display = "inherit";
+              document.getElementById("prow_'.$p_id.'").classList.add("deleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.add("deleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("undeleting");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;deleted&nbsp;";
+              document.getElementById("readydelete'.$p_id.'").innerHTML = "ready to purge";';
+} elseif ($name == 'restore') { // Trash
+  $result .= 'document.getElementById("r_redelete_'.$p_id.'").style.display = "inherit";
+              document.getElementById("r_restore_'.$p_id.'").style.display = "none";
+              document.getElementById("r_pdelete_'.$p_id.'").style.display = "none";
+              document.getElementById("prow_'.$p_id.'").classList.add("undeleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("deleting");
+              document.getElementById("changed_'.$p_id.'").classList.add("undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("deleting");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;undeleted&nbsp;";
+              document.getElementById("readydelete'.$p_id.'").innerHTML = "restored";';
+} elseif ($name == 'purge') { // Trash
+  $result .= 'document.getElementById("prow_'.$p_id.'").classList.add("deleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("undeleting");
+              document.getElementById("purged_'.$p_id.'").style.display = "inline";
+              document.getElementById("purged_'.$p_id.'").classList.remove("undeleting");
+              document.getElementById("purged_'.$p_id.'").classList.add("deleting");
+              document.getElementById("changed_'.$p_id.'").style.display = "none";
+              document.getElementById("showviews'.$p_id.'").remove();
+              document.getElementById("showaction'.$p_id.'").remove();
+              document.getElementById("readydelete'.$p_id.'").innerHTML = "purged forever";';
+} elseif ($slug == 'make') { // Pieces type
   $result .= 'document.getElementById("r_make_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showtypify'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed&nbsp;";
+              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.add("renew");
+              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed type&nbsp;";
               var x = document.getElementById("ptype'.$p_id.'");
               if (x.innerHTML === "post") {
                 x.innerHTML = "page";
               } else {
                 x.innerHTML = "post";
               }';
-} else {
+} else { // Pieces status
   $result .= 'document.getElementById("r_status_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showaction'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed&nbsp;";';
-}
+              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.add("renew");
+              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed status&nbsp;";';
+} // End action if
 
   $result .= '
         form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
@@ -167,7 +189,8 @@ function piecesaction($action, $p_id) {
       exit();
     }
 
-  } elseif ($action == 'delete') {
+  } elseif (($action == 'delete')
+        ||  ($action == 'redelete')) {
     $queryd = "UPDATE pieces SET status='dead' WHERE id='$p_id'";
     $calld = mysqli_query($database, $queryd);
     $queryr = "UPDATE publications SET status='dead' WHERE piece_id='$p_id'";
@@ -194,7 +217,8 @@ function piecesaction($action, $p_id) {
       exit();
     }
 
-  } elseif ($action == 'permanently delete') {
+  } elseif ($action == 'purge') {
+    /*
     $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
     $call1 = mysqli_query($database, $query1);
     if ($call1) {
@@ -212,7 +236,8 @@ function piecesaction($action, $p_id) {
       echo '<pre>Major database error!</pre>';
       exit();
     }
-
+*/
+echo "PURGED";
   } elseif ($action == 'make post') {
     $query1 = "UPDATE publications SET type='post' WHERE piece_id='$p_id'";
     $call1 = mysqli_query($database, $query1);

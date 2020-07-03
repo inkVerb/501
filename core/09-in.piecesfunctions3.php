@@ -23,15 +23,15 @@ function piecesform($name, $p_id) {
     $color_class = 'red';
     $float_ = 'right';
   } elseif ($name == 'delete forever') {
-    $post_to = 'empty_delete.php';
+    $post_to = 'purge_delete.php';
     $color_class = 'red';
     $float_ = 'right';
   } elseif ($name == 'restore') {
     $post_to = 'undelete_trash.php';
     $color_class = 'orange';
     $float_ = 'left';
-  } elseif ($name == 'permanently delete') {
-    $post_to = 'empty_delete_trash.php';
+  } elseif ($name == 'purge') {
+    $post_to = 'purge_delete_trash.php';
     $color_class = 'red';
     $float_ = 'right';
   } elseif ($name == 'make post') {

@@ -19,7 +19,7 @@ function piecesform($name, $p_id) {
     $color_class = 'red';
     $float_ = 'right';
     $slug = 'delete';
-  } elseif ($name == 'permanently delete') {
+  } elseif ($name == 'purge') {
     $color_class = 'red';
     $float_ = 'right';
     $slug = 'delete';
@@ -139,7 +139,7 @@ function piecesaction($action, $p_id) {
       exit();
     }
 
-  } elseif ($action == 'permanently delete') {
+  } elseif ($action == 'purge') {
     $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
     $call1 = mysqli_query($database, $query1);
     if ($call1) {

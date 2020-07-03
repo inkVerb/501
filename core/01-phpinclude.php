@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   //if (isset($_POST['website'])) && ($_POST['website'] != '') { // Better
   if (!empty($_POST['website'])) { // Simpler same thing
     $website = checkPost('website',$_POST['website']);
-  } else { // Empty error message in $check_err array
+  } else { // Purge error message in $check_err array
     $check_err['website'] = 'Enter a website address!';
   }
 
