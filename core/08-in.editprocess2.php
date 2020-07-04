@@ -1,6 +1,6 @@
 <?php
 
-if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece']))) {
+if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
   // POST checks
     // Only sanitize, no errors

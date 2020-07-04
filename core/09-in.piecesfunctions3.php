@@ -45,7 +45,7 @@ function piecesform($name, $p_id) {
   }
 
   $result = '
-<form method="post" action="'.$post_to.'" style ="float: '.$float_.';" class="postform inline">
+<form method="post" action="'.$post_to.'" style="float: '.$float_.';" class="postform inline">
   <input type="hidden" name="p" value="'.$p_id.'">
   <button type="submit" class="postform inline link-button '.$color_class.'">'.$name.'</button>
 </form>';

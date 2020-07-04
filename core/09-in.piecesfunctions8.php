@@ -42,7 +42,7 @@ function piecesform($name, $p_id) {
   }
 
   $result = '
-  <form method="post" id="pa_'.$slug.'_'.$p_id.'" action="act.piecesactions.php" style ="float: '.$float_.';" class="postform inline">
+  <form method="post" id="pa_'.$slug.'_'.$p_id.'" action="act.piecesactions.php" style="float: '.$float_.';" class="postform inline">
     <input type="hidden" name="p" value="'.$p_id.'">
     <input type="hidden" name="action" value="'.$name.'">
     <input type="submit" class="postform inline link-button '.$color_class.'" value="'.$name.'">
@@ -58,18 +58,18 @@ function piecesform($name, $p_id) {
       AJAX.addEventListener( "load", function(event) {
         document.getElementById("prow_'.$p_id.'").innerHTML = event.target.responseText;
         document.getElementById("prow_'.$p_id.'").classList.add("renew");
-        form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
+        form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
         listenToForm'.$slug.$p_id.'();
       } );
-      AJAX.addEventListener( "error", function( event ) {
+      AJAX.addEventListener( "error", function(event) {
         document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_'.$p_id.'\" class=\"error\">Error with '.$name.'</tr>";
       } );
-      AJAX.open( "POST", "ajax.piecesactions.php" );
-      AJAX.send( FD );
+      AJAX.open("POST", "ajax.piecesactions.php");
+      AJAX.send(FD);
     }
-    var form = document.getElementById( "pa_'.$slug.'_'.$p_id.'" );
+    var form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
     function listenToForm'.$slug.$p_id.'(){
-      form.addEventListener( "submit", function ( event ) {
+      form.addEventListener( "submit", function(event) {
         event.preventDefault();
         sendData();
       } );
@@ -91,7 +91,7 @@ function piecesaction($action, $p_id) {
 
   // Choose the action
   if ($action == 'unpublish') {
-    $query = "UPDATE publications SET pubstatus='redrafting' WHERE id='$p_id'";
+    $query = "UPDATE publications SET pubstatus='redrafting', date_updated=NOW() WHERE id='$p_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $piecesactionsuccess = true;
@@ -102,7 +102,7 @@ function piecesaction($action, $p_id) {
     }
 
   } elseif ($action == 'republish') {
-    $query = "UPDATE publications SET pubstatus='published' WHERE id='$p_id'";
+    $query = "UPDATE publications SET pubstatus='published', date_updated=NOW() WHERE id='$p_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $piecesactionsuccess = true;
@@ -113,9 +113,9 @@ function piecesaction($action, $p_id) {
     }
 
   } elseif ($action == 'delete') {
-    $queryd = "UPDATE pieces SET status='dead' WHERE id='$p_id'";
+    $queryd = "UPDATE pieces SET status='dead', date_updated=NOW() WHERE id='$p_id'";
     $calld = mysqli_query($database, $queryd);
-    $queryr = "UPDATE publications SET status='dead' WHERE piece_id='$p_id'";
+    $queryr = "UPDATE publications SET status='dead', date_updated=NOW() WHERE piece_id='$p_id'";
     $callr = mysqli_query($database, $queryr);
     if (($calld) && ($callr)) {
       $piecesactionsuccess = true;
@@ -127,9 +127,9 @@ function piecesaction($action, $p_id) {
 
   } elseif (($action == 'restore')
         ||  ($action == 'undelete')) {
-    $queryd = "UPDATE pieces SET status='live' WHERE id='$p_id'";
+    $queryd = "UPDATE pieces SET status='live', date_updated=NOW() WHERE id='$p_id'";
     $calld = mysqli_query($database, $queryd);
-    $queryr = "UPDATE publications SET status='live' WHERE piece_id='$p_id'";
+    $queryr = "UPDATE publications SET status='live', date_updated=NOW() WHERE piece_id='$p_id'";
     $callr = mysqli_query($database, $queryr);
     if (($calld) && ($callr)) {
       $piecesactionsuccess = true;
@@ -159,9 +159,9 @@ function piecesaction($action, $p_id) {
     }
 
   } elseif ($action == 'make post') {
-    $query1 = "UPDATE publications SET type='post' WHERE piece_id='$p_id'";
+    $query1 = "UPDATE publications SET type='post', date_updated=NOW() WHERE piece_id='$p_id'";
     $call1 = mysqli_query($database, $query1);
-    $query2 = "UPDATE pieces SET type='post' WHERE id='$p_id'";
+    $query2 = "UPDATE pieces SET type='post', date_updated=NOW() WHERE id='$p_id'";
     $call2 = mysqli_query($database, $query2);
     if (($call1) && ($call2)) {
       $piecesactionsuccess = true;
@@ -172,9 +172,9 @@ function piecesaction($action, $p_id) {
     }
 
   } elseif ($action == 'make page') {
-    $query1 = "UPDATE publications SET type='page' WHERE piece_id='$p_id'";
+    $query1 = "UPDATE publications SET type='page', date_updated=NOW() WHERE piece_id='$p_id'";
     $call1 = mysqli_query($database, $query1);
-    $query2 = "UPDATE pieces SET type='page' WHERE id='$p_id'";
+    $query2 = "UPDATE pieces SET type='page', date_updated=NOW() WHERE id='$p_id'";
     $call2 = mysqli_query($database, $query2);
     if (($call1) && ($call2)) {
       $piecesactionsuccess = true;

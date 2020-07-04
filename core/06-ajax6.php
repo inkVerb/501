@@ -22,20 +22,20 @@
 
       } ); // Change HTML on successful response
 
-      AJAX.addEventListener( "error", function( event ) { // This runs if AJAX fails
+      AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
         document.getElementById("ajax_changes").innerHTML =  'Oops! Something went wrong.';
       } );
 
-      AJAX.open( "POST", "ajax_responder.php" ); // Send data, ajax_responder.php can be any file or URL
+      AJAX.open("POST", "ajax_responder.php"); // Send data, ajax_responder.php can be any file or URL
 
-      AJAX.send( FD ); // Data sent is from the form
+      AJAX.send(FD); // Data sent is from the form
 
     } // sendData() function
 
     // Declare the variable the first time it is used, not a constant
-    var form = document.getElementById( "ajaxForm" ); // Access <form id="ajaxForm">, id="ajaxForm" can be anything
+    var form = document.getElementById("ajaxForm"); // Access <form id="ajaxForm">, id="ajaxForm" can be anything
     function listenToForm(){
-      form.addEventListener( "submit", function ( event ) { // Takeover <input type="submit">
+      form.addEventListener( "submit", function(event) { // Takeover <input type="submit">
         event.preventDefault();
         sendData();
       } );

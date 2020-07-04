@@ -240,6 +240,11 @@ del {
   margin-right: 8px;
 }
 
+/* metaEdit() popup */
+.metaedit {
+	position: relative;
+}
+
 /* infoPop() popup */
 /* Container */
 .infopop {

@@ -91,7 +91,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
+    $query_pub = "SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
@@ -100,15 +100,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     $p_status = 'pre-draft';
   }
 
-  // Dead or live?
-  // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
-  if ($p_status == 'dead') {
-    $status_class = 'pieces_dead';
-    $show_status = '<i class="gray">trashed</i>';
-  } else {
-    $status_class = 'pieces_live';
-    $show_status = $p_status;
-  }
+  // Status
+  $status_class = 'pieces_live';
 
   // Date
   if ($p_date_live == NULL) {

@@ -91,7 +91,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = "SELECT status, pubstatus FROM publications WHERE piece_id='$p_id'";
+    $query_pub = "SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id='$p_id'";
     $call_pub = mysqli_query($database, $query_pub);
     $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
       // Update the $p_status
@@ -100,14 +100,21 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     $p_status = 'pre-draft';
   }
 
-  // Dead or live?
-  // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload
-  if ($p_status == 'dead') {
-    $status_class = 'pieces_dead';
-    $show_status = '<i class="gray">trashed</i>';
-  } else {
-    $status_class = 'pieces_live';
-    $show_status = $p_status;
+  // Status
+  $status_class = 'pieces_live';
+  if ($p_status == 'published') {
+    $show_status = '&#10004; published';
+  } elseif ($p_status == 'redrafting') {
+    $show_status = '&#10001; redrafting';
+  } elseif ($p_status == 'pre-draft') {
+    $show_status = '&#10001; pre-draft';
+  }
+
+  // Type
+  if ($p_type == 'post') {
+    $show_type = '&#8267; post';
+  } elseif ($p_type == 'page') {
+    $show_type = '&#10081; page';
   }
 
   // Date
@@ -122,9 +129,12 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<tr class="'."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
 
   // Title
+  $title_content = '<b class="piece_title" onclick="metaEdit'.$p_id.'()" style="cursor: pointer;">'.$p_title.' &#9998;</b>';
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-  <b class="piece_title" onclick="metaEdit'.$p_id.'()" style ="cursor: pointer;">'.$p_title.' &#9998;</b><br>
+  <div style="display: inline;">'.$title_content.'</div><br>
+  <div id="me'.$p_id.'" style="display: hidden;"></div>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
+
   <div id="showviews'.$p_id.'" style="display: none;">
   <a style="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
@@ -146,17 +156,92 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // JavaScript for metaEdit
   ?>
   <script>
-  function metaEdit<?php echo $p_id; ?>() {
-    // metaEdit JS goes here
+  // This will be used inside the <form> AJAX sends to us; declare the function now
+  function metaEditClose<?php echo $p_id; ?>() {
+    // innerHTML replace with the original Title content
+    document.getElementById("me<?php echo $p_id; ?>").innerHTML = "<?php echo "bye" ?>";
   }
+
+  // Initiate AJAX
+  function metaEditAjax<?php echo $p_id; ?>() {
+    var ajax;
+    ajax = new XMLHttpRequest();
+    return ajax;
+
+  }
+
+  // AJAX the <form>
+  function metaEdit<?php echo $p_id; ?>() {
+
+    var x = document.getElementById("me<?php echo $p_id; ?>");
+    if (x.style.display === "inline") { // Box is open, clicking Title again to close
+      document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
+      document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
+
+    } else { // Box is closed, clicking Title to open
+
+    // AJAX handler
+    var ajaxHandler = metaEditAjax<?php echo $p_id; ?>();
+    ajaxHandler.onreadystatechange = function() {
+      if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
+
+        // Show box
+        document.getElementById("me<?php echo $p_id; ?>").classList.add("metaedit");
+        document.getElementById("me<?php echo $p_id; ?>").style.display = "inline";
+
+        // Update to see the <form> from AJAX
+        document.getElementById("me<?php echo $p_id; ?>").innerHTML = ajaxHandler.responseText;
+
+        // Capture submit button for AJAX
+        form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
+        listenToMetaEditForm<?php echo $p_id; ?>();
+      }
+    }
+    // POST to the AJAX and get the actual form
+    ajaxHandler.open("POST", "ajax.metaedit.php", true);
+    ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    ajaxHandler.send("p_id=<?php echo $p_id; ?>");
+
+  } // End clicking to open
+} // End editMeta()
+
+  // Listen for a submit
+  function sendEditMetaData<?php echo $p_id; ?>() {
+    const AJAX = new XMLHttpRequest();
+    const FD = new FormData( form );
+    AJAX.addEventListener( "load", function(event) {
+
+      // After we submit this AJAX-loaded <form>
+      document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
+      document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
+      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("renew"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = ajaxHandler.responseText; // Note the <tr> row
+
+    } );
+    AJAX.addEventListener( "error", function(event) {
+      document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_<?php echo $p_id; ?>\" class=\"error\">Error with '.$name.'</tr>";
+    } );
+    AJAX.open("POST", "ajax.metaedit.php", true);
+    AJAX.send(FD);
+  }
+
+  // Capture submit button for AJAX
+  var form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
+  function listenToMetaEditForm<?php echo $p_id; ?>(){
+    form.addEventListener( "submit", function(event) {
+      event.preventDefault();
+      sendEditMetaData<?php echo $p_id; ?>();
+    } );
+  }
+
   </script>
   <?php
 
   echo '</td>';
 
   // Status
-  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$show_status.' <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br>
+  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">
+  <span id="pstatus'.$p_id.'">'.$show_status.'</span><i id="pdeleting'.$p_id.'" style="display: none;">&#10008; trashed</i> <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br>
   <div id="showaction'.$p_id.'" style="display: none;">';
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
@@ -201,7 +286,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Type
   echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">
-  <span id="ptype'.$p_id.'">'.$p_type.'</span><br><div id="showtypify'.$p_id.'" style="display: none;">';
+  <span id="ptype'.$p_id.'">'.$show_type.'</span><br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
     echo '<div id="r_make_'.$p_id.'">'.piecesform('make post', $p_id).'</div></div>';
   } else {

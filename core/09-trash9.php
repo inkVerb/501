@@ -116,7 +116,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <b>'.$p_title.'</b><br>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style ="float: none;" href="edit.php?p='.$p_id.'">edit</a>
+  <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
   </div></td>';
 
@@ -136,7 +136,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Actions
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">
-    <div id="readydelete'.$p_id.'" style="display: inline;">ready to purge</div>
+    <span id="readydelete'.$p_id.'">ready to purge</span>
     <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code>
     <code onclick="clearPurged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="purged_'.$p_id.'">&nbsp;purged&nbsp;</code><br>
     <div id="showaction'.$p_id.'" style="display: none;">

@@ -100,6 +100,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Dead or live?
   $status_class = 'pieces_dead';
 
+  // Type
+  if ($p_type == 'post') {
+    $show_type = '&#8267; post';
+  } elseif ($p_type == 'page') {
+    $show_type = '&#10081; page';
+  }
+
   // Date
   if ($p_date_live == NULL) {
     $p_date_note = '<span class="date">'."Started: $p_date_created".'</span>';
@@ -136,9 +143,14 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Actions
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">
-    ready to delete<br><div id="showaction'.$p_id.'" style="display: none;">'
-    .piecesform('restore', $p_id).piecesform('purge', $p_id).
-  '</div>';
+    <span id="readydelete'.$p_id.'">&#10008; ready to purge</span>
+    <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code>
+    <code onclick="clearPurged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="purged_'.$p_id.'">&nbsp;purged&nbsp;</code><br>
+    <div id="showaction'.$p_id.'" style="display: none;">
+    <div id="r_redelete_'.$p_id.'" style="display: none;">'.piecesform('redelete', $p_id).'</div>
+    <div id="r_restore_'.$p_id.'" style="display: inherit;">'.piecesform('restore', $p_id).'</div>
+    <div id="r_pdelete_'.$p_id.'" style="display: inherit;">'.piecesform('purge', $p_id).'</div>
+    </div>';
 
   // JavaScript with unique function name per row, show/hide action links
   ?>
@@ -153,11 +165,29 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   }
   </script>
   <?php
+  // JavaScript to clear "changed" status
+  ?>
+  <script>
+  function clearChanged<?php echo $p_id; ?>() {
+    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting"); // Remove the .renew class from the <tr> added by AJAX
+    document.getElementById("changed_<?php echo $p_id; ?>").style.display = "none"; // Hide the "changed" clickable message added by AJAX
+    document.getElementById("showaction<?php echo $p_id; ?>").style.display = "inline";
+  }
+  </script>
+  <?php
+  // JavaScript to clear "purged" status
+  ?>
+  <script>
+  function clearPurged<?php echo $p_id; ?>() {
+    document.getElementById("prow_<?php echo $p_id; ?>").style.display = "none" // Remove the <tr> row
+  }
+  </script>
+  <?php
 
   echo '</td>';
 
   // Type
-  echo '<td>'.$p_type.'<br></td>';
+  echo '<td>'.$show_type.'<br></td>';
 
   // Finish piece
   echo '</tr>';

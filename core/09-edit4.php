@@ -157,7 +157,5 @@ $string3<br>
 ";
 echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_links).'<br><br>';
 
-
-
 // Footer
 include ('./in.footer.php');
