@@ -176,7 +176,7 @@ function pieceInput($name, $value) {
     </select>';
 
   } elseif ($name == 'p_content') {
-    $result = '<textarea id="p_content" name="p_content">'.$value.'</textarea>';
+    $result = '<textarea id="p_content" class="tinymce_editor" name="p_content">'.$value.'</textarea>';
 
   } elseif ($name == 'p_after') {
     $result = '<textarea id="p_after" name="p_after">'.$value.'</textarea>';

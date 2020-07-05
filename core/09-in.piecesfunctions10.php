@@ -69,9 +69,9 @@ if ($name == 'delete') { // Pieces
               document.getElementById("pdeleting'.$p_id.'").style.display = "inline";
               document.getElementById("pstatus'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("deleting");
-              document.getElementById("prow_'.$p_id.'").classList.remove("undeleting","renew");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","undeleting","renew");
               document.getElementById("changed_'.$p_id.'").classList.add("deleting");
-              document.getElementById("changed_'.$p_id.'").classList.remove("undeleting","renew");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","undeleting","renew");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;deleting&nbsp;";';
 } elseif ($name == 'undelete') { // Pieces
   $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "none";
@@ -80,9 +80,9 @@ if ($name == 'delete') { // Pieces
               document.getElementById("pdeleting'.$p_id.'").style.display = "none";
               document.getElementById("pstatus'.$p_id.'").style.display = "inline";
               document.getElementById("prow_'.$p_id.'").classList.add("undeleting");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","renew");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","deleting","renew");
               document.getElementById("changed_'.$p_id.'").classList.add("undeleting");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","renew");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","renew");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;undeleted&nbsp;";';
 } elseif ($name == 'redelete') { // Trash
   $result .= 'document.getElementById("r_redelete_'.$p_id.'").style.display = "none";
@@ -118,9 +118,9 @@ if ($name == 'delete') { // Pieces
   $result .= 'document.getElementById("r_make_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showtypify'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed type&nbsp;";
               var x = document.getElementById("ptype'.$p_id.'");
               if (x.innerHTML.includes("post")) {
@@ -132,9 +132,9 @@ if ($name == 'delete') { // Pieces
   $result .= 'document.getElementById("r_status_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showaction'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed status&nbsp;";
               var x = document.getElementById("pstatus'.$p_id.'");
               if (x.innerHTML.includes("published")) {
@@ -149,7 +149,11 @@ if ($name == 'delete') { // Pieces
         listenToForm'.$slug.$p_id.'();
       } );
       AJAX.addEventListener( "error", function(event) {
-        document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_'.$p_id.'\" class=\"error\">Error with '.$name.'</tr>";
+        document.getElementById("prow_'.$p_id.'").classList.add("deleting");
+        document.getElementById("changed_'.$p_id.'").classList.add("renew");
+        document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
+        document.getElementById("changed_'.$p_id.'").innerHTML = "'.$name.' error";
+        document.getElementById("changed_'.$p_id.'").style.display = "inline";
       } );
       AJAX.open("POST", "ajax.piecesactions.php");
       AJAX.send(FD);

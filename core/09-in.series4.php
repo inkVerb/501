@@ -1,6 +1,3 @@
-<?php
-
-?>
 <!-- AJAX a form via JavaScript & PHP from 501-06 -->
 <script>
 window.addEventListener( "load", function () {

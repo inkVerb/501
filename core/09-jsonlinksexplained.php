@@ -16,7 +16,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p_links'])) ) {
 
 // Create our form (a little bigger with: cols="80" rows="8")
 echo '
-<form action="jsonarraylinkparse.php" method="post">
+<form action="jsonlinksexplained.php" method="post">
   <textarea id="p_links" name="p_links" cols="80" rows="8">'.$posted_value.'</textarea>
   <br><br>
   <input type="submit" value="Parse me">
@@ -386,7 +386,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
   $span_end = htmlspecialchars('</span>');
   echo '<pre><h2>6. Iterate our PHP array into HTML links</h2></pre>';
   echo '<code style="background-color:#ddd;">
-  $p_links_json_in = ''; // Start the $p_links_json_in set
+  $p_links_json_in = \'\'; // Start the $p_links_json_in set
   foreach ($links_array as $line_item) {<br>
   &nbsp;&nbsp;$link_item = \''.$processed_link.'\';<br>
   &nbsp;&nbsp;$links .= $link_item.\''.$br_tag.$br_tag.'\';<br>

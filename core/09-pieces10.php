@@ -132,7 +132,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   $title_content = '<b class="piece_title" onclick="metaEdit'.$p_id.'()" style="cursor: pointer;">'.$p_title.' &#9998;</b>';
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
   <div style="display: inline;">'.$title_content.'</div><br>
-  <div id="me'.$p_id.'" style="display: hidden;"></div>
+  <div id="me'.$p_id.'" class="meta_edit_box" style="display: hidden;"></div>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
 
   <div id="showviews'.$p_id.'" style="display: none;">
@@ -156,10 +156,12 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // JavaScript for metaEdit
   ?>
   <script>
+
   // This will be used inside the <form> AJAX sends to us; declare the function now
   function metaEditClose<?php echo $p_id; ?>() {
     // innerHTML replace with the original Title content
-    document.getElementById("me<?php echo $p_id; ?>").innerHTML = "<?php echo "bye" ?>";
+    document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none";
+    document.getElementById("me<?php echo $p_id; ?>").innerHTML = "";
   }
 
   // Initiate AJAX
@@ -173,6 +175,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // AJAX the <form>
   function metaEdit<?php echo $p_id; ?>() {
 
+    // Close box
     var x = document.getElementById("me<?php echo $p_id; ?>");
     if (x.style.display === "inline") { // Box is open, clicking Title again to close
       document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
@@ -197,7 +200,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
         listenToMetaEditForm<?php echo $p_id; ?>();
       }
     }
-    // POST to the AJAX and get the actual form
+    // POST to the AJAX source and get the actual <form>
     ajaxHandler.open("POST", "ajax.metaedit.php", true);
     ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     ajaxHandler.send("p_id=<?php echo $p_id; ?>");
@@ -209,19 +212,24 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   function sendEditMetaData<?php echo $p_id; ?>() {
     const AJAX = new XMLHttpRequest();
     const FD = new FormData( form );
-    AJAX.addEventListener( "load", function(event) {
-
-      // After we submit this AJAX-loaded <form>
+    AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
+      document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none"; // Hide the view actions
       document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
       document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
-      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("renew"); // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = ajaxHandler.responseText; // Note the <tr> row
-
+      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting");
+      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = '&nbsp;'+event.target.responseText+'&nbsp;'; // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").style.display = "inline"; // Show our "changed indicator"
     } );
-    AJAX.addEventListener( "error", function(event) {
-      document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_<?php echo $p_id; ?>\" class=\"error\">Error with '.$name.'</tr>";
+    AJAX.addEventListener( "error", function(event) { // Error in AJAX
+      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("deleting"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.add("renew"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("metaupdate","deleting","undeleting"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = "error with Meta Edit"; // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").style.display = "inline"; // Show our "changed indicator"
     } );
-    AJAX.open("POST", "ajax.metaedit.php", true);
+    AJAX.open("POST", "ajax.metaedit.php");
     AJAX.send(FD);
   }
 
@@ -233,6 +241,35 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       sendEditMetaData<?php echo $p_id; ?>();
     } );
   }
+
+  // Schedule click show/hide
+    // Click on the checkbox to show/check
+    function showGoLiveOptionsBox<?php echo $p_id; ?>() {
+      var x = document.getElementById("goLiveOptions<?php echo $p_id; ?>");
+      if (x.style.display === "block") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "block";
+      }
+    }
+    // Click on the label to show/check
+    function showGoLiveOptionsLabel<?php echo $p_id; ?>() {
+      // Show the Date Live schedule div
+      var x = document.getElementById("goLiveOptions<?php echo $p_id; ?>");
+      if (x.style.display === "block") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "block";
+      }
+      // Use JavaScript to check the box
+      var y = document.getElementById("p_live_schedule_<?php echo $p_id; ?>");
+      if (y.checked === false) {
+        y.checked = true;
+      } else {
+        y.checked = false;
+      }
+    }
+  // End Schedule click show/hide
 
   </script>
   <?php
@@ -274,7 +311,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   ?>
   <script>
   function clearChanged<?php echo $p_id; ?>() {
-    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting"); // Remove the .renew class from the <tr> added by AJAX
+    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew","metaupdate","deleting","undeleting"); // Remove the .renew class from the <tr> added by AJAX
     document.getElementById("changed_<?php echo $p_id; ?>").style.display = "none"; // Hide the "changed" clickable message added by AJAX
     document.getElementById("showaction<?php echo $p_id; ?>").style.display = "inline";
     document.getElementById("showtypify<?php echo $p_id; ?>").style.display = "none";

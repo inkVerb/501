@@ -31,6 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Save
 if (isset($_POST['edit_piece'])) {
 
+  // Pub Status
+  if ( ($_POST['p_pubyn'] != 'published') && ($_POST['p_pubyn'] != 'pre-draft') ) {
+    echo '<b class="error">impossible error</b>';
+    exit();
+  }
+  $p_pubyn = ($_POST['p_pubyn'] == 'published') ? $_POST['p_pubyn'] : 'pre-draft';
+
   // Title now because we will use it in the Slug
   $p_title = checkPiece('p_title',$_POST['p_title']);
 
@@ -42,11 +49,7 @@ if (isset($_POST['edit_piece'])) {
   }
   // Check that the slug isn't already used
   $p_slug_test_sqlesc = escape_sql($p_slug);
-  if (isset($piece_id)) { // We don't want a dup from for own piece
-    $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc' AND NOT piece_id='$piece_id'";
-  } else {
-    $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc'";
-  }
+  $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc' AND NOT piece_id='$piece_id'";
   $call = mysqli_query($database, $query);
   if (mysqli_num_rows($call) == 1) {
     $add_num = 0;
@@ -57,11 +60,7 @@ if (isset($_POST['edit_piece'])) {
       $new_p_slug = $p_slug_test_sqlesc.'-'.$add_num;
 
       // Check again
-      if (isset($piece_id)) { // We don't want a dup from for own piece
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id'";
-      } else {
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug'";
-      }
+      $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id'";
       $call = mysqli_query($database, $query);
       if (mysqli_num_rows($call) == 0) {
         $p_slug = $new_p_slug;
@@ -108,12 +107,10 @@ if (isset($_POST['edit_piece'])) {
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
-  if ($p_status == 'draft') { // No empty live date for publishing pieces
-    $p_live = ($p_live_schedule == true) ? $p_live_sqlesc = escape_sql("$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec") : NULL;
-    $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
-  } elseif (($p_status == 'publish') || ($p_status == 'update')) { // Unscheduled publish goes live now
-    $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
-    $p_live_schedule = true;
+  if ($p_live_schedule == false) { // No empty live date for publishing pieces
+    $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id'";
+  } elseif ($p_live_schedule == true) { // Unscheduled publish goes live now
+    $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
     $p_live_sqlesc = escape_sql($p_live);
     $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
   }
@@ -135,30 +132,29 @@ if (isset($_POST['edit_piece'])) {
     $callu = mysqli_query($database, $queryu);
 
     // publications UPDATE?
-    if ($pubstatus == 'none') {
+    if ($p_pubyn == false) {
       $callp = true; // We have a test later
-      $publication_message = 'Pre-draft saved';
-    } elseif ( ($pubstatus = 'published') || ($pubstatus = 'redrafting') ) {
+      $publication_message = 'pre-draft saved';
+    } elseif ($p_pubyn == true) {
       $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
       $callp = mysqli_query($database, $query);
-
-      $publication_message = 'Publication updated';
+      $publication_message = 'piece updated';
     }
 
     // Test the query
     if (($callp) && ($callu)) {
        echo $publication_message;
     } else {
-      echo '<b class="error">Serious error</b>';
+      echo '<b class="error">serious error</b>';
       exit();
     }
   } else {
     echo 'No change to publication';
   }
 
+
 // Editing
 } elseif (isset($_POST['p_id'])) {
-
 
   // Look for a publications piece, regardless of what happens, before anything else happens
   $query = "SELECT id FROM publications WHERE piece_id='$piece_id' AND pubstatus='published'";
@@ -169,19 +165,22 @@ if (isset($_POST['edit_piece'])) {
   }
 
   // Retrieve existing piece
-  $query = "SELECT status, title, slug, after, tags, links, date_live FROM pieces WHERE id='$piece_id'";
+  $query = "SELECT pub_yn, title, slug, after, tags, links, date_live FROM pieces WHERE id='$piece_id'";
   $call = mysqli_query($database, $query);
   // Shoule be 1 row
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $p_status = "$row[0]";
+      $p_pubyn = "$row[0]";
       $p_title = "$row[1]";
       $p_slug = "$row[2]";
       $p_after = "$row[3]";
       $p_tags_json = "$row[4]";
       $p_links_sqljson = "$row[5]";
       $p_live = "$row[6]";
+
+      // Pub Status
+      $p_pubyn = ($p_pubyn == true) ? 'published' : 'pre-draft';
 
       // Process tags for use in HTML
       $p_tags = implode(', ', json_decode($p_tags_json, true));
@@ -199,49 +198,67 @@ if (isset($_POST['edit_piece'])) {
         $p_links = $links;
       }
 
+      // Parse $p_live
+      // Test our $p_live when converting it to the epoch
+      if ($p_live_epoch = strtotime($p_live)) { // Our accepted timestamp format
+        $p_live_schedule = true;
+        // Send to it's variables
+        $p_live_yr = date("Y", $p_live_epoch);
+        $p_live_mo = date("m", $p_live_epoch);
+        $p_live_day = date("d", $p_live_epoch);
+        $p_live_hr = date("H", $p_live_epoch);
+        $p_live_min = date("i", $p_live_epoch);
+        $p_live_sec = date("s", $p_live_epoch);
+
+      } else { // Not our format, probably NULL, do not schedule
+        $p_live_schedule = false;
+
+      }
+
     } else {
-      echo '<b class="error">Serious database error!</b>';
+      echo '<b class="error">serious database error!</b>';
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // Our pieceInput globals
+  $edit_piece_id = $piece_id;
+  $form_id = 'meta_edit_form_';
 
   // Our Meta Edit form
-  echo '<form action="AJAX" method="post" id="meta_edit_form_'.$piece_id.'">';
-  echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
+  echo '<form action="AJAX" class="metaedit" method="post" id="meta_edit_form_'.$piece_id.'">';
+  echo '<input form="meta_edit_form_'.$piece_id.'" type="hidden" name="edit_piece" value="'.$piece_id.'"><br>';
+  echo '<input form="meta_edit_form_'.$piece_id.'" type="hidden" name="p_pubyn" value="'.$p_pubyn.'"><br>';
+  echo '</form>';
 
   // Title & Slug
   echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
   echo 'Slug: '.pieceInput('p_slug', $p_slug).'<br><br>';
 
   // Series
-  $infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';
   echo 'Series:';
+  // Query the Serieses
+  $query = "SELECT id, name FROM series";
+  $call = mysqli_query($database, $query);
 
-    // Set necessary values
-    // Set a default Series, probably from settings table
-    $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
+  // Start the select input
+  // We need the div with our AJAX form inside so the input value is reset on success
+  echo '
+  <div id="p_series'.$piece_id.'">
+  <select form="meta_edit_form_'.$piece_id.'" name="p_series">';
+    // Iterate each Series
+    while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+      $s_id = "$row[0]";
+      $s_name = "$row[1]";
+      $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the current Series
+      echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
+    }
+  echo '</select>';
 
-    // Accept any set value
-    $p_series = (isset($p_series)) ? $p_series : $de_series;
-    include ('./in.series.php');
+  echo '<br><br>';
 
   // Schedule
   // Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
-  echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Scheduled...</label><br><br>';
-  echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
+  echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel'.$piece_id.'()"> Scheduled...</label><br><br>';
+  echo '<div id="goLiveOptions'.$piece_id.'" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
     echo 'Date live: '.
     pieceInput('p_live_yr', $p_live_yr).', '.
     pieceInput('p_live_mo', $p_live_mo).' '.
@@ -250,36 +267,7 @@ if (isset($_POST['edit_piece'])) {
     pieceInput('p_live_min', $p_live_min).':'.
     pieceInput('p_live_sec', $p_live_sec).'<br><br>';
   echo '
-  </div>
-    <script>
-    // Check/uncheck the box = hide/show the Date Live schedule (p_live_schedule) <div>
-    function showGoLiveOptionsBox() {
-      var x = document.getElementById("goLiveOptions");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-    }
-    // JavaScript does not allow onClick action for both the label and the checkbox
-    // So, we make the label open the Date Live schedule div AND check the box...
-    function showGoLiveOptionsLabel() {
-      // Show the Date Live schedule div
-      var x = document.getElementById("goLiveOptions");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-      // Use JavaScript to check the box
-      var y = document.getElementById("p_live_schedule");
-      if (y.checked === false) {
-        y.checked = true;
-      } else {
-        y.checked = false;
-      }
-    }
-    </script>';
+  </div>';
 
   // Tags
   echo 'Tags:<br>'.pieceInput('p_tags', $p_tags).'<br><br>';
@@ -292,10 +280,9 @@ if (isset($_POST['edit_piece'])) {
 
 
   // Finish the form
-  echo '<input form="edit_piece" type="submit" name="p_submit" value="Update">';
+  echo '<input form="meta_edit_form_'.$piece_id.'" type="submit" name="p_submit" value="Update">';
   echo '<button onclick="metaEditClose'.$piece_id.'();">Cancel</button>';
-  echo '</form>';
 
-}  else {
+} else {
   exit();
 }

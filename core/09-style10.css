@@ -165,6 +165,20 @@ table.contentlib tr.renew code.renew {
 	border-width: 1px;
 }
 
+table.contentlib tr.metaupdate {
+	background-color: #fae8be;
+}
+
+table.contentlib tr.metaupdate code.metaupdate {
+	color: #fae8be;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #f2ca6d;
+	border-color: #f2ca6d;
+	border-width: 1px;
+}
+
 table.contentlib tr.deleting {
 	background-color: #fadbd8;
 }
@@ -195,7 +209,9 @@ table.contentlib tr.undeleting code.undeleting {
 
 table.contentlib tr.renew code.renew:hover,
 table.contentlib tr.deleting code.deleting:hover,
-table.contentlib tr.undeleting code.undeleting:hover {
+table.contentlib tr.undeleting code.undeleting:hover,
+table.contentlib tr.metaupdate code.metaupdate:hover {
+	color: #fff;
 	background-color: #999;
 	border-color: #999;
 }
@@ -245,6 +261,15 @@ del {
 	position: relative;
 }
 
+form.metaedit,
+form.metaedit label,
+form.metaedit input,
+form.metaedit button,
+form.metaedit select,
+form.metaedit textarea {
+	font-size: x-small;
+}
+
 /* infoPop() popup */
 /* Container */
 .infopop {
@@ -284,8 +309,8 @@ del {
 /* Toggle hide/show the popup */
 .infopop .show {
  visibility: visible;
- -webkit-animation: infoPopFadeIn 1s;
- animation: infoPopFadeIn 1s
+ -webkit-animation: infoPopFadeIn 0.1s;
+ animation: infoPopFadeIn 0.1s
 }
 
 /* Animation to fade in the popup */

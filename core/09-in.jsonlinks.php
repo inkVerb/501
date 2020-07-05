@@ -37,7 +37,7 @@ $string3<br>
 
 
 // Basic RegEx for no brackets and coding non-link safety checks
-if (($p_links_check != '') && (!empty($p_links_check)) && preg_match($url,FILTER_VALIDATE_URL)) {
+if ( ($p_links_check != '') && (!empty($p_links_check)) && (preg_match("/((https?)\:\/\/)?/",$p_links_check)) ) {
 
 
   // Prepare our values

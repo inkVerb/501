@@ -173,7 +173,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
    // Prepare the query to update the old piece, including the proposed live date to test for changes
    if ($p_status == 'draft') { // No empty live date for publishing pieces
-     $p_live = ($p_live_schedule == true) ? $p_live_sqlesc = escape_sql("$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec") : NULL;
+     $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : NULL;
+     $p_live_sqlesc = escape_sql($p_live);
      $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
    } elseif (($p_status == 'publish') || ($p_status == 'update')) { // Unscheduled publish goes live now
      $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";

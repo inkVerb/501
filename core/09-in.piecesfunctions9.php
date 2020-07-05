@@ -149,7 +149,11 @@ if ($name == 'delete') { // Pieces
         listenToForm'.$slug.$p_id.'();
       } );
       AJAX.addEventListener( "error", function(event) {
-        document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_'.$p_id.'\" class=\"error\">Error with '.$name.'</tr>";
+        document.getElementById("prow_'.$p_id.'").classList.add("deleting");
+        document.getElementById("changed_'.$p_id.'").classList.add("renew");
+        document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+        document.getElementById("changed_'.$p_id.'").innerHTML = "'.$name.' error";
+        document.getElementById("changed_'.$p_id.'").style.display = "inline";
       } );
       AJAX.open("POST", "ajax.piecesactions.php");
       AJAX.send(FD);

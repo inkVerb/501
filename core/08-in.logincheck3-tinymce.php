@@ -11,7 +11,7 @@
   <script src="tinymce/tinymce.min.js"></script>
   <script type="text/javascript">
   tinymce.init({
-    selector: '#p_content', // This is the id for our "Content" <textarea>
+    selector: '.tinymce_editor', // This is the class for our "Content" <textarea>
     width: 600,
     height: 300,
     plugins: [

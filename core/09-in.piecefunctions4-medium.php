@@ -188,9 +188,9 @@ function pieceInput($name, $value) {
     </select>';
 
   } elseif ($name == 'p_content') {
-    $result = '<textarea form="edit_piece" id="p_content" class="p_content_medium" name="p_content">'.$value.'</textarea>
+    $result = '<textarea form="edit_piece" id="p_content" class="medium_editor" name="p_content">'.$value.'</textarea>
     <script src="medium/js/medium-editor.js"></script>
-    <script>var editor = new MediumEditor(\'.p_content_medium\');</script>';
+    <script>var editor = new MediumEditor(\'.medium_editor\');</script>';
 
   } elseif ($name == 'p_after') {
     $result = '<textarea form="edit_piece" id="p_after" name="p_after">'.$value.'</textarea>';

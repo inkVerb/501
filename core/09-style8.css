@@ -238,8 +238,8 @@ del {
 /* Toggle hide/show the popup */
 .infopop .show {
  visibility: visible;
- -webkit-animation: infoPopFadeIn 1s;
- animation: infoPopFadeIn 1s
+ -webkit-animation: infoPopFadeIn 0.1s;
+ animation: infoPopFadeIn 0.1s
 }
 
 /* Animation to fade in the popup */
