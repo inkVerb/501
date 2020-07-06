@@ -22,9 +22,9 @@ echo '
 <table class="contentlib">
   <tbody>
     <tr>
-    <th width="40%">Title</th>
-    <th width="40%">Status</th>
-    <th width="20%">Type</th>
+    <th width="53%">Title</th>
+    <th width="32%">Status</th>
+    <th width="15%">Type</th>
     </tr>
 ';
 
@@ -79,7 +79,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>'.$p_date_note.'
   <div id="showviews'.$p_id.'" style="display: none;">
   <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
-  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>';
+  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>';
 
   // JavaScript with unique function name per row, show/hide action links
   ?>

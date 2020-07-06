@@ -51,8 +51,15 @@ textarea.meta {
 	width: 50em;
 	height: 8em;
 }
+textarea.metaedit {
+	width: 37em;
+	height: 8em;
+}
 input[type=text].piece {
 	width: 50em;
+}
+input[type=text].metaedit {
+	width: 30em;
 }
 
 table, tbody, tr, td, th  {
@@ -101,6 +108,7 @@ form.postform .inline {
 /* Content library */
 table.contentlib {
 	width: 100%;
+	min-width: 850px;
 }
 
 table.contentlib tbody tr th {
@@ -261,13 +269,16 @@ del {
 	position: relative;
 }
 
-div.metaedit,
-div.metaedit form,
-div.metaedit label,
-div.metaedit input,
-div.metaedit select,
-div.metaedit textarea,
-div.metaedit button {
+tr.pieces {
+	font-size: small;
+}
+tr.metaedit,
+tr.metaedit form,
+tr.metaedit label,
+tr.metaedit input,
+tr.metaedit select,
+tr.metaedit textarea,
+tr.metaedit button {
 	font-size: x-small;
 }
 

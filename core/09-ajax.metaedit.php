@@ -101,23 +101,12 @@ if (isset($_POST['edit_piece'])) {
   $p_tags_json = checkPiece('p_tags',$_POST['p_tags']);
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
-  // Prepare our database values for entry
-  $p_title_sqlesc = escape_sql($p_title);
-  $p_slug_sqlesc = escape_sql($p_slug);
-  $p_after_sqlesc = escape_sql($p_after);
-  $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
-  $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+  // Prepare our response
+  $ajax_response = array();
+  $ajax_response['title'] = $p_title;
 
-  if ($p_live_schedule == false) { // No empty live date for publishing pieces
-    $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id'";
-  } elseif ($p_live_schedule == true) { // Unscheduled publish goes live now
-    $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
-    $p_live_sqlesc = escape_sql($p_live);
-    $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
-  }
-
-  // Update the database
-  $querys = "SELECT id FROM publications WHERE BINARY piece_id='$piece_id'
+  // Check for differences in the database
+  $querys = "SELECT id FROM pieces WHERE id='$piece_id'
   AND BINARY title='$p_title_sqlesc'
   AND BINARY slug='$p_slug_sqlesc'
   AND BINARY after='$p_after_sqlesc'
@@ -125,34 +114,52 @@ if (isset($_POST['edit_piece'])) {
   AND links=CAST('$p_links_sqljson' AS JSON),
   AND BINARY date_live='$p_live_sqlesc'";
   $calls = mysqli_query($database, $querys);
-  // If there were no changes
+  // If there is no match
   if (mysqli_num_rows($calls) == 0) {
+
+    // Prepare our database values for entry
+    $p_title_sqlesc = escape_sql($p_title);
+    $p_slug_sqlesc = escape_sql($p_slug);
+    $p_after_sqlesc = escape_sql($p_after);
+    $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+    $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+
+    //  Schedule?
+    if ($p_live_schedule == false) { // No empty live date for publishing pieces
+      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id'";
+    } elseif ($p_live_schedule == true) { // Unscheduled publish goes live now
+      $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
+      $p_live_sqlesc = escape_sql($p_live);
+      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
+    }
 
     // Run our pieces UPDATE
     $callu = mysqli_query($database, $queryu);
 
-    // publications UPDATE?
-    if ($p_pubyn == false) {
+        // publications UPDATE?
+    if ($p_pubyn == 'pre-draft') {
       $callp = true; // We have a test later
-      $publication_message = 'pre-draft saved';
-    } elseif ($p_pubyn == true) {
+      $ajax_response['message'] = 'pre-draft saved';
+    } elseif ($p_pubyn == 'published') {
       $queryp = "UPDATE publications SET pubstatus='published', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
       $callp = mysqli_query($database, $queryp);
-      $publication_message = 'piece updated';
+      $ajax_response['message'] = 'piece updated';
     }
 
     // Test the query
-    if (($callp) && ($callu)) {
-       echo $publication_message;
-    } else {
-      echo '<b class="error">serious error</b>';
-      echo "<pre>$queryu</pre><pre>$queryp</pre>";
-      exit();
+    if ( (!$callp) || (!$callu) ) { // SQL error
+       $ajax_response['message'] = '<span class="error">serious SQL error</span>';
     }
-  } else {
-    echo 'No change to publication';
+
+  } else { // No changes
+    $ajax_response['message'] = 'no change';
   }
 
+  $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+
+  // We're done here
+  echo $json_response;
+  exit();
 
 // Editing
 } elseif (isset($_POST['p_id'])) {
@@ -225,18 +232,21 @@ if (isset($_POST['edit_piece'])) {
   $edit_piece_id = $piece_id;
   $form_id = 'meta_edit_form_';
 
-  // Our Meta Edit form
-  echo '<div class="metaedit">';
+  // Title & <tr> row
+  echo '<tr><td>';
+  echo '<b class="piece_title" onclick="metaEditClose'.$piece_id.'()" style="cursor: pointer;">'.$p_title.'  &#9998;</b><br><br>';
+
+  // Meta Edit form
   echo '<form action="AJAX" class="metaedit" method="post" id="meta_edit_form_'.$piece_id.'">';
-  echo '<input form="meta_edit_form_'.$piece_id.'" type="hidden" name="edit_piece" value="'.$piece_id.'"><br>';
-  echo '<input form="meta_edit_form_'.$piece_id.'" type="hidden" name="p_pubyn" value="'.$p_pubyn.'"><br>';
+  echo '<input form="meta_edit_form_'.$piece_id.'" type="hidden" name="edit_piece" value="'.$piece_id.'">';
+  echo '<input form="meta_edit_form_'.$piece_id.'" type="hidden" name="p_pubyn" value="'.$p_pubyn.'">';
   echo '</form>';
 
   // Title & Slug
-  echo '<label class="metaedit">Title: '.pieceInput('p_title', $p_title).'<br><br></label>';
-  echo '<label class="metaedit">Slug: '.pieceInput('p_slug', $p_slug).'<br><br></label>';
+  echo '<label class="metaedit">Title: '.pieceInput('p_title_me', $p_title).'<br><br></label>';
+  echo '<label class="metaedit">Slug: '.pieceInput('p_slug_me', $p_slug).'<br><br></label>';
 
-  // Series
+ // Series
   echo '<label class="metaedit">Series:<br></label>';
   // Query the Serieses
   $query = "SELECT id, name FROM series";
@@ -256,36 +266,42 @@ if (isset($_POST['edit_piece'])) {
     }
   echo '</select>';
 
+  // Next cell
   echo '<br><br>';
+
+  // Tags
+  echo '<label class="metaedit">Tags:<br></label>'.pieceInput('p_tags', $p_tags).'<br><br>';
 
   // Schedule
   // Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
   echo pieceInput('p_live_schedule', $p_live_schedule).'<label class="metaedit" onclick="showGoLiveOptionsLabel'.$piece_id.'()"> Scheduled...</label><br><br>';
   echo '<div id="goLiveOptions'.$piece_id.'" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
-    echo 'Date live: '.
+    echo 'Date live:<br><br>'.
     pieceInput('p_live_yr', $p_live_yr).', '.
     pieceInput('p_live_mo', $p_live_mo).' '.
-    pieceInput('p_live_day', $p_live_day).' @ '.
+    pieceInput('p_live_day', $p_live_day).'<br><br>@ '.
     pieceInput('p_live_hr', $p_live_hr).':'.
     pieceInput('p_live_min', $p_live_min).':'.
     pieceInput('p_live_sec', $p_live_sec).'<br><br>';
   echo '
   </div>';
 
-  // Tags
-  echo '<label class="metaedit">Tags:<br></label>'.pieceInput('p_tags', $p_tags).'<br><br>';
+  // Next cell
+  echo '</td><td colspan="2">';
+
+  // Buttons
+  echo '<input form="meta_edit_form_'.$piece_id.'" type="submit" name="p_submit" value="Update">&nbsp;&nbsp;';
+  echo '<button onclick="metaEditClose'.$piece_id.'();">Cancel</button>';
+  echo '<br><br>';
 
   // After
-  echo '<label class="metaedit">After:<br></label>'.pieceInput('p_after', $p_after).'<br><br>';
+  echo '<label class="metaedit">After:<br></label>'.pieceInput('p_after_me', $p_after).'<br><br>';
 
   // Links
-  echo '<label class="metaedit">Links: <code class="gray">https://verb.ink ;; Title ;; Credit<br></code><br></label>'.pieceInput('p_links', $p_links).'<br><br>';
+  echo '<label class="metaedit">Links: <code class="gray">https://verb.ink ;; Title ;; Credit<br></code><br></label>'.pieceInput('p_links_me', $p_links).'<br><br>';
 
-
-  // Finish the form
-  echo '<input form="meta_edit_form_'.$piece_id.'" type="submit" name="p_submit" value="Update">';
-  echo '<button onclick="metaEditClose'.$piece_id.'();">Cancel</button>';
-  echo '</div>';
+  // Finish the row
+  echo '</td></tr>';
 
 } else {
   exit();

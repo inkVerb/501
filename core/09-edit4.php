@@ -26,7 +26,7 @@ if (isset($piece_id)) { // Updating piece
   } else {
     echo '<pre>(unpublished draft)</pre>';
   }
-  echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview draft</a></pre>';
+  echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview</a></pre>';
   echo '<form action="edit.php?p='.$piece_id.'" method="post" id="edit_piece">';
   echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece

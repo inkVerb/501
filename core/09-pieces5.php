@@ -22,9 +22,9 @@ echo '
 <table class="contentlib">
   <tbody>
     <tr>
-    <th width="40%">Title</th>
-    <th width="40%">Status</th>
-    <th width="20%">Type</th>
+    <th width="53%">Title</th>
+    <th width="32%">Status</th>
+    <th width="15%">Type</th>
     </tr>
 ';
 

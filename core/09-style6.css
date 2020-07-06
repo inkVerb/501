@@ -84,6 +84,7 @@ form.postform .inline {
 /* Content library */
 table.contentlib {
 	width: 100%;
+	min-width: 850px;
 }
 
 table.contentlib tbody tr th {

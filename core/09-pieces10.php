@@ -66,9 +66,9 @@ echo '
 <table class="contentlib">
   <tbody>
     <tr>
-    <th width="40%">Title</th>
-    <th width="40%">Status</th>
-    <th width="20%">Type</th>
+    <th width="53%">Title</th>
+    <th width="32%">Status</th>
+    <th width="15%">Type</th>
     </tr>
 ';
 
@@ -125,19 +125,20 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   }
 
   // Display the info in a <table>
+  // Place our AJAX Meta Edit <tr> row
+  echo '<tr id="me'.$p_id.'" class="meta_edit_box '."$table_row_color $status_class".'" style="display: hidden;"></tr>';
   // Start our HTML table
-  echo '<tr class="'."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
+  echo '<tr class="pieces '."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
 
   // Title
   $title_content = '<b class="piece_title" onclick="metaEdit'.$p_id.'()" style="cursor: pointer;">'.$p_title.' &#9998;</b>';
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
   <div style="display: inline;" id="title_'.$p_id.'">'.$title_content.'</div><br>
-  <div id="me'.$p_id.'" class="meta_edit_box" style="display: hidden;"></div>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
 
   <div id="showviews'.$p_id.'" style="display: none;">
   <a style="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>
-  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview draft</a>
+  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>
   </div>';
 
   // JavaScript with unique function name per row, show/hide action links
@@ -151,127 +152,6 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       x.style.display = "inline";
     }
   }
-  </script>
-  <?php
-  // JavaScript for metaEdit
-  ?>
-  <script>
-
-  // This will be used inside the <form> AJAX sends to us; declare the function now
-  function metaEditClose<?php echo $p_id; ?>() {
-    // innerHTML replace with the original Title content
-    document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none";
-    document.getElementById("me<?php echo $p_id; ?>").innerHTML = "";
-  }
-
-  // Initiate AJAX
-  function metaEditAjax<?php echo $p_id; ?>() {
-    var ajax;
-    ajax = new XMLHttpRequest();
-    return ajax;
-
-  }
-
-  // AJAX the <form>
-  function metaEdit<?php echo $p_id; ?>() {
-
-    // Close box
-    var x = document.getElementById("me<?php echo $p_id; ?>");
-    if (x.style.display === "inline") { // Box is open, clicking Title again to close
-      document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
-      document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
-
-    } else { // Box is closed, clicking Title to open
-
-    // AJAX handler
-    var ajaxHandler = metaEditAjax<?php echo $p_id; ?>();
-    ajaxHandler.onreadystatechange = function() {
-      if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
-
-        // Show box
-        document.getElementById("me<?php echo $p_id; ?>").classList.add("metaedit");
-        document.getElementById("me<?php echo $p_id; ?>").style.display = "inline";
-
-        // Update to see the <form> from AJAX
-        document.getElementById("me<?php echo $p_id; ?>").innerHTML = ajaxHandler.responseText;
-
-        // Capture submit button for AJAX
-        form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
-        listenToMetaEditForm<?php echo $p_id; ?>();
-      }
-    }
-    // POST to the AJAX source and get the actual <form>
-    ajaxHandler.open("POST", "ajax.metaedit.php", true);
-    ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    ajaxHandler.send("p_id=<?php echo $p_id; ?>");
-
-  } // End clicking to open
-} // End editMeta()
-
-  // Listen for a submit
-  function sendEditMetaData<?php echo $p_id; ?>() {
-    const AJAX = new XMLHttpRequest();
-    const FD = new FormData( form );
-    AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
-      document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none"; // Hide the view actions
-      document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
-      document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
-      document.getElementById("title_<?php echo $p_id; ?>").innerHTML = '<b class="piece_title" onclick="metaEdit<?php echo $p_id; ?>()" style="cursor: pointer;">'+event.target.responseText+' &#9998;</b>';// Change the Title
-      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting");
-      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = '&nbsp;'+event.target.responseText+'&nbsp;'; // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").style.display = "inline"; // Show our "changed indicator"
-    } );
-    AJAX.addEventListener( "error", function(event) { // Error in AJAX
-      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("deleting"); // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").classList.add("renew"); // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("metaupdate","deleting","undeleting"); // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = "error with Meta Edit"; // Note the <tr> row
-      document.getElementById("changed_<?php echo $p_id; ?>").style.display = "inline"; // Show our "changed indicator"
-    } );
-    AJAX.open("POST", "ajax.metaedit.php");
-    AJAX.send(FD);
-  }
-
-  // Capture submit button for AJAX
-  var form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
-  function listenToMetaEditForm<?php echo $p_id; ?>(){
-    form.addEventListener( "submit", function(event) {
-      event.preventDefault();
-      sendEditMetaData<?php echo $p_id; ?>();
-    } );
-  }
-
-  // Schedule click show/hide
-    // Click on the checkbox to show/check
-    function showGoLiveOptionsBox<?php echo $p_id; ?>() {
-      var x = document.getElementById("goLiveOptions<?php echo $p_id; ?>");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-    }
-    // Click on the label to show/check
-    function showGoLiveOptionsLabel<?php echo $p_id; ?>() {
-      // Show the Date Live schedule div
-      var x = document.getElementById("goLiveOptions<?php echo $p_id; ?>");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-      // Use JavaScript to check the box
-      var y = document.getElementById("p_live_schedule_<?php echo $p_id; ?>");
-      if (y.checked === false) {
-        y.checked = true;
-      } else {
-        y.checked = false;
-      }
-    }
-  // End Schedule click show/hide
-
   </script>
   <?php
 
@@ -349,6 +229,137 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
 
   // Finish piece
   echo '</tr>';
+
+  // JavaScript for metaEdit
+  ?>
+  <script>
+
+  // This will be used inside the <form> AJAX sends to us; declare the function now
+  function metaEditClose<?php echo $p_id; ?>() {
+    // innerHTML replace with the original Title content
+    document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none";
+    document.getElementById("me<?php echo $p_id; ?>").innerHTML = "";
+    document.getElementById("prow_<?php echo $p_id; ?>").style.display = "";
+  }
+
+  // Initiate AJAX
+  function metaEditAjax<?php echo $p_id; ?>() {
+    var ajax;
+    ajax = new XMLHttpRequest();
+    return ajax;
+
+  }
+
+  // AJAX the <form>
+  function metaEdit<?php echo $p_id; ?>() {
+
+    // Close box
+    var x = document.getElementById("me<?php echo $p_id; ?>");
+    if (x.style.display === "inline") { // Box is open, clicking Title again to close
+      document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
+      document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
+      document.getElementById("prow_<?php echo $p_id; ?>").style.display = ""; // Show the normal <tr> row
+
+    } else { // Box is closed, clicking Title to open
+
+    // AJAX handler
+    var ajaxHandler = metaEditAjax<?php echo $p_id; ?>();
+    ajaxHandler.onreadystatechange = function() {
+      if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
+
+        // Hide the normal <tr> row
+        document.getElementById("prow_<?php echo $p_id; ?>").style.display = "none";
+
+        // Show box
+        document.getElementById("me<?php echo $p_id; ?>").classList.add("metaedit");
+        document.getElementById("me<?php echo $p_id; ?>").style.display = "";
+
+        // Update to see the <form> from AJAX
+        document.getElementById("me<?php echo $p_id; ?>").innerHTML = ajaxHandler.responseText;
+
+        // Capture submit button for AJAX
+        form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
+        listenToMetaEditForm<?php echo $p_id; ?>();
+      }
+    }
+    // POST to the AJAX source and get the actual <form>
+    ajaxHandler.open("POST", "ajax.metaedit.php", true);
+    ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    ajaxHandler.send("p_id=<?php echo $p_id; ?>");
+
+  } // End clicking to open
+} // End editMeta()
+
+  // Listen for a submit
+  function sendEditMetaData<?php echo $p_id; ?>() {
+    const AJAX = new XMLHttpRequest();
+    const FD = new FormData( form );
+    AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
+      // Parse our response
+      var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
+      // Make our JavaScript changes
+      document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none"; // Hide the view actions
+      document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
+      document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
+      document.getElementById("title_<?php echo $p_id; ?>").innerHTML = '<b class="piece_title" onclick="metaEdit<?php echo $p_id; ?>()" style="cursor: pointer;">'+jsonMetaEditResponse["title"]+' &#9998;</b>';// Change the Title
+      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
+      document.getElementById("prow_<?php echo $p_id; ?>").style.display = ""; // Show the normal <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting");
+      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = '&nbsp;'+jsonMetaEditResponse["message"]+'&nbsp;'; // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").style.display = "inline"; // Show our "changed indicator"
+    } );
+    AJAX.addEventListener( "error", function(event) { // Error in AJAX
+      document.getElementById("prow_<?php echo $p_id; ?>").classList.add("deleting"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.add("renew"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("metaupdate","deleting","undeleting"); // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").innerHTML = "error with Meta Edit"; // Note the <tr> row
+      document.getElementById("changed_<?php echo $p_id; ?>").style.display = "inline"; // Show our "changed indicator"
+    } );
+    AJAX.open("POST", "ajax.metaedit.php");
+    AJAX.send(FD);
+  }
+
+  // Capture submit button for AJAX
+  var form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
+  function listenToMetaEditForm<?php echo $p_id; ?>(){
+    form.addEventListener( "submit", function(event) {
+      event.preventDefault();
+      sendEditMetaData<?php echo $p_id; ?>();
+    } );
+  }
+
+  // Schedule click show/hide
+    // Click on the checkbox to show/check
+    function showGoLiveOptionsBox<?php echo $p_id; ?>() {
+      var x = document.getElementById("goLiveOptions<?php echo $p_id; ?>");
+      if (x.style.display === "block") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "block";
+      }
+    }
+    // Click on the label to show/check
+    function showGoLiveOptionsLabel<?php echo $p_id; ?>() {
+      // Show the Date Live schedule div
+      var x = document.getElementById("goLiveOptions<?php echo $p_id; ?>");
+      if (x.style.display === "block") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "block";
+      }
+      // Use JavaScript to check the box
+      var y = document.getElementById("p_live_schedule_<?php echo $p_id; ?>");
+      if (y.checked === false) {
+        y.checked = true;
+      } else {
+        y.checked = false;
+      }
+    }
+  // End Schedule click show/hide
+
+  </script>
+  <?php
 
   // Toggle our row colors
   $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';

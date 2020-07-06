@@ -154,8 +154,14 @@ function pieceInput($name, $value) {
   if ($name == 'p_title') {
     $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="piece" id="p_title_'.$edit_piece_id.'" name="p_title" maxlength="90" value="'.$value.'" required>';
 
+  } elseif ($name == 'p_title_me') {
+    $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="metaedit" id="p_title_'.$edit_piece_id.'" name="p_title" maxlength="90" value="'.$value.'" required>';
+
   } elseif ($name == 'p_slug') {
     $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="piece" id="p_slug_'.$edit_piece_id.'" name="p_slug" maxlength="90" value="'.$value.'">';
+
+  } elseif ($name == 'p_slug_me') {
+    $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="metaedit" id="p_slug_'.$edit_piece_id.'" name="p_slug" maxlength="90" value="'.$value.'">';
 
   } elseif ($name == 'p_type') {
     // type_post checked or not?
@@ -204,11 +210,17 @@ function pieceInput($name, $value) {
   } elseif ($name == 'p_after') {
     $result = '<textarea form="'.$form_id.$edit_piece_id.'" class="meta" id="p_after_'.$edit_piece_id.'" name="p_after">'.$value.'</textarea>';
 
+  } elseif ($name == 'p_after_me') {
+    $result = '<textarea form="'.$form_id.$edit_piece_id.'" class="metaedit" id="p_after_'.$edit_piece_id.'" name="p_after">'.$value.'</textarea>';
+
   } elseif ($name == 'p_tags') {
     $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" id="p_tags_'.$edit_piece_id.'" name="p_tags" maxlength="150" value="'.$value.'">';
 
   } elseif ($name == 'p_links') {
     $result = '<textarea form="'.$form_id.$edit_piece_id.'" class="meta" id="p_links_'.$edit_piece_id.'" name="p_links">'.$value.'</textarea>';
+
+  } elseif ($name == 'p_links_me') {
+    $result = '<textarea form="'.$form_id.$edit_piece_id.'" class="metaedit" id="p_links_'.$edit_piece_id.'" name="p_links">'.$value.'</textarea>';
 
   // Date-time Live
   } elseif ($name == 'p_live_yr') {
