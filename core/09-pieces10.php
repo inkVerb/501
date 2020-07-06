@@ -131,7 +131,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Title
   $title_content = '<b class="piece_title" onclick="metaEdit'.$p_id.'()" style="cursor: pointer;">'.$p_title.' &#9998;</b>';
   echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
-  <div style="display: inline;">'.$title_content.'</div><br>
+  <div style="display: inline;" id="title_'.$p_id.'">'.$title_content.'</div><br>
   <div id="me'.$p_id.'" class="meta_edit_box" style="display: hidden;"></div>
   <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
 
@@ -216,6 +216,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       document.getElementById("showviews<?php echo $p_id; ?>").style.display = "none"; // Hide the view actions
       document.getElementById("me<?php echo $p_id; ?>").style.display = "none"; // Hide the box
       document.getElementById("me<?php echo $p_id; ?>").innerHTML = ""; // Empty the box
+      document.getElementById("title_<?php echo $p_id; ?>").innerHTML = '<b class="piece_title" onclick="metaEdit<?php echo $p_id; ?>()" style="cursor: pointer;">'+event.target.responseText+' &#9998;</b>';// Change the Title
       document.getElementById("prow_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
       document.getElementById("changed_<?php echo $p_id; ?>").classList.add("metaupdate"); // Note the <tr> row
       document.getElementById("changed_<?php echo $p_id; ?>").classList.remove("renew","deleting","undeleting");

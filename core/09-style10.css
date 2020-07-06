@@ -261,12 +261,13 @@ del {
 	position: relative;
 }
 
-form.metaedit,
-form.metaedit label,
-form.metaedit input,
-form.metaedit button,
-form.metaedit select,
-form.metaedit textarea {
+div.metaedit,
+div.metaedit form,
+div.metaedit label,
+div.metaedit input,
+div.metaedit select,
+div.metaedit textarea,
+div.metaedit button {
 	font-size: x-small;
 }
 
