@@ -19,6 +19,6 @@ function escape_sql($data) {
   $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
 
 	// Apply mysqli_real_escape_string()
-	return mysqli_real_escape_string ($database, $trimmed_data);
+	return mysqli_real_escape_string($database, $trimmed_data);
 
 }

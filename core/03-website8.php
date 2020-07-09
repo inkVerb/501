@@ -22,49 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Include our POST checks
   include ('./in.checks.php');
 
-  // if DELETE: *Run this first* so other checks don't matter
-  if (isset($delete_fruit)) {
-    // Query to DELETE the row
-    $query = "DELETE FROM fruit WHERE id='$delete_fruit'";
-    $call = mysqli_query($database, $query);
-    // mysqli_affected_rows() will also recognize deleted rows
-    if (mysqli_affected_rows($database) == 1) {
-      echo '<p class="green">Fruit deleted!</p>';
-    } else {
-      echo '<p class="error">Database error!</p>';
-    }
-    echo '<p>SQL query: <code>'.$query.'</code></p>';
+  // Add the database if everything checks out
+  if ($checks_out == true) {
+    $fruitname_sql_safe = escape_sql($fruitname);
+    $type_sql_safe = escape_sql($type);
+    $prepared_sql_safe = escape_sql($prepared);
+    $query = "INSERT INTO fruit (name, type, prepared) VALUES ('$fruitname_sql_safe', '$type_sql_safe', '$prepared_sql_safe')";
+    $call = mysqli_query($database, $query); // This actually runs the INSERT query
 
-  // if UPDATE: Update the database if everything checks out
-  } elseif (($checks_out == true) && (!empty($update_fruit))) {
-    $query = "UPDATE fruit SET name='$fruitname', type='$type', have=$have, count='$count', prepared='$prepared' WHERE id='$fruitid'";
-    $call = mysqli_query($database, $query);
-    // Check to see that our SQL query worked out
-    if ($call) { // Test simply for 'true' since $call has already run and returned a true/false response
-      // Unset these so they don't appear in the form below
-      unset($fruitname);
-      unset($type);
-      unset($have);
-      unset($count);
-      unset($prepared);
-
-      // See if it actually changed something
-      if (mysqli_affected_rows($database) == 1) {
-        echo '<p class="green">Fruit updated!</p>';
-      } else {
-        echo '<p class="orange">No change!</p>';
-      }
-      echo '<p>SQL query: <code>'.$query.'</code></p>';
-    } else {
-      echo '<p class="error">Database error!</p>
-      <p>SQL query: <code>'.$query.'</code></p>';
-    } // End database check
-
-
-  // if INSERT: Insert the new entry if everything checks out
-  } elseif (($checks_out == true) && (!empty($new_fruit))) {
-    $query = "INSERT INTO fruit (name, type, prepared) VALUES ('$fruitname', '$type', '$prepared')";
-    $call = mysqli_query($database, $query);
     // Check to see that our SQL query worked out
     if ($call) { // Test simply for 'true' since $call has already run and returned a true/false response
       // Unset these so they don't appear in the form
@@ -79,13 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p>SQL query: <code>'.$query.'</code></p>';
     } // End database check
   } else {
-      echo '<p class="error">Errors! Try again.</p>';
-    }
+    echo '<p class="error">Errors! Try again.</p>';
+  }
 
 } // Finish POST if
 
 // Make a MySQLi database call
-$query = "SELECT name, type, have, count, prepared, date_created, id FROM fruit";
+$query = "SELECT name, type, have, count, prepared, date_created FROM fruit";
 $call = mysqli_query($database, $query);
 // $row loop below from $call
 
@@ -98,13 +63,11 @@ echo "
     <tr>
       <td>Name:</td>
       <td>Type:</td>
-      <td>Have?</td>
+      <td>Have:</td>
       <td>Count:</td>
       <td>Prepared:</td>
       <td>Created:</td>
-      <td>Delete?</td>
-      <td>Update:</td>
-    </tr>"; // Note we just added the "Delete?" column to our HTML table
+    </tr>";
 
 //// Each SQL row as a new row in the HTML table
 
@@ -116,23 +79,17 @@ while ( $row = mysqli_fetch_array($call, MYSQLI_NUM) ) {
   $fruit_count = "$row[3]";
   $fruit_prepared = "$row[4]";
   $fruit_date = "$row[5]";
-  $fruit_id = "$row[6]";
 
-  echo '
+  echo "
     <tr>
-      <form action="website.php" method="post">
-        <input type="hidden" name="fruitid" value="'.$fruit_id.'">
-        <td>'.formInput('fruitname', $fruit_name, $check_err, $fruit_id).'</td>
-        <td>'.formInput('type', $fruit_type, $check_err, $fruit_id).'</td>
-        <td>'.formInput('have', $fruit_have, $check_err, $fruit_id).'</td>
-        <td>'.formInput('count', $fruit_count, $check_err, $fruit_id).'</td>
-        <td>'.formInput('prepared', $fruit_prepared, $check_err, $fruit_id).'</td>
-        <td>'.$fruit_date.'</td>
-        <td><input type="checkbox" name="deletefruit" value="'.$fruit_id.'"></td>
-        <td><input type="submit" value="Update"></td>
-      </form>
+      <td>$fruit_name</td>
+      <td>$fruit_type</td>
+      <td>$fruit_have</td>
+      <td>$fruit_count</td>
+      <td>$fruit_prepared</td>
+      <td>$fruit_date</td>
     </tr>
-    '; // Note the value of our "delete" checkbox is the ID of the item we would delete
+    ";
 } //// End SQL loop
 
 // Finish our table
@@ -143,12 +100,11 @@ echo "
 
 // Our form
 echo '<h1>Add a new fruit</h1>
-<form action="website.php" method="post">
-<input type="hidden" name="newfruit" value="true">'; // Add this hidden value to double-check which form to process
-// We must put the labels outside because we removed them from the function
-echo 'Name: '.formInput('fruitname', $fruitname, $check_err, "new"); // formInput() has an extra argument so our errors only show for the right item
-echo 'Type: '.formInput('type', $type, $check_err, "new");
-echo 'Prepared:'.formInput('prepared', $prepared, $check_err, "new");
+<form action="website.php" method="post">';
+
+echo formInput('fruitname', $fruitname, $check_err);
+echo formInput('type', $type, $check_err);
+echo formInput('prepared', $prepared, $check_err);
 
 echo '
   <input type="submit" value="Submit Button">
