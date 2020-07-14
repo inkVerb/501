@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $upload_dir = 'uploads/';
     $file_name = basename($_FILES['upload_file']['name']);
     $temp_file = $_FILES['upload_file']['tmp_name'];
+    $file_mime = mime_content_type($temp_file);
     $file_extension = strtolower(pathinfo($file_name,PATHINFO_EXTENSION));
     $file_basename = basename($file_name,'.'.$file_extension); // Strip off the extension
     $file_name = $file_basename.'.'.$file_extension; // Reassign extension with no caps
@@ -52,17 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Allowedd formats
-    if ( (($file_extension == 'jpg')  && (getimagesize($temp_file)['mime'] == 'image/jpeg'))
-    ||   (($file_extension == 'jpeg') && (getimagesize($temp_file)['mime'] == 'image/jpeg'))
-    ||   (($file_extension == 'png')  && (getimagesize($temp_file)['mime'] == 'image/png'))
-    ||   (($file_extension == 'gif')  && (getimagesize($temp_file)['mime'] == 'image/gif')) ) {
+    if ( (($file_extension == 'jpg')  && ($file_mime == 'image/jpeg'))
+    ||   (($file_extension == 'jpeg') && ($file_mime == 'image/jpeg'))
+    ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
+    ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
 
       // Valid & accepted, get size & mime type
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
       $image_type = $imageinfo['mime'];
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        echo '<p class="blue">Image type: '.$image_type.'<br>Dimensions: '.$image_dimensions.'</p>';
+        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: '.$image_dimensions.'</p>';
       } else {
         $errors .= '<p class="error">Not an image</p>';
       }
@@ -79,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Upload the file and check in one command
     } else {
       if (move_uploaded_file($temp_file, $file_path_dest)) {
-        echo '<p class="blue">File uploaded: <code>'.$file_name.'</code></p>';
+        echo '<p class="blue">File name: <code>'.$file_name.'</code></p>';
       } else {
         $errors .= '<p class="error">Upload error</p>';
         // Show our $errors

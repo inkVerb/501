@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $file_name = basename($_FILES['upload_file']['name']);
     $file_path_dest = $upload_dir.$file_name;
     $temp_file = $_FILES['upload_file']['tmp_name'];
+    $file_mime = mime_content_type($temp_file);
     $errors = '';
 
     // Check for valid image by getting info
@@ -41,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Upload the file and check in one command
     } else {
       if (move_uploaded_file($temp_file, $file_path_dest)) {
-        echo '<p class="blue">File uploaded: <code>'.$file_name.'</code></p>';
+        echo '<p class="blue">File uploaded: <code>'.$file_name.'</code><br>File type: <code>'.$file_mime.'</code></p>';
       } else {
         $errors .= '<p class="error">Upload error</p>';
         // Show our $errors

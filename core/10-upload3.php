@@ -24,21 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $file_name = basename($_FILES['upload_file']['name']);
     $file_path_dest = $upload_dir.$file_name;
     $temp_file = $_FILES['upload_file']['tmp_name'];
+    $file_mime = mime_content_type($temp_file);
     $file_extension = strtolower(pathinfo($file_name,PATHINFO_EXTENSION));
     $errors = '';
 
     // Allowedd formats
-    if ( (($file_extension == 'jpg')  && (getimagesize($temp_file)['mime'] == 'image/jpeg'))
-    ||   (($file_extension == 'jpeg') && (getimagesize($temp_file)['mime'] == 'image/jpeg'))
-    ||   (($file_extension == 'png')  && (getimagesize($temp_file)['mime'] == 'image/png'))
-    ||   (($file_extension == 'gif')  && (getimagesize($temp_file)['mime'] == 'image/gif')) ) {
+    if ( (($file_extension == 'jpg')  && ($file_mime == 'image/jpeg'))
+    ||   (($file_extension == 'jpeg') && ($file_mime == 'image/jpeg'))
+    ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
+    ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
 
       // Valid & accepted, get size & mime type
       $imageinfo = getimagesize($temp_file);
-      $image_type = $imageinfo['mime'];
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        echo '<p class="blue">Image type: '.$image_type.'<br>Dimensions: '.$image_dimensions.'</p>';
+        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: '.$image_dimensions.'</p>';
       } else {
         $errors .= '<p class="error">Not an image</p>';
       }
