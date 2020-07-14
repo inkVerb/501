@@ -1,51 +1,82 @@
 <?php
 
 // Single actions
-function piecesform($name, $p_id) {
+function metaeditform($name, $p_id) {
 
   // Validate the $p_id
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
 
   // Get the page we're going to
   if ($name == 'undelete') {
-    $post_to = 'undelete.php';
     $color_class = 'orange';
     $float_ = 'left';
+    $slug = 'delete';
+  } elseif ($name == 'restore') {
+    $color_class = 'orange';
+    $float_ = 'left';
+    $slug = 'delete';
+  } elseif ($name == 'delete') {
+    $color_class = 'red';
+    $float_ = 'right';
+    $slug = 'delete';
+  } elseif ($name == 'purge') {
+    $color_class = 'red';
+    $float_ = 'right';
+    $slug = 'delete';
   } elseif ($name == 'unpublish') {
-    $post_to = 'unpublish.php';
     $color_class = 'orange';
     $float_ = 'left';
+    $slug = 'status';
   } elseif ($name == 'republish') {
-    $post_to = 'republish.php';
     $color_class = 'green';
     $float_ = 'left';
-  } elseif ($name == 'delete') {
-    $post_to = 'delete.php';
-    $color_class = 'red';
-    $float_ = 'right';
-  } elseif ($name == 'restore') {
-    $post_to = 'undelete_trash.php';
-    $color_class = 'orange';
-    $float_ = 'left';
-  } elseif ($name == 'purge') {
-    $post_to = 'purge_delete_trash.php';
-    $color_class = 'red';
-    $float_ = 'right';
+    $slug = 'status';
   } elseif ($name == 'make post') {
-    $post_to = 'postify.php';
     $color_class = 'blue';
     $float_ = 'left';
+    $slug = 'make';
   } elseif ($name == 'make page') {
-    $post_to = 'pagify.php';
     $color_class = 'blue';
     $float_ = 'left';
+    $slug = 'make';
   }
 
   $result = '
-<form method="post" action="'.$post_to.'" style="float: '.$float_.';" class="postform inline">
-  <input type="hidden" name="p" value="'.$p_id.'">
-  <button type="submit" class="postform inline link-button '.$color_class.'">'.$name.'</button>
-</form>';
+  <form method="post" id="pa_'.$slug.'_'.$p_id.'" action="act.piecesactions.php" style="float: '.$float_.';" class="postform inline">
+    <input type="hidden" name="p" value="'.$p_id.'">
+    <input type="hidden" name="action" value="'.$name.'">
+    <input type="submit" class="postform inline link-button '.$color_class.'" value="'.$name.'">
+  </form>';
+
+
+  $result .= '
+  <script>
+  window.addEventListener( "load", function () {
+    function sendData() {
+      const AJAX = new XMLHttpRequest();
+      const FD = new FormData( form );
+      AJAX.addEventListener( "load", function(event) {
+        document.getElementById("prow_'.$p_id.'").innerHTML = event.target.responseText;
+        document.getElementById("prow_'.$p_id.'").classList.add("renew");
+        form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
+        listenToForm'.$slug.$p_id.'();
+      } );
+      AJAX.addEventListener( "error", function(event) {
+        document.getElementById("prow_'.$p_id.'").innerHTML =  "<tr class=\"renew\" id=\"prow_'.$p_id.'\" class=\"error\">Error with '.$name.'</tr>";
+      } );
+      AJAX.open("POST", "ajax.piecesactions.php");
+      AJAX.send(FD);
+    }
+    var form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
+    function listenToForm'.$slug.$p_id.'(){
+      form.addEventListener( "submit", function(event) {
+        event.preventDefault();
+        sendData();
+      } );
+    }
+    listenToForm'.$slug.$p_id.'();
+  } );
+  </script>';
 
   return $result;
 } // Finish function
@@ -111,11 +142,15 @@ function piecesaction($action, $p_id) {
   } elseif ($action == 'purge') {
     $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
     $call1 = mysqli_query($database, $query1);
-    $query2 = "DELETE FROM publications WHERE piece_id='$p_id'";
-    $call2 = mysqli_query($database, $query2);
-    $query3 = "DELETE FROM publication_history WHERE piece_id='$p_id'";
-    $call3 = mysqli_query($database, $query3);
-    if (($call1) && ($call2) && ($call3)) {
+    if ($call1) {
+      $query2 = "DELETE FROM publications WHERE status='dead' AND piece_id='$p_id'";
+      $call2 = mysqli_query($database, $query2);
+    }
+    if ($call2) {
+      $query3 = "DELETE FROM publication_history WHERE piece_id='$p_id'";
+      $call3 = mysqli_query($database, $query3);
+    }
+    if ($call3) {
       $piecesactionsuccess = true;
     } else {
       unset($piecesactionsuccess);

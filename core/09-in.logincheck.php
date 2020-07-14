@@ -26,8 +26,10 @@ if (isset($_COOKIE['user_key'])) {
       unset($_COOKIE['user_key']);
       setcookie('user_key', null, 86401);
     }
-    // exit and redirect in one line
-    exit(header("Location: webapp.php"));
+    if ((!isset($nologin_allowed)) || ($nologin_allowed != true)) {
+      // exit and redirect in one line
+      exit(header("Location: webapp.php"));
+    }
   }
 
   // Get the user's info from the users table
@@ -44,7 +46,7 @@ if (isset($_COOKIE['user_key'])) {
       $_SESSION['user_name'] = $fullname;
 
     } else {
-      echo "Database error!";
+      echo '<p class="error">SQL error!</p>';
       exit();
     }
 

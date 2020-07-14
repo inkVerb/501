@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 // republish
 if ($_POST['bluksubmit'] == 'republish') {

@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($_POST['action'])) ) {
@@ -48,17 +48,17 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
     // We check both the $action and the status/type to make sure they match, then render what they would on a normal page load
     if ( (($action == 'republish') || ($action == 'undelete')) && ($p_status == 'published') ) {
-      echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> ';
+      echo metaeditform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> ';
     } elseif ( (($action == 'unpublish') || ($action == 'undelete')) && ($p_status == 'redrafting') ) {
-      echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> ';
+      echo metaeditform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> ';
     } elseif (($action == 'make page') && ($p_type == 'page')) {
-      echo piecesform('make post', $p_id);
+      echo metaeditform('make post', $p_id);
     } elseif (($action == 'make post') && ($p_type == 'post')) {
-      echo piecesform('make page', $p_id);
+      echo metaeditform('make page', $p_id);
     } elseif (($action == 'restore') && ($p_status != 'dead')) {
-      echo piecesform('redelete', $p_id);
+      echo metaeditform('redelete', $p_id);
     } elseif (($action == 'redelete') && ($p_status == 'dead')) {
-      echo piecesform('restore', $p_id);
+      echo metaeditform('restore', $p_id);
     }
 
 }

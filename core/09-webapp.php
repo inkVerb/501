@@ -135,7 +135,7 @@ if (!isset($user_id)) {
   echo '<label for="rememberme"><input type="checkbox" id="rememberme" name="rememberme" /> Remember me (use cookies to stay logged in 30 days)</label>';
 
   echo '
-    <input type="submit" value="Submit Button">
+    <input type="submit" value="Login">
   </form>
   ';
 

@@ -78,9 +78,11 @@ if (isset($_POST['edit_piece'])) {
     $p_live_hr = checkPiece('p_live_hr',$_POST['p_live_hr']);
     $p_live_min = checkPiece('p_live_min',$_POST['p_live_min']);
     $p_live_sec = checkPiece('p_live_sec',$_POST['p_live_sec']);
+    $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
   } else {
     $p_live = date("Y-m-d H:i:s");
   }
+  $p_live_sqlesc = escape_sql($p_live);
 
   // Series
   // Set a default Series, probably from settings table
@@ -101,6 +103,13 @@ if (isset($_POST['edit_piece'])) {
   $p_tags_json = checkPiece('p_tags',$_POST['p_tags']);
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
+  // Prepare our database values for entry
+  $p_title_sqlesc = escape_sql($p_title);
+  $p_slug_sqlesc = escape_sql($p_slug);
+  $p_after_sqlesc = escape_sql($p_after);
+  $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+  $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+
   // Prepare our response
   $ajax_response = array();
   $ajax_response['title'] = $p_title;
@@ -110,26 +119,17 @@ if (isset($_POST['edit_piece'])) {
   AND BINARY title='$p_title_sqlesc'
   AND BINARY slug='$p_slug_sqlesc'
   AND BINARY after='$p_after_sqlesc'
-  AND tags=CAST('$p_tags_sqljson' AS JSON),
-  AND links=CAST('$p_links_sqljson' AS JSON),
+  AND tags=CAST('$p_tags_sqljson' AS JSON)
+  AND links=CAST('$p_links_sqljson' AS JSON)
   AND BINARY date_live='$p_live_sqlesc'";
   $calls = mysqli_query($database, $querys);
   // If there is no match
   if (mysqli_num_rows($calls) == 0) {
 
-    // Prepare our database values for entry
-    $p_title_sqlesc = escape_sql($p_title);
-    $p_slug_sqlesc = escape_sql($p_slug);
-    $p_after_sqlesc = escape_sql($p_after);
-    $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
-    $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
-
     //  Schedule?
     if ($p_live_schedule == false) { // No empty live date for publishing pieces
       $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id'";
     } elseif ($p_live_schedule == true) { // Unscheduled publish goes live now
-      $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
-      $p_live_sqlesc = escape_sql($p_live);
       $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
     }
 

@@ -9,7 +9,7 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
@@ -163,16 +163,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <div id="showaction'.$p_id.'" style="display: none;">';
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
-    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
-    <div id="r_status_'.$p_id.'" style="display: inherit;">'.piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
-    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
+    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
+    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.metaeditform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'redrafting') {
-    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
-    <div id="r_status_'.$p_id.'" style="display: inherit;">'.piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> </div>
-    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
+    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> </div>
+    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.metaeditform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'pre-draft') {
-    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.piecesform('undelete', $p_id).'</div>
-    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.piecesform('delete', $p_id).'</div></div>';
+    echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>
+    <div id="r_delete_'.$p_id.'" style="display: inherit;">'.metaeditform('delete', $p_id).'</div></div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
@@ -206,9 +206,9 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">
   <span id="ptype'.$p_id.'">'.$show_type.'</span><br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
-    echo '<div id="r_make_'.$p_id.'">'.piecesform('make post', $p_id).'</div></div>';
+    echo '<div id="r_make_'.$p_id.'">'.metaeditform('make post', $p_id).'</div></div>';
   } else {
-    echo '<div id="r_make_'.$p_id.'">'.piecesform('make page', $p_id).'</div></div>';
+    echo '<div id="r_make_'.$p_id.'">'.metaeditform('make page', $p_id).'</div></div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links

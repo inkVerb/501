@@ -1,7 +1,7 @@
 <?php
 
 // Single actions
-function piecesform($name, $p_id) {
+function metaeditform($name, $p_id) {
 
   // Validate the $p_id
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
@@ -69,9 +69,9 @@ if ($name == 'delete') { // Pieces
               document.getElementById("pdeleting'.$p_id.'").style.display = "inline";
               document.getElementById("pstatus'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("deleting");
-              document.getElementById("prow_'.$p_id.'").classList.remove("undeleting","renew");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","undeleting","renew");
               document.getElementById("changed_'.$p_id.'").classList.add("deleting");
-              document.getElementById("changed_'.$p_id.'").classList.remove("undeleting","renew");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","undeleting","renew");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;deleting&nbsp;";';
 } elseif ($name == 'undelete') { // Pieces
   $result .= 'document.getElementById("r_undelete_'.$p_id.'").style.display = "none";
@@ -80,9 +80,9 @@ if ($name == 'delete') { // Pieces
               document.getElementById("pdeleting'.$p_id.'").style.display = "none";
               document.getElementById("pstatus'.$p_id.'").style.display = "inline";
               document.getElementById("prow_'.$p_id.'").classList.add("undeleting");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","renew");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","deleting","renew");
               document.getElementById("changed_'.$p_id.'").classList.add("undeleting");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","renew");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","renew");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;undeleted&nbsp;";';
 } elseif ($name == 'redelete') { // Trash
   $result .= 'document.getElementById("r_redelete_'.$p_id.'").style.display = "none";
@@ -93,7 +93,7 @@ if ($name == 'delete') { // Pieces
               document.getElementById("changed_'.$p_id.'").classList.add("deleting");
               document.getElementById("changed_'.$p_id.'").classList.remove("undeleting");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;deleted&nbsp;";
-              document.getElementById("readydelete'.$p_id.'").innerHTML = "ready to purge";';
+              document.getElementById("readydelete'.$p_id.'").innerHTML = "&#10008; ready to purge";';
 } elseif ($name == 'restore') { // Trash
   $result .= 'document.getElementById("r_redelete_'.$p_id.'").style.display = "inherit";
               document.getElementById("r_restore_'.$p_id.'").style.display = "none";
@@ -103,7 +103,7 @@ if ($name == 'delete') { // Pieces
               document.getElementById("changed_'.$p_id.'").classList.add("undeleting");
               document.getElementById("changed_'.$p_id.'").classList.remove("deleting");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;undeleted&nbsp;";
-              document.getElementById("readydelete'.$p_id.'").innerHTML = "restored";';
+              document.getElementById("readydelete'.$p_id.'").innerHTML = "&#9851; restored";';
 } elseif ($name == 'purge') { // Trash
   $result .= 'document.getElementById("prow_'.$p_id.'").classList.add("deleting");
               document.getElementById("prow_'.$p_id.'").classList.remove("undeleting");
@@ -118,29 +118,29 @@ if ($name == 'delete') { // Pieces
   $result .= 'document.getElementById("r_make_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showtypify'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed type&nbsp;";
               var x = document.getElementById("ptype'.$p_id.'");
-              if (x.innerHTML === "post") {
-                x.innerHTML = "page";
+              if (x.innerHTML.includes("post")) {
+                x.innerHTML = "&#10081; page";
               } else {
-                x.innerHTML = "post";
+                x.innerHTML = "&#8267; post";
               }';
 } else { // Pieces status
   $result .= 'document.getElementById("r_status_'.$p_id.'").innerHTML = event.target.responseText;
               document.getElementById("showaction'.$p_id.'").style.display = "none";
               document.getElementById("prow_'.$p_id.'").classList.add("renew");
-              document.getElementById("prow_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("prow_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").classList.add("renew");
-              document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+              document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
               document.getElementById("changed_'.$p_id.'").innerHTML = "&nbsp;changed status&nbsp;";
               var x = document.getElementById("pstatus'.$p_id.'");
-              if (x.innerHTML === "published") {
-                x.innerHTML = "redrafting";
+              if (x.innerHTML.includes("published")) {
+                x.innerHTML = "&#10001; redrafting";
               } else {
-                x.innerHTML = "published";
+                x.innerHTML = "&#10004; published";
               }';
 } // End action if
 
@@ -151,7 +151,7 @@ if ($name == 'delete') { // Pieces
       AJAX.addEventListener( "error", function(event) {
         document.getElementById("prow_'.$p_id.'").classList.add("deleting");
         document.getElementById("changed_'.$p_id.'").classList.add("renew");
-        document.getElementById("changed_'.$p_id.'").classList.remove("deleting","undeleting");
+        document.getElementById("changed_'.$p_id.'").classList.remove("metaupdate","deleting","undeleting");
         document.getElementById("changed_'.$p_id.'").innerHTML = "'.$name.' error";
         document.getElementById("changed_'.$p_id.'").style.display = "inline";
       } );

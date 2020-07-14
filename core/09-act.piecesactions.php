@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($_POST['action'])) ) {

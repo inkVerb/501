@@ -128,7 +128,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     AND BINARY slug='$p_slug_sqlesc'
     AND BINARY content='$p_content_sqlesc'
     AND BINARY after='$p_after_sqlesc'
-    AND tags=CAST('$p_tags_sqljson' AS JSON),
+    AND tags=CAST('$p_tags_sqljson' AS JSON)
     AND links=CAST('$p_links_sqljson' AS JSON)"; // This is how to test if a JSON string matches
     //echo "<pre>\$query: $query</pre>"; // uncomment to see the query, then run it yourself
     $call = mysqli_query($database, $query);
@@ -202,8 +202,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       AND BINARY slug='$p_slug_sqlesc'
       AND BINARY content='$p_content_sqlesc'
       AND BINARY after='$p_after_sqlesc'
-      AND tags=CAST('$p_tags_sqljson' AS JSON),
-      AND links=CAST('$p_links_sqljson' AS JSON),
+      AND tags=CAST('$p_tags_sqljson' AS JSON)
+      AND links=CAST('$p_links_sqljson' AS JSON)
       AND BINARY date_live='$p_live_sqlesc'";
       $call = mysqli_query($database, $query);
       // If there were no changes

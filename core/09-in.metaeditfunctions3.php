@@ -1,6 +1,6 @@
 <?php
 
-function piecesform($name, $p_id) {
+function metaeditform($name, $p_id) {
 
   // Validate the $p_id
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}

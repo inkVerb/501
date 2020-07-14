@@ -9,7 +9,7 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 // Trash link
 echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <a class="red" href="purge_all_trash.php">Purge all trash</a>';
@@ -56,7 +56,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       '.$p_date_note.'</td>';
 
   // Actions
-  echo '<td>'.piecesform('restore', $p_id).piecesform('purge', $p_id).'</td>';
+  echo '<td>'.metaeditform('restore', $p_id).metaeditform('purge', $p_id).'</td>';
 
   // Type
   echo '<td>'.$p_type.'<br></td>';

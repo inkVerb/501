@@ -9,7 +9,7 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 // Trash link
 echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
@@ -140,9 +140,9 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     <code onclick="clearChanged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code>
     <code onclick="clearPurged'.$p_id.'()" title="dismiss" style="float: right; cursor: pointer; display: none;" id="purged_'.$p_id.'">&nbsp;purged&nbsp;</code><br>
     <div id="showaction'.$p_id.'" style="display: none;">
-    <div id="r_redelete_'.$p_id.'" style="display: none;">'.piecesform('redelete', $p_id).'</div>
-    <div id="r_restore_'.$p_id.'" style="display: inherit;">'.piecesform('restore', $p_id).'</div>
-    <div id="r_pdelete_'.$p_id.'" style="display: inherit;">'.piecesform('purge', $p_id).'</div>
+    <div id="r_redelete_'.$p_id.'" style="display: none;">'.metaeditform('redelete', $p_id).'</div>
+    <div id="r_restore_'.$p_id.'" style="display: inherit;">'.metaeditform('restore', $p_id).'</div>
+    <div id="r_pdelete_'.$p_id.'" style="display: inherit;">'.metaeditform('purge', $p_id).'</div>
     </div>';
 
   // JavaScript with unique function name per row, show/hide action links

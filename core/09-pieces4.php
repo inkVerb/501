@@ -9,7 +9,7 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
@@ -79,21 +79,21 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Status
   echo '<td>'.$p_status.'<br>';
   if ($p_status == 'dead') {
-    echo piecesform('undelete', $p_id).piecesform('delete forever', $p_id).'</td>';
+    echo metaeditform('undelete', $p_id).metaeditform('delete forever', $p_id).'</td>';
   } elseif ($p_status == 'published') {
-    echo piecesform('unpublish', $p_id).piecesform('delete', $p_id).'</td>';
+    echo metaeditform('unpublish', $p_id).metaeditform('delete', $p_id).'</td>';
   } elseif ($p_status == 'redrafting') {
-    echo piecesform('republish', $p_id).piecesform('delete', $p_id).'</td>';
+    echo metaeditform('republish', $p_id).metaeditform('delete', $p_id).'</td>';
   } elseif ($p_status == 'pre-draft') {
-    echo piecesform('delete', $p_id).'</td>';
+    echo metaeditform('delete', $p_id).'</td>';
   }
 
   // Type
   echo '<td>'.$p_type.'<br>';
   if ($p_type == 'page') {
-    echo piecesform('make post', $p_id).'</td>';
+    echo metaeditform('make post', $p_id).'</td>';
   } else {
-    echo piecesform('make page', $p_id).'</td>';
+    echo metaeditform('make page', $p_id).'</td>';
   }
 
   // Finish piece

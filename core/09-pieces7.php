@@ -9,7 +9,7 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
 // Include our pieces functions
-include ('./in.piecesfunctions.php');
+include ('./in.metaeditfunctions.php');
 
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
@@ -143,13 +143,13 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
   .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
   if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
-    echo piecesform('undelete', $p_id).'</div>';
+    echo metaeditform('undelete', $p_id).'</div>';
   } elseif ($p_status == 'published') {
-    echo piecesform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> '.piecesform('delete', $p_id).'</div>';
+    echo metaeditform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> '.metaeditform('delete', $p_id).'</div>';
   } elseif ($p_status == 'redrafting') {
-    echo piecesform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.piecesform('delete', $p_id).'</div>';
+    echo metaeditform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> '.metaeditform('delete', $p_id).'</div>';
   } elseif ($p_status == 'pre-draft') {
-    echo piecesform('delete', $p_id).'</div>';
+    echo metaeditform('delete', $p_id).'</div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
@@ -172,9 +172,9 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
   .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
-    echo piecesform('make post', $p_id).'</div>';
+    echo metaeditform('make post', $p_id).'</div>';
   } else {
-    echo piecesform('make page', $p_id).'</div>';
+    echo metaeditform('make page', $p_id).'</div>';
   }
 
   // JavaScript with unique function name per row, show/hide action links
