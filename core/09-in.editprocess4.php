@@ -56,13 +56,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // If there were no changes
     while ($dup = true) {
       $add_num = $add_num + 1;
-      $new_p_slug = $p_slug_test_sqlesc.'-'.$add_num;
+      $new_p_slug = $p_slug.'-'.$add_num;
+      $new_p_slug_test_sqlesc = escape_sql($new_p_slug);
 
       // Check again
       if (isset($piece_id)) { // We don't want a dup from for own piece
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id'";
+        $query = "SELECT id FROM publications WHERE slug='$new_p_slug_test_sqlesc' AND NOT piece_id='$piece_id'";
       } else {
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug'";
+        $query = "SELECT id FROM publications WHERE slug='$new_p_slug_test_sqlesc'";
       }
       $call = mysqli_query($database, $query);
       if (mysqli_num_rows($call) == 0) {

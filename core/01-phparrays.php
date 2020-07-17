@@ -47,6 +47,20 @@ print_r($assocArray);
 echo "<br>print_r \$autoArray:<br>";
 print_r($autoArray);
 
+
+// Match something in an array
+if (in_array('Donuts', $assocArray)) {
+  echo '<br>Donuts found!<br>';
+} else {
+  echo '<br>Donuts not found!<br>';
+}
+
+if (in_array('Latte', $assocArray)) {
+  echo '<br>Latte found!<br>';
+} else {
+  echo '<br>Latte not found!<br>';
+}
+
 ?>
 
 </body>
