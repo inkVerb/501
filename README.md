@@ -1,2 +1,2 @@
 # 501
-## Tools for [PHP 501](https://github.com/inkVerb/Pinker/blob/master/501-php)
+## Tools for [Shell 501](https://github.com/inkVerb/Pinker/blob/master/501-shell)

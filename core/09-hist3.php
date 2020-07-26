@@ -224,7 +224,7 @@ echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a><
 
 //// Now starts "htmdiff" ////
 // echo our diff JS
-echo '<script src="htmldiff.js"></script>';
+echo '<script src="htmldiff.min.js"></script>';
 
 // DOM that the JS can recognize
 echo '

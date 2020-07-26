@@ -224,7 +224,7 @@ table.contentlib tr.metaupdate code.metaupdate:hover {
 	border-color: #999;
 }
 
-/* htmldiff.js */
+/* htmldiff.min.js */
 ins {
   text-decoration: none;
   background-color: #d4fcbc;

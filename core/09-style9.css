@@ -202,7 +202,7 @@ table.contentlib tr.undeleting code.undeleting:hover {
 	border-color: #999;
 }
 
-/* htmldiff.js */
+/* htmldiff.min.js */
 ins {
   text-decoration: none;
   background-color: #d4fcbc;
