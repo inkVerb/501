@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
-$nologin_allowed = true; // Login requires this page
+$nologin_allowed = true; // Login required?
 include ('./in.login_check.php');
 
 // Check the database for published pieces

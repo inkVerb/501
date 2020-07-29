@@ -8,7 +8,7 @@ include ('./in.functions.php');
 
 // Include our login cluster
 $head_title = "Webapp Dashboard"; // Set a <title> name used next
-$nologin_allowed = true; // Login requires this page
+$nologin_allowed = true; // Login required?
 include ('./in.login_check.php');
 
 // Just logged out?
