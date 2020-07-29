@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="tinymce/tinymce.min.js"></script>
+  <script type="text/javascript">
+  tinymce.init({
+    selector: '#myTextarea',
+    width: 600,
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'table emoticons template paste contextmenu styleprops',
+
+      // Added for uploads & images
+      'imagetools',
+
+    ],
+    // This changes what is in the formatselect item
+    block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; inline code=code; preformatted=pre',
+
+    toolbar: 'formatselect | ' +
+    'formatgroup paragraphgroup toolgroup ' + // These are defined below in toolbar_groups
+    'bold italic ' +
+    'pagebreak link unlink image media preview code fullscreen',
+
+    toolbar_groups: {
+        formatgroup: {
+            icon: 'format',
+            tooltip: 'Formatting',
+            items: 'forecolor backcolor strikethrough subscript superscript removeformat pastetext'
+        },
+        paragraphgroup: {
+            icon: 'paragraph',
+            tooltip: 'Paragraph & Blocks',
+            items: 'alignleft aligncenter alignright alignjustify | blockquote bullist numlist outdent indent table'
+        },
+        toolgroup: {
+            icon: 'plus',
+            tooltip: 'Insert',
+            items: 'anchor insertdatetime charmap hr emoticons | searchreplace spellchecker print help'
+        }
+    },
+
+    skin: 'oxide', // Default, dir: tinymce/skins alternative native skin is: oxide-dark
+    icons: 'default', // Default, dir: tinymce/icons create your own:https://www.tiny.cloud/docs/advanced/creating-an-icon-pack/
+    toolbar_location: 'bottom',
+    menubar: false,
+    paste_as_text: true,
+    content_css: 'style.css',
+
+    // Added for uploads & images
+    paste_data_images: true,
+    imate_title: true,
+
+    // Drag-in uploads ("automatic uploads")
+    automatic_uploads: true, // This is the default
+    images_reuse_filename: true, // So drag-in auto uploads will keep the same file name
+
+    // The .php file to handle this in the background (AJAX)
+    images_upload_url: 'tiny-upload.php',
+
+    // Our own upload handler
+    images_upload_handler: function(fileHere, success, fail) {
+        // Prepare
+        var ajax = new XMLHttpRequest();
+        ajax.withCredentials = false;
+        ajax.open('post', 'tiny-upload.php');
+        ajax.upload.onprogress = function (e) {
+          progress(e.loaded / e.total * 100);
+        };
+
+        // Test for failure
+        ajax.onload = function() {
+            // Make sure we have a legit status
+            if (ajax.status == 200) {
+              // Make sure JSON is JSON
+              if ( (!JSON.parse(ajax.responseText)) || (typeof JSON.parse(ajax.responseText).filepath != 'string') ) {
+                  fail('Invalid: <code>'+ajax.responseText+'</code>');
+                  return;
+              }
+
+              // No fails
+              success(JSON.parse(ajax.responseText).filepath);
+
+            // Make sure there was no error in the AJAX
+            } else {
+                fail('Upload error: <code>'+ajax.status+'</code>');
+                return;
+            }
+        };
+
+        // Send the file info to TinyMCE
+        var fileInfo = new FormData();
+        fileInfo.append('file', fileHere.blob(), fileHere.filename()); // Sort out the info
+        ajax.send(fileInfo); // Send the info
+    },
+
+  });
+  </script>
+</head>
+
+<body>
+
+
+  <textarea id="myTextarea"></textarea>
+
+</body>
+</html>

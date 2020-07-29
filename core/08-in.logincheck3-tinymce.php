@@ -11,22 +11,48 @@
   <script src="tinymce/tinymce.min.js"></script>
   <script type="text/javascript">
   tinymce.init({
-    selector: '.tinymce_editor', // This is the class for our "Content" <textarea>
+    selector: '#myTextarea',
     width: 600,
     height: 300,
     plugins: [
       'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
       'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-      'table emoticons template paste help'
+      'table emoticons template paste contextmenu styleprops',
+
     ],
-    toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | ' +
-      'bullist numlist outdent indent | link image | print preview media fullpage | ' +
-      'forecolor backcolor emoticons | help',
-    menu: {
-      favs: {title: 'My Favorites', items: 'code visualaid | searchreplace | spellchecker | emoticons'}
+    // This changes what is in the formatselect item
+    block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; inline code=code; preformatted=pre',
+
+    toolbar: 'formatselect | ' +
+    'formatgroup paragraphgroup toolgroup ' + // These are defined below in toolbar_groups
+    'bold italic ' +
+    'pagebreak link unlink image media preview code fullscreen',
+
+    toolbar_groups: {
+        formatgroup: {
+            icon: 'format',
+            tooltip: 'Formatting',
+            items: 'forecolor backcolor strikethrough subscript superscript removeformat pastetext'
+        },
+        paragraphgroup: {
+            icon: 'paragraph',
+            tooltip: 'Paragraph & Blocks',
+            items: 'alignleft aligncenter alignright alignjustify | blockquote bullist numlist outdent indent table'
+        },
+        toolgroup: {
+            icon: 'plus',
+            tooltip: 'Insert',
+            items: 'anchor insertdatetime charmap hr emoticons | searchreplace spellchecker print help'
+        }
     },
-    menubar: 'favs file edit view insert format tools table help',
-    content_css: 'css/content.css'
+
+    skin: 'oxide', // Default, dir: tinymce/skins alternative native skin is: oxide-dark
+    icons: 'default', // Default, dir: tinymce/icons create your own:https://www.tiny.cloud/docs/advanced/creating-an-icon-pack/
+    toolbar_location: 'bottom',
+    menubar: false,
+    paste_as_text: true,
+    content_css: 'style.css',
+
   });
   </script>
   <!-- TinyMCE end -->
