@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $imageinfo = getimagesize($temp_file);
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: '.$image_dimensions.'</p>';
+        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code</p>';
       } else {
         $errors .= '<p class="error">Not an image</p>';
       }
