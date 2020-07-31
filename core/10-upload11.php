@@ -6,17 +6,17 @@ include ('./in.config.php');
 //echo var_dump($_FILES);
 
 // Process the upload
-if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['upload_file']['size'] != 0) && (isset($_SESSION['user_id'])) ) {
+if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['upload_file']['size'][0] != 0) && (isset($_SESSION['user_id'])) ) {
 
     $upload_dir = 'dropzone_uploads/';
-    $file_name = basename($_FILES['upload_file']['name']);
-    $temp_file = $_FILES['upload_file']['tmp_name'];
+    $file_name = basename($_FILES['upload_file']['name'][0]);
+    $temp_file = $_FILES['upload_file']['tmp_name'][0];
     $file_mime = mime_content_type($temp_file);
     $file_extension = strtolower(pathinfo($file_name,PATHINFO_EXTENSION));
     $file_basename = basename($file_name,'.'.$file_extension); // Strip off the extension
     $file_name = $file_basename.'.'.$file_extension; // Reassign extension with no caps
     $file_path_dest = $upload_dir.$file_name;
-    $file_size = $_FILES['upload_file']['size'];
+    $file_size = $_FILES['upload_file']['size'][0];
     $size_limit = 5000000; // 5MB
     $errors = '';
 

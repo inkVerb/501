@@ -45,7 +45,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check file size
     if ($file_size > $size_limit) {
-      $errors .= '<p class="error">File is too large</p>';
+      $errors .= '<span class="error">File is too large. Size: '.$file_size.'</span><br><br>';
+    } else {
+      // This is a handy function to make file sizes in bytes readable by humans
+      function human_file_size($size, $unit="") {
+        if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
+          return number_format($size/(1<<30),2)."GB";
+        if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
+          return number_format($size/(1<<20),2)."MB";
+        if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
+          return number_format($size/(1<<10),2)."KB";
+        return number_format($size)." bytes";
+      }
+      // Use our handy function
+      $file_size_pretty = human_file_size($file_size);
     }
 
     // Image formats
@@ -54,12 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
     ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
 
-      // Valid & accepted, get size & mime type
+      // Valid & accepted, get dimensions & mime type
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
       $image_type = $imageinfo['mime'];
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code</p>';
+        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></p>';
       } else {
         $errors .= '<p class="error">Not an image</p>';
       }
@@ -109,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Upload the file and check in one command
     } else {
       if (move_uploaded_file($temp_file, $file_path_dest)) {
-        echo '<p class="blue">File name: <code>'.$file_name.'</code></p>';
+        echo '<p class="blue">File size: <code>'.$file_size_pretty.'</code><br>File name: <code>'.$file_name.'</code></p>';
       } else {
         $errors .= '<p class="error">Upload error</p>';
         // Show our $errors

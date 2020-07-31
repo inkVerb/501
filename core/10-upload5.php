@@ -54,12 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
     ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
 
-      // Valid & accepted, get size & mime type
+      // Valid & accepted, get dimensions & mime type
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
       $image_type = $imageinfo['mime'];
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code</p>';
+        echo '<p class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></p>';
       } else {
         $errors .= '<p class="error">Not an image</p>';
       }
