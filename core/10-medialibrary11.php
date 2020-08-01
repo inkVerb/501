@@ -29,29 +29,26 @@ include ('./in.login_check.php');
 
     // Process AJAX response from upload.php
 
-
-// Fix this JS so it concatenates each response, updating the final output with each upload
-
     init: function() {
-      var upResponse = '';
+      var upResponse = ''; // Variable to concatenate multiple AJAX responses
       this.on('success', function(file, responseText) {
 
         // Update our upResponse variable
-        upResponse += upResponse'<b>'+file.name+' info:</b><br>'+responseText;
+        upResponse += '<b>'+file.name+' info:</b><br>'+responseText;
 
         // Show the filename and HTML response in an alert box for learning purposes
         alert(file.name+' :: UPLOAD MESSAGE :: '+responseText);
 
-      });
+        // Update our webpage with the current contatenated AJAX responses
+        if (upResponse != '') {
+          // Write the response to HTML element id="uploadresponse"
+          document.getElementById("uploadresponse").innerHTML = upResponse;
+        } else {
+          // Write the response to HTML element id="uploadresponse"
+          document.getElementById("uploadresponse").innerHTML = '<span class="error">Nothing uploaded.</span>';
+        }
 
-      // Update our webpage
-      if (upResponse != '') {
-        // Write the response to HTML element id="uploadresponse"
-        document.getElementById("uploadresponse").innerHTML = upResponse;
-      } else {
-        // Write the response to HTML element id="uploadresponse"
-        document.getElementById("uploadresponse").innerHTML = '<span class="error">Nothing uploaded.</span>';
-      }
+      });
 
     } // Process AJAX response
 
