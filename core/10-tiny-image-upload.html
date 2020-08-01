@@ -9,11 +9,10 @@
     height: 300,
     plugins: [
       'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking',
       'table emoticons template paste contextmenu styleprops',
 
-      // Added for uploads & images
-      'imagetools',
+      //'imagetools', // Uncomment for expirimental fun
 
     ],
     // This changes what is in the formatselect item
@@ -22,7 +21,7 @@
     toolbar: 'formatselect | ' +
     'formatgroup paragraphgroup toolgroup ' + // These are defined below in toolbar_groups
     'bold italic ' +
-    'pagebreak link unlink image media preview code fullscreen',
+    'pagebreak link unlink image preview code fullscreen',
 
     toolbar_groups: {
         formatgroup: {
