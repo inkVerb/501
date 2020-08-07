@@ -23,25 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $file_extension = strtolower(pathinfo($file_name,PATHINFO_EXTENSION));
     $file_basename = basename($file_name,'.'.$file_extension); // Strip off the extension
     $file_name = $file_basename.'.'.$file_extension; // Reassign extension with no caps
-    $file_path_dest = $upload_dir.$file_name;
     $file_size = $_FILES['upload_file']['size'];
     $size_limit = 5000000; // 5MB
     $errors = '';
-
-    // Check if file name already exists
-    if (file_exists($file_path_dest)) {
-      $append_int = 1;
-      $new_file_basename = $file_basename.'-'.$append_int;
-      $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
-      while (file_exists($new_file_path_dest)) {
-        $new_file_basename = $file_basename.'-'.$append_int;
-        $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
-        $append_int++; // Increment our appendage
-      }
-      // Reset our values
-      $file_name = $new_file_basename.'.'.$file_extension;
-      $file_path_dest = $upload_dir.$file_name;
-    }
 
     // Check file size
     if ($file_size > $size_limit) {
@@ -119,8 +103,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $errors .= '<p class="error">File rejected</p>';
       // Show our $errors
       echo $errors;
-    // Upload the file and check in one command
+
+    // File checks out
     } else {
+      // Check if file name already exists
+      $file_path_dest = $upload_dir.$file_name;
+      if (file_exists($file_path_dest)) {
+        $append_int = 1;
+        $new_file_basename = $file_basename.'-'.$append_int;
+        $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
+        while (file_exists($new_file_path_dest)) {
+          $new_file_basename = $file_basename.'-'.$append_int;
+          $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
+          $append_int++; // Increment our appendage
+        }
+        // Reset our values
+        $file_name = $new_file_basename.'.'.$file_extension;
+        $file_path_dest = $upload_dir.$file_name;
+      }
+      // Upload the file and check in one command
       if (move_uploaded_file($temp_file, $file_path_dest)) {
         echo '<p class="blue">File size: <code>'.$file_size_pretty.'</code><br>File name: <code>'.$file_name.'</code></p>';
       } else {

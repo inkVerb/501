@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <link rel="stylesheet" href="medium/css/medium-editor.css">
+  <link rel="stylesheet" href="medium/css/themes/default.css">
+
+  <!-- Tables -->
+  <link rel="stylesheet" href="medium/css/medium-editor-tables.css">
+
+</head>
+
+<body>
+
+  <textarea class="editable"></textarea>
+  
+  <script src="medium/js/medium-editor.js"></script>
+
+  <!-- Tables -->
+  <script src="medium/js/medium-editor-tables.js"></script>
+
+  <script type="text/javascript" charset="utf-8">
+
+    var editor = new MediumEditor('.editable', {
+      toolbar: {
+        buttons: [
+          'bold',
+          'italic',
+          'table'
+        ]
+      },
+
+      // Add Tables
+      extensions: {
+        table: new MediumEditorTable()
+      }
+    });
+
+  </script>
+
+</body>
+</html>

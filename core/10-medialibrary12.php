@@ -13,7 +13,7 @@ include ('./in.login_check.php');
 
 <!-- Dropzone settings -->
 <script>
-  Dropzone.options.dropzoneUploader = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
+  Dropzone.options.dropzoneUploaderMediaLibrary = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader-media-library"
     dictDefaultMessage: 'Drop to upload!',
     paramName: "upload_file", // We are still using upload_file; default: file
     maxFilesize: 5, // MB
@@ -56,11 +56,16 @@ include ('./in.login_check.php');
 </script>
 <!-- End Dropzone settings -->
 
-<form id="dropzone-uploader" class="dropzone ml" action='upload.php' method='post' enctype='multipart/form-data'></form>
+<form id="dropzone-uploader-media-library" class="dropzone ml" action='upload.php' method='post' enctype='multipart/form-data'></form>
+
+<!-- Iterate through each item in the media libary -->
 
 <!-- AJAX response from upload.php will go here-->
-<p id="uploadresponse"></p>
+<div id="uploadresponse"></div>
+
 <?php
+
+//
 
 // Footer
 include ('./in.footer.php');
