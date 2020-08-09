@@ -144,6 +144,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
         // AJAX-send the success message
         echo $info_message;
         }
+
       } else {
         $errors .= '<span class="error">Upload error</span><br><br>';
         // Show our $errors

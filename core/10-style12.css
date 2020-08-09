@@ -108,8 +108,31 @@ form.postform .inline {
 	color: #3f5275;
 }
 
+/* Media Library */
+div#media-library {
+	width: auto;
+	min-width: 150px;
+	padding: 10px;
+	margin: 10px;
+}
+
+div#media-upload {
+	float: right;
+	width: 20%;
+}
+
+div#media-list {
+	float: left;
+	width: 75%;
+}
+
+table#media-table {
+	width: 100%;
+	min-width: 150px;
+}
+
 /* Content library */
-table.contentlib {
+table#pieces-table {
 	width: 100%;
 	min-width: 850px;
 }

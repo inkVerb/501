@@ -135,7 +135,7 @@ if (isset($_COOKIE['user_key'])) {
 // Head finished
 
 if ( (isset($user_id)) && (isset($fullname)) ) {
-  echo '<p><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="pieces.php">Pieces</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+  echo '<p><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="pieces.php">Pieces</a> | <a href="medialibrary.php">Media</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
 }
 
 // Title the page so we know where we are

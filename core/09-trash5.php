@@ -33,7 +33,7 @@ echo '<br><hr><br>';
 
 // Start our HTML table
 echo '
-<table class="contentlib">
+<table class="contentlib" id="pieces-table">
   <tbody>
     <tr>
       <th width="40%">Title</th>

@@ -63,7 +63,7 @@ function toggle(source) {
 
 // Start our HTML table
 echo '
-<table class="contentlib">
+<table class="contentlib" id="pieces-table">
   <tbody>
     <tr>
     <th width="53%">Title</th>
