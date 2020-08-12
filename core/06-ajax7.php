@@ -9,9 +9,9 @@
   <script>
     function ajaxFormData(formID, postTo, ajaxUpdate) { // These arguments can be anything, same as used in this function
       // Bind a new event listener every time the <form> is changed:
-      const FORM = document.getElementById( formID ); // <form> by ID to access, formID is the JS argument in the function
+      const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const FD = new FormData( FORM ); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById(ajaxUpdate).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxUpdate is the JS argument in the function

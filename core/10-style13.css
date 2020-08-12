@@ -1,0 +1,375 @@
+/* Other CSS files */
+@import "./dropzone.min.css"; /* Dropzone */
+
+form input.error {
+	border: 2px solid #cc3333;
+}
+
+.error,
+a.error,
+a.error:visited {
+	color: #cc3333;
+}
+.red,
+a.red,
+a.red:visited {
+	color: #cc4433;
+}
+.green,
+a.green,
+a.green:visited {
+	color: #33aa33;
+}
+.orange,
+a.orange,
+a.orange:visited {
+	color: #cc8833;
+}
+.blue,
+a.blue,
+a.blue:visited {
+	color: #2266bb;
+}
+.purple,
+a.purple,
+a.purple:visited {
+	color: #8a5597;
+}
+.gray,
+a.gray,
+a.gray:visited {
+	color: #777;
+}
+
+section.tags {
+	font-family: monospace;
+}
+
+section.links {
+	font-family: monospace;
+	font-size: small;
+}
+
+textarea.meta {
+	width: 50em;
+	height: 8em;
+}
+textarea.metaedit {
+	width: 37em;
+	height: 8em;
+}
+input[type=text].piece {
+	width: 50em;
+}
+input[type=text].metaedit {
+	width: 30em;
+}
+
+table, tbody, tr, td, th  {
+	border:none;
+	border-collapse: collapse;
+	border-spacing: 0;
+	padding: 0.25em;
+}
+
+a, a:visited {
+	color: #198ca6;
+}
+
+a:hover,
+a.red:hover,
+a.green:hover,
+a.orange:hover,
+a.blue:hover,
+a.purple:hover,
+a.gray:hover {
+	color: #3f5275;
+}
+
+/* POST form function classes */
+form.postform .inline,
+button.postform .inline {
+  display: inline;
+}
+
+button.postform { /* Make this button behave like a link */
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  text-decoration: underline;
+  cursor: pointer;
+}
+button.postform:hover {
+	color: #3f5275;
+}
+
+.postform .link-button {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: inherit;
+}
+
+.postform .link-button:focus {
+  outline: none;
+}
+
+.postform .link-button:hover {
+	color: #3f5275;
+}
+
+/* Media Library */
+div#media-library {
+	width: auto;
+	min-width: 150px;
+	padding: 10px;
+	margin: 10px;
+}
+
+div#media-upload {
+	float: right;
+	width: 20%;
+}
+
+div#media-list {
+	float: left;
+	width: 75%;
+}
+
+table#media-table {
+	width: 100%;
+	min-width: 150px;
+}
+
+/* Content library */
+table#pieces-table {
+	width: 100%;
+	min-width: 850px;
+}
+
+table.contentlib tbody tr th {
+	text-align: left;
+}
+
+table.contentlib,
+table.contentlib tbody,
+table.contentlib tbody tr,
+table.contentlib tbody tr th,
+table.contentlib tbody tr td {
+	padding: 1em;
+	border:none;
+	border-collapse: collapse;
+	vertical-align: text-top;
+}
+
+table.contentlib a.piece_title,
+table.contentlib a.piece_title:visited {
+	color: #000;
+	text-decoration: none;
+}
+
+table.contentlib a:hover {
+	color: #3f5275;
+}
+
+table.contentlib span.date {
+	color: #555;
+	font-family: monospace;
+}
+
+table.contentlib tr.pieces_dead,
+table.contentlib tr.pieces_dead a {
+	font-style: italic;
+	color: #555;
+}
+
+table.contentlib tr.pieces_live {
+ /* Nothing here, placeholder because the class does exist */
+}
+
+table.contentlib tr.blues {
+	background-color: #d8effa;
+}
+
+table.contentlib tr.shady {
+	background-color: #dff8ef;
+}
+
+table.contentlib tr.renew {
+	background-color: #faebd8;
+}
+
+table.contentlib tr.renew code.renew {
+	color: #faebd8;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #ffcba8;
+	border-color: #ffcba8;
+	border-width: 1px;
+}
+
+table.contentlib tr.metaupdate {
+	background-color: #fae8be;
+}
+
+table.contentlib tr.metaupdate code.metaupdate {
+	color: #fae8be;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #f2ca6d;
+	border-color: #f2ca6d;
+	border-width: 1px;
+}
+
+table.contentlib tr.deleting {
+	background-color: #fadbd8;
+}
+
+table.contentlib tr.deleting code.deleting {
+	color: #fadbd8;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #af5b58;
+	border-color: #af5b58;
+	border-width: 1px;
+}
+
+table.contentlib tr.undeleting {
+	background-color: #dbfad8;
+}
+
+table.contentlib tr.undeleting code.undeleting {
+	color: #dbfad8;
+	border-style: solid;
+	border-spacing: 4px;
+	border-radius: 4px;
+	background-color: #5baf58;
+	border-color: #5baf58;
+	border-width: 1px;
+}
+
+table.contentlib tr.renew code.renew:hover,
+table.contentlib tr.deleting code.deleting:hover,
+table.contentlib tr.undeleting code.undeleting:hover,
+table.contentlib tr.metaupdate code.metaupdate:hover {
+	color: #fff;
+	background-color: #999;
+	border-color: #999;
+}
+
+/* htmldiff.min.js */
+ins {
+  text-decoration: none;
+  background-color: #d4fcbc;
+}
+
+del {
+  text-decoration: line-through;
+  background-color: #fbb6c2;
+  color: #555;
+}
+
+.outercard {
+  border: none;
+  margin: 1rem;
+  padding: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin: 0;
+  padding: 1rem;
+  flex: 1 0 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-right: -8px;
+}
+
+.col {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  margin-right: 8px;
+}
+
+/* metaEdit() popup */
+.metaedit {
+	position: relative;
+}
+
+tr.pieces {
+	font-size: small;
+}
+tr.metaedit,
+tr.metaedit form,
+tr.metaedit label,
+tr.metaedit input,
+tr.metaedit select,
+tr.metaedit textarea,
+tr.metaedit button {
+	font-size: x-small;
+}
+
+/* infoPop() popup */
+/* Container */
+.infopop {
+ position: relative;
+ display: inline-block;
+ cursor: pointer;
+}
+
+/* The actual popup */
+.infopop .infopoptext {
+ visibility: hidden;
+ width: 30em;
+ background-color: #555;
+ color: #fff;
+ text-align: left;
+ border-radius: 6px;
+ padding: 8px;
+ position: absolute;
+ z-index: 1;
+ bottom: 125%;
+ left: 5%;
+ margin-left: -10px;
+}
+
+/* Popup arrow */
+.infopop .infopoptext::after {
+ content: "";
+ position: absolute;
+ top: 100%;
+ left: 5%;
+ margin-left: -12px;
+ border-width: 5px;
+ border-style: solid;
+ border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle hide/show the popup */
+.infopop .show {
+ visibility: visible;
+ -webkit-animation: infoPopFadeIn 0.1s;
+ animation: infoPopFadeIn 0.1s
+}
+
+/* Animation to fade in the popup */
+@-webkit-keyframes infoPopFadeIn {
+ from {opacity: 0;}
+ to {opacity: 1;}
+}
+
+@keyframes infoPopFadeIn {
+ from {opacity: 0;}
+ to {opacity:1 ;}
+}

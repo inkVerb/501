@@ -3,8 +3,6 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-//echo var_dump($_FILES);
-
 // Process the upload
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['upload_file']['size'] != 0) && (isset($_SESSION['user_id'])) ) {
 
