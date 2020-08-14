@@ -86,6 +86,10 @@ a.gray:hover {
 	color: #3f5275;
 }
 
+div.piece-content {
+	overflow-wrap: break-word;
+}
+
 /* POST form function classes */
 form.postform .inline {
   display: inline;
@@ -111,6 +115,9 @@ form.postform .inline {
 /* Content library */
 table.contentlib {
 	width: 100%;
+}
+
+table#pieces-table {
 	min-width: 850px;
 }
 

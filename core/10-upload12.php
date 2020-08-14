@@ -46,10 +46,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
       // Valid & accepted, get size & mime type
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
-      $image_type = $imageinfo['mime'];
+      $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        $info_message .= '<span class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
+        $info_message .= '<span class="blue">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
         $upload_dir = $upload_dir_base.'images/';
       } else {
         $errors .= '<span class="error">Not an image</span><br><br>';
@@ -139,8 +139,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           // Show our $errors
           echo $errors;
         } else {
-        // AJAX-send the success message
-        echo $info_message;
+          // AJAX-send the success message
+          echo $info_message;
         }
 
       } else {

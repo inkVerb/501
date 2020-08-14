@@ -59,7 +59,7 @@ $row = mysqli_fetch_array($call, MYSQLI_NUM);
   echo '</small></p>';
 
   // Content
-  echo '<br>'.$p_content.'<br>';
+  echo '<br><div class="piece-content">'.$p_content.'</div><br>';
 
   // After
   echo '<br><div class="gray">'.$p_after.'</div><br>';

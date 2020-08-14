@@ -3,152 +3,207 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Process the upload
-if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id']))  && (isset($_SESSION['user_id'])) ) {
+// Check & validate for what we need
+if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (filter_var($_POST['m_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) ) {
 
-    $upload_dir_base = 'media/';
-    $file_name = basename($_FILES['upload_file']['name'][0]);
-    $temp_file = $_FILES['upload_file']['tmp_name'][0];
-    $file_mime = mime_content_type($temp_file);
-    $file_extension = strtolower(pathinfo($file_name,PATHINFO_EXTENSION));
-    $file_basename = basename($file_name,'.'.$file_extension); // Strip off the extension
-    $file_name = $file_basename.'.'.$file_extension; // Reassign extension with no caps
-    $file_size = $_FILES['upload_file']['size'][0];
-    $size_limit = 5000000; // 5MB
-    $errors = '';
+  // Assign the media ID and sanitize as the same time
+  $m_id = preg_replace("/[^0-9]/"," ", $_POST['m_id']);
 
-    // Check file size
-    if ($file_size > $size_limit) {
-      $errors .= '<span class="error">File is too large. Size: '.$file_size.'</span><br><br>';
+  // File name change
+  if ( (isset($_POST['name_change'])) && (isset($_POST['save_file_name'])) ) {
+
+    // Get the old file name
+    $query = "SELECT file_base, file_extension, location FROM media_library WHERE id='$m_id'";
+    $call = mysqli_query($database, $query);
+    // Shoule be 1 row
+    if (mysqli_num_rows($call) == 1) {
+      // Assign the values
+      $row = mysqli_fetch_array($call, MYSQLI_NUM);
+        $m_old_file_file_base = "$row[0]";
+        $m_old_file_file_extension = "$row[1]";
+        $m_file_location = "$row[2]";
+        $m_old_file_name = $m_old_file_file_base.'.'.$m_old_file_file_extension;
+      }
+
+    if (!file_exists("media/$m_file_location/$m_old_file_name")) {
+      echo '<span class="error notehide">Error!</span>';
+      exit();
+    }
+
+    // Assign and sanitize
+    $regex_replace = "/[^a-zA-Z0-9-_]/";
+    $m_new_file_base = preg_replace($regex_replace,"-", $_POST['save_file_name']); // Lowercase, all non-alnum to hyphen
+
+    // SQL
+    $m_new_file_base_sqlesc = escape_sql($m_new_file_base);
+    $query = "UPDATE media_library SET file_base='$m_new_file_base_sqlesc' WHERE id='$m_id'";
+    $call = mysqli_query($database, $query);
+    if ($call) {
+      echo '<span class="green notehide">Saved</span>';
+
+      // Change the actual file name
+      rename("media/$m_file_location/$m_old_file_name","media/$m_file_location/$m_new_file_base.$m_old_file_file_extension");
+
     } else {
-      // This is a handy function to make file sizes in bytes readable by humans
-      function human_file_size($size, $unit="") {
-        if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
-          return number_format($size/(1<<30),2)."GB";
-        if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
-          return number_format($size/(1<<20),2)."MB";
-        if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
-          return number_format($size/(1<<10),2)."KB";
-        return number_format($size)." bytes";
-      }
-      // Use our handy function
-      $file_size_pretty = human_file_size($file_size);
+      echo '<span class="error notehide">Error!</span>';
     }
 
-    // Create our $info_message
-    $info_message = '';
+  // Save media info
+  } elseif ( (isset($_POST['media_edit_save'])) && (isset($_POST['title_text'])) && (isset($_POST['alt_text'])) ) {
 
-    // Image formats
-    if ( (($file_extension == 'jpg')  && ($file_mime == 'image/jpeg'))
-    ||   (($file_extension == 'jpeg') && ($file_mime == 'image/jpeg'))
-    ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
-    ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
+    // Assign and sanitize
+    $regex_replace = "/[^a-zA-Z0-9-]/";
+    $title_text = preg_replace($regex_replace,"-", $_POST['title_text']); // Lowercase, all non-alnum to hyphen
+    $alt_text = preg_replace($regex_replace,"-", $_POST['alt_text']); // Lowercase, all non-alnum to hyphen
 
-      // Valid & accepted, get size & mime type
-      $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
-      $image_type = $imageinfo['mime'];
-      $image_dimensions = $imageinfo[3];
-      if (getimagesize($temp_file)) {
-        $info_message .= '<span class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
-        $upload_dir = $upload_dir_base.'images/';
-      } else {
-        $errors .= '<span class="error">Not an image</span><br><br>';
-      }
-
-    // SVG image
-    } elseif (($file_extension == 'svg')  && ($file_mime == 'image/svg+xml')) {
-      $info_message .= '<span class="blue">Image type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_dir = $upload_dir_base.'images/';
-      $upload_location = 'images';
-      $basic_type = 'IMAGE';
-
-    // Video formats
-    } elseif ( (($file_extension == 'webm') && ($file_mime == 'video/webm'))
-          ||   (($file_extension == 'ogg')  && ($file_mime == 'video/ogg'))
-          ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4')) ) {
-      $info_message .= '<span class="blue">Video type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_location = 'video';
-      $basic_type = 'VIDEO';
-
-    // Audio formats
-    } elseif ( (($file_extension == 'mp3') && ($file_mime == 'audio/mpeg'))
-          ||   (($file_extension == 'ogg') && ($file_mime == 'audio/ogg'))
-          ||   (($file_extension == 'wav') && ($file_mime == 'audio/x-wav')) // WAV files can have different interpretations of mime types
-          ||   (($file_extension == 'wav') && ($file_mime == 'audio/wav')) ) {
-      $info_message .= '<span class="blue">Audio type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_location = 'audio';
-      $basic_type = 'AUDIO';
-
-    // Document formats
-    } elseif ( (($file_extension == 'txt')  && ($file_mime == 'text/plain'))
-          ||   (($file_extension == 'md')   && ($file_mime == 'text/plain'))
-          ||   (($file_extension == 'doc')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
-          ||   (($file_extension == 'doc')  && ($file_mime == 'application/msword')) // Compiled, from MS Word
-          ||   (($file_extension == 'docx') && ($file_mime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
-          ||   (($file_extension == 'odt')  && ($file_mime == 'application/vnd.oasis.opendocument.text'))
-          ||   (($file_extension == 'pdf')  && ($file_mime == 'application/x-pdf')) // PDF files can have different interpretations of mime types
-          ||   (($file_extension == 'pdf')  && ($file_mime == 'application/pdf')) ) {
-      $info_message .= '<span class="blue">Document type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_location = 'docs';
-      $basic_type = 'DOCUMENT';
-
-    // Not allowed
-    } else { // Not an accepted extension
-      $errors .= '<span class="error">Type: '.$file_mime.' Allowed file types<br>
-      Image:<code> .jpg, .jpeg, .png, .gif</code><br>
-      Video:<code> .webm, .ogg, .mp4</code><br>
-      Audio:<code> .mp3, .ogg, .wav</code><br>
-      Docs:<code> .txt, .md, .doc, .docx, .odt, .pdf</code><br></span><br><br>';
-    }
-
-    // Check if $no_errors is set to 0 by an error
-    if ($errors != '') {
-      $errors .= '<span class="error">File rejected</span><br><br>';
-      // Show our $errors
-      echo $errors;
-    // File checks out
+    // SQL
+    $title_text_sqlesc = escape_sql($title_text);
+    $alt_text_sqlesc = escape_sql($alt_text);
+    $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc' WHERE id='$m_id'";
+    $call = mysqli_query($database, $query);
+    if ($call) {
+      echo '<span class="green notehide">Saved</span>';
     } else {
-      // Check if file name already exists
-      $upload_dir = $upload_dir_base.$upload_location.'/';
-      $file_path_dest = $upload_dir.$file_name;
-      if (file_exists($file_path_dest)) {
-        $append_int = 1;
-        $new_file_basename = $file_basename.'-'.$append_int;
-        $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
-        while (file_exists($new_file_path_dest)) {
-          $new_file_basename = $file_basename.'-'.$append_int;
-          $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
-          $append_int++; // Increment our appendage
-        }
-        // Reset our values
-        $file_basename = $new_file_basename;
-        $file_name = $new_file_basename.'.'.$file_extension;
-        $file_path_dest = $upload_dir.$file_name;
-      }
-      // Upload the file and check in one command
-      if (move_uploaded_file($temp_file, $file_path_dest)) {
-        $info_message .= '<span class="blue">File size: <code>'.$file_size_pretty.'</code></span><br>';
-        $info_message .= '<span class="blue">File name: <code>'.$file_name.'</code></span><br><br>';
-
-        // SQL entry
-        $query = "INSERT INTO media_library (size, mime_type, basic_type, location, file_base, file_extension)
-                  VALUES ('$file_size', '$file_mime', '$basic_type', '$upload_location', '$file_basename', '$file_extension')";
-        $call = mysqli_query($database, $query);
-        if (!$call) {
-          $errors .= '<span class="error">SQL error</span><br><br>';
-          // Show our $errors
-          echo $errors;
-        } else {
-        // AJAX-send the success message
-        echo $info_message;
-        }
-
-      } else {
-        $errors .= '<span class="error">Upload error</span><br><br>';
-        // Show our $errors
-        echo $errors;
-      }
+      echo '<span class="error notehide">Error!</span>';
     }
+
+  // mediaEdit AJAX loader
+  } else {
+
+    // Get the media item info from the database
+    $query = "SELECT size, mime_type, basic_type, file_base, file_extension, title_text, alt_text FROM media_library WHERE id='$m_id'";
+    $call = mysqli_query($database, $query);
+    // Shoule be 1 row
+    if (mysqli_num_rows($call) == 1) {
+      // Assign the values
+      $row = mysqli_fetch_array($call, MYSQLI_NUM);
+        $m_size = "$row[0]";
+        $m_mime_type = "$row[1]";
+        $m_basic_type = "$row[2]";
+        $m_file_base = "$row[3]";
+        $m_file_extension = "$row[4]";
+        $m_title_text = "$row[5]";
+        $m_alt_text = "$row[6]";
+    } else {
+      echo '<h1 id="media-editor-content" class="error">Error!</h1>
+      <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
+      <p class="error">Database error: Media item not found.</p>';
+      exit();
+    }
+
+    // Assign a "pretty" value for basic media type
+    switch ($m_basic_type) {
+      case 'IMAGE':
+        $media_type_pretty = 'Image: ';
+        break;
+      case 'VIDEO':
+        $media_type_pretty = 'Video: ';
+        break;
+      case 'AUDIO':
+        $media_type_pretty = 'Audio: ';
+        break;
+      case 'DOCUMENT':
+        $media_type_pretty = 'Document: ';
+        break;
+      default:
+        echo '<h1 id="media-editor-content" class="error">Error!</h1>
+        <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
+        <p class="error">Database error: Media type is impossible.</p>';
+        exit();
+    }
+
+    // Assign a "pretty" value for specific media mime type
+    switch ($m_mime_type) {
+      case 'image/jpeg':
+        $media_type_pretty .= 'JPEG';
+        break;
+      case 'image/png':
+        $media_type_pretty .= 'PNG';
+        break;
+      case 'image/gif':
+        $media_type_pretty .= 'GIF';
+        break;
+      case 'image/svg+xml':
+        $media_type_pretty .= 'SVG';
+        break;
+      case 'video/webm':
+        $media_type_pretty .= 'WebM';
+        break;
+      case 'video/ogg':
+        $media_type_pretty .= 'Ogg';
+        break;
+      case 'video/mp4':
+        $media_type_pretty .= 'MP4';
+        break;
+      case 'audio/mpeg':
+        $media_type_pretty .= 'MP3';
+        break;
+      case 'audio/ogg':
+        $media_type_pretty .= 'Ogg';
+        break;
+      case 'audio/x-wav':
+        $media_type_pretty .= 'Waveform';
+        break;
+      case 'audio/wav':
+        $media_type_pretty .= 'Waveform';
+        break;
+      case 'text/plain':
+        $media_type_pretty .= ($m_file_extension == 'md') ? 'Markdown' : 'Text';
+        break;
+      case 'text/html':
+        $media_type_pretty .= 'Raw DOC';
+        break;
+      case 'application/msword':
+        $media_type_pretty .= 'MS Word DOC';
+        break;
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        $media_type_pretty .= 'MS Word DOCX';
+        break;
+      case 'application/vnd.oasis.opendocument.text':
+        $media_type_pretty .= 'Open Document';
+        break;
+      case 'application/x-pdf':
+        $media_type_pretty .= 'PDF';
+        break;
+      case 'application/pdf':
+        $media_type_pretty .= 'PDF';
+        break;
+      default:
+        echo '<h1 id="media-editor-content" class="error">Error!</h1>
+        <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
+        <p class="error">Database error: Media mime type is impossible.</p>';
+        exit();
+    }
+
+    // This is a handy function to make file sizes in bytes readable by humans
+    function human_file_size($size, $unit="") {
+      if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
+        return number_format($size/(1<<30),2)."GB";
+      if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
+        return number_format($size/(1<<20),2)."MB";
+      if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
+        return number_format($size/(1<<10),2)."KB";
+      return number_format($size)." bytes";
+    }
+
+    $file_name_pre = '<pre onclick="changeFileName(\''.$m_id.'\', \''.$m_file_base.'\', \''.$m_file_extension.'\');" class="postform blue" title="change file name">'.$m_file_base.'.'.$m_file_extension.'</pre>';
+
+    echo '
+      <h1 id="media-editor-content">'.$media_type_pretty.'</h1>
+      <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
+      <pre>'.human_file_size($m_size).' ('.$m_size.' bytes)</pre>
+      <div id="change-file-name">'.$file_name_pre.'</div>
+
+      <form id="media-edit-form">
+        <input type="hidden" value="'.$m_id.'" name="m_id">
+        <input type="hidden" value="'.$m_id.'" name="media_edit_save">
+        <p>Title: <input type="text" name="title_text" value="'.$m_title_text.'"></p>
+        <p>Alt: <input type="text" name="alt_text" value="'.$m_alt_text.'"></p>
+        <button type="button" onclick="mediaSave('.$m_id.');">Save</button>
+      </form>
+    ';
+
+  } // mediaEdit AJAX loader
 
 } else { // End POST check
   header("Location: webapp.php");

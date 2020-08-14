@@ -58,6 +58,8 @@ include ('./in.login_check.php');
 
 <!-- Media Library -->
 <div id="media-library">
+
+  <!-- Dropzone -->
   <div id="media-upload">
     <form id="dropzone-uploader-media-library" class="dropzone ml" action='upload.php' method='post' enctype='multipart/form-data'></form>
 

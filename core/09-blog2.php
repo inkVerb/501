@@ -55,7 +55,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     // Shorten
     $p_content = preview_text($p_content, 5, $p_id);
     // Display
-    echo '<br>'.$p_content;
+    echo '<br><div class="piece-content">'.$p_content.'</div>';
 
     // Show "read" link if limit_text() cut anything
     if (isset($limited[$p_id])) {

@@ -46,11 +46,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
       // Valid & accepted, get size & mime type
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
-      $image_type = $imageinfo['mime'];
+      $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        $info_message .= '<span class="blue">Image type: <code>'.$file_mime.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
+        $info_message .= '<span class="blue">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
         $upload_dir = $upload_dir_base.'images/';
+        $upload_location = 'images';
+        $basic_type = 'IMAGE';
       } else {
         $errors .= '<span class="error">Not an image</span><br><br>';
       }
@@ -82,7 +84,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // Document formats
     } elseif ( (($file_extension == 'txt')  && ($file_mime == 'text/plain'))
           ||   (($file_extension == 'md')   && ($file_mime == 'text/plain'))
-          ||   (($file_extension == 'doc')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
+          ||   (($file_extension == 'htm')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
+          ||   (($file_extension == 'html')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
           ||   (($file_extension == 'doc')  && ($file_mime == 'application/msword')) // Compiled, from MS Word
           ||   (($file_extension == 'docx') && ($file_mime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
           ||   (($file_extension == 'odt')  && ($file_mime == 'application/vnd.oasis.opendocument.text'))
@@ -139,8 +142,18 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           // Show our $errors
           echo $errors;
         } else {
-        // AJAX-send the success message
-        echo $info_message;
+          // Get the new SQL entry ID
+          $m_id  = $database->insert_id;
+
+          // AJAX mediaEdit button (calls a JS function already loaded by medialibrary.php, can't load that JS here)
+          $info_message .= '
+          <form id="mediaEdit_'.$m_id.'">
+            <input type="hidden" value="'.$m_id.'" name="m_id">
+            <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');" style="float: right;">edit</button>
+          </form>';
+
+          // AJAX-send the success message
+          echo $info_message;
         }
 
       } else {

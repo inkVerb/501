@@ -56,18 +56,22 @@ include ('./in.login_check.php');
 </script>
 <!-- End Dropzone settings -->
 
+<!-- AJAX mediaEdit container: media editor will CSS-float inside this -->
+<div id="media-editor-container" style="display:none;">
+  <!-- AJAX mediaEdit HTML entity -->
+  <div id="media-editor"></div>
+</div>
+
 <!-- Media Library -->
 <div id="media-library">
+
+  <!-- Dropzone -->
   <div id="media-upload">
+
     <form id="dropzone-uploader-media-library" class="dropzone ml" action='upload.php' method='post' enctype='multipart/form-data'></form>
 
     <!-- AJAX response from upload.php will go here-->
     <div id="uploadresponse"></div>
-  </div>
-
-  <!-- AJAX mediaEdit container-->
-  <div id="media-editor" style="display:none;">
-
   </div>
 
   <!-- Iterate through each item in the media libary -->
@@ -89,15 +93,15 @@ include ('./in.login_check.php');
     ?>
     <script>
       // Open the media editor, populate via AJAX
-      function mediaEdit(formID, postTo, ajaxUpdate) { // These arguments can be anything, same as used in this function
+      function mediaEdit(formID, postTo, ajaxUpdate, save_message='') { // These arguments can be anything, same as used in this function
 
         // Show the media-edit div
-        document.getElementById("media-editor").style.display = "block";
+        document.getElementById("media-editor-container").style.display = "block";
 
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const FD = new FormData( FORM ); // Bind to-send data to form element
+        const FD = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
           document.getElementById(ajaxUpdate).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxUpdate is the JS argument in the function
@@ -114,99 +118,180 @@ include ('./in.login_check.php');
       } // mediaEdit() function
 
       // Save media info via AJAX, only indicate "Saved" or other message AJAXed backed from the server
-      function mediaSave(formID) { // These arguments can be anything, same as used in this function
-
-        // Show the media-edit div
-        document.getElementById("media-editor").style.display = "block";
+      function mediaSave(m_id) { // These arguments can be anything, same as used in this function
 
         // Bind a new event listener every time the <form> is changed:
-        const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
+        const FORM = document.getElementById("media-edit-form"); // <form> by ID to access, formID is the JS argument in the function
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const FD = new FormData( FORM ); // Bind to-send data to form element
+        const FD = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
-          document.getElementById("saved-message").innerHTML = event.target.responseText;
+          // Reload the media edit form
+          mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
+
+          // Show the message
+          document.getElementById("media-editor-saved-message").innerHTML = event.target.responseText;
         } );
 
         AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-          document.getElementById("saved-message").innerHTML =  'Oops! Something went wrong.';
+          document.getElementById("media-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
         } );
 
         AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
         AJAX.send(FD); // Data sent is from the form
 
-      } // mediaEdit() function
+      } // mediaSave() function
+
+      // Save new file name via AJAX, only indicate "Saved" or other message AJAXed backed from the server
+      function nameChange(m_id) { // These arguments can be anything, same as used in this function
+
+        // Bind a new event listener every time the <form> is changed:
+        const FORM = document.getElementById("name-change-form"); // <form> by ID to access, formID is the JS argument in the function
+        const AJAX = new XMLHttpRequest(); // AJAX handler
+        const FD = new FormData(FORM); // Bind to-send data to form element
+
+        AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+          // Reload the media edit form
+          mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
+
+          // Show the message
+          document.getElementById("media-editor-saved-message").innerHTML = event.target.responseText;
+
+          // Style the name in the Media Library table
+          document.getElementById("filename_"+m_id).classList.add('orange');
+        } );
+
+        AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+          document.getElementById("media-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
+        } );
+
+        AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
+
+        AJAX.send(FD); // Data sent is from the form
+
+      } // nameChange() function
 
       // Close the media editor
       function mediaEditorClose() {
-        document.getElementById("media-editor").style.display = "none";
+        document.getElementById("media-editor-container").style.display = "none";
+      }
+
+      // File name change form
+      function changeFileName(m_id, m_file_base, m_file_extension) {
+        const FILE_NAME_FORM = '<form id="name-change-form">\
+          <input type="hidden" value="'+m_id+'" name="m_id">\
+          <input type="hidden" value="'+m_id+'" name="name_change">\
+          <input type="text" name="save_file_name" value="'+m_file_base+'">&nbsp;<b><code>.'+m_file_extension+'</code></b>\
+          <button type="button" onclick="nameChange('+m_id+');">Change file name</button>\
+          &nbsp;&nbsp;<span onclick="changeFileNameClose(\''+m_id+'\', \''+m_file_base+'\', \''+m_file_extension+'\');" class="postform" title="cancel">&#xd7;</span>\
+        </form>';
+        document.getElementById("change-file-name").innerHTML = FILE_NAME_FORM;
+      }
+
+      // Close the file name change form
+      function changeFileNameClose(m_id, m_file_base, m_file_extension) {
+        const PRE_CONTENT = '<pre onclick="changeFileName(\''+m_id+'\', \''+m_file_base+'\', \''+m_file_extension+'\');" class="postform blue" title="change file name">'+m_file_base+'.'+m_file_extension+'</pre>';
+        document.getElementById("change-file-name").innerHTML = PRE_CONTENT;
       }
     </script>
     <?php
 
-    // Start our HTML table
-    echo '
-    <table class="contentlib" id="media-table">
-      <tbody>
-        <tr>
-        <th width="15%">Filename</th>
-        <th width="15%">Type</th>
-        <th width="70%">Info</th>
-        </tr>
-    ';
-
     // Get and display each item
     $query = "SELECT id, file_base, file_extension, basic_type, size FROM media_library";
     $call = mysqli_query($database, $query);
-    // Start our row colors
-    $table_row_color = 'blues';
-    // We have many entries, this will iterate one post per each
-    while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
-      // Assign the values
-      $m_id = "$row[0]";
-      $m_file_base = "$row[1]";
-      $m_file_extension = "$row[2]";
-      $m_basic_type = "$row[3]";
-      $m_size = "$row[4]";
 
-      // Proper filename
-      $m_filename = $m_file_base.'.'.$m_file_extension;
+    // Is anything there?
+    if (mysqli_num_rows($call) == 0) {
 
-      // Use our handy function
-      $m_size_pretty = human_file_size($m_size);
+      echo 'Nothing yet. Upload a file to add to your Media Library.';
 
-      // Fill-in the row
-      echo '<tr class="'.$table_row_color.'">';
+    } else {
 
-      // File
-      echo '<td><small><pre>'.$m_filename.'</pre></small></td>';
+      // Message at top
+      $num_items = (mysqli_num_rows($call) == 1) ? mysqli_num_rows($call).' media item' : mysqli_num_rows($call).' media items';
+      echo '<p style="display: inline;"><b>'.$num_items.'</b>&nbsp;&nbsp;<div id="media-editor-saved-message" style="display: inline;"></div></p>';
 
-      // Type
-      echo '<td><small>'.$m_basic_type.'</small></td>';
+      // Start our HTML table
+      echo '
+      <table class="contentlib" id="media-table">
+        <tbody>
+          <tr>
+          <th width="15%">Filename</th>
+          <th width="15%">Type</th>
+          <th width="70%" colspan="2">Info</th>
+          </tr>
+      ';
 
-      // Info & AJAX mediaEdit button
-      echo '<td><small>'.$m_size_pretty.'</small>&nbsp;
-        <form id="mediaEdit_'.$m_id.'">
-          <input type="hidden" value="'.$m_id.'" name="m_id">
-          <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');">edit</button>
-        </form>
-      </td>';
+      // Start our row colors
+      $table_row_color = 'blues';
+      // We have many entries, this will iterate one post per each
+      while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+        // Assign the values
+        $m_id = "$row[0]";
+        $m_file_base = "$row[1]";
+        $m_file_extension = "$row[2]";
+        $m_basic_type = "$row[3]";
+        $m_size = "$row[4]";
 
-      // End the row
-      echo '</tr>';
+        // Proper filename
+        $m_filename = $m_file_base.'.'.$m_file_extension;
 
-      // Toggle our row colors
-      $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';
+        // Use our handy function
+        $m_size_pretty = human_file_size($m_size);
 
-    }
+        // JavaScript with unique function name per row, show/hide action links
+        ?>
+        <script>
+        function showActions<?php echo $m_id; ?>() {
+          var x = document.getElementById("showaction<?php echo $m_id; ?>");
+          if (x.style.display === "inline") {
+            x.style.display = "none";
+          } else {
+            x.style.display = "inline";
+          }
+        }
+        </script>
+        <?php
 
-    echo "
-      </tbody>
-    </table>
-    ";
+        // Fill-in the row
+        echo '<tr class="'.$table_row_color.'" onmouseover="showActions'.$m_id.'()" onmouseout="showActions'.$m_id.'()">';
 
-    ?>
+        // File
+        echo '<td><small><pre id="filename_'.$m_id.'">'.$m_filename.'</pre></small></td>';
+
+        // Type
+        echo '<td><small>'.$m_basic_type.'</small></td>';
+
+        // Info
+        echo '<td><small>'.$m_size_pretty.'</small>&nbsp;
+        </td>';
+
+        // AJAX mediaEdit button
+        echo '<td>
+          <form id="mediaEdit_'.$m_id.'">
+            <input type="hidden" value="'.$m_id.'" name="m_id">
+            <div id="showaction'.$m_id.'" style="display: none;">
+              <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');" style="float: right;">edit</button>
+            </div>
+          </form>
+        </td>';
+
+        // End the row
+        echo '</tr>';
+
+        // Toggle our row colors
+        $table_row_color = ($table_row_color == 'blues') ? 'shady' : 'blues';
+
+      }
+
+      echo "
+        </tbody>
+      </table>
+      ";
+
+    } // End check for if there is anything in the media_library database
+  ?>
   </div>
 
 </div>

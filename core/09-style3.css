@@ -36,6 +36,10 @@ a:hover {
 	color: #3f5275;
 }
 
+div.piece-content {
+	overflow-wrap: break-word;
+}
+
 /* POST form function classes */
 form.postform .inline {
   display: inline;
