@@ -12,6 +12,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   // File name change
   if ( (isset($_POST['name_change'])) && (isset($_POST['save_file_name'])) ) {
 
+    // Create our AJAX response array
+    $ajax_response = array();
+
     // Get the old file name
     $query = "SELECT file_base, file_extension, location FROM media_library WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
@@ -20,13 +23,17 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
       // Assign the values
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
         $m_old_file_file_base = "$row[0]";
-        $m_old_file_file_extension = "$row[1]";
+        $m_old_file_extension = "$row[1]";
         $m_file_location = "$row[2]";
-        $m_old_file_name = $m_old_file_file_base.'.'.$m_old_file_file_extension;
+        $m_old_file_name = $m_old_file_file_base.'.'.$m_old_file_extension;
       }
 
     if (!file_exists("media/$m_file_location/$m_old_file_name")) {
-      echo '<span class="error notehide">Error!</span>';
+      $ajax_response['message'] = '<span class="error notehide">Error!</span>';
+
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
       exit();
     }
 
@@ -39,17 +46,25 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $query = "UPDATE media_library SET file_base='$m_new_file_base_sqlesc' WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
-      echo '<span class="green notehide">Saved</span>';
+      $ajax_response['message'] = '<span class="green notehide">Saved</span>';
+      $ajax_response['file_name'] = "$m_new_file_base.$m_old_file_extension";
 
       // Change the actual file name
-      rename("media/$m_file_location/$m_old_file_name","media/$m_file_location/$m_new_file_base.$m_old_file_file_extension");
+      rename("media/$m_file_location/$m_old_file_name","media/$m_file_location/$m_new_file_base.$m_old_file_extension");
 
     } else {
-      echo '<span class="error notehide">Error!</span>';
+      $ajax_response['message'] = '<span class="error notehide">Error!</span>';
     }
+
+    // We're done here
+    $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+    echo $json_response;
 
   // Save media info
   } elseif ( (isset($_POST['media_edit_save'])) && (isset($_POST['title_text'])) && (isset($_POST['alt_text'])) ) {
+
+    // Create our AJAX response array
+    $ajax_response = array();
 
     // Assign and sanitize
     $regex_replace = "/[^a-zA-Z0-9-]/";
@@ -62,10 +77,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc' WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
-      echo '<span class="green notehide">Saved</span>';
+      $ajax_response['message'] = '<span class="green notehide">Saved</span>';
     } else {
-      echo '<span class="error notehide">Error!</span>';
+      $ajax_response['message'] = '<span class="error notehide">Error!</span>';
     }
+
+    // We're done here
+    $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+    echo $json_response;
 
   // mediaEdit AJAX loader
   } else {

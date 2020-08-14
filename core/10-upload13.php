@@ -49,7 +49,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        $info_message .= '<span class="blue">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
+        $info_message .= '<span class="upload-info">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
         $upload_dir = $upload_dir_base.'images/';
         $upload_location = 'images';
         $basic_type = 'IMAGE';
@@ -59,7 +59,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
     // SVG image
     } elseif (($file_extension == 'svg')  && ($file_mime == 'image/svg+xml')) {
-      $info_message .= '<span class="blue">Image type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Image type: <code>'.$file_mime.'</code></span><br><br>';
       $upload_dir = $upload_dir_base.'images/';
       $upload_location = 'images';
       $basic_type = 'IMAGE';
@@ -68,7 +68,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     } elseif ( (($file_extension == 'webm') && ($file_mime == 'video/webm'))
           ||   (($file_extension == 'ogg')  && ($file_mime == 'video/ogg'))
           ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4')) ) {
-      $info_message .= '<span class="blue">Video type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Video type: <code>'.$file_mime.'</code></span><br><br>';
       $upload_location = 'video';
       $basic_type = 'VIDEO';
 
@@ -77,7 +77,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           ||   (($file_extension == 'ogg') && ($file_mime == 'audio/ogg'))
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/x-wav')) // WAV files can have different interpretations of mime types
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/wav')) ) {
-      $info_message .= '<span class="blue">Audio type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Audio type: <code>'.$file_mime.'</code></span><br><br>';
       $upload_location = 'audio';
       $basic_type = 'AUDIO';
 
@@ -91,7 +91,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           ||   (($file_extension == 'odt')  && ($file_mime == 'application/vnd.oasis.opendocument.text'))
           ||   (($file_extension == 'pdf')  && ($file_mime == 'application/x-pdf')) // PDF files can have different interpretations of mime types
           ||   (($file_extension == 'pdf')  && ($file_mime == 'application/pdf')) ) {
-      $info_message .= '<span class="blue">Document type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Document type: <code>'.$file_mime.'</code></span><br><br>';
       $upload_location = 'docs';
       $basic_type = 'DOCUMENT';
 
@@ -130,8 +130,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       }
       // Upload the file and check in one command
       if (move_uploaded_file($temp_file, $file_path_dest)) {
-        $info_message .= '<span class="blue">File size: <code>'.$file_size_pretty.'</code></span><br>';
-        $info_message .= '<span class="blue">File name: <code>'.$file_name.'</code></span><br><br>';
 
         // SQL entry
         $query = "INSERT INTO media_library (size, mime_type, basic_type, location, file_base, file_extension)
@@ -145,15 +143,21 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           // Get the new SQL entry ID
           $m_id  = $database->insert_id;
 
+          $info_message .= '<span class="upload-info">File size: <code>'.$file_size_pretty.'</code></span><br id="mediatype_'.$m_id.'">'; // We need id="mediatype_..." so JS has something to change and it doesn't break
+          $info_message .= '<span class="upload-info">File name: <code id="filename_'.$m_id.'">'.$file_name.'</code></span><br><br>';
+
+          // Wrap the info in a paragraph
+          $info_message = '<p id="upload_'.$m_id.'" class="blue">'.$info_message.'</p>';
+
           // AJAX mediaEdit button (calls a JS function already loaded by medialibrary.php, can't load that JS here)
-          $info_message .= '
+          $edit_form = '
           <form id="mediaEdit_'.$m_id.'">
             <input type="hidden" value="'.$m_id.'" name="m_id">
             <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');" style="float: right;">edit</button>
-          </form>';
+          </form><br>';
 
-          // AJAX-send the success message
-          echo $info_message;
+          // AJAX-send the success message and edit link
+          echo $edit_form.$info_message.'<hr>';
         }
 
       } else {

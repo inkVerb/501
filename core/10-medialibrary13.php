@@ -126,11 +126,18 @@ include ('./in.login_check.php');
         const FD = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+          // Parse our response
+          var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
+
           // Reload the media edit form
           mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
 
           // Show the message
-          document.getElementById("media-editor-saved-message").innerHTML = event.target.responseText;
+          document.getElementById("media-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
+
+          // Style the media type in the Media Library table
+          document.getElementById("mediatype_"+m_id).classList.add('orange');
+          document.getElementById("upload_"+m_id).classList.remove('blue');
         } );
 
         AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
@@ -152,14 +159,19 @@ include ('./in.login_check.php');
         const FD = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+          // Parse our response
+          var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
+
           // Reload the media edit form
           mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
 
           // Show the message
-          document.getElementById("media-editor-saved-message").innerHTML = event.target.responseText;
+          document.getElementById("media-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
 
-          // Style the name in the Media Library table
+          // Style & update the name in the Media Library table
+          document.getElementById("filename_"+m_id).innerHTML = jsonMetaEditResponse["file_name"];
           document.getElementById("filename_"+m_id).classList.add('orange');
+          document.getElementById("upload_"+m_id).classList.remove('blue');
         } );
 
         AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
@@ -261,10 +273,10 @@ include ('./in.login_check.php');
         echo '<td><small><pre id="filename_'.$m_id.'">'.$m_filename.'</pre></small></td>';
 
         // Type
-        echo '<td><small>'.$m_basic_type.'</small></td>';
+        echo '<td><small><pre id="mediatype_'.$m_id.'">'.$m_basic_type.'</pre></small></td>';
 
         // Info
-        echo '<td><small>'.$m_size_pretty.'</small>&nbsp;
+        echo '<td><small><pre id="filesize_'.$m_id.'">'.$m_size_pretty.'</pre></small>&nbsp;
         </td>';
 
         // AJAX mediaEdit button
