@@ -113,6 +113,7 @@ table.contentlib a:hover {
 }
 
 table.contentlib span.date {
+	line-height: 1.8;
 	color: #555;
 	font-family: monospace;
 }

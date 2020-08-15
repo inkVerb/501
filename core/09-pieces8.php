@@ -11,6 +11,77 @@ include ('./in.login_check.php');
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
 
+// JavaScript
+?>
+<script>
+
+// show/hide view links in Title
+function showViews(p_id) {
+  var x = document.getElementById("showviews"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
+
+// show/hide action links in Status
+function showActions(p_id) {
+  var x = document.getElementById("showaction"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
+
+// Clear "changed" status
+function clearChanged(p_id) {
+  document.getElementById("prow_"+p_id).classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
+  document.getElementById("changed_"+p_id).remove(); // Remove the "changed" clickable message added by AJAX
+  showActions(p_id); // We need our toggles right
+}
+
+// show/hide action link in Type
+function showTypify(p_id) {
+  var x = document.getElementById("showtypify"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
+
+// show/hide Bulk Actions
+function showBulkActions() {
+  var x = document.getElementById("bulk_actions_div");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+
+  // Hide/show all checkboxes by class
+  [].forEach.call(document.querySelectorAll(".bulk_checkbox"), function (c) {
+    if (c.style.display === "inline") {
+      c.style.display = "none";
+    } else {
+      c.style.display = "inline";
+    }
+  });
+}
+
+// "Select all"
+function toggle(source) {
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  for (var i = 0; i < checkboxes.length; i++) {
+    if (checkboxes[i] != source)
+      checkboxes[i].checked = source.checked;
+  }
+}
+</script>
+<?php
+
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
 
@@ -34,32 +105,6 @@ echo '<div onclick="showBulkActions()" style="cursor: pointer; display: inline;"
 </form>
 <label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
 </div>';
-
-// JavaScript to show/hide Bulk Actions
-?>
-<script>
-function showBulkActions() {
-  var x = document.getElementById("bulk_actions_div");
-  if (x.style.display === "block") {
-    x.style.display = "none";
-  } else {
-    x.style.display = "block";
-  }
-}
-</script>
-<?php
-// JavaScript to "Select all"
-?>
-<script>
-function toggle(source) {
-    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i] != source)
-            checkboxes[i].checked = source.checked;
-    }
-}
-</script>
-<?php
 
 // Start our HTML table
 echo '
@@ -115,33 +160,19 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<tr class="'."$table_row_color $status_class".'" id="prow_'.$p_id.'">';
 
   // Title
-  echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
+  echo '<td onmouseover="showViews('.$p_id.')" onmouseout="showViews('.$p_id.')">
   <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
-  <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
+  <div class="bulk_checkbox" style="display: none;"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"></div> '.$p_date_note.'
   <div id="showviews'.$p_id.'" style="display: none;">
   <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>
   </div>';
 
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showViews<?php echo $p_id; ?>() {
-    var x = document.getElementById("showviews<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
-
   echo '</td>';
 
   // Status
-  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-  .$show_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
+  echo '<td onmouseover="showActions('.$p_id.')" onmouseout="showActions('.$p_id.')">'
+  .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
   if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
     echo metaeditform('undelete', $p_id).'</div>';
   } elseif ($p_status == 'published') {
@@ -152,54 +183,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     echo metaeditform('delete', $p_id).'</div>';
   }
 
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showActions<?php echo $p_id; ?>() {
-    var x = document.getElementById("showaction<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
-  // JavaScript to clear "changed" status
-  ?>
-  <script>
-  function clearChanged<?php echo $p_id; ?>() {
-    document.getElementById("prow_<?php echo $p_id; ?>").classList.remove("renew"); // Remove the .renew class from the <tr> added by AJAX
-    document.getElementById("changed_<?php echo $p_id; ?>").remove(); // Remove the "changed" clickable message added by AJAX
-    showActions<?php echo $p_id; ?>(); // We need our toggles right
-  }
-  </script>
-  <?php
-
   echo '</td>';
 
   // Type
-  echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
+  echo '<td onmouseover="showTypify('.$p_id.')" onmouseout="showTypify('.$p_id.')">'
   .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
     echo metaeditform('make post', $p_id).'</div>';
   } else {
     echo metaeditform('make page', $p_id).'</div>';
   }
-
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showTypify<?php echo $p_id; ?>() {
-    var x = document.getElementById("showtypify<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
 
   echo '</td>';
 

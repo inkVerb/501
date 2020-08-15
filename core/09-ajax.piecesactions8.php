@@ -70,7 +70,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     echo '<tr class="'."$status_class".'" id="prow_'.$p_id.'">'; // This won't matter, but it is here for reference
 
     // Title
-    echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
+    echo '<td onmouseover="showViews('.$p_id.')" onmouseout="showViews('.$p_id.')">
     <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>
     <label for="bulk_'.$p_id.'"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"> '.$p_date_note.'</label>
     <div id="showviews'.$p_id.'" style="display: none;">
@@ -80,8 +80,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     </td>';
 
     // Status
-    echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
-    .$show_status.' <code class="renew" onclick="clearChanged'.$p_id.'()" style="float: right; cursor: pointer;" id="changed_'.$p_id.'">changed</code><br><div id="showaction'.$p_id.'" style="display: none;">';
+    echo '<td onmouseover="showActions('.$p_id.')" onmouseout="showActions('.$p_id.')">'
+    .$show_status.' <code class="renew" onclick="clearChanged('.$p_id.')" style="float: right; cursor: pointer;" id="changed_'.$p_id.'">changed</code><br><div id="showaction'.$p_id.'" style="display: none;">';
     if ($p_status == 'dead') { // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
       echo metaeditform('undelete', $p_id).'</div>';
     } elseif ($p_status == 'published') {
@@ -95,7 +95,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
     echo '</td>';
 
     // Type
-    echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
+    echo '<td onmouseover="showTypify('.$p_id.')" onmouseout="showTypify('.$p_id.')">'
     .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
     if ($p_type == 'page') {
       echo metaeditform('make post', $p_id).'</div>';

@@ -7,38 +7,47 @@ function metaeditform($name, $p_id) {
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
 
   // Get the page we're going to
-  if ($name == 'undelete') {
-    $color_class = 'orange';
-    $float_ = 'left';
-    $slug = 'delete';
-  } elseif ($name == 'restore') {
-    $color_class = 'orange';
-    $float_ = 'left';
-    $slug = 'delete';
-  } elseif ($name == 'delete') {
-    $color_class = 'red';
-    $float_ = 'right';
-    $slug = 'delete';
-  } elseif ($name == 'purge') {
-    $color_class = 'red';
-    $float_ = 'right';
-    $slug = 'delete';
-  } elseif ($name == 'unpublish') {
-    $color_class = 'orange';
-    $float_ = 'left';
-    $slug = 'status';
-  } elseif ($name == 'republish') {
-    $color_class = 'green';
-    $float_ = 'left';
-    $slug = 'status';
-  } elseif ($name == 'make post') {
-    $color_class = 'blue';
-    $float_ = 'left';
-    $slug = 'make';
-  } elseif ($name == 'make page') {
-    $color_class = 'blue';
-    $float_ = 'left';
-    $slug = 'make';
+  switch ($name) {
+    case 'undelete':
+      $color_class = 'orange';
+      $float_ = 'left';
+      $slug = 'delete';
+      break;
+    case 'restore':
+      $color_class = 'orange';
+      $float_ = 'left';
+      $slug = 'delete';
+      break;
+    case 'delete':
+      $color_class = 'red';
+      $float_ = 'right';
+      $slug = 'delete';
+      break;
+    case 'purge':
+      $color_class = 'red';
+      $float_ = 'right';
+      $slug = 'delete';
+      break;
+    case 'unpublish':
+      $color_class = 'orange';
+      $float_ = 'left';
+      $slug = 'status';
+      break;
+    case 'republish':
+      $color_class = 'green';
+      $float_ = 'left';
+      $slug = 'status';
+      break;
+    case 'make post':
+      $color_class = 'blue';
+      $float_ = 'left';
+      $slug = 'make';
+      break;
+    case 'make page':
+      $color_class = 'blue';
+      $float_ = 'left';
+      $slug = 'make';
+      break;
   }
 
   $result = '
@@ -90,100 +99,108 @@ function piecesaction($action, $p_id) {
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
 
   // Choose the action
-  if ($action == 'unpublish') {
-    $query = "UPDATE publications SET pubstatus='redrafting', date_updated=NOW() WHERE id='$p_id'";
-    $call = mysqli_query($database, $query);
-    if ($call) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
+  switch ($action) {
+    case 'unpublish':
+      $query = "UPDATE publications SET pubstatus='redrafting', date_updated=NOW() WHERE id='$p_id'";
+      $call = mysqli_query($database, $query);
+      if ($call) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
 
-  } elseif ($action == 'republish') {
-    $query = "UPDATE publications SET pubstatus='published', date_updated=NOW() WHERE id='$p_id'";
-    $call = mysqli_query($database, $query);
-    if ($call) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
+      break;
+    case 'republish':
+      $query = "UPDATE publications SET pubstatus='published', date_updated=NOW() WHERE id='$p_id'";
+      $call = mysqli_query($database, $query);
+      if ($call) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
 
-  } elseif ($action == 'delete') {
-    $queryd = "UPDATE pieces SET status='dead', date_updated=NOW() WHERE id='$p_id'";
-    $calld = mysqli_query($database, $queryd);
-    $queryr = "UPDATE publications SET status='dead', date_updated=NOW() WHERE piece_id='$p_id'";
-    $callr = mysqli_query($database, $queryr);
-    if (($calld) && ($callr)) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
+      break;
+    case 'delete':
+      $queryd = "UPDATE pieces SET status='dead', date_updated=NOW() WHERE id='$p_id'";
+      $calld = mysqli_query($database, $queryd);
+      $queryr = "UPDATE publications SET status='dead', date_updated=NOW() WHERE piece_id='$p_id'";
+      $callr = mysqli_query($database, $queryr);
+      if (($calld) && ($callr)) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
 
-  } elseif (($action == 'restore')
-        ||  ($action == 'undelete')) {
-    $queryd = "UPDATE pieces SET status='live', date_updated=NOW() WHERE id='$p_id'";
-    $calld = mysqli_query($database, $queryd);
-    $queryr = "UPDATE publications SET status='live', date_updated=NOW() WHERE piece_id='$p_id'";
-    $callr = mysqli_query($database, $queryr);
-    if (($calld) && ($callr)) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
+      break;
+    case 'restore':
+    case 'undelete':
+      $queryd = "UPDATE pieces SET status='live', date_updated=NOW() WHERE id='$p_id'";
+      $calld = mysqli_query($database, $queryd);
+      $queryr = "UPDATE publications SET status='live', date_updated=NOW() WHERE piece_id='$p_id'";
+      $callr = mysqli_query($database, $queryr);
+      if (($calld) && ($callr)) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
 
-  } elseif ($action == 'purge') {
-    $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
-    $call1 = mysqli_query($database, $query1);
-    if ($call1) {
-      $query2 = "DELETE FROM publications WHERE status='dead' AND piece_id='$p_id'";
+      break;
+    case 'purge':
+      $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
+      $call1 = mysqli_query($database, $query1);
+      if ($call1) {
+        $query2 = "DELETE FROM publications WHERE status='dead' AND piece_id='$p_id'";
+        $call2 = mysqli_query($database, $query2);
+      }
+      if ($call2) {
+        $query3 = "DELETE FROM publication_history WHERE piece_id='$p_id'";
+        $call3 = mysqli_query($database, $query3);
+      }
+      if ($call3) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
+
+      break;
+    case 'make post':
+      $query1 = "UPDATE publications SET type='post', date_updated=NOW() WHERE piece_id='$p_id'";
+      $call1 = mysqli_query($database, $query1);
+      $query2 = "UPDATE pieces SET type='post', date_updated=NOW() WHERE id='$p_id'";
       $call2 = mysqli_query($database, $query2);
-    }
-    if ($call2) {
-      $query3 = "DELETE FROM publication_history WHERE piece_id='$p_id'";
-      $call3 = mysqli_query($database, $query3);
-    }
-    if ($call3) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
+      if (($call1) && ($call2)) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
 
-  } elseif ($action == 'make post') {
-    $query1 = "UPDATE publications SET type='post', date_updated=NOW() WHERE piece_id='$p_id'";
-    $call1 = mysqli_query($database, $query1);
-    $query2 = "UPDATE pieces SET type='post', date_updated=NOW() WHERE id='$p_id'";
-    $call2 = mysqli_query($database, $query2);
-    if (($call1) && ($call2)) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
+      break;
+    case 'make page':
+      $query1 = "UPDATE publications SET type='page', date_updated=NOW() WHERE piece_id='$p_id'";
+      $call1 = mysqli_query($database, $query1);
+      $query2 = "UPDATE pieces SET type='page', date_updated=NOW() WHERE id='$p_id'";
+      $call2 = mysqli_query($database, $query2);
+      if (($call1) && ($call2)) {
+        $piecesactionsuccess = true;
+      } else {
+        unset($piecesactionsuccess);
+        echo '<pre>Major database error!</pre>';
+        exit();
+      }
 
-  } elseif ($action == 'make page') {
-    $query1 = "UPDATE publications SET type='page', date_updated=NOW() WHERE piece_id='$p_id'";
-    $call1 = mysqli_query($database, $query1);
-    $query2 = "UPDATE pieces SET type='page', date_updated=NOW() WHERE id='$p_id'";
-    $call2 = mysqli_query($database, $query2);
-    if (($call1) && ($call2)) {
-      $piecesactionsuccess = true;
-    } else {
-      unset($piecesactionsuccess);
-      echo '<pre>Major database error!</pre>';
-      exit();
-    }
-
+      break;
   }
 
 } // Finish function

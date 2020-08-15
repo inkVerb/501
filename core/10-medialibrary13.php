@@ -206,6 +206,64 @@ include ('./in.login_check.php');
         const PRE_CONTENT = '<pre onclick="changeFileName(\''+m_id+'\', \''+m_file_base+'\', \''+m_file_extension+'\');" class="postform blue" title="change file name">'+m_file_base+'.'+m_file_extension+'</pre>';
         document.getElementById("change-file-name").innerHTML = PRE_CONTENT;
       }
+
+      // JavaScript to show/hide edit link
+      function showActions(m_id) {
+        var x = document.getElementById("showaction"+m_id);
+        if (x.style.display === "inline") {
+          x.style.display = "none";
+        } else {
+          x.style.display = "inline";
+        }
+      }
+
+      // JavaScript to show/hide delete action
+      function showDelete() {
+        // Hide/show the bulk delete div
+        var x = document.getElementById("bulk_delete_div");
+        if (x.style.display === "block") {
+          x.style.display = "none";
+        } else {
+          x.style.display = "block";
+        }
+
+        // Hide/show the delete button
+        var d = document.getElementById("bulk_delete_button");
+        if (d.style.display === "block") {
+          d.style.display = "none";
+        } else {
+          d.style.display = "block";
+        }
+
+        // Hide/show all checkboxes by class
+        [].forEach.call(document.querySelectorAll(".del_checkbox"), function (c) {
+          if (c.style.display === "block") {
+            c.style.display = "none";
+          } else {
+            c.style.display = "block";
+          }
+        });
+
+      }
+
+      // JavaScript to "Select all"
+      function toggle(source) {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+          if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+        }
+      }
+
+      // JavaScript to show "confirm delete forever"
+      function confirmDelete() {
+        var x = document.getElementById("bulk_delete_confirm");
+        if (x.style.display === "block") {
+          x.style.display = "none";
+        } else {
+          x.style.display = "block";
+        }
+      }
     </script>
     <?php
 
@@ -224,14 +282,37 @@ include ('./in.login_check.php');
       $num_items = (mysqli_num_rows($call) == 1) ? mysqli_num_rows($call).' media item' : mysqli_num_rows($call).' media items';
       echo '<p style="display: inline;"><b>'.$num_items.'</b>&nbsp;&nbsp;<div id="media-editor-saved-message" style="display: inline;"></div></p>';
 
+
+      // Simple line
+      echo '<br><hr><br>';
+
       // Start our HTML table
       echo '
       <table class="contentlib" id="media-table">
         <tbody>
           <tr>
-          <th width="15%">Filename</th>
+          <th width="15%">Filename
+            <div id="bulk_delete_button" style="display: none;">
+              <br>
+              <button type="button" class="postform link-button inline red" onclick="confirmDelete();">delete &rarr;</button>
+            </div>
+          </th>
           <th width="15%">Type</th>
-          <th width="70%" colspan="2">Info</th>
+          <th width="55%">Info
+            <div id="bulk_delete_confirm" style="display: none;">
+              <form id="delete_action" method="post" action="act.delmedia.php">
+                <br>
+                <b><input type="submit" class="red" name="deleteaction" value="confirm delete forever"></b>
+              </form>
+            </div>
+          </th>
+          <th width="15%">
+            <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete &#9660;</b></div><br>
+            <div id="bulk_delete_div" style="display: none;">
+              <br>
+              <label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
+            </div>
+          </th>
           </tr>
       ';
 
@@ -252,22 +333,8 @@ include ('./in.login_check.php');
         // Use our handy function
         $m_size_pretty = human_file_size($m_size);
 
-        // JavaScript with unique function name per row, show/hide action links
-        ?>
-        <script>
-        function showActions<?php echo $m_id; ?>() {
-          var x = document.getElementById("showaction<?php echo $m_id; ?>");
-          if (x.style.display === "inline") {
-            x.style.display = "none";
-          } else {
-            x.style.display = "inline";
-          }
-        }
-        </script>
-        <?php
-
         // Fill-in the row
-        echo '<tr class="'.$table_row_color.'" onmouseover="showActions'.$m_id.'()" onmouseout="showActions'.$m_id.'()">';
+        echo '<tr class="'.$table_row_color.'" onmouseover="showActions('.$m_id.')" onmouseout="showActions('.$m_id.')">';
 
         // File
         echo '<td><small><pre id="filename_'.$m_id.'">'.$m_filename.'</pre></small></td>';
@@ -286,7 +353,12 @@ include ('./in.login_check.php');
             <div id="showaction'.$m_id.'" style="display: none;">
               <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');" style="float: right;">edit</button>
             </div>
-          </form>
+          </form>';
+
+        // Delete actions
+        echo '
+          <br>
+          <div class="del_checkbox" style="display: none;"><label for="bulk_'.$m_id.'">delete <input form="delete_action" type="checkbox" id="bulk_'.$m_id.'" name="bulk_'.$m_id.'" value="'.$m_id.'"></label></div>
         </td>';
 
         // End the row

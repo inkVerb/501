@@ -11,6 +11,42 @@ include ('./in.login_check.php');
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
 
+// JavaScript
+?>
+<script>
+
+// show/hide view links in Title
+function showViews(p_id) {
+  var x = document.getElementById("showviews"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
+
+// show/hide action links in Status
+function showActions(p_id) {
+  var x = document.getElementById("showaction"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
+
+// show/hide action link in Type
+function showTypify(p_id) {
+  var x = document.getElementById("showtypify"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
+</script>
+<?php
+
 // Trash link
 echo '<a class="red" href="trash.php">View trash</a>';
 
@@ -75,30 +111,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   echo '<tr class="'."$table_row_color $status_class".'">';
 
   // Title
-  echo '<td onmouseover="showViews'.$p_id.'()" onmouseout="showViews'.$p_id.'()">
+  echo '<td onmouseover="showViews('.$p_id.')" onmouseout="showViews('.$p_id.')">
   <b><a class="piece_title" href="edit.php?p='.$p_id.'">'.$p_title.'</a></b><br>'.$p_date_note.'
   <div id="showviews'.$p_id.'" style="display: none;">
   <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>';
 
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showViews<?php echo $p_id; ?>() {
-    var x = document.getElementById("showviews<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
-
   echo '</td>';
 
   // Status
-  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">'
+  echo '<td onmouseover="showActions('.$p_id.')" onmouseout="showActions('.$p_id.')">'
   .$p_status.'<br><div id="showaction'.$p_id.'" style="display: none;">';
   if ($p_status == 'dead') {
     echo metaeditform('undelete', $p_id).metaeditform('delete forever', $p_id).'</div>';
@@ -110,44 +132,16 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     echo metaeditform('delete', $p_id).'</div>';
   }
 
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showActions<?php echo $p_id; ?>() {
-    var x = document.getElementById("showaction<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
-
   echo '</td>';
 
   // Type
-  echo '<td onmouseover="showTypify'.$p_id.'()" onmouseout="showTypify'.$p_id.'()">'
+  echo '<td onmouseover="showTypify('.$p_id.')" onmouseout="showTypify('.$p_id.')">'
   .$p_type.'<br><div id="showtypify'.$p_id.'" style="display: none;">';
   if ($p_type == 'page') {
     echo metaeditform('make post', $p_id).'</div>';
   } else {
     echo metaeditform('make page', $p_id).'</div>';
   }
-
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showTypify<?php echo $p_id; ?>() {
-    var x = document.getElementById("showtypify<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
 
   echo '</td>';
 

@@ -11,12 +11,11 @@ include ('./in.login_check.php');
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
 
-// Trash link
-echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
-
-// Double-check for "Purge all trash"
+// JavaScript
 ?>
 <script>
+
+// Double-check for "Purge all trash"
 function showPurgeAll() {
   var x = document.getElementById("purge_all_trash");
   if (x.style.display === "inline") {
@@ -25,8 +24,21 @@ function showPurgeAll() {
     x.style.display = "inline";
   }
 }
+
+// show/hide action links in Action
+function showActions(p_id) {
+  var x = document.getElementById("showaction"+p_id);
+  if (x.style.display === "inline") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "inline";
+  }
+}
 </script>
 <?php
+
+// Trash link
+echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
 
 // Simple line
 echo '<br><hr><br>';
@@ -72,24 +84,10 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
       '.$p_date_note.'</td>';
 
   // Actions
-  echo '<td onmouseover="showActions'.$p_id.'()" onmouseout="showActions'.$p_id.'()">
+  echo '<td onmouseover="showActions('.$p_id.')" onmouseout="showActions('.$p_id.')">
     ready to delete<br><div id="showaction'.$p_id.'" style="display: none;">'
     .metaeditform('restore', $p_id).metaeditform('purge', $p_id).
   '</div>';
-
-  // JavaScript with unique function name per row, show/hide action links
-  ?>
-  <script>
-  function showActions<?php echo $p_id; ?>() {
-    var x = document.getElementById("showaction<?php echo $p_id; ?>");
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
-    }
-  }
-  </script>
-  <?php
 
   echo '</td>';
 

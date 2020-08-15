@@ -15,6 +15,11 @@ include ('./in.metaeditfunctions.php');
 if ($_POST['bluksubmit'] == 'republish') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('republish', $piece_id);
   }
 
@@ -26,6 +31,11 @@ if ($_POST['bluksubmit'] == 'republish') {
 if ($_POST['bluksubmit'] == 'unpublish') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('unpublish', $piece_id);
   }
 
@@ -37,6 +47,11 @@ if ($_POST['bluksubmit'] == 'unpublish') {
 if ($_POST['bluksubmit'] == 'make post') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('make post', $piece_id);
   }
 
@@ -48,6 +63,11 @@ if ($_POST['bluksubmit'] == 'make post') {
 if ($_POST['bluksubmit'] == 'make page') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('make page', $piece_id);
   }
 
@@ -59,6 +79,11 @@ if ($_POST['bluksubmit'] == 'make page') {
 if ($_POST['bluksubmit'] == 'undelete') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('undelete', $piece_id);
   }
 
@@ -70,6 +95,11 @@ if ($_POST['bluksubmit'] == 'undelete') {
 if ($_POST['bluksubmit'] == 'delete') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('delete', $piece_id);
   }
 
@@ -81,6 +111,11 @@ if ($_POST['bluksubmit'] == 'delete') {
 if ($_POST['bluksubmit'] == 'restore') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('restore', $piece_id);
   }
 
@@ -92,6 +127,11 @@ if ($_POST['bluksubmit'] == 'restore') {
 if ($_POST['bluksubmit'] == 'delete forever') {
   unset($_POST['bluksubmit']);
   foreach ($_POST as $piece_id) {
+    // Validate
+    if (!filter_var($piece_id, FILTER_VALIDATE_INT)) {
+      continue;
+    }
+    // Run the action
     piecesaction('delete forever', $piece_id);
   }
 
