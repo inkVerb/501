@@ -6,7 +6,7 @@ include ('./in.config.php');
 // Process the upload
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['upload_file']['size'][0] != 0) && (isset($_SESSION['user_id'])) ) {
 
-    $upload_dir_base = 'media/';
+    $upload_dir = 'media/uploads/';
     $file_name = basename($_FILES['upload_file']['name'][0]);
     $temp_file = $_FILES['upload_file']['tmp_name'][0];
     $file_mime = mime_content_type($temp_file);
@@ -44,13 +44,47 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
     ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
 
-      // Valid & accepted, get size & mime type
+      // Valid & accepted
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
+
+      // Linux process prep
+      list($img_w, $img_h) = $imageinfo;
+        $img_size = $img_w.'x'.$img_h;
+      if ($img_w == $img_h) {
+        $img_orientation = 'squr';
+        $img_xs = '154x154';
+        $img_sm = '484x484';
+        $img_md = '800x800';
+        $img_lg = '1280x1280';
+        $img_xl = '1920x1920';
+
+      } elseif ($img_w > $img_h) {
+        $img_orientation = 'wide';
+        // Image size ratios
+        $img_xs = ($img_w > 154) ? '154x'.round(154*($img_h/$img_w)) : 'none';
+        $img_sm = ($img_w > 484) ? '484x'.round(484*($img_h/$img_w)) : 'none';
+        $img_md = ($img_w > 800) ? '800x'.round(800*($img_h/$img_w)) : 'none';
+        $img_lg = ($img_w > 1280) ? '1280x'.round(1280*($img_h/$img_w)) : 'none';
+        $img_xl = ($img_w > 1920) ? '1920x'.round(1920*($img_h/$img_w)) : 'none';
+
+      } elseif ($img_w < $img_h) {
+        $img_orientation = 'tall';
+        // Image size ratios
+        $img_xs = ($img_w > 154) ? round(154*($img_w/$img_h)).'x154' : 'none';
+        $img_sm = ($img_w > 484) ? round(484*($img_w/$img_h)).'x484' : 'none';
+        $img_md = ($img_w > 800) ? round(800*($img_w/$img_h)).'x800' : 'none';
+        $img_lg = ($img_w > 1280) ? round(1280*($img_w/$img_h)).'x1280' : 'none';
+        $img_xl = ($img_w > 1920) ? round(1920*($img_w/$img_h)).'x1920' : 'none';
+
+      }
+
+      // Get size & mime type
       $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
-      $image_dimensions = $imageinfo[3];
+      //$image_dimensions = $imageinfo[3]; // We won't use this anymore, but keep it for reference
+      $image_dimensions = $img_w.'x'.$img_h;
       if (getimagesize($temp_file)) {
         $info_message .= '<span class="upload-info">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
-        $upload_dir = $upload_dir_base.'images/';
+        $upload_type = 'img';
         $upload_location = 'images';
         $basic_type = 'IMAGE';
       } else {
@@ -60,7 +94,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // SVG image
     } elseif (($file_extension == 'svg')  && ($file_mime == 'image/svg+xml')) {
       $info_message .= '<span class="upload-info">Image type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_dir = $upload_dir_base.'images/';
+      $upload_type = 'svg';
       $upload_location = 'images';
       $basic_type = 'IMAGE';
 
@@ -69,6 +103,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           ||   (($file_extension == 'ogg')  && ($file_mime == 'video/ogg'))
           ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4')) ) {
       $info_message .= '<span class="upload-info">Video type: <code>'.$file_mime.'</code></span><br><br>';
+      $upload_type = 'vid';
       $upload_location = 'video';
       $basic_type = 'VIDEO';
 
@@ -78,6 +113,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/x-wav')) // WAV files can have different interpretations of mime types
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/wav')) ) {
       $info_message .= '<span class="upload-info">Audio type: <code>'.$file_mime.'</code></span><br><br>';
+      $upload_type = 'aud';
       $upload_location = 'audio';
       $basic_type = 'AUDIO';
 
@@ -92,6 +128,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           ||   (($file_extension == 'pdf')  && ($file_mime == 'application/x-pdf')) // PDF files can have different interpretations of mime types
           ||   (($file_extension == 'pdf')  && ($file_mime == 'application/pdf')) ) {
       $info_message .= '<span class="upload-info">Document type: <code>'.$file_mime.'</code></span><br><br>';
+      $upload_type = 'doc';
       $upload_location = 'docs';
       $basic_type = 'DOCUMENT';
 
@@ -112,7 +149,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // File checks out
     } else {
       // Check if file name already exists
-      $upload_dir = $upload_dir_base.$upload_location.'/';
       $file_path_dest = $upload_dir.$file_name;
       if (file_exists($file_path_dest)) {
         $append_int = 1;
@@ -131,6 +167,30 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       // Upload the file and check in one command
       if (move_uploaded_file($temp_file, $file_path_dest)) {
 
+        // Linux process
+        switch ($upload_type) {
+          case 'img':
+            shell_exec('/var/www/html/web/bash.imageprocess.sh img '.$file_basename.' '.$file_extension.' '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
+
+          break;
+          case 'svg':
+            shell_exec('/var/www/html/web/bash.imageprocess.sh svg '.$file_name);
+
+          break;
+          case 'vid':
+            shell_exec('/var/www/html/web/bash.videoprocess.sh '.$file_name);
+
+          break;
+          case 'aud':
+            shell_exec('/var/www/html/web/bash.audioprocess.sh '.$file_name);
+
+          break;
+          case 'doc':
+            shell_exec('/var/www/html/web/bash.documprocess.sh '.$file_name);
+
+          break;
+        }
+
         // SQL entry
         $query = "INSERT INTO media_library (size, mime_type, basic_type, location, file_base, file_extension)
                   VALUES ('$file_size', '$file_mime', '$basic_type', '$upload_location', '$file_basename', '$file_extension')";
@@ -142,6 +202,18 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
         } else {
           // Get the new SQL entry ID
           $m_id  = $database->insert_id;
+
+          // Add images to the imgaes table
+          if ($upload_type == 'img') {
+            $query = "INSERT INTO media_images (m_id, orientation, width, height, xs, sm, md, lg, xl)
+                      VALUES ('$m_id', '$img_orientation', '$img_w', '$img_h', '$img_xs', '$img_sm', '$img_md', '$img_lg', '$img_xl')";
+            $call = mysqli_query($database, $query);
+            if (!$call) {
+              $errors .= '<span class="error">SQL image error</span><br><br>';
+              // Show our $errors
+              echo $errors;
+            }
+          }
 
           $info_message .= '<span class="upload-info">File size: <code>'.$file_size_pretty.'</code></span><br id="mediatype_'.$m_id.'">'; // We need id="mediatype_..." so JS has something to change and it doesn't break
           $info_message .= '<span class="upload-info">File name: <code id="filename_'.$m_id.'">'.$file_name.'</code></span><br><br>';

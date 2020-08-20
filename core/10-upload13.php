@@ -49,8 +49,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
-        $info_message .= '<span class="upload-info">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
-        $upload_dir = $upload_dir_base.'images/';
+        $info_message .= '<span class="upload-info">Image type: <code>'.$image_type.'</code><br>Dimensions:<br><code>'.$image_dimensions.'</code></span><br>';
         $upload_location = 'images';
         $basic_type = 'IMAGE';
       } else {
@@ -60,7 +59,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // SVG image
     } elseif (($file_extension == 'svg')  && ($file_mime == 'image/svg+xml')) {
       $info_message .= '<span class="upload-info">Image type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_dir = $upload_dir_base.'images/';
       $upload_location = 'images';
       $basic_type = 'IMAGE';
 
