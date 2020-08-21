@@ -61,6 +61,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // Video formats
     } elseif ( (($file_extension == 'webm') && ($file_mime == 'video/webm'))
           ||   (($file_extension == 'ogg')  && ($file_mime == 'video/ogg'))
+          ||   (($file_extension == 'ogg')  && ($file_mime == 'video/x-theora+ogg'))
           ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4')) ) {
       $info_message .= '<span class="blue">Video type: <code>'.$file_mime.'</code></span><br><br>';
 

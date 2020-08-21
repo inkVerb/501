@@ -42,26 +42,31 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     if ( (($file_extension == 'jpg')  && ($file_mime == 'image/jpeg'))
     ||   (($file_extension == 'jpeg') && ($file_mime == 'image/jpeg'))
     ||   (($file_extension == 'png')  && ($file_mime == 'image/png'))
-    ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif')) ) {
+    ||   (($file_extension == 'gif')  && ($file_mime == 'image/gif'))
+    // Allow bmp because we will convert it to web-friendly
+    ||   (($file_extension == 'bmp')  && ($file_mime == 'image/bmp'))
+    ||   (($file_extension == 'bmp')  && ($file_mime == 'image/x-windows-bmp'))
+    ||   (($file_extension == 'bmp')  && ($file_mime == 'image/x-ms-bmp')) ) {
 
       // Valid & accepted
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
 
       // Linux process prep
-      list($img_w, $img_h) = $imageinfo;
+      list($img_w, $img_h) = $imageinfo; // Break-down this array, previously we used: $image_dimensions = $imageinfo[3];
         $img_size = $img_w.'x'.$img_h;
       if ($img_w == $img_h) {
         $img_orientation = 'squr';
-        $img_xs = '154x154';
-        $img_sm = '484x484';
-        $img_md = '800x800';
-        $img_lg = '1280x1280';
-        $img_xl = '1920x1920';
+        // Image size ratios
+        $img_xs = ($img_w > 154) ? '154x154' : 'thum';
+        $img_sm = ($img_w > 484) ? '484x484' : 'none';
+        $img_md = ($img_w > 800) ? '800x800' : 'none';
+        $img_lg = ($img_w > 1280) ? '1280x1280' : 'none';
+        $img_xl = ($img_w > 1920) ? '1920x1920' : 'none';
 
       } elseif ($img_w > $img_h) {
         $img_orientation = 'wide';
         // Image size ratios
-        $img_xs = ($img_w > 154) ? '154x'.round(154*($img_h/$img_w)) : 'none';
+        $img_xs = ($img_w > 154) ? '154x'.round(154*($img_h/$img_w)) : 'thum';
         $img_sm = ($img_w > 484) ? '484x'.round(484*($img_h/$img_w)) : 'none';
         $img_md = ($img_w > 800) ? '800x'.round(800*($img_h/$img_w)) : 'none';
         $img_lg = ($img_w > 1280) ? '1280x'.round(1280*($img_h/$img_w)) : 'none';
@@ -70,7 +75,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       } elseif ($img_w < $img_h) {
         $img_orientation = 'tall';
         // Image size ratios
-        $img_xs = ($img_w > 154) ? round(154*($img_w/$img_h)).'x154' : 'none';
+        $img_xs = ($img_w > 154) ? round(154*($img_w/$img_h)).'x154' : 'thum';
         $img_sm = ($img_w > 484) ? round(484*($img_w/$img_h)).'x484' : 'none';
         $img_md = ($img_w > 800) ? round(800*($img_w/$img_h)).'x800' : 'none';
         $img_lg = ($img_w > 1280) ? round(1280*($img_w/$img_h)).'x1280' : 'none';
@@ -79,7 +84,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       }
 
       // Get size & mime type
-      $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
+      $image_type = $imageinfo['mime'];
       //$image_dimensions = $imageinfo[3]; // We won't use this anymore, but keep it for reference
       $image_dimensions = $img_w.'x'.$img_h;
       if (getimagesize($temp_file)) {
@@ -101,7 +106,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // Video formats
     } elseif ( (($file_extension == 'webm') && ($file_mime == 'video/webm'))
           ||   (($file_extension == 'ogg')  && ($file_mime == 'video/ogg'))
-          ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4')) ) {
+          ||   (($file_extension == 'ogg')  && ($file_mime == 'video/x-theora+ogg'))
+          ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4'))
+          // Allow other mimetypes because we will convert them to web-playable
+          ||   (($file_extension == 'flv') && ($file_mime == 'video/x-flv'))
+          ||   (($file_extension == 'avi') && ($file_mime == 'video/x-msvideo'))
+          ||   (($file_extension == 'mkv') && ($file_mime == 'video/x-matroska'))
+          ||   (($file_extension == 'mov') && ($file_mime == 'video/quicktime')) ) {
       $info_message .= '<span class="upload-info">Video type: <code>'.$file_mime.'</code></span><br><br>';
       $upload_type = 'vid';
       $upload_location = 'video';
@@ -138,7 +149,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       Image:<code> .jpg, .jpeg, .png, .gif</code><br>
       Video:<code> .webm, .ogg, .mp4</code><br>
       Audio:<code> .mp3, .ogg, .wav</code><br>
-      Docs:<code> .txt, .md, .doc, .docx, .odt, .pdf</code><br></span><br><br>';
+      Docs:<code> .txt, .md, .doc, .docx, .odt, .pdf</code><br>
+      Converted:<code> .flv, .bmp</code></span><br><br>';
     }
 
     // Check if $no_errors is set to 0 by an error
@@ -148,48 +160,61 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       echo $errors;
     // File checks out
     } else {
+      // Set final file extension for non-accepted convertable files
+      $final_extension = $file_extension; // Normal circumstances default
+      $final_extension = ($file_extension == 'bmp') ? 'png' : $final_extension;
+      $final_extension = ($file_extension == 'flv') ? 'mp4' : $final_extension;
+      // Most documents are or are converted to a .pdf, so check that for name conflicts
+      $final_extension = ( ($basic_type == 'DOCUMENT') && ($file_extension != 'docx') && ($file_extension != 'txt') ) ? 'pdf' : $final_extension;
       // Check if file name already exists
-      $file_path_dest = $upload_dir.$file_name;
-      if (file_exists($file_path_dest)) {
+      $upload_path_dest = 'media/'.$upload_location.'/'.$file_basename.'.'.$final_extension;;
+      if (file_exists($upload_path_dest)) {
         $append_int = 1;
         $new_file_basename = $file_basename.'-'.$append_int;
-        $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
+        $new_file_path_dest = 'media/'.$upload_location.'/'.$new_file_basename.'.'.$final_extension;
         while (file_exists($new_file_path_dest)) {
           $new_file_basename = $file_basename.'-'.$append_int;
-          $new_file_path_dest = $upload_dir.$new_file_basename.'.'.$file_extension;
+          $new_file_path_dest = 'media/'.$upload_location.'/'.$new_file_basename.'.'.$final_extension;
           $append_int++; // Increment our appendage
         }
         // Reset our values
         $file_basename = $new_file_basename;
         $file_name = $new_file_basename.'.'.$file_extension;
-        $file_path_dest = $upload_dir.$file_name;
       }
+      // Final file name
+      $file_path_dest = $upload_dir.$file_name;
       // Upload the file and check in one command
       if (move_uploaded_file($temp_file, $file_path_dest)) {
 
         // Linux process
         switch ($upload_type) {
           case 'img':
-            shell_exec('/var/www/html/web/bash.imageprocess.sh img '.$file_basename.' '.$file_extension.' '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
+            shell_exec('/var/www/html/web/bash.imageprocess.sh '.$file_basename.' '.$file_extension.' img '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
 
           break;
           case 'svg':
-            shell_exec('/var/www/html/web/bash.imageprocess.sh svg '.$file_name);
+            shell_exec('/var/www/html/web/bash.imageprocess.sh '.$file_basename.' '.$file_extension.' svg');
 
           break;
           case 'vid':
-            shell_exec('/var/www/html/web/bash.videoprocess.sh '.$file_name);
+            shell_exec('/var/www/html/web/bash.videoprocess.sh '.$file_basename.' '.$file_extension);
 
           break;
           case 'aud':
-            shell_exec('/var/www/html/web/bash.audioprocess.sh '.$file_name);
+            shell_exec('/var/www/html/web/bash.audioprocess.sh '.$file_basename.' '.$file_extension);
 
           break;
           case 'doc':
-            shell_exec('/var/www/html/web/bash.documprocess.sh '.$file_name);
+            shell_exec('/var/www/html/web/bash.documprocess.sh '.$file_basename.' '.$file_extension.' pdf');
 
           break;
         }
+
+        // Correct non-accepted conversions
+        $file_mime = ($file_extension == 'bmp') ? 'image/png' : $file_mime;
+        $file_extension = ($file_extension == 'bmp') ? 'png' : $file_extension;
+        $file_mime = ($file_extension == 'flv') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'flv') ? 'mp4' : $file_extension;
 
         // SQL entry
         $query = "INSERT INTO media_library (size, mime_type, basic_type, location, file_base, file_extension)
@@ -216,7 +241,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           }
 
           $info_message .= '<span class="upload-info">File size: <code>'.$file_size_pretty.'</code></span><br id="mediatype_'.$m_id.'">'; // We need id="mediatype_..." so JS has something to change and it doesn't break
-          $info_message .= '<span class="upload-info">File name: <code id="filename_'.$m_id.'">'.$file_name.'</code></span><br><br>';
+          $info_message .= '<span class="upload-info">File name: <code id="filename_'.$m_id.'">'.$file_basename.'.'.$file_extension.'</code></span><br><br>';
 
           // Wrap the info in a paragraph
           $info_message = '<p id="upload_'.$m_id.'" class="blue">'.$info_message.'</p>';

@@ -62,7 +62,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
       // Valid & accepted, get size & mime type
       $imageinfo = getimagesize($temp_file); // We didn't assign this value until we were sure it worked
-      $image_type = $imageinfo['mime']; // We don't need this, but it demonstrates what getimagesize() can do, $file_mime = mime_content_type($temp_file); is the same
+      $image_type = $imageinfo['mime'];
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
         $info_message .= '<span class="blue">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
@@ -77,6 +77,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // Video formats
     } elseif ( (($file_extension == 'webm') && ($file_mime == 'video/webm'))
           ||   (($file_extension == 'ogg')  && ($file_mime == 'video/ogg'))
+          ||   (($file_extension == 'ogg')  && ($file_mime == 'video/x-theora+ogg'))
           ||   (($file_extension == 'mp4')  && ($file_mime == 'video/mp4')) ) {
       $info_message .= '<span class="blue">Video type: <code>'.$file_mime.'</code></span><br><br>';
 
