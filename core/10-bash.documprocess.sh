@@ -14,6 +14,8 @@ fi
 if [ "$out" != "$ext" ] && [ "$out" != "txt" ] && [ "$ext" != "txt" ] && [ "$out" != "doc" ] && [ "$ext" != "doc" ]; then
   /usr/bin/pandoc -s "${basepath}uploads/${name}.${ext}" -o "${basepath}docs/${name}.${out}"
   wait
+elif [ "$ext" = "txt" ] || [ "$ext" = "doc" ]; then
+  /bin/cp "${basepath}uploads/${name}.${ext}" "${basepath}docs/${name}.${ext}"
 fi
 
 # Move original
