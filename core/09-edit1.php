@@ -24,7 +24,7 @@ if (isset($piece_id)) { // Updating piece
   echo '<form action="edit.php" method="post">';
 }
 
-// Tell in.checks.php that this is a "Piece" form
+// Tell in.editprocess.php that this is a "Piece" form
 echo '<input type="hidden" name="piece"><br>';
 
 // Create the fields

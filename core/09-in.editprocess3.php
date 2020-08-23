@@ -178,7 +178,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         // Change
         if (mysqli_affected_rows($database) == 1) {
           // No redirect because our variables are already set
-          echo '<p class="green">Draft updated.</p>';
+          echo '<p class="green">Draft saved.</p>';
         // No change
         } elseif (mysqli_affected_rows($database) == 0) {
           echo '<p class="orange">No change to draft.</p>';

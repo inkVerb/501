@@ -308,7 +308,7 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <div style="display: inline;" id="title_'.$p_id.'">'.$title_content.'</div><br>
   <div class="bulk_checkbox" style="display: none;"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"></div> '.$p_date_note.'
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style="float: none;" href="edit.php?p='.$p_id.'">Editor &rarr;</a>
+  <a style="float: none;" href="edit.php?p='.$p_id.'">Edit &rarr;</a>
   <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>
   </div>';
 

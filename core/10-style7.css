@@ -5,6 +5,23 @@ form input.error {
 	border: 2px solid #cc3333;
 }
 
+/* Notice hides */
+@-webkit-keyframes fadeOut {
+  0% { opacity: 1;}
+  99% { opacity: 0.01;width: 100%; height: 100%;}
+  100% { opacity: 0;width: 0; height: 0;}
+}
+@keyframes fadeOut {
+  0% { opacity: 1;}
+  99% { opacity: 0.01;width: 100%; height: 100%;}
+  100% { opacity: 0;width: 0; height: 0;}
+}
+.notehide {
+  -webkit-animation: fadeOut 8s;
+  animation: fadeOut 8s;
+  animation-fill-mode: forwards;
+}
+
 .error,
 a.error,
 a.error:visited {
@@ -60,6 +77,9 @@ textarea.metaedit {
 }
 input[type=text].piece {
 	width: 50em;
+}
+input[type=text].slug {
+	width: 29em;
 }
 input[type=text].metaedit {
 	width: 30em;

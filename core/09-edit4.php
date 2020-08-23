@@ -35,8 +35,8 @@ if (isset($piece_id)) { // Updating piece
 // Finish the form
 echo '</form>';
 
-// Tell in.checks.php that this is a "Piece" form
-echo '<input form="edit_piece" type="hidden" name="piece"><br>';
+// Tell in.editprocess.php that this is a "Piece" form
+echo '<input form="edit_piece" type="hidden" name="piece">';
 
 // Title & Slug
 echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
@@ -64,7 +64,7 @@ echo '<br><br>';
 $infomsg = '
 <b>Page</b>: hides meta (After, Tags, Links), works in menues, appears as prominent link in "Series lists"<br><br>
 <b>Post</b>: appears in blog lists';
-echo 'Type:'.infoPop('typt_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
+echo 'Type:'.infoPop('type_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
 
 // Series
 $infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';

@@ -53,8 +53,8 @@ echo '</select>';
 // New Series form
 echo '<br><br>
 <form id="add_new_series">
-  <input type="text" name="new_series" id="new_series_input_text">
-  <input type="submit" value="+ Series">
+  <input form="add_new_series" type="text" name="new_series" id="new_series_input_text">
+  <input form="add_new_series" type="submit" value="+ Series">
 </form>
 </div>
 ';

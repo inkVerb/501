@@ -140,6 +140,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
     $query = "SELECT date_live FROM pieces WHERE BINARY id=$piece_id
     AND BINARY type='$p_type_sqlesc'
+    AND BINARY series='$p_series'
     AND BINARY title='$p_title_sqlesc'
     AND BINARY slug='$p_slug_sqlesc'
     AND BINARY content='$p_content_sqlesc'
@@ -194,7 +195,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         // Change
         if (mysqli_affected_rows($database) == 1) {
           // No redirect because our variables are already set
-          echo '<p class="green">Draft updated.</p>';
+          echo '<p class="green">Draft saved.</p>';
         // No change
         } elseif (mysqli_affected_rows($database) == 0) {
           echo '<p class="orange">No change to draft.</p>';
@@ -214,6 +215,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       // Make sure there are no duplicates, we don't need a revision history where no changes were made
       $query = "SELECT id FROM publications WHERE BINARY piece_id='$piece_id'
       AND BINARY type='$p_type_sqlesc'
+      AND BINARY series='$p_series'
       AND BINARY title='$p_title_sqlesc'
       AND BINARY slug='$p_slug_sqlesc'
       AND BINARY content='$p_content_sqlesc'
@@ -311,7 +313,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $revert_id = preg_replace("/[^0-9]/"," ", $_GET['h']);
 
     // Retrieve existing piece from history
-    $query = "SELECT piece_id, type, title, slug, content, after, tags, links, date_live FROM publication_history WHERE id='$revert_id'";
+    $query = "SELECT piece_id, type, series, title, slug, content, after, tags, links, date_live FROM publication_history WHERE id='$revert_id'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
@@ -319,13 +321,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
         $piece_id = "$row[0]";
         $p_type = "$row[1]";
-        $p_title = "$row[2]";
-        $p_slug = "$row[3]";
-        $p_content = "$row[4]";
-        $p_after = "$row[5]";
-        $p_tags_json = "$row[6]";
-        $p_links_sqljson = "$row[7]";
-        $p_live = "$row[8]";
+        $p_series = "$row[2]";
+        $p_title = "$row[3]";
+        $p_slug = "$row[4]";
+        $p_content = "$row[5]";
+        $p_after = "$row[6]";
+        $p_tags_json = "$row[7]";
+        $p_links_sqljson = "$row[8]";
+        $p_live = "$row[9]";
         $editing_published_piece = true;
 
         // Indicate a historical edit
@@ -385,7 +388,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
     // Retrieve existing piece
-    $query = "SELECT type, status, title, slug, content, after, tags, links, date_live FROM pieces WHERE id='$piece_id'";
+    $query = "SELECT type, status, series, title, slug, content, after, tags, links, date_live FROM pieces WHERE id='$piece_id'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
@@ -393,13 +396,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
         $p_type = "$row[0]";
         $p_status = "$row[1]";
-        $p_title = "$row[2]";
-        $p_slug = "$row[3]";
-        $p_content = "$row[4]";
-        $p_after = "$row[5]";
-        $p_tags_json = "$row[6]";
-        $p_links_sqljson = "$row[7]";
-        $p_live = "$row[8]";
+        $p_series = "$row[2]";
+        $p_title = "$row[3]";
+        $p_slug = "$row[4]";
+        $p_content = "$row[5]";
+        $p_after = "$row[6]";
+        $p_tags_json = "$row[7]";
+        $p_links_sqljson = "$row[8]";
+        $p_live = "$row[9]";
 
         // Process tags for use in HTML
         $p_tags = implode(', ', json_decode($p_tags_json, true));

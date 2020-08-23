@@ -21,7 +21,7 @@ echo '<h1>Editor</h1>';
 // Our edit form
 echo '<form action="edit.php" method="post">';
 
-// Tell in.checks.php that this is a "Piece" form
+// Tell in.editprocess.php that this is a "Piece" form
 echo '<input type="hidden" name="piece"><br>';
 
 // Create the fields
