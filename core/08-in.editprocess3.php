@@ -6,7 +6,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Only sanitize, no errors
 
   // Title now because we will use it in the Slug
-  if ((isset($_POST['p_title'])) && ($_POST['p_title'] != '')) {
+  if ( (isset($_POST['p_title'])) && ($_POST['p_title'] != '') ) {
     $p_title = checkPiece('p_title',$_POST['p_title']);
   }
 
@@ -17,30 +17,33 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $p_slug = checkPiece('p_slug',$_POST['p_slug']);
   }
 
-  if (isset($_POST['piece_id'])) { // Updating piece
-    $piece_id = $_POST['piece_id'];
+  if ( (isset($_POST['piece_id'])) && (filter_var($_POST['piece_id'], FILTER_VALIDATE_INT)) ) { // Updating piece
+    $piece_id = preg_replace("/[^0-9]/"," ", $_POST['piece_id']);
+    $piece_id_sqlesc = escape_sql($piece_id);
   }
 
   // Check that the slug isn't already used
+  $p_slug_test_sqlesc = escape_sql($p_slug);
   if (isset($piece_id)) { // We don't want a dup from for own piece
-    $query = "SELECT id FROM publications WHERE slug='$p_slug' AND NOT piece_id='$piece_id'";
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
   } else {
-    $query = "SELECT id FROM publications WHERE slug='$p_slug'";
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc'";
   }
   $call = mysqli_query($database, $query);
-  if (mysqli_num_rows($call) != 0) {
+  if (mysqli_num_rows($call) > 0) {
     $add_num = 0;
     $dup = true;
     // If there were no changes
     while ($dup = true) {
       $add_num = $add_num + 1;
       $new_p_slug = $p_slug.'-'.$add_num;
+      $new_p_slug_test_sqlesc = escape_sql($new_p_slug);
 
       // Check again
       if (isset($piece_id)) { // We don't want a dup from for own piece
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id'";
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
       } else {
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug'";
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc'";
       }
       $call = mysqli_query($database, $query);
       if (mysqli_num_rows($call) == 0) {
@@ -75,7 +78,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   if (isset($piece_id)) { // Updating piece
 
    // Make sure there are no duplicates, we don't need a revision history where no changes were made
-   $query = "SELECT date_live FROM pieces WHERE BINARY id='$piece_id' AND BINARY type='$p_type_sqlesc' AND BINARY title='$p_title_sqlesc' AND BINARY slug='$p_slug_sqlesc' AND BINARY content='$p_content_sqlesc' AND BINARY after='$p_after_sqlesc'";
+   $query = "SELECT date_live FROM pieces WHERE BINARY id='$piece_id_sqlesc' AND BINARY type='$p_type_sqlesc' AND BINARY title='$p_title_sqlesc' AND BINARY slug='$p_slug_sqlesc' AND BINARY content='$p_content_sqlesc' AND BINARY after='$p_after_sqlesc'";
    $call = mysqli_query($database, $query);
    // If there were no changes
    if (mysqli_num_rows($call) == 1) {
@@ -92,11 +95,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   if ($p_live_schedule == false) {
     // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
     $p_live = NULL; // Keep it invalid, we won't use it
-    $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
+    $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live=NULL, date_updated=NOW() WHERE id='$piece_id_sqlesc'";
   } elseif ($p_live_schedule == true) {
     $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
     $p_live_sqlesc = escape_sql($p_live);
-    $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
+    $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
   }
 
    // Run the query only if the live date is not a duplicate
@@ -163,12 +166,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
 // New piece or editing old piece?
 // Check for GET and validate in one if test
-} elseif ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
+} elseif ( (isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT)) ) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
+  $piece_id_sqlesc = escape_sql($piece_id);
 
   // Retrieve existing piece
-  $query = "SELECT type, status, title, slug, content, after, date_live FROM pieces WHERE id='$piece_id'";
+  $query = "SELECT type, status, title, slug, content, after, date_live FROM pieces WHERE id='$piece_id_sqlesc'";
   $call = mysqli_query($database, $query);
   // Shoule be 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -206,7 +210,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
   // New just saved?
-  if ((isset($_SESSION['new_just_saved'])) && ($_SESSION['new_just_saved'] == true)) {
+  if ( (isset($_SESSION['new_just_saved'])) && ($_SESSION['new_just_saved'] == true) ) {
     unset($_SESSION['new_just_saved']);
     echo '<p class="green">Saved!</p>';
   }

@@ -3,9 +3,6 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our sitewide functions
-include ('./in.functions.php');
-
 // Include our piece functions
 include ('./in.piecefunctions.php');
 
@@ -30,6 +27,9 @@ include ('./in.editprocess.php');
 		function offNavWarn() {
 			window.onbeforeunload = null;
 		}
+
+    // Disable "Enter" key on forms
+    window.addEventListener('keydown',function(e){if(e.keyIdentifier=='U+000A'||e.keyIdentifier=='Enter'||e.keyCode==13){if(e.target.nodeName=='INPUT'&&e.target.type=='text'){e.preventDefault();return false;}}},true);
   </script>
 <?php
 
@@ -185,7 +185,7 @@ echo '
         y.checked = false;
       }
     }
-  </script>';
+  </script>
 <?php
 
 // Tags

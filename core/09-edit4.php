@@ -3,9 +3,6 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
-// Include our sitewide functions
-include ('./in.functions.php');
-
 // Include our piece functions
 include ('./in.piecefunctions.php');
 

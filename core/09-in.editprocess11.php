@@ -6,7 +6,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Only sanitize, no errors
 
   // Title now because we will use it in the Slug
-  if ((isset($_POST['p_title'])) && ($_POST['p_title'] != '')) {
+  if ( (isset($_POST['p_title'])) && ($_POST['p_title'] != '') ) {
     $p_title = checkPiece('p_title',$_POST['p_title']);
   }
 
@@ -17,12 +17,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $p_slug = checkPiece('p_slug',$_POST['p_slug']);
   }
 
-  if (isset($_POST['piece_id'])) { // Updating piece
-    $piece_id = $_POST['piece_id'];
+  if ( (isset($_POST['piece_id'])) && (filter_var($_POST['piece_id'], FILTER_VALIDATE_INT)) ) { // Updating piece
+    $piece_id = preg_replace("/[^0-9]/"," ", $_POST['piece_id']);
+    $piece_id_sqlesc = escape_sql($piece_id);
   }
 
   // Check for existing publication
-  $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id'";
+  $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id_sqlesc'";
   $call = mysqli_query($database, $query);
   if (mysqli_num_rows($call) == 1) {
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
@@ -45,12 +46,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   // Check that the slug isn't already used
   $p_slug_test_sqlesc = escape_sql($p_slug);
   if (isset($piece_id)) { // We don't want a dup from for own piece
-    $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc' AND NOT piece_id='$piece_id'";
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
   } else {
-    $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc'";
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc'";
   }
   $call = mysqli_query($database, $query);
-  if (mysqli_num_rows($call) == 1) {
+  if (mysqli_num_rows($call) > 0) {
     $add_num = 0;
     $dup = true;
     // If there were no changes
@@ -61,9 +62,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
       // Check again
       if (isset($piece_id)) { // We don't want a dup from for own piece
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug_test_sqlesc' AND NOT piece_id='$piece_id'";
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
       } else {
-        $query = "SELECT id FROM publications WHERE slug='$new_p_slug_test_sqlesc'";
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc'";
       }
       $call = mysqli_query($database, $query);
       if (mysqli_num_rows($call) == 0) {
@@ -108,7 +109,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
   // Prepare our database values for entry
+  $piece_id_sqlesc = escape_sql($piece_id);
   $p_type_sqlesc = escape_sql($p_type);
+  $p_series_sqlesc = escape_sql($p_series);
   $p_title_sqlesc = escape_sql($p_title);
   $p_slug_sqlesc = escape_sql($p_slug);
   $p_content_sqlesc = escape_sql($p_content);
@@ -140,7 +143,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
     $query = "SELECT date_live FROM pieces WHERE BINARY id=$piece_id
     AND BINARY type='$p_type_sqlesc'
-    AND BINARY series='$p_series'
+    AND BINARY series='$p_series_sqlesc'
     AND BINARY title='$p_title_sqlesc'
     AND BINARY slug='$p_slug_sqlesc'
     AND BINARY content='$p_content_sqlesc'
@@ -164,7 +167,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     // For the Publish button, we at least need to know the piece indeed exists
     } else {
-      $query = "SELECT id FROM pieces WHERE id='$piece_id'";
+      $query = "SELECT id FROM pieces WHERE id='$piece_id_sqlesc'";
       $call = mysqli_query($database, $query);
       // If there were no changes
       if (mysqli_num_rows($call) == 1) {
@@ -177,12 +180,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
    if ($p_status == 'draft') { // No empty live date for publishing pieces
      $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : NULL;
      $p_live_sqlesc = escape_sql($p_live);
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id'";
-   } elseif (($p_status == 'publish') || ($p_status == 'update')) { // Unscheduled publish goes live now
+     $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id_sqlesc'";
+   } elseif ( ($p_status == 'publish') || ($p_status == 'update') ) { // Unscheduled publish goes live now
      $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
      $p_live_schedule = true;
      $p_live_sqlesc = escape_sql($p_live);
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id'";
+     $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
    }
 
     // Run the query only if the live date is not a duplicate
@@ -230,11 +233,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
     // Publishing?
-    if (($p_status == 'publish') || ($p_status == 'update')) {
+    if ( ($p_status == 'publish') || ($p_status == 'update') ) {
       // Make sure there are no duplicates, we don't need a revision history where no changes were made
-      $query = "SELECT id FROM publications WHERE BINARY piece_id='$piece_id'
+      $query = "SELECT id FROM publications WHERE BINARY piece_id='$piece_id_sqlesc'
       AND BINARY type='$p_type_sqlesc'
-      AND BINARY series='$p_series'
+      AND BINARY series='$p_series_sqlesc'
       AND BINARY title='$p_title_sqlesc'
       AND BINARY slug='$p_slug_sqlesc'
       AND BINARY content='$p_content_sqlesc'
@@ -247,19 +250,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       if (mysqli_num_rows($call) == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
-          $query = "INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', $p_series, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
+          $query = "INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id_sqlesc', '$p_type_sqlesc', $p_series_sqlesc, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
           $callp = mysqli_query($database, $query);
-          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', $p_series, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
+          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id_sqlesc', '$p_type_sqlesc', $p_series_sqlesc, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
-          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
+          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id_sqlesc'";
           $callu = mysqli_query($database, $query);
           $publication_message = 'Piece published!';
         } elseif ( ($p_status == 'update') || ($pubstatus = 'published') || ($pubstatus = 'redrafting') ) {
-          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id'";
+          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
           $callp = mysqli_query($database, $query);
-          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id', '$p_type_sqlesc', $p_series, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
+          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) VALUES ('$piece_id_sqlesc', '$p_type_sqlesc', $p_series_sqlesc, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
-          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id'";
+          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id_sqlesc'";
           $callu = mysqli_query($database, $query);
           $publication_message = 'Publication updated!';
         }
@@ -281,11 +284,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = "INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_sqlesc', false, $p_series, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', NULL)";
+      $query = "INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_sqlesc', false, $p_series_sqlesc, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_links_sqljson', NULL)";
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_sqlesc = escape_sql($p_live);
-      $query = "INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_sqlesc', false, $p_series, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc','$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc')";
+      $query = "INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_sqlesc', false, $p_series_sqlesc, '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc','$p_tags_sqljson', '$p_links_sqljson', '$p_live_sqlesc')";
     }
 
     // Run the query
@@ -313,7 +316,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   } // End new/update if
 
   // Look for a publications piece by that ID, regardless of what happened, after everything happened
-  $query = "SELECT id FROM publications WHERE piece_id='$piece_id' AND pubstatus='published'";
+  $query = "SELECT id FROM publications WHERE piece_id='$piece_id_sqlesc' AND pubstatus='published'";
   $call = mysqli_query($database, $query);
   // Shoule be 1 row
   if (mysqli_num_rows($call) == 1) {
@@ -322,8 +325,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
 // Opening old piece to edit
 // Check for GET or SESSION and validate in one if test
-} elseif (((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT)))
-  || ((isset($_GET['h'])) && (filter_var($_GET['h'], FILTER_VALIDATE_INT)))) {
+} elseif ( ( (isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT)) )
+  || ( (isset($_GET['h'])) && (filter_var($_GET['h'], FILTER_VALIDATE_INT)) ) ) {
 
   // Deal with a SESSION argument from publication_history
   if (isset($_GET['h'])) {
@@ -397,9 +400,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     // Assign piece ID
     $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
+    $piece_id_sqlesc = escape_sql($piece_id);
 
     // Look for a publications piece, regardless of what happens, before anything else happens
-    $query = "SELECT id FROM publications WHERE piece_id='$piece_id' AND pubstatus='published'";
+    $query = "SELECT id FROM publications WHERE piece_id='$piece_id_sqlesc' AND pubstatus='published'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
@@ -407,7 +411,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
     // Retrieve existing piece
-    $query = "SELECT type, status, series, title, slug, content, after, tags, links, date_live FROM pieces WHERE id='$piece_id'";
+    $query = "SELECT type, status, series, title, slug, content, after, tags, links, date_live FROM pieces WHERE id='$piece_id_sqlesc'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
@@ -468,7 +472,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
   // New just saved?
-  if ((isset($_SESSION['new_just_saved'])) && ($_SESSION['new_just_saved'] == true)) {
+  if ( (isset($_SESSION['new_just_saved'])) && ($_SESSION['new_just_saved'] == true) ) {
     unset($_SESSION['new_just_saved']);
     echo '<p class="green">Saved!</p>';
   }

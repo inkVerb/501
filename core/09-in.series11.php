@@ -30,7 +30,7 @@ $call = mysqli_query($database, $query);
 // We need the div with our AJAX form inside so the input value is reset on success
 echo '
 <div id="p_series">
-<select form="edit_piece" name="p_series">';
+<select form="edit_piece" name="p_series" onchange="onNavWarn();" onkeyup="onNavWarn();" onclick="onNavWarn();">';
 
 // Iterate each Series
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {

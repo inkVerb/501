@@ -6,7 +6,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Only sanitize, no errors
 
   // Title now because we will use it in the Slug
-  if ((isset($_POST['p_title'])) && ($_POST['p_title'] != '')) {
+  if ( (isset($_POST['p_title'])) && ($_POST['p_title'] != '') ) {
     $p_title = checkPiece('p_title',$_POST['p_title']);
   }
 
