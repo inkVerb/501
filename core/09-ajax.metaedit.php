@@ -3,9 +3,6 @@
 // Include our config (with SQL) up near the top of our PHP file
 include_once ('./in.config.php');
 
-// Include our sitewide functions
-include_once ('./in.functions.php');
-
 // Include our piece functions
 include_once ('./in.piecefunctions.php');
 
@@ -29,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Save
-if (isset($_POST['edit_piece'])) {
+if ( (isset($_POST['edit_piece']))
+&&   (filter_var($_POST['edit_piece'], FILTER_VALIDATE_INT)) ) {
 
   // Pub Status
   if ( ($_POST['p_pubyn'] != 'published') && ($_POST['p_pubyn'] != 'pre-draft') ) {
@@ -234,7 +232,7 @@ if (isset($_POST['edit_piece'])) {
 
   // Title & <tr> row
   echo '<tr><td>';
-  echo '<b class="piece_title" onclick="metaEditClose'.$piece_id.'()" style="cursor: pointer;">'.$p_title.'  &#9998;</b><br><br>';
+  echo '<b class="piece_title" onclick="metaEditClose('.$piece_id.')" style="cursor: pointer;">'.$p_title.'  &#9998;</b><br><br>';
 
   // Meta Edit form
   echo '<form action="AJAX" class="metaedit" method="post" id="meta_edit_form_'.$piece_id.'">';
@@ -274,7 +272,7 @@ if (isset($_POST['edit_piece'])) {
 
   // Schedule
   // Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
-  echo pieceInput('p_live_schedule', $p_live_schedule).'<label class="metaedit" onclick="showGoLiveOptionsLabel'.$piece_id.'()"> Scheduled...</label><br><br>';
+  echo pieceInput('p_live_schedule', $p_live_schedule).'<label class="metaedit" onclick="showGoLiveOptionsLabel('.$piece_id.')"> Scheduled...</label><br><br>';
   echo '<div id="goLiveOptions'.$piece_id.'" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
     echo 'Date live:<br><br>'.
     pieceInput('p_live_yr', $p_live_yr).', '.
@@ -291,7 +289,7 @@ if (isset($_POST['edit_piece'])) {
 
   // Buttons
   echo '<input form="meta_edit_form_'.$piece_id.'" type="submit" name="p_submit" value="Update">&nbsp;&nbsp;';
-  echo '<button onclick="metaEditClose'.$piece_id.'();">Cancel</button>';
+  echo '<button onclick="metaEditClose('.$piece_id.');">Cancel</button>';
   echo '<br><br>';
 
   // After

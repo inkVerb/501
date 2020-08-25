@@ -75,15 +75,24 @@ if (isset($_COOKIE['user_key'])) {
 
   <!-- TinyMCE -->
   <?php if ($edit_page_yn == true) {
-    echo "
+    ?>
     <script src='tinymce/tinymce.min.js'></script>
     <script type='text/javascript'>
+      // Allow AJAX to read TinyMCE
       tinymce.init({
         setup: function (editor) {
           editor.on('change', function () {
             tinymce.triggerSave();
           });
+        },
+      // Make our Ctrl + S "Save draft" JS function work inside TinyMCE
+      init_instance_callback: function (editor) {
+        editor.addShortcut("ctrl+s", "Save draft", "custom_ctrl_s");
+        editor.addCommand("custom_ctrl_s", function() {
+            ajaxSaveDraft('ajax.edit.php') // Run our "Save" AJAX
+        });
       },
+
       selector: '.tinymce_editor',
       width: 600,
       height: 300,
@@ -127,7 +136,8 @@ if (isset($_COOKIE['user_key'])) {
       content_css: 'style.css',
 
     });
-    </script>";
+    </script>
+    <?php
   } ?>
   <!-- TinyMCE end -->
 

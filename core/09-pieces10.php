@@ -126,7 +126,6 @@ function toggle(source) {
           document.getElementById("me"+p_id).innerHTML = ajaxHandler.responseText;
 
           // Capture submit button for AJAX
-          form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
           listenToMetaEditForm(p_id);
         }
       }
@@ -140,8 +139,9 @@ function toggle(source) {
 
   // Listen for a submit
   function sendEditMetaData(p_id) {
-    const AJAX = new XMLHttpRequest();
-    const FD = new FormData( form );
+    var form = document.getElementById('meta_edit_form_'+p_id);
+    var AJAX = new XMLHttpRequest();
+    var FD = new FormData(form);
     AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
       // Parse our response
       var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
@@ -149,7 +149,7 @@ function toggle(source) {
       document.getElementById("showviews"+p_id).style.display = "none"; // Hide the view actions
       document.getElementById("me"+p_id).style.display = "none"; // Hide the box
       document.getElementById("me"+p_id).innerHTML = ""; // Empty the box
-      document.getElementById("title_"+p_id).innerHTML = '<b class="piece_title" onclick="metaEdit(p_id)" style="cursor: pointer;">'+jsonMetaEditResponse["title"]+' &#9998;</b>';// Change the Title
+      document.getElementById("title_"+p_id).innerHTML = '<b class="piece_title" onclick="metaEdit('+p_id+')" style="cursor: pointer;">'+jsonMetaEditResponse["title"]+' &#9998;</b>';// Change the Title
       document.getElementById("prow_"+p_id).classList.add("metaupdate"); // Note the <tr> row
       document.getElementById("prow_"+p_id).style.display = ""; // Show the normal <tr> row
       document.getElementById("changed_"+p_id).classList.add("metaupdate"); // Note the <tr> row
@@ -169,8 +169,8 @@ function toggle(source) {
   }
 
   // Capture submit button for AJAX
-  var form = document.getElementById("<?php echo 'meta_edit_form_'.$p_id; ?>");
   function listenToMetaEditForm(p_id){
+    var form = document.getElementById('meta_edit_form_'+p_id);
     form.addEventListener( "submit", function(event) {
       event.preventDefault();
       sendEditMetaData(p_id);
