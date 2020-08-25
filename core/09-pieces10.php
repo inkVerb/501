@@ -37,7 +37,7 @@ function showActions(p_id) {
 
 // Clear "changed" status
 function clearChanged(p_id) {
-  document.getElementById("prow_"+p_id).classList.remove("renew","deleting","undeleting"); // Remove the .renew class from the <tr> added by AJAX
+  document.getElementById("prow_"+p_id).classList.remove("renew","deleting","undeleting","metaupdate"); // Remove the .renew class from the <tr> added by AJAX
   document.getElementById("changed_"+p_id).style.display = "none"; // Hide the "changed" clickable message added by AJAX
   document.getElementById("showaction"+p_id).style.display = "inline";
   document.getElementById("showtypify"+p_id).style.display = "none";
