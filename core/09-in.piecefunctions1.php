@@ -33,6 +33,9 @@ function checkPiece($name, $value) {
     $result = strtolower(preg_replace($regex_replace,"-", $value)); // Lowercase, all non-alnum to hyphen
     $result = substr($result, 0, 90); // Limit to 90 characters
 
+    // Make sure the slug is not empty
+    $result = ($result == '') ? 'piece' : $result;
+
   } elseif ($name == 'p_type') {
     if (($value == 'post') || ($value == 'page')) {
       $result = $value;

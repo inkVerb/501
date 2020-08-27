@@ -140,6 +140,18 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   // New or update?
   if (isset($piece_id)) { // Editing piece
 
+    // Prepare the query to update the old piece, including the proposed live date to test for changes
+    if ($p_status == 'draft') { // No empty live date for publishing pieces
+      $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : NULL;
+      $p_live_sqlesc = escape_sql($p_live);
+      $queryu = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id_sqlesc'";
+    } elseif ( ($p_status == 'publish') || ($p_status == 'update') ) { // Unscheduled publish goes live now
+      $p_live = ( ($p_live_schedule == true) || ($p_live == NULL) ) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
+      $p_live_schedule = true;
+      $p_live_sqlesc = escape_sql($p_live);
+      $queryu = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
+    }
+
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
     $query = "SELECT date_live FROM pieces WHERE BINARY id=$piece_id
     AND BINARY type='$p_type_sqlesc'
@@ -148,6 +160,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     AND BINARY slug='$p_slug_sqlesc'
     AND BINARY content='$p_content_sqlesc'
     AND BINARY after='$p_after_sqlesc'
+    AND BINARY date_live='$p_live_sqlesc'
     AND tags=CAST('$p_tags_sqljson' AS JSON)
     AND links=CAST('$p_links_sqljson' AS JSON)"; // This is how to test if a JSON string matches
     //echo "<pre>\$query: $query</pre>"; // uncomment to see the query, then run it yourself
@@ -176,24 +189,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       }
     }
 
-   // Prepare the query to update the old piece, including the proposed live date to test for changes
-   if ($p_status == 'draft') { // No empty live date for publishing pieces
-     $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : NULL;
-     $p_live_sqlesc = escape_sql($p_live);
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id_sqlesc'";
-   } elseif ( ($p_status == 'publish') || ($p_status == 'update') ) { // Unscheduled publish goes live now
-     $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
-     $p_live_schedule = true;
-     $p_live_sqlesc = escape_sql($p_live);
-     $query = "UPDATE pieces SET type='$p_type_sqlesc', series=$p_series_sqlesc, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
-   }
-
     // Run the query only if the live date is not a duplicate
     if ( (!isset($p_live_found)) || ( ($p_live_found != 'found') && ($p_live_found != $p_live) ) ) {
       // Run the pieces query
-      $call = mysqli_query($database, $query);
+      $callu = mysqli_query($database, $queryu);
       // Test the query
-      if ($call) {
+      if ($callu) {
 
         // Change
         if (mysqli_affected_rows($database) == 1) {
@@ -206,7 +207,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $r_class = 'orange';
         }
       } else {
-        $response = 'Serious error. '.$query;
+        $response = 'Serious error.';
         $r_class = 'error';
       }
 
@@ -242,9 +243,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       AND BINARY slug='$p_slug_sqlesc'
       AND BINARY content='$p_content_sqlesc'
       AND BINARY after='$p_after_sqlesc'
+      AND BINARY date_live='$p_live_sqlesc'
       AND tags=CAST('$p_tags_sqljson' AS JSON)
-      AND links=CAST('$p_links_sqljson' AS JSON)
-      AND BINARY date_live='$p_live_sqlesc'";
+      AND links=CAST('$p_links_sqljson' AS JSON)";
       $call = mysqli_query($database, $query);
       // If there were no changes
       if (mysqli_num_rows($call) == 0) {

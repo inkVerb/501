@@ -136,7 +136,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
      $p_live_sqlesc = escape_sql($p_live);
      $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live=NULL, date_updated=NOW() WHERE id='$piece_id_sqlesc'";
    } elseif ( ($p_status == 'publish') || ($p_status == 'update') ) { // Unscheduled publish goes live now
-     $p_live = ($p_live_schedule == true) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
+     $p_live = ( ($p_live_schedule == true) || ($p_live == NULL) ) ? "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec" : "$p_live";
      $p_live_schedule = true;
      $p_live_sqlesc = escape_sql($p_live);
      $query = "UPDATE pieces SET type='$p_type_sqlesc', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
