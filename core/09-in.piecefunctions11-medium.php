@@ -205,7 +205,9 @@ function pieceInput($name, $value) {
     </select>';
 
   } elseif ($name == 'p_content') {
-    $result = '<textarea form="edit_piece" id="p_content" class="tinymce_editor" name="p_content">'.$value.'</textarea>';
+    $result = '<textarea form="edit_piece" id="p_content" class="medium_editor" name="p_content">'.$value.'</textarea>
+    <script src="medium/js/medium-editor.js"></script>
+    <script>var editor = new MediumEditor(\'.medium_editor\');</script>';
 
   // Meta
   } elseif ($name == 'p_after') {

@@ -3,6 +3,9 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
 
+// Include our POST processor
+include ('./in.piecefunctions.php');
+
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
 
@@ -11,14 +14,81 @@ $head_title = "Publication History"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.login_check.php');
 
-
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
   exit(header("Location: blog.php"));
 }
 
 // What type of comparison? Prepare SQL queries accordingly
-if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
+// Ultimately restoring an Autosave, clicked from this page and will redirect to edit.php
+if (isset($_POST['as_json'])) {
+  // Validate & parse our JSON from the Autosave
+  $as_diff_array = json_decode($_POST['as_json'], true); // We need true because we are not working with OOP in PHP yet
+  if (json_last_error() != JSON_ERROR_NONE) {
+    exit(header("Location: blog.php"));
+  }
+  // Get our info, update the dateabse, redirect to the Editor
+  $piece_id = filter_var($as_diff_array["piece_id"], FILTER_VALIDATE_INT);
+  $piece_id_sqlesc = escape_sql($piece_id);
+  $p_title = checkPiece('p_title',$as_diff_array["p_title"]);
+    // Apply Title to Slug if empty
+    if ((empty($as_diff_array["p_slug"])) || (empty($as_diff_array["p_slug"] == ''))) {
+      $p_slug = checkPiece('p_slug',$p_title);
+    } else {
+      $p_slug = checkPiece('p_slug',$as_diff_array["p_slug"]);
+    }
+
+    // Check that the slug isn't already used
+    $p_slug_test_sqlesc = escape_sql($p_slug);
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
+    $call = mysqli_query($database, $query);
+    if (mysqli_num_rows($call) > 0) {
+      $add_num = 0;
+      $dup = true;
+      // If there were no changes
+      while ($dup = true) {
+        $add_num = $add_num + 1;
+        $new_p_slug = $p_slug.'-'.$add_num;
+        $new_p_slug_test_sqlesc = escape_sql($new_p_slug);
+
+        // Check again
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
+        $call = mysqli_query($database, $query);
+        if (mysqli_num_rows($call) == 0) {
+          $p_slug = $new_p_slug;
+          break;
+        }
+      }
+    }
+
+  $p_content = checkPiece('p_content',$as_diff_array["p_content"]);
+  $p_after = checkPiece('p_after',$as_diff_array["p_after"]);
+  $p_tags_json = checkPiece('p_tags',$as_diff_array["p_tags"]);
+  $p_links_json = checkPiece('p_links',$as_diff_array["p_links"]);
+  $p_update = date("Y-m-d H:i:s", substr($as_diff_array["as_time"], 0, 10));
+
+  // Prepare our database values for entry
+  $p_title_sqlesc = escape_sql($p_title);
+  $p_slug_sqlesc = escape_sql($p_slug);
+  $p_content_sqlesc = escape_sql($p_content);
+  $p_after_sqlesc = escape_sql($p_after);
+  $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+  $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+
+  // Run the query
+  $query = "UPDATE pieces SET title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
+  $call = mysqli_query($database, $query);
+  if ($call) {
+    $_SESSION['as_recovered'] = true;
+    header("Location: edit.php?p=$piece_id");
+    exit();
+  } else {
+    echo 'SQL error recovering piece.';
+    exit();
+  }
+
+// Most recent draft
+} elseif ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
   $diffing = "latest draft v current publication";
@@ -35,8 +105,8 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
     $p_slug = "$row[1]";
     $p_content = htmlspecialchars_decode("$row[2]"); // We used htmlspecialchars() to enter the database, now we must reverse it
     $p_after = "$row[3]";
-    $p_tags_sqljson = "$row[4]";
-    $p_links_sqljson = "$row[5]";
+    $p_tags_json = "$row[4]";
+    $p_links_json = "$row[5]";
     $p_update = "$row[6]";
   $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
     // Assign the values
@@ -49,7 +119,61 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
     $o_links_sqljson = "$row[6]";
     $o_update = "$row[7]";
 
+// Recovered autosave
+} elseif ((isset($_GET['o'])) && (filter_var($_GET['o'], FILTER_VALIDATE_INT))
+      &&  (isset($_GET['a'])) && ($_GET['a'] == 1)
+      &&  (isset($_POST['old_as']))) {
+  // Validate & parse our JSON from the Autosave
+  $as_diff_array = json_decode($_POST['old_as'], true); // We need true because we are not working with OOP in PHP yet
+  if (json_last_error() == JSON_ERROR_NONE) {
+    $as_diff_json_string = $_POST['old_as']; // We use this when recovering
+  } else {
+    exit(header("Location: blog.php"));
+  }
 
+  $piece_id_o = preg_replace("/[^0-9]/"," ", $_GET['o']);
+  $diffing = "recovered autosave (unsaved changes from current browser, not available in any history)";
+  $query_o = "SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id='$piece_id_o' ORDER BY id DESC LIMIT 1";
+  $call_o = mysqli_query($database, $query_o);
+  $call_p = true; // So we don't fail tests since all other scenarios use two calls
+  $diff_type = 'as';
+  // Values
+  $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
+    // Assign the values
+    $o_title = "$row[0]";
+    $o_slug = "$row[1]";
+    $o_content = htmlspecialchars_decode("$row[2]"); // We used htmlspecialchars() to enter the database, now we must reverse it
+    $o_after = "$row[3]";
+    $o_tags_sqljson = "$row[4]";
+    $o_links_sqljson = "$row[5]";
+    $o_update = "$row[6]";
+    $o_id = $piece_id_o;
+    // Assign the values
+    $piece_id_p = $as_diff_array["piece_id"];
+    $p_title = $as_diff_array["p_title"];
+    $p_slug = $as_diff_array["p_slug"];
+    $p_content = $as_diff_array["p_content"];
+    $p_after = $as_diff_array["p_after"];
+    $p_tags_json = $as_diff_array["p_tags"];
+    $p_links_json = $as_diff_array["p_links"];
+    $p_update = date("Y-m-d H:i:s", substr($as_diff_array["as_time"], 0, 10));
+
+    // Make sure both history IDs match the same piece ID
+    if ($piece_id_p == $piece_id_o) {
+      $piece_id = $piece_id_p;
+    } else {
+      exit(header("Location: blog.php"));
+    }
+
+    // Form for our recover
+    ?>
+      <form id="restore_autosave" method="post" action="hist.php?asr=<?php echo $piece_id; ?>">
+        <input form="restore_autosave" type="hidden" name="as_json" value='<?php echo $as_diff_json_string; ?>'>
+      </form>
+    <?php
+
+
+// Deeper History
 } elseif ((isset($_GET['c'])) && (filter_var($_GET['c'], FILTER_VALIDATE_INT))
       &&  (isset($_GET['h'])) && (filter_var($_GET['h'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
@@ -68,8 +192,8 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
     $p_title = "$row[1]";
     $p_slug = "$row[2]";
     $p_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_tags_sqljson = "$row[4]";
-    $p_links_sqljson = "$row[5]";
+    $p_tags_json = "$row[4]";
+    $p_links_json = "$row[5]";
     $p_update = "$row[6]";
     $p_id = $piece_id_c;
   $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
@@ -91,6 +215,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
       exit(header("Location: blog.php"));
     }
 
+// Most recent published History
 } elseif ((isset($_GET['r'])) && (filter_var($_GET['r'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['r']);
@@ -107,8 +232,8 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
     $p_title = "$row[1]";
     $p_slug = "$row[2]";
     $p_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_tags_sqljson = "$row[4]";
-    $p_links_sqljson = "$row[5]";
+    $p_tags_json = "$row[4]";
+    $p_links_json = "$row[5]";
     $p_update = "$row[6]";
   $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
     // Assign the values
@@ -141,7 +266,7 @@ if (!empty($tags_array)) {
     $o_tags .= $tag_item.'<br>';
   }
 }
-if ($p_tags_sqljson != '[""]') {$tags_array = json_decode($p_tags_sqljson);}
+if ($p_tags_json != '[""]') {$tags_array = json_decode($p_tags_json);}
 if (!empty($tags_array)) {
   $p_tags = ''; // Start the $p_tags set
   // Parse $links_array into <a> tag variables
@@ -161,7 +286,7 @@ if (!empty($links_array)) {
   // Set our final value
   $o_links = $links;
 }
-if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
 if (!empty($links_array)) {
   $links = ''; // Start the $links set
   foreach ($links_array as $line_item) {
@@ -243,7 +368,9 @@ echo '
     <div class="col">';
     // Editing a current draft?
     if (($diff_type == 'p') && ($p_id = "draft_")) {
-      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
+      echo '<code class="link-button green" onclick="restoreAutosave();">edit current draft</code>';
+    } elseif ($diff_type == 'as') {
+      echo '<code><input form="restore_autosave" type="submit" class="green postform link-button" value="restore this autosave"></code>';
     } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
       echo '<code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>';
     }

@@ -36,7 +36,17 @@ include ('./in.editprocess.php');
   </script>
 <?php
 
-// Our edit form
+// Recovered Autosave?
+if (isset($_SESSION['as_recovered'])) {
+  echo '<pre class="green">Autosave recovered.</pre>';
+  unset($_SESSION['as_recovered']);
+}
+
+// Recovered Autosave?
+if (isset($_SESSION['as_recovered'])) {
+  echo '<pre class="green">Autosave recovered.</pre>';
+  unset($_SESSION['as_recovered']);
+}
 // New or update?
 if (isset($piece_id)) { // Updating piece
   if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
@@ -44,8 +54,11 @@ if (isset($piece_id)) { // Updating piece
   } else {
     echo '<pre>(unpublished draft)</pre>';
   }
+  // Preview & change notices
   echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview</a></pre>';
-  echo '<form action="edit.php?p='.$piece_id.'" method="post" id="edit_piece">';
+  echo '<div id="edit_changes_notice"></div>';
+  // Our edit form
+  echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
   echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece
   echo '<form action="edit.php" method="post" id="edit_piece">';
@@ -75,7 +88,7 @@ echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
 if (isset($piece_id)) {
   // Save AJAX for existing Piece
   echo '
-  <input form="edit_piece" type="hidden" name="p_submit" value="Save draft">
+  <input form="edit_piece" type="hidden" id="p_submit_edit" name="p_submit" value="">
   <button type="button" title="Save (Ctrl + S)" onclick="ajaxSaveDraft(); offNavWarn();" name="save_draft" id="save_draft" class="lt_button small" style="display: inline;">Save draft</button>
   &nbsp;'; // Space between the buttons
 
@@ -104,9 +117,13 @@ if (isset($piece_id)) {
 if ( (isset($editing_existing_piece)) && ($editing_existing_piece == true) ) {
   // Editing a published piece?
   if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
-    echo '<input form="edit_piece" type="submit" name="p_submit" value="Update">';
+    echo '
+    <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Update\');" name="edit_update" id="edit_update_button" class="lt_button small" style="display: inline;">Update</button>';
+
   } else {
-    echo '<input form="edit_piece" type="submit" name="p_submit" value="Publish">';
+    echo '
+    <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Publish\');" name="edit_update" id="edit_publish_button" class="lt_button small" style="display: inline;">Publish</button>';
+
   }
 }
 
@@ -230,7 +247,6 @@ echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_li
 // JavaScript functions for editing existing pieces
 if (isset($piece_id)) {
   ?>
-  <div id="test_me"></div>
     <script>
       // Autosave
       function pieceAutoSave() {
@@ -243,12 +259,59 @@ if (isset($piece_id)) {
           as_json["p_slug"] = edit_piece_json["p_slug"];
           as_json["p_content"] = edit_piece_json["p_content"];
           as_json["p_after"] = edit_piece_json["p_after"];
+          as_json["p_tags"] = edit_piece_json["p_tags"];
           as_json["p_links"] = edit_piece_json["p_links"];
           as_json["as_time"] = new Date().getTime(); // "Epoch" time in miliseconds from Jan 1, 1970
+        // Set our local storage ID
+        as_id = 'as_'+as_json["piece_id"];
+        // Check and trigger a nav warning if there are any changes in the Piece content
+        if (localStorage.getItem(as_id) === null) { // If there is no autosave
+          old_as_p_content = as_json["p_content"]; // This sets the new and old to be the same, a roundabout way of neutralizing the check if there is no autosave yet
+        } else {
+          var old_as = localStorage.getItem(as_id); // Use the Piece ID in localStorage name
+          var old_as_json = JSON.parse(old_as); // Make it a JSON-readable Object
+          var old_as_p_content = old_as_json["p_content"];
+        }
+        var new_as_p_content = as_json["p_content"];
+        if (new_as_p_content != old_as_p_content) { // Is there a change?
+          onNavWarn(); // Trigger the nav warning
+        }
         // Save it to local storage
-        localStorage.setItem('as_'+as_json["piece_id"], JSON.stringify(as_json)); // Save our JSON as a string, JS can't understand it but it will save and open easily
-        document.getElementById("test_me").innerHTML = 'autosaving'+as_json["p_content"];//
+        localStorage.setItem(as_id, JSON.stringify(as_json)); // Save our JSON as a string, JS can't understand it but it will save and open easily
       }
+      // Timer used by recurring Autosave
+      function Timer(fn, t) {
+        var timerObj = setInterval(fn, t);
+
+        // Stop timer
+        this.stop = function() {
+            if (timerObj) {
+                clearInterval(timerObj);
+                timerObj = null;
+            }
+            return this;
+        }
+
+        // Start timer
+        this.start = function() {
+            if (!timerObj) {
+                this.stop();
+                timerObj = setInterval(fn, t);
+            }
+            return this;
+        }
+
+        // Stop current & reset
+        this.reset = function(newT = t) {
+            t = newT;
+            return this.stop().start();
+        }
+      }
+      // Set the Autosave to happen every 30 seconds via our Timer function (it doesn't start yet)
+      var autoSaveTimer = new Timer(function() { // Defines and initiates in the same command
+        pieceAutoSave()
+      }, 30000);
+      autoSaveTimer.stop(); // Stop it right away, just in case we don't want it running yet
       // Run this when the page loads: check for inconsistency with current edit_piece form and last autosave
       window.addEventListener( "load", function () {
         const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
@@ -262,15 +325,16 @@ if (isset($piece_id)) {
           curr_json["p_slug"] = edit_piece_json["p_slug"];
           curr_json["p_content"] = edit_piece_json["p_content"];
           curr_json["p_after"] = edit_piece_json["p_after"];
+          curr_json["p_tags"] = edit_piece_json["p_tags"];
           curr_json["p_links"] = edit_piece_json["p_links"];
           var curr = JSON.stringify(curr_json);
+          var pID = edit_piece_json["piece_id"];
         if (localStorage.getItem(as_id) === null) { // If there is no autosave
-          // Autosave every 30 seconds
-          setInterval( function () {
-            pieceAutoSave()
-          }, 10000);
+          // Start the Autosave 30 second repeating Timer
+          autoSaveTimer.start();
         } else {
           var old_as = localStorage.getItem(as_id); // Use the Piece ID in localStorage name
+          var recover_as = old_as; // Keep it unchanged in case we want to recover it, including the time, which we will soon delete
           var old_as_json = JSON.parse(old_as); // Make it a JSON-readable Object
           var old_as_time = old_as_json["as_time"];
           delete old_as_json["as_time"]; // Get rid of the time
@@ -278,27 +342,51 @@ if (isset($piece_id)) {
           var edit_piece = JSON.stringify(old_as_json);
           // See if different
           if (old_as === curr) {
-            // Autosave every 30 seconds
-            setInterval( function () {
-              pieceAutoSave()
-            }, 10000);
+            // Start the Autosave 30 second repeating Timer
+            autoSaveTimer.start();
           } else {
-            document.getElementById("test_me").innerHTML = 'something has changed<br>old:<br>'+old_as+'<br>new:<br>'+curr;///
+            var changesMessage = '<p class="orange">Connection issue or last browser session not closed correctly: Something has changed since last save!<br><form id="save_diff_error" name="save_diff_error" method="post" action="hist.php?o='+pID+'&a=1"><input type="hidden" form="save_diff_error" name="old_as" value=\''+recover_as+'\'><input type="submit" class="orange" value="See diff...">&nbsp;<button type="button" class="red" onclick="dismissASdiff();">Dismiss forever</button></form>';
+            document.getElementById("edit_changes_notice").innerHTML = changesMessage;
           }
         }
 
       });
-      // Send Autosave to history
-      function histAutoSave() {
-        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
-        var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object just to get the Piece ID
-        var old_as = localStorage.getItem('as_'+edit_piece_json["piece_id"]); // Use the Piece ID in localStorage name
-        var old_as_json = JSON.parse(old_as);
-        /// Send via POST to hist.php
+      // Dismiss the Autosave diff warning by updateing the Autosave
+      function dismissASdiff() {
+        // Autosave update
+        pieceAutoSave();
+
+        // Turn off any nav away warning
+        offNavWarn();
+
+        // Reload the page
+        location.reload();
+        return false; // So we don't keep reloading forever
+      }
+
+      // Update/Publish buttons
+      function buttonFormSubmit(p_sub) { // These arguments can be anything, same as used in this function
+        // Set the value of p_submit
+        document.getElementById("p_submit_edit").value = p_sub;
+
+        // Stop our Autosave Timer so it can't produce conflicts, it's no longer needed because we are going to POST away
+        autoSaveTimer.stop();
+
+        // Update our Autosave so it is up to date
+        pieceAutoSave();
+
+        // Turn off any nav away warning
+        offNavWarn();
+
+        // Submit the form
+        document.edit_piece.submit();
       }
 
       // AJAX
       function ajaxSaveDraft() { // These arguments can be anything, same as used in this function
+        // Set the value of p_submit
+        document.getElementById("p_submit_edit").value = "Save draft";
+
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById("edit_piece");
         const AJAX = new XMLHttpRequest(); // AJAX handler
@@ -314,10 +402,15 @@ if (isset($piece_id)) {
           document.getElementById("ajax_save_draft_response").innerHTML = jsonSaveDraftResponse["message"];
           document.getElementById("p_slug").value = jsonSaveDraftResponse["slug"];
           document.getElementById("p_slug_a").innerHTML = jsonSaveDraftResponse["slug"];
-          offNavWarn(); // Turn off the nav away warning
 
           // Update the Autosave
           pieceAutoSave();
+
+          // Turn off the nav away warning (after pieceAutoSave may have triggered a now-unnecessary nav warning)
+          offNavWarn();
+
+          // Reset our Autosave 30 second repeating Timer
+          autoSaveTimer.reset(30000);
         } );
 
         AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
