@@ -80,10 +80,10 @@ if (isset($piece_id)) {
 
   // First Save for new Piece
   echo '
-  <input form="edit_piece" type="submit" name="p_submit" id="save_draft" value="Save draft">
+  <input form="edit_piece" type="submit" onclick="offNavWarn();" name="p_submit" id="save_draft" value="Save draft">
   &nbsp;'; // Space between the buttons
 
-  // AJAX
+  // AJAX false triggers in new piece
   ?>
     <script>
       // Ctrl + S = submit Save on new Piece
@@ -93,6 +93,11 @@ if (isset($piece_id)) {
           document.getElementById('save_draft').click();
         }
       }, false); // Ctrl + S capture
+
+      // False AJAX save from TinyMCE Ctrl + S hotkey when AJAX has no piece ID to process
+      function ajaxSaveDraft() {
+        document.getElementById('save_draft').click();
+      }
     </script>
   <?php
 } // Save button
@@ -268,7 +273,7 @@ if (isset($piece_id)) {
       document.addEventListener("keydown", function(cs) {
         if ( (window.navigator.platform.match("Mac") ? cs.metaKey : cs.ctrlKey) && (cs.keyCode == 83) ) {
           cs.preventDefault(); // Stop it from doing what it normally does
-          ajaxSaveDraft('ajax.edit.php'); // Run our "Save" AJAX
+          ajaxSaveDraft(); // Run our "Save" AJAX
         }
       }, false); // Ctrl + S capture
     </script>

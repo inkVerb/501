@@ -44,6 +44,13 @@ if (isset($_SESSION['as_recovered'])) {
 
 // New or update?
 if (isset($piece_id)) { // Updating piece
+  // Unpublished changes to draft?
+  $query = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$piece_id ORDER BY U.id DESC LIMIT 1";
+  $call = mysqli_query($database, $query);
+  $draft_diff = (mysqli_num_rows($call) == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> in unpublished changes</pre>' : '';
+  echo $draft_diff;
+
+  // Other notices and relevant links
   if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
     echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
   } else {
@@ -56,7 +63,7 @@ if (isset($piece_id)) { // Updating piece
   echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
   echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
 } else { // New piece
-  echo '<form action="edit.php" method="post" id="edit_piece">';
+  echo '<form action="edit.php" method="post" name="edit_piece" id="edit_piece" id="edit_piece">';
 }
 // Finish the form
 echo '</form>';
@@ -118,7 +125,7 @@ if ( (isset($editing_existing_piece)) && ($editing_existing_piece == true) ) {
   // Editing a published piece?
   if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
     echo '
-    <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Update\');" name="edit_update" id="edit_update_button" class="lt_button small" style="display: inline;">Update</button>';
+    <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Update\');" name="edit_update" id="edit_update_button" class="lt_button small" style="display: inline;">Update publication</button>';
 
   } else {
     echo '

@@ -89,7 +89,7 @@ if (isset($_COOKIE['user_key'])) {
       init_instance_callback: function (editor) {
         editor.addShortcut("ctrl+s", "Save draft", "custom_ctrl_s");
         editor.addCommand("custom_ctrl_s", function() {
-            ajaxSaveDraft('ajax.edit.php') // Run our "Save" AJAX
+            ajaxSaveDraft() // Run our "Save" AJAX
         });
       },
 
