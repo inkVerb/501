@@ -32,8 +32,9 @@ if [ "$type" = "img" ] && [ "$ext" = "bmp" ]; then
   if [ "$img_xl" != "none" ]; then
     /usr/bin/convert -size ${img_xl} "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_1920.png"
   fi
-  # Move and remove original
+  # Move & copy conversion, remove original
   /usr/bin/convert "${basepath}uploads/${name}.${ext}" "${basepath}original/images/${name}.png"
+  /bin/cp "${basepath}original/images/${name}.png" "${basepath}images/${name}.png"
   /bin/rm "${basepath}uploads/${name}.${ext}"
 
 # Process normal images
@@ -53,7 +54,7 @@ elif [ "$type" = "img" ]; then
   img_xl="$8"
   # Always create a thumbnail
   if [ "$img_sm" != "thum" ]; then
-    /usr/bin/convert -size 154x154 "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_154.png"
+    /usr/bin/convert -size 154x154 "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_154.${ext}"
   else
     /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_xs} "${basepath}images/${name}_154.${ext}"
   fi
@@ -70,8 +71,9 @@ elif [ "$type" = "img" ]; then
   if [ "$img_xl" != "none" ]; then
     /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_xl} "${basepath}images/${name}_1920.${ext}"
   fi
-  # Move original
+  # Move & copy original
   /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}original/images/${name}.${ext}"
+  /bin/cp "${basepath}original/images/${name}.${ext}" "${basepath}images/${name}.${ext}"
 
 # Convert svg for thumbnail
 elif [ "$type" = "svg" ] && [ "$ext" = "svg" ]; then

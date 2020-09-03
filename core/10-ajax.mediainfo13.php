@@ -66,10 +66,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     // Create our AJAX response array
     $ajax_response = array();
 
-    // Assign and sanitize
-    $regex_replace = "/[^a-zA-Z0-9-]/";
-    $title_text = preg_replace($regex_replace,"-", $_POST['title_text']); // Lowercase, all non-alnum to hyphen
-    $alt_text = preg_replace($regex_replace,"-", $_POST['alt_text']); // Lowercase, all non-alnum to hyphen
+    // Assign and sanitize img attributes
+    $title_text = htmlspecialchars($_POST['title_text']);
+    $alt_text = htmlspecialchars($_POST['alt_text']);
 
     // SQL
     $title_text_sqlesc = escape_sql($title_text);

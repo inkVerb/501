@@ -16,7 +16,7 @@ include ('./in.login_check.php');
   Dropzone.options.dropzoneUploaderMediaLibrary = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader-media-library"
     dictDefaultMessage: 'Drop to upload!',
     paramName: "upload_file", // We are still using upload_file; default: file
-    maxFilesize: 5, // MB
+    maxFilesize: 100, // MB
     uploadMultiple: true, // Default: false
       maxFiles: 50,
       parallelUploads: 1, // Default: 2
@@ -25,7 +25,7 @@ include ('./in.login_check.php');
       dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
 
     // File types ported over from upload.php, redundant but consistent:
-    acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
+    acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
 
     // Process AJAX response from upload.php
 
@@ -34,7 +34,7 @@ include ('./in.login_check.php');
       this.on('success', function(file, responseText) {
 
         // Update our upResponse variable
-        upResponse += '<b>'+file.name+' info:</b><br>'+responseText;
+        upResponse += '<div class="media-upload-info"><b>'+file.name+' info:</b><br>'+responseText+'</div>';
 
         // Show the filename and HTML response in an alert box for learning purposes
         //alert(file.name+' :: UPLOAD MESSAGE :: '+responseText);
@@ -45,7 +45,7 @@ include ('./in.login_check.php');
           document.getElementById("uploadresponse").innerHTML = upResponse;
         } else {
           // Write the response to HTML element id="uploadresponse"
-          document.getElementById("uploadresponse").innerHTML = '<span class="error">Nothing uploaded.</span>';
+          document.getElementById("uploadresponse").innerHTML = '<div style="float:left;"><span class="error">Nothing uploaded.</span></div>';
         }
 
       });
@@ -73,7 +73,7 @@ include ('./in.login_check.php');
     <!-- AJAX response from upload.php will go here-->
     <div id="uploadresponse"></div>
   </div>
-
+<br>
   <!-- Iterate through each item in the media libary -->
   <div id="media-list">
     <?php
@@ -268,7 +268,7 @@ include ('./in.login_check.php');
     <?php
 
     // Get and display each item
-    $query = "SELECT id, file_base, file_extension, basic_type, size FROM media_library";
+    $query = "SELECT id, file_base, file_extension, basic_type, location, size FROM media_library";
     $call = mysqli_query($database, $query);
 
     // Is anything there?
@@ -280,7 +280,7 @@ include ('./in.login_check.php');
 
       // Message at top
       $num_items = (mysqli_num_rows($call) == 1) ? mysqli_num_rows($call).' media item' : mysqli_num_rows($call).' media items';
-      echo '<p style="display: inline;"><b>'.$num_items.'</b>&nbsp;&nbsp;<div id="media-editor-saved-message" style="display: inline;"></div></p>';
+      echo '<div style="display:block;clear:both;"><p style="display:inline;"><b>'.$num_items.'</b>&nbsp;&nbsp;<div id="media-editor-saved-message" style="display:inline;"></div></p></div>';
 
 
       // Simple line
@@ -307,7 +307,7 @@ include ('./in.login_check.php');
             </div>
           </th>
           <th width="15%">
-            <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete &#9660;</b></div><br>
+            <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete&#9660;</b></div><br>
             <div id="bulk_delete_div" style="display: none;">
               <br>
               <label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
@@ -325,7 +325,8 @@ include ('./in.login_check.php');
         $m_file_base = "$row[1]";
         $m_file_extension = "$row[2]";
         $m_basic_type = "$row[3]";
-        $m_size = "$row[4]";
+        $m_location = "$row[4]";
+        $m_size = "$row[5]";
 
         // Proper filename
         $m_filename = $m_file_base.'.'.$m_file_extension;
@@ -337,14 +338,101 @@ include ('./in.login_check.php');
         echo '<tr class="'.$table_row_color.'" onmouseover="showActions('.$m_id.')" onmouseout="showActions('.$m_id.')">';
 
         // File
-        echo '<td><small><pre id="filename_'.$m_id.'">'.$m_filename.'</pre></small></td>';
+        echo '<td><pre id="filename_'.$m_id.'"><small>'.$m_filename.'</small></pre></td>';
 
         // Type
-        echo '<td><small><pre id="mediatype_'.$m_id.'">'.$m_basic_type.'</pre></small></td>';
+        echo '<td><pre id="mediatype_'.$m_id.'"><small>'.$m_basic_type.'</small></pre></td>';
 
         // Info
-        echo '<td><small><pre id="filesize_'.$m_id.'">'.$m_size_pretty.'</pre></small>&nbsp;
-        </td>';
+        echo '<td>';
+
+          // File & conversion links
+          $basepath = 'media/';
+          $origpath = 'media/original/';
+          switch ($m_basic_type) {
+            case 'IMAGE':
+              if ($m_file_extension == 'svg') {
+                $thumb = $basepath.$m_location.'/'.$m_file_base.'_154_svg.'.$m_file_extension;
+                $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+                // Set links
+                $img_svg_link = (file_exists($img_svg)) ? '<a href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
+
+                // File links
+                echo '<pre id="filelink_'.$m_id.'"><small>'.$img_svg_link.'</small></pre>';
+              } else {
+                $thumb = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
+                $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
+                $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
+                $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
+                $img_lg = $basepath.$m_location.'/'.$m_file_base.'_1280.'.$m_file_extension;
+                $img_xl = $basepath.$m_location.'/'.$m_file_base.'_1920.'.$m_file_extension;
+                $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+                $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+                // Set links
+                $img_xs_link = (file_exists($img_xs)) ? '<a href="http://localhost/web/'.$img_xs.'">154</a>&nbsp;('.human_file_size(filesize($img_xs)).')&nbsp;' : '';
+                $img_sm_link = (file_exists($img_sm)) ? '<a href="http://localhost/web/'.$img_sm.'">484</a>&nbsp;('.human_file_size(filesize($img_sm)).')&nbsp;' : '';
+                $img_md_link = (file_exists($img_md)) ? '<a href="http://localhost/web/'.$img_md.'">800</a>&nbsp;('.human_file_size(filesize($img_md)).')&nbsp;' : '';
+                $img_lg_link = (file_exists($img_lg)) ? '<a href="http://localhost/web/'.$img_lg.'">1280</a>&nbsp;('.human_file_size(filesize($img_lg)).')&nbsp;' : '';
+                $img_xl_link = (file_exists($img_xl)) ? '<a href="http://localhost/web/'.$img_xl.'">1920</a>&nbsp;('.human_file_size(filesize($img_xl)).')&nbsp;' : '';
+                $img_fl_link = (file_exists($img_fl)) ? '<a href="http://localhost/web/'.$img_fl.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_fl)).')&nbsp;' : '';
+                $img_or_link = (file_exists($img_or)) ? '<a href="http://localhost/web/'.$img_or.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_or)).')&nbsp;' : '';
+
+                // File links
+                echo '<pre id="filelink_'.$m_id.'"><small>'.$img_fl_link.$img_or_link.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
+
+              }
+            break;
+            case 'VIDEO':
+              $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+              $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+              // Set links
+              $vid_web_link = (file_exists($vid_web)) ? '<a href="http://localhost/web/'.$vid_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
+              $vid_ori_link = (file_exists($vid_ori)) ? '<a href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
+
+              // File links
+              echo '<pre id="filelink_'.$m_id.'"><small>'.$vid_web_link.$vid_ori_link.'</small></pre>';
+
+            break;
+            case 'AUDIO':
+              $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
+              $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+              // Set links
+              $aud_web_link = (file_exists($aud_web)) ? '<a href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
+              $aud_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
+
+              // File links
+              echo '<pre id="filelink_'.$m_id.'"><small>'.$aud_web_link.$aud_ori_link.'</small></pre>';
+            break;
+            case 'DOCUMENT':
+              if ( ($m_file_extension == 'txt') || ($m_file_extension == 'doc') ) {
+                $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+                // Set links
+                $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+
+                // File links
+                echo '<pre id="filelink_'.$m_id.'"><small>'.$doc_web_link.'</small></pre>';
+              } else {
+                $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
+                $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+                // Set links
+                $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+                $doc_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
+
+                // File links
+                echo '<pre id="filelink_'.$m_id.'"><small>'.$doc_web_link.$doc_ori_link.'</small></pre>';
+              }
+            break;
+
+          }
+
+
+        echo'</td>';
 
         // AJAX mediaEdit button
         echo '<td>

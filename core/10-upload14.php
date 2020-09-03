@@ -14,7 +14,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     $file_basename = basename($file_name,'.'.$file_extension); // Strip off the extension
     $file_name = $file_basename.'.'.$file_extension; // Reassign extension with no caps
     $file_size = $_FILES['upload_file']['size'][0];
-    $size_limit = 5000000; // 5MB
+    $size_limit = 100000000; // 100MB
     $errors = '';
 
     // Check file size
@@ -84,11 +84,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       }
 
       // Get size & mime type
-      $image_type = $imageinfo['mime'];
+      //$image_type = $imageinfo['mime']; // We won't use this anymore, but keep it for reference
       //$image_dimensions = $imageinfo[3]; // We won't use this anymore, but keep it for reference
       $image_dimensions = $img_w.'x'.$img_h;
       if (getimagesize($temp_file)) {
-        $info_message .= '<span class="upload-info">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
+        $info_message .= '<span class="upload-info">Image type: <code>'.$file_extension.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
         $upload_type = 'img';
         $upload_location = 'images';
         $basic_type = 'IMAGE';
@@ -98,7 +98,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
     // SVG image
     } elseif (($file_extension == 'svg')  && ($file_mime == 'image/svg+xml')) {
-      $info_message .= '<span class="upload-info">Image type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Image type: <code>'.$file_extension.'</code></span><br><br>';
       $upload_type = 'svg';
       $upload_location = 'images';
       $basic_type = 'IMAGE';
@@ -113,7 +113,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           ||   (($file_extension == 'avi') && ($file_mime == 'video/x-msvideo'))
           ||   (($file_extension == 'mkv') && ($file_mime == 'video/x-matroska'))
           ||   (($file_extension == 'mov') && ($file_mime == 'video/quicktime')) ) {
-      $info_message .= '<span class="upload-info">Video type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Video type: <code>'.$file_extension.'</code></span><br><br>';
       $upload_type = 'vid';
       $upload_location = 'video';
       $basic_type = 'VIDEO';
@@ -122,8 +122,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     } elseif ( (($file_extension == 'mp3') && ($file_mime == 'audio/mpeg'))
           ||   (($file_extension == 'ogg') && ($file_mime == 'audio/ogg'))
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/x-wav')) // WAV files can have different interpretations of mime types
-          ||   (($file_extension == 'wav') && ($file_mime == 'audio/wav')) ) {
-      $info_message .= '<span class="upload-info">Audio type: <code>'.$file_mime.'</code></span><br><br>';
+          ||   (($file_extension == 'wav') && ($file_mime == 'audio/wav'))
+          ||   (($file_extension == 'flac') && ($file_mime == 'audio/x-flac')) // FLAC files can have different interpretations of mime types
+          ||   (($file_extension == 'flac') && ($file_mime == 'audio/flac')) ) {
+      $info_message .= '<span class="upload-info">Audio type: <code>'.$file_extension.'</code></span><br><br>';
       $upload_type = 'aud';
       $upload_location = 'audio';
       $basic_type = 'AUDIO';
@@ -131,25 +133,26 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // Document formats
     } elseif ( (($file_extension == 'txt')  && ($file_mime == 'text/plain'))
           ||   (($file_extension == 'md')   && ($file_mime == 'text/plain'))
-          ||   (($file_extension == 'htm')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
-          ||   (($file_extension == 'html')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
+          ||   (($file_extension == 'htm')  && ($file_mime == 'text/html'))
+          ||   (($file_extension == 'html') && ($file_mime == 'text/html'))
+          ||   (($file_extension == 'doc')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
           ||   (($file_extension == 'doc')  && ($file_mime == 'application/msword')) // Compiled, from MS Word
           ||   (($file_extension == 'docx') && ($file_mime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
           ||   (($file_extension == 'odt')  && ($file_mime == 'application/vnd.oasis.opendocument.text'))
           ||   (($file_extension == 'pdf')  && ($file_mime == 'application/x-pdf')) // PDF files can have different interpretations of mime types
           ||   (($file_extension == 'pdf')  && ($file_mime == 'application/pdf')) ) {
-      $info_message .= '<span class="upload-info">Document type: <code>'.$file_mime.'</code></span><br><br>';
+      $info_message .= '<span class="upload-info">Document type: <code>'.$file_extension.'</code></span><br><br>';
       $upload_type = 'doc';
       $upload_location = 'docs';
       $basic_type = 'DOCUMENT';
 
     // Not allowed
     } else { // Not an accepted extension
-      $errors .= '<span class="error">Type: '.$file_mime.' Allowed file types<br>
+      $errors .= '<span class="error">Type: '.$file_extension.' Allowed file types<br>
       Image:<code> .jpg, .jpeg, .png, .gif</code><br>
       Video:<code> .webm, .ogg, .mp4</code><br>
-      Audio:<code> .mp3, .ogg, .wav</code><br>
-      Docs:<code> .txt, .md, .doc, .docx, .odt, .pdf</code><br>
+      Audio:<code> .mp3, .ogg, .wav, .flac</code><br>
+      Docs:<code> .txt, .md, .htm, .html, .doc, .docx, .odt, .pdf</code><br>
       Converted:<code> .flv, .bmp</code></span><br><br>';
     }
 
@@ -165,7 +168,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       $final_extension = ($file_extension == 'bmp') ? 'png' : $final_extension;
       $final_extension = ($file_extension == 'flv') ? 'mp4' : $final_extension;
       // Most documents are or are converted to a .pdf, so check that for name conflicts
-      $final_extension = ( ($basic_type == 'DOCUMENT') && ($file_extension != 'docx') && ($file_extension != 'txt') ) ? 'pdf' : $final_extension;
+      $final_extension = ( ($basic_type == 'DOCUMENT') && ($file_extension != 'doc') && ($file_extension != 'txt') ) ? 'pdf' : $final_extension;
+      // All audio is converted to .mp3, so check that for name conflicts
+      $final_extension = ($basic_type == 'AUDIO') ? 'mp3' : $final_extension;
       // Check if file name already exists
       $upload_path_dest = 'media/'.$upload_location.'/'.$file_basename.'.'.$final_extension;;
       if (file_exists($upload_path_dest)) {
@@ -241,7 +246,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           }
 
           $info_message .= '<span class="upload-info">File size: <code>'.$file_size_pretty.'</code></span><br id="mediatype_'.$m_id.'">'; // We need id="mediatype_..." so JS has something to change and it doesn't break
-          $info_message .= '<span class="upload-info">File name: <code id="filename_'.$m_id.'">'.$file_basename.'.'.$file_extension.'</code></span><br><br>';
+          $info_message .= '<span class="upload-info">File name: <code id="filename_'.$m_id.'">'.$file_basename.'.'.$file_extension.'</code></span>';
 
           // Wrap the info in a paragraph
           $info_message = '<p id="upload_'.$m_id.'" class="blue">'.$info_message.'</p>';
@@ -250,22 +255,25 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           $edit_form = '
           <form id="mediaEdit_'.$m_id.'">
             <input type="hidden" value="'.$m_id.'" name="m_id">
-            <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');" style="float: right;">edit</button>
-          </form><br>';
+            <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');">edit</button>
+          </form>';
 
           // AJAX-send the success message and edit link
           echo $edit_form.$info_message.'<hr>';
         }
 
       } else {
-        $errors .= '<span class="error">Upload error</span><br><br>';
+        $errors .= '<span class="error">Upload error</span><hr>';
         // Show our $errors
         echo $errors;
       }
     }
 
+} elseif ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_SESSION['user_id'])) ) {
+  $errors = '<span class="error">Upload error, files may be empty or in raw data format, such as raw FLAC audio files.</span><hr>';
+  // Show our $errors
+  echo $errors;
 } else { // End POST check
-  header("Location: webapp.php");
   exit();
 }
 

@@ -17,15 +17,15 @@ if [ "$v_height" -gt "$v_width" ]; then
   fi
 else
   # Don't up-scale a small video
-  if [ "$v_height" -gt "960" ]; then
+  if [ "$v_width" -gt "960" ]; then
     v_scale="960:-1"
   else
-    v_scale="$v_height:-1"
+    v_scale="$v_width:-1"
   fi
 fi
 
 # Convert flv, mkd, or avi to mp4 in our process
-if [ "$2" = "flv" ] || [ "$2" = "avi" ] || [ "$2" = "mkv" ] || [ "$2" = "mov" ]; then
+if [ "$ext" = "flv" ] || [ "$ext" = "avi" ] || [ "$ext" = "mkv" ] || [ "$ext" = "mov" ]; then
 
   /usr/bin/ffmpeg -y -i "${basepath}uploads/${name}.${ext}" -filter:v scale=${v_scale} -c:a copy "${basepath}video/${name}.mp4"
   wait
@@ -38,13 +38,19 @@ if [ "$2" = "flv" ] || [ "$2" = "avi" ] || [ "$2" = "mkv" ] || [ "$2" = "mov" ];
 else
 
   # Test for accepted types, redundant and secure
-  if [ "$2" != "webm" ] && [ "$2" != "ogg" ] && [ "$2" != "mp4" ]; then
+  if [ "$ext" != "webm" ] && [ "$ext" != "ogg" ] && [ "$ext" != "mp4" ]; then
     exit 0; # Quiet exit, no need for STDERR
   fi
 
-  /usr/bin/ffmpeg -y -i "${basepath}uploads/${name}.${ext}" -filter:v scale=${v_scale} -c:a copy "${basepath}video/${name}.${ext}"
-  wait
-  # Move original
-  /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}original/video/${name}.${ext}"
+  # Only convert large videos
+  if [ "$v_height" -gt "960" ] || [ "$v_width" -gt "960" ]; then
+    /usr/bin/ffmpeg -y -i "${basepath}uploads/${name}.${ext}" -filter:v scale=${v_scale} -c:a copy "${basepath}video/${name}.${ext}"
+    wait
+    # Move original
+    /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}original/video/${name}.${ext}"
+  else
+    # Move original
+    /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}video/${name}.${ext}"
+  fi
 
 fi

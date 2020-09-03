@@ -128,7 +128,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     }
 
 } else { // End POST check
-  header("Location: webapp.php");
   exit();
 }
 

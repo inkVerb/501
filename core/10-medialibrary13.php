@@ -307,7 +307,7 @@ include ('./in.login_check.php');
             </div>
           </th>
           <th width="15%">
-            <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete &#9660;</b></div><br>
+            <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete&#9660;</b></div><br>
             <div id="bulk_delete_div" style="display: none;">
               <br>
               <label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>

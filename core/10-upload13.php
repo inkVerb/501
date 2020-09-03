@@ -83,8 +83,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // Document formats
     } elseif ( (($file_extension == 'txt')  && ($file_mime == 'text/plain'))
           ||   (($file_extension == 'md')   && ($file_mime == 'text/plain'))
-          ||   (($file_extension == 'htm')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
-          ||   (($file_extension == 'html')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
+          ||   (($file_extension == 'htm')  && ($file_mime == 'text/html'))
+          ||   (($file_extension == 'html') && ($file_mime == 'text/html'))
+          ||   (($file_extension == 'doc')  && ($file_mime == 'text/html')) // Standard HTML, not yet compiled
           ||   (($file_extension == 'doc')  && ($file_mime == 'application/msword')) // Compiled, from MS Word
           ||   (($file_extension == 'docx') && ($file_mime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
           ||   (($file_extension == 'odt')  && ($file_mime == 'application/vnd.oasis.opendocument.text'))
@@ -100,7 +101,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       Image:<code> .jpg, .jpeg, .png, .gif</code><br>
       Video:<code> .webm, .ogg, .mp4</code><br>
       Audio:<code> .mp3, .ogg, .wav</code><br>
-      Docs:<code> .txt, .md, .doc, .docx, .odt, .pdf</code><br></span><br><br>';
+      Docs:<code> .txt, .md, .htm, .html, .doc, .docx, .odt, .pdf</code><br></span><br><br>';
     }
 
     // Check if $no_errors is set to 0 by an error
@@ -167,7 +168,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     }
 
 } else { // End POST check
-  header("Location: webapp.php");
   exit();
 }
 
