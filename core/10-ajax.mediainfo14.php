@@ -146,7 +146,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
       } // Mimetype switch
 
       if ($renamed == false) {
-        $ajax_response['message'] = '<span class="error">Could not rename file on server</span>';
+        $ajax_response['message'] = '<span class="error notehide">Could not rename file on server</span>';
       }
 
     } else {
