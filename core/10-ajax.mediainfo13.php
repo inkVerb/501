@@ -22,10 +22,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     if (mysqli_num_rows($call) == 1) {
       // Assign the values
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $m_old_file_file_base = "$row[0]";
+        $m_old_file_base = "$row[0]";
         $m_old_file_extension = "$row[1]";
         $m_file_location = "$row[2]";
-        $m_old_file_name = $m_old_file_file_base.'.'.$m_old_file_extension;
+        $m_old_file_name = $m_old_file_base.'.'.$m_old_file_extension;
       }
 
     if (!file_exists("media/$m_file_location/$m_old_file_name")) {

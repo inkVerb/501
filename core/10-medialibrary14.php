@@ -274,7 +274,7 @@ include ('./in.login_check.php');
     // Is anything there?
     if (mysqli_num_rows($call) == 0) {
 
-      echo 'Nothing yet. Upload a file to add to your Media Library.';
+      echo '<div style="display:block;clear:both;"><p style="display:inline;">Nothing yet. Upload a file to add to your Media Library.</p></div>';
 
     } else {
 
@@ -338,10 +338,10 @@ include ('./in.login_check.php');
         echo '<tr class="'.$table_row_color.'" onmouseover="showActions('.$m_id.')" onmouseout="showActions('.$m_id.')">';
 
         // File
-        echo '<td><pre id="filename_'.$m_id.'"><small>'.$m_filename.'</small></pre></td>';
+        echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre></td>';
 
         // Type
-        echo '<td><pre id="mediatype_'.$m_id.'"><small>'.$m_basic_type.'</small></pre></td>';
+        echo '<td><pre><small id="mediatype_'.$m_id.'">'.$m_basic_type.'</small></pre></td>';
 
         // Info
         echo '<td>';
@@ -429,7 +429,7 @@ include ('./in.login_check.php');
               }
             break;
 
-          }
+          } // Mimetype switch
 
 
         echo'</td>';

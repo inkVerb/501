@@ -16,19 +16,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $ajax_response = array();
 
     // Get the old file name
-    $query = "SELECT file_base, file_extension, location FROM media_library WHERE id='$m_id'";
+    $query = "SELECT file_base, basic_type, file_extension, location FROM media_library WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
       // Assign the values
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $m_old_file_file_base = "$row[0]";
-        $m_old_file_extension = "$row[1]";
-        $m_file_location = "$row[2]";
-        $m_old_file_name = $m_old_file_file_base.'.'.$m_old_file_extension;
+        $m_file_base = "$row[0]";
+        $m_basic_type = "$row[1]";
+        $m_file_extension = "$row[2]";
+        $m_location = "$row[3]";
       }
 
-    if (!file_exists("media/$m_file_location/$m_old_file_name")) {
+    if (!file_exists("media/$m_location/$m_old_file_name")) {
       $ajax_response['message'] = '<span class="error notehide">Error!</span>';
 
       // We're done here
@@ -39,21 +39,118 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
 
     // Assign and sanitize
     $regex_replace = "/[^a-zA-Z0-9-_]/";
-    $m_new_file_base = preg_replace($regex_replace,"-", $_POST['save_file_name']); // Lowercase, all non-alnum to hyphen
+    $m_file_base_new = preg_replace($regex_replace,"-", $_POST['save_file_name']); // Lowercase, all non-alnum to hyphen
 
     // SQL
-    $m_new_file_base_sqlesc = escape_sql($m_new_file_base);
-    $query = "UPDATE media_library SET file_base='$m_new_file_base_sqlesc' WHERE id='$m_id'";
+    $m_file_base_new_sqlesc = escape_sql($m_file_base_new);
+    $query = "UPDATE media_library SET file_base='$m_file_base_new_sqlesc' WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
-      $ajax_response['file_name'] = "$m_new_file_base.$m_old_file_extension";
+      $ajax_response['file_name'] = "$m_file_base_new.$m_file_extension";
 
-      // Change the actual file name
-      rename("media/$m_file_location/$m_old_file_name","media/$m_file_location/$m_new_file_base.$m_old_file_extension");
+      // File & conversion links
+      $basepath = 'media/';
+      $origpath = 'media/original/';
+      $renamed = true; // Start our tests out right
+      switch ($m_basic_type) {
+        case 'IMAGE':
+          if ($m_file_extension == 'svg') {
+            // Old name
+            $thumb = $basepath.$m_location.'/'.$m_file_base.'_154_svg.'.$m_file_extension;
+            $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            // New name
+            $thumb_new = $basepath.$m_location.'/'.$m_file_base_new.'_154_svg.'.$m_file_extension;
+            $img_svg_new = $basepath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+
+            // Rename & set variable accordingly, one error and it will read false
+            rename($thumb, $thumb_new); $renamed = ( (file_exists($thumb_new)) && ($renamed != false) ) ? true : false;
+            rename($img_svg, $img_svg_new); $renamed = ( (file_exists($img_svg_new)) && ($renamed != false) ) ? true : false;
+          } else {
+            // Old name
+            $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
+            $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
+            $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
+            $img_lg = $basepath.$m_location.'/'.$m_file_base.'_1280.'.$m_file_extension;
+            $img_xl = $basepath.$m_location.'/'.$m_file_base.'_1920.'.$m_file_extension;
+            $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            // New name
+            $img_xs_new = $basepath.$m_location.'/'.$m_file_base_new.'_154.'.$m_file_extension;
+            $img_sm_new = $basepath.$m_location.'/'.$m_file_base_new.'_484.'.$m_file_extension;
+            $img_md_new = $basepath.$m_location.'/'.$m_file_base_new.'_800.'.$m_file_extension;
+            $img_lg_new = $basepath.$m_location.'/'.$m_file_base_new.'_1280.'.$m_file_extension;
+            $img_xl_new = $basepath.$m_location.'/'.$m_file_base_new.'_1920.'.$m_file_extension;
+            $img_fl_new = $basepath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+            $img_or_new = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+
+            // Some of these might not necessarily exist, depending on image size, smaller first
+            if (file_exists($img_xs)) {rename($img_xs, $img_xs_new); $renamed = ( (file_exists($img_xs_new)) && ($renamed != false) ) ? true : false;}
+            if (file_exists($img_sm)) {rename($img_sm, $img_sm_new); $renamed = ( (file_exists($img_sm_new)) && ($renamed != false) ) ? true : false;}
+            if (file_exists($img_md)) {rename($img_md, $img_md_new); $renamed = ( (file_exists($img_md_new)) && ($renamed != false) ) ? true : false;}
+            if (file_exists($img_lg)) {rename($img_lg, $img_lg_new); $renamed = ( (file_exists($img_lg_new)) && ($renamed != false) ) ? true : false;}
+            if (file_exists($img_xl)) {rename($img_xl, $img_xl_new); $renamed = ( (file_exists($img_xl_new)) && ($renamed != false) ) ? true : false;}
+
+            // Delete & set variable accordingly, one error and it will read false
+            rename($img_fl, $img_fl_new); $renamed = ( (file_exists($img_fl_new)) && ($renamed != false) ) ? true : false;
+            rename($img_or, $img_or_new); $renamed = ( (file_exists($img_or_new)) && ($renamed != false) ) ? true : false;
+          }
+        break;
+        case 'VIDEO':
+          // Old name
+          $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          // New name
+          $vid_web_new = $basepath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+          $vid_ori_new = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+
+          // Delete & set variable accordingly, one error and it will read false
+          rename($vid_web, $vid_web_new); $renamed = ( (file_exists($vid_web_new)) && ($renamed != false) ) ? true : false;
+          rename($vid_ori, $vid_ori_new); $renamed = ( (file_exists($vid_ori_new)) && ($renamed != false) ) ? true : false;
+        break;
+        case 'AUDIO':
+          // Old name
+          $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
+          $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          // New name
+          $aud_web_new = $basepath.$m_location.'/'.$m_file_base_new.'.mp3';
+          $aud_ori_new = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+
+          // Delete & set variable accordingly, one error and it will read false
+          rename($aud_web, $aud_web_new); $renamed = ( (file_exists($aud_web_new)) && ($renamed != false) ) ? true : false;
+          rename($aud_ori, $aud_ori_new); $renamed = ( (file_exists($aud_ori_new)) && ($renamed != false) ) ? true : false;
+        break;
+        case 'DOCUMENT':
+          if ( ($m_file_extension == 'txt') || ($m_file_extension == 'doc') ) {
+            // Old name
+            $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            // New name
+            $doc_web_new = $basepath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+
+            // Delete & set variable accordingly, one error and it will read false
+            rename($doc_web, $doc_web_new); $renamed = ( (file_exists($doc_web_new)) && ($renamed != false) ) ? true : false;
+          } else {
+            // Old name
+            $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
+            $doc_ori = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+            // New name
+            $doc_web_new = $basepath.$m_location.'/'.$m_file_base.'.pdf';
+            $doc_ori_new = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+
+            // Delete & set variable accordingly, one error and it will read false
+            rename($doc_web, $doc_web_new); $renamed = ( (file_exists($doc_web_new)) && ($renamed != false) ) ? true : false;
+            rename($doc_ori, $doc_ori_new); $renamed = ( (file_exists($doc_ori_new)) && ($renamed != false) ) ? true : false;
+          }
+        break;
+
+      } // Mimetype switch
+
+      if ($renamed == false) {
+        $ajax_response['message'] = '<span class="error">Could not rename file on server</span>';
+      }
 
     } else {
-      $ajax_response['message'] = '<span class="error notehide">Error!</span>';
+      $ajax_response['message'] = '<span class="error notehide">Could not file name in database</span>';
     }
 
     // We're done here
