@@ -35,13 +35,14 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
       switch ($m_basic_type) {
         case 'IMAGE':
           if ($m_file_extension == 'svg') {
-            $thumb = $basepath.$m_location.'/'.$m_file_base.'_154_svg.'.$m_file_extension;
+            $thumb = $basepath.$m_location.'/'.$m_file_base.'_thumb_svg.'.$m_file_extension;
             $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
             // Delete & set variable accordingly, one error and it will read false
             unlink($thumb); $deleted = ( (!file_exists($thumb)) && ($deleted != false) ) ? true : false;
             unlink($img_svg); $deleted = ( (!file_exists($img_svg)) && ($deleted != false) ) ? true : false;
           } else {
+            $img_th = $basepath.$m_location.'/'.$m_file_base.'_thumb.'.$m_file_extension;
             $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
             $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
             $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
@@ -51,6 +52,7 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
             $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
             // Some of these might not necessarily exist, depending on image size, smaller first
+            unlink($img_th); $deleted = ( (!file_exists($img_th)) && ($deleted != false) ) ? true : false;
             unlink($img_xs); $deleted = ( (!file_exists($img_xs)) && ($deleted != false) ) ? true : false;
             unlink($img_sm); $deleted = ( (!file_exists($img_sm)) && ($deleted != false) ) ? true : false;
             unlink($img_md); $deleted = ( (!file_exists($img_md)) && ($deleted != false) ) ? true : false;

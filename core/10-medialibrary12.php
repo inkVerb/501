@@ -94,7 +94,7 @@ include ('./in.login_check.php');
     ';
 
     // Get and display each item
-    $query = "SELECT id, file_base, file_extension, basic_type, size FROM media_library";
+    $query = "SELECT id, file_base, file_extension, basic_type, size FROM media_library ORDER BY id DESC";
     $call = mysqli_query($database, $query);
     // Start our row colors
     $table_row_color = 'blues';

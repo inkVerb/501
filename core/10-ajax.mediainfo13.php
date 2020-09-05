@@ -43,7 +43,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
 
     // SQL
     $m_new_file_base_sqlesc = escape_sql($m_new_file_base);
-    $query = "UPDATE media_library SET file_base='$m_new_file_base_sqlesc' WHERE id='$m_id'";
+    $query = "UPDATE media_library SET file_base='$m_new_file_base_sqlesc', date_updated=NOW() WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
@@ -73,7 +73,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     // SQL
     $title_text_sqlesc = escape_sql($title_text);
     $alt_text_sqlesc = escape_sql($alt_text);
-    $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc' WHERE id='$m_id'";
+    $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc', date_updated=NOW() WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';

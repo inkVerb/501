@@ -244,6 +244,9 @@ include ('./in.login_check.php');
           }
         });
 
+        // Make sure the delete confirm is hidden (so it doesn't stay shown if delete checkboxes are re-hidden)
+        document.getElementById("bulk_delete_confirm").style.display = "none";
+
       }
 
       // JavaScript to "Select all"
@@ -268,7 +271,7 @@ include ('./in.login_check.php');
     <?php
 
     // Get and display each item
-    $query = "SELECT id, file_base, file_extension, basic_type, location, size FROM media_library";
+    $query = "SELECT id, file_base, file_extension, basic_type, location, size, alt_text FROM media_library ORDER BY id DESC";
     $call = mysqli_query($database, $query);
 
     // Is anything there?
@@ -291,13 +294,13 @@ include ('./in.login_check.php');
       <table class="contentlib" id="media-table">
         <tbody>
           <tr>
-          <th width="15%">Filename
+          <th width="15%">File
             <div id="bulk_delete_button" style="display: none;">
               <br>
               <button type="button" class="postform link-button inline red" onclick="confirmDelete();">delete &rarr;</button>
             </div>
           </th>
-          <th width="15%">Type</th>
+          <th width="15%"></th>
           <th width="55%">Info
             <div id="bulk_delete_confirm" style="display: none;">
               <form id="delete_action" method="post" action="act.delmedia.php">
@@ -307,10 +310,10 @@ include ('./in.login_check.php');
             </div>
           </th>
           <th width="15%">
-            <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete&#9660;</b></div><br>
+            <div onclick="showDelete()" style="cursor: pointer; display: inline; float: right;"><b>Delete&#9660;</b></div><br>
             <div id="bulk_delete_div" style="display: none;">
               <br>
-              <label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
+              <label style="float: right;"><b>Select all</b> <input type="checkbox" onclick="toggle(this);"></label>
             </div>
           </th>
           </tr>
@@ -327,6 +330,7 @@ include ('./in.login_check.php');
         $m_basic_type = "$row[3]";
         $m_location = "$row[4]";
         $m_size = "$row[5]";
+        $m_alt = "$row[6]";
 
         // Proper filename
         $m_filename = $m_file_base.'.'.$m_file_extension;
@@ -334,119 +338,194 @@ include ('./in.login_check.php');
         // Use our handy function
         $m_size_pretty = human_file_size($m_size);
 
-        // Fill-in the row
+        // Start our row
         echo '<tr class="'.$table_row_color.'" onmouseover="showActions('.$m_id.')" onmouseout="showActions('.$m_id.')">';
 
-        // File
-        echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre></td>';
+        // AJAX mediaEdit button
+        $ajax_edit = '<form id="mediaEdit_'.$m_id.'">
+            <input type="hidden" value="'.$m_id.'" name="m_id">
+            <div id="showaction'.$m_id.'" style="display: none;">
+              <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');"><small>edit</small></button>
+            </div>
+          </form>';
 
-        // Type
-        echo '<td><pre><small id="mediatype_'.$m_id.'">'.$m_basic_type.'</small></pre></td>';
+        // Fill-in the row per media type
+        $basepath = 'media/';
+        $origpath = 'media/original/';
+        switch ($m_basic_type) {
+          case 'IMAGE':
+            if ($m_file_extension == 'svg') {
 
-        // Info
-        echo '<td>';
+              // Use the .png thumbnail because the .svg file is likely larger than this 50px .png
+              $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="'.$basepath.$m_location.'/'.$m_file_base.'_thumb_svg.png">';
 
-          // File & conversion links
-          $basepath = 'media/';
-          $origpath = 'media/original/';
-          switch ($m_basic_type) {
-            case 'IMAGE':
-              if ($m_file_extension == 'svg') {
-                $thumb = $basepath.$m_location.'/'.$m_file_base.'_154_svg.'.$m_file_extension;
-                $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+              // Thumbnail
+              echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
-                // Set links
-                $img_svg_link = (file_exists($img_svg)) ? '<a href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
+              // Filename
+              echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
 
-                // File links
-                echo '<pre id="filelink_'.$m_id.'"><small>'.$img_svg_link.'</small></pre>';
-              } else {
-                $thumb = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
-                $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
-                $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
-                $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
-                $img_lg = $basepath.$m_location.'/'.$m_file_base.'_1280.'.$m_file_extension;
-                $img_xl = $basepath.$m_location.'/'.$m_file_base.'_1920.'.$m_file_extension;
-                $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-                $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+              // Info
+              echo '<td class="media-lib-info">';
 
-                // Set links
-                $img_xs_link = (file_exists($img_xs)) ? '<a href="http://localhost/web/'.$img_xs.'">154</a>&nbsp;('.human_file_size(filesize($img_xs)).')&nbsp;' : '';
-                $img_sm_link = (file_exists($img_sm)) ? '<a href="http://localhost/web/'.$img_sm.'">484</a>&nbsp;('.human_file_size(filesize($img_sm)).')&nbsp;' : '';
-                $img_md_link = (file_exists($img_md)) ? '<a href="http://localhost/web/'.$img_md.'">800</a>&nbsp;('.human_file_size(filesize($img_md)).')&nbsp;' : '';
-                $img_lg_link = (file_exists($img_lg)) ? '<a href="http://localhost/web/'.$img_lg.'">1280</a>&nbsp;('.human_file_size(filesize($img_lg)).')&nbsp;' : '';
-                $img_xl_link = (file_exists($img_xl)) ? '<a href="http://localhost/web/'.$img_xl.'">1920</a>&nbsp;('.human_file_size(filesize($img_xl)).')&nbsp;' : '';
-                $img_fl_link = (file_exists($img_fl)) ? '<a href="http://localhost/web/'.$img_fl.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_fl)).')&nbsp;' : '';
-                $img_or_link = (file_exists($img_or)) ? '<a href="http://localhost/web/'.$img_or.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_or)).')&nbsp;' : '';
-
-                // File links
-                echo '<pre id="filelink_'.$m_id.'"><small>'.$img_fl_link.$img_or_link.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
-
-              }
-            break;
-            case 'VIDEO':
-              $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-              $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+              $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
               // Set links
-              $vid_web_link = (file_exists($vid_web)) ? '<a href="http://localhost/web/'.$vid_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
-              $vid_ori_link = (file_exists($vid_ori)) ? '<a href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
+              $img_svg_link = (file_exists($img_svg)) ? '<a href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
 
               // File links
-              echo '<pre id="filelink_'.$m_id.'"><small>'.$vid_web_link.$vid_ori_link.'</small></pre>';
+              echo '<pre id="filelink_'.$m_id.'"><small>SVG: '.$img_svg_link.'</small></pre>';
 
-            break;
-            case 'AUDIO':
-              $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
-              $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            } else {
+
+              $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="'.$basepath.$m_location.'/'.$m_file_base.'_thumb.'.$m_file_extension.'">';
+
+              // Thumbnail
+              echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
+
+              // Filename
+              echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
+
+              // Info
+              echo '<td class="media-lib-info">';
+
+              $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
+              $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
+              $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
+              $img_lg = $basepath.$m_location.'/'.$m_file_base.'_1280.'.$m_file_extension;
+              $img_xl = $basepath.$m_location.'/'.$m_file_base.'_1920.'.$m_file_extension;
+              $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+              $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+              // Original and Blog image sizes
+              list($img_fl_w, $img_fl_h) = (file_exists($img_fl)) ? getimagesize($img_fl) : '';
+              list($img_or_w, $img_or_h) = (file_exists($img_or)) ? getimagesize($img_or) : '';
+
+              // Orientation
+              if ($img_fl_w == $img_fl_h) {
+                $img_orientation = 'squr';
+              } elseif ($img_fl_w > $img_fl_h) {
+                $img_orientation = 'wide';
+              } elseif ($img_fl_w < $img_fl_h) {
+                $img_orientation = 'tall';
+              }
 
               // Set links
-              $aud_web_link = (file_exists($aud_web)) ? '<a href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
-              $aud_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
+              $img_xs_link = (file_exists($img_xs)) ? '<a href="http://localhost/web/'.$img_xs.'">154</a>&nbsp;('.human_file_size(filesize($img_xs)).')&nbsp;' : '';
+              $img_sm_link = (file_exists($img_sm)) ? '<a href="http://localhost/web/'.$img_sm.'">484</a>&nbsp;('.human_file_size(filesize($img_sm)).')&nbsp;' : '';
+              $img_md_link = (file_exists($img_md)) ? '<a href="http://localhost/web/'.$img_md.'">800</a>&nbsp;('.human_file_size(filesize($img_md)).')&nbsp;' : '';
+              $img_lg_link = (file_exists($img_lg)) ? '<a href="http://localhost/web/'.$img_lg.'">1280</a>&nbsp;('.human_file_size(filesize($img_lg)).')&nbsp;' : '';
+              $img_xl_link = (file_exists($img_xl)) ? '<a href="http://localhost/web/'.$img_xl.'">1920</a>&nbsp;('.human_file_size(filesize($img_xl)).')&nbsp;' : '';
+              $img_fl_link = (file_exists($img_fl)) ? '<a href="http://localhost/web/'.$img_fl.'">blog '.$m_file_extension.'</a>'.'&nbsp;'.$img_fl_w.'x'.$img_fl_h.'&nbsp;('.human_file_size(filesize($img_fl)).')&nbsp;' : '';
+              $img_or_link = (file_exists($img_or)) ? '<a href="http://localhost/web/'.$img_or.'">orig '.$m_file_extension.'</a>'.'&nbsp;'.$img_or_w.'x'.$img_or_h.'&nbsp;('.human_file_size(filesize($img_or)).')&nbsp;' : '';
 
               // File links
-              echo '<pre id="filelink_'.$m_id.'"><small>'.$aud_web_link.$aud_ori_link.'</small></pre>';
-            break;
-            case 'DOCUMENT':
-              if ( ($m_file_extension == 'txt') || ($m_file_extension == 'doc') ) {
-                $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+              echo '<pre id="filelink_'.$m_id.'"><small>IMG: '.$img_fl_link.$img_or_link.'<br><br>'.$img_orientation.'&nbsp;'.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
 
-                // Set links
-                $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+            }
+          break;
+          case 'VIDEO':
 
-                // File links
-                echo '<pre id="filelink_'.$m_id.'"><small>'.$doc_web_link.'</small></pre>';
-              } else {
-                $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
-                $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="thumb-vid.png">';
 
-                // Set links
-                $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
-                $doc_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
+            // Thumbnail
+            echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
-                // File links
-                echo '<pre id="filelink_'.$m_id.'"><small>'.$doc_web_link.$doc_ori_link.'</small></pre>';
-              }
-            break;
+            // Filename
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
 
-          } // Mimetype switch
+            // Info
+            echo '<td class="media-lib-info">';
+
+            $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+            // Set links
+            $vid_web_link = (file_exists($vid_web)) ? '<a href="http://localhost/web/'.$vid_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
+            $vid_ori_link = (file_exists($vid_ori)) ? '<a href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
+
+            // File links
+            echo '<pre id="filelink_'.$m_id.'"><small>VID: '.$vid_web_link.$vid_ori_link.'</small></pre>';
+
+          break;
+          case 'AUDIO':
+
+            $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="thumb-aud.png">';
+
+            // Thumbnail
+            echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
+
+            // Filename
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
+
+            // Info
+            echo '<td class="media-lib-info">';
+
+            $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
+            $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+            // Set links
+            $aud_web_link = (file_exists($aud_web)) ? '<a href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
+            $aud_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
+
+            // File links
+            echo '<pre id="filelink_'.$m_id.'"><small>AUD: '.$aud_web_link.$aud_ori_link.'</small></pre>';
+          break;
+          case 'DOCUMENT':
+
+            $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="thumb-doc.png">';
+
+            if ( ($m_file_extension == 'txt') || ($m_file_extension == 'doc') ) {
+
+              // Thumbnail
+              echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
+
+              // Filename
+              echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
+
+              // Info
+              echo '<td class="media-lib-info">';
+
+              $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+              // Set links
+              $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+
+              // File links
+              echo '<pre id="filelink_'.$m_id.'"><small>DOC: '.$doc_web_link.'</small></pre>';
+
+            } else {
+
+              // Thumbnail
+              echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
+
+              // Filename
+              echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
+
+              // Info
+              echo '<td class="media-lib-info">';
+
+              $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
+              $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+              // Set links
+              $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+              $doc_ori_link = (file_exists($doc_ori)) ? '<a href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
+
+              // File links
+              echo '<pre id="filelink_'.$m_id.'"><small>DOC: '.$doc_web_link.$doc_ori_link.'</small></pre>';
+            }
+          break;
+
+        } // Mimetype switch
 
 
         echo'</td>';
 
-        // AJAX mediaEdit button
-        echo '<td>
-          <form id="mediaEdit_'.$m_id.'">
-            <input type="hidden" value="'.$m_id.'" name="m_id">
-            <div id="showaction'.$m_id.'" style="display: none;">
-              <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-editor\');" style="float: right;">edit</button>
-            </div>
-          </form>';
-
         // Delete actions
-        echo '
+        echo '<td>
           <br>
-          <div class="del_checkbox" style="display: none;"><label for="bulk_'.$m_id.'">delete <input form="delete_action" type="checkbox" id="bulk_'.$m_id.'" name="bulk_'.$m_id.'" value="'.$m_id.'"></label></div>
+          <div class="del_checkbox" style="display: none; float: right;"><label for="bulk_'.$m_id.'">delete <input form="delete_action" type="checkbox" id="bulk_'.$m_id.'" name="bulk_'.$m_id.'" value="'.$m_id.'"></label></div>
         </td>';
 
         // End the row

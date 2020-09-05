@@ -99,7 +99,7 @@ echo '<div onclick="showBulkActions()" style="cursor: pointer; display: inline;"
     </tr>
   </table>
 </form>
-<label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
+<label><input type="checkbox" onclick="toggle(this);"> <b>Select all</b></label>
 </div>';
 
 // Start our HTML table

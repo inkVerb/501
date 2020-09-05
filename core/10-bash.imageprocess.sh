@@ -1,86 +1,104 @@
 #!/bin/bash
 
+# Instructions
+## File must be correctly named and in /var/www/html/web/media/uploads/
+## Directories must exist: /var/www/html/web/media/uploads /var/www/html/web/media/images /var/www/html/web/media/original/images
+
+# How to use:
+## bash.imageprocess.sh [file basename] [file extension] [img/svg] [orientation: tall/wide/squr] [xs max] [sm max] [md max] [lg max] [xl max]
+# Eg:
+## bash.imageprocess.sh file_name png tall 154x154 484 800 1280 1920
+## bash.imageprocess.sh file_name svg
+
+thumb="50x50"
 basepath="/var/www/html/web/media/"
 name="$1"
 ext="$2"
-type="$3"
 
 # Convert bmp to png in our process
-if [ "$type" = "img" ] && [ "$ext" = "bmp" ]; then
+if [ "$ext" = "bmp" ]; then
+  toext="png"
 
-  img_xs="$4"
-  img_sm="$5"
-  img_md="$6"
-  img_lg="$7"
-  img_xl="$8"
-  # Always create a thumbnail
-  if [ "$img_sm" != "thum" ]; then
-    /usr/bin/convert -size 154x154 "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_154.png"
-  else
-    /usr/bin/convert -size ${img_xs} "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_154.png"
-  fi
-  # Check the image is large enough for each size
-  if [ "$img_sm" != "none" ]; then
-    /usr/bin/convert -size ${img_sm} "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_484.png"
-  fi
-  if [ "$img_md" != "none" ]; then
-    /usr/bin/convert -size ${img_md} "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_800.png"
-  fi
-  if [ "$img_lg" != "none" ]; then
-    /usr/bin/convert -size ${img_lg} "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_1280.png"
-  fi
-  if [ "$img_xl" != "none" ]; then
-    /usr/bin/convert -size ${img_xl} "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_1920.png"
-  fi
-  # Move & copy conversion, remove original
-  /usr/bin/convert "${basepath}uploads/${name}.${ext}" "${basepath}original/images/${name}.png"
-  /bin/cp "${basepath}original/images/${name}.png" "${basepath}images/${name}.png"
-  /bin/rm "${basepath}uploads/${name}.${ext}"
-
-# Process normal images
-elif [ "$type" = "img" ]; then
+# Other rasterized images
+elif [ "$ext" != "svg" ]; then
 
   # Test for accepted types, redundant and secure
   if [ "$ext" != "jpg" ] && [ "$ext" != "jpeg" ] && [ "$ext" != "png" ] && [ "$ext" != "gif" ]; then
     exit 0; # Quiet exit, no need for STDERR
   fi
 
-  # imagemagick will detect formats automatically, so mimetypes need no further checking
+  toext="$ext"
 
+fi
+
+# Rasterized images
+if [ "$ext" != "svg" ]; then
+
+  # Dimensions
+  orientation=$3
   img_xs="$4"
   img_sm="$5"
   img_md="$6"
   img_lg="$7"
   img_xl="$8"
-  # Always create a thumbnail
-  if [ "$img_sm" != "thum" ]; then
-    /usr/bin/convert -size 154x154 "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_154.${ext}"
-  else
-    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_xs} "${basepath}images/${name}_154.${ext}"
+
+  # Pull orientation for consistent file names
+  if [ "$orientation" = "squr" ] || [ "$orientation" = "wide" ]; then
+    name_xs=$(echo $img_xs | sed 's/x.*//')
+    name_sm=$(echo $img_sm | sed 's/x.*//')
+    name_md=$(echo $img_md | sed 's/x.*//')
+    name_lg=$(echo $img_lg | sed 's/x.*//')
+    name_xl=$(echo $img_xl | sed 's/x.*//')
+
+  elif [ "$orientation" = "tall" ]; then
+    name_xs=$(echo $img_xs | sed 's/.*x//')
+    name_sm=$(echo $img_sm | sed 's/.*x//')
+    name_md=$(echo $img_md | sed 's/.*x//')
+    name_lg=$(echo $img_lg | sed 's/.*x//')
+    name_xl=$(echo $img_xl | sed 's/.*x//')
   fi
-  # Check the image is large enough for each size
+
+  # imagemagick will detect formats automatically, so mimetypes need no further checking
+
+  # Always create a thumbnail
+  /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${thumb} "${basepath}images/${name}_thumb.${toext}"
+
+  # Check that each image size is set
+  if [ "$img_xs" != "none" ]; then
+    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_xs} "${basepath}images/${name}_${name_xs}.${toext}"
+  fi
   if [ "$img_sm" != "none" ]; then
-    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_sm} "${basepath}images/${name}_484.${ext}"
+    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_sm} "${basepath}images/${name}_${name_sm}.${toext}"
   fi
   if [ "$img_md" != "none" ]; then
-    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_md} "${basepath}images/${name}_800.${ext}"
+    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_md} "${basepath}images/${name}_${name_md}.${toext}"
   fi
   if [ "$img_lg" != "none" ]; then
-    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_lg} "${basepath}images/${name}_1280.${ext}"
+    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_lg} "${basepath}images/${name}_${name_lg}.${toext}"
   fi
   if [ "$img_xl" != "none" ]; then
-    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_xl} "${basepath}images/${name}_1920.${ext}"
+    /usr/bin/convert "${basepath}uploads/${name}.${ext}" -resize ${img_xl} "${basepath}images/${name}_${name_xl}.${toext}"
   fi
-  # Move & copy original
-  /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}original/images/${name}.${ext}"
-  /bin/cp "${basepath}original/images/${name}.${ext}" "${basepath}images/${name}.${ext}"
 
-# Convert svg for thumbnail
-elif [ "$type" = "svg" ] && [ "$ext" = "svg" ]; then
+  # Converted?
+  if [ "$ext" != "$toext" ]; then
+    # Convert, copy & delete upload
+    /usr/bin/convert "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}.${toext}"
+    /bin/cp "${basepath}images/${name}.${toext}" "${basepath}original/images/${name}.${toext}"
+    /bin/rm "${basepath}uploads/${name}.${ext}"
+  else
+    # Copy & move upload
+    /bin/cp "${basepath}uploads/${name}.${ext}" "${basepath}original/images/${name}.${toext}"
+    /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}.${toext}"
+  fi
+
+# SVG
+elif [ "$ext" = "svg" ]; then
+
+  # Move upload
+  /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}.${ext}"
 
   # Always create a thumbnail
-  /usr/bin/convert -background none -size 154x154 "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}_154_svg.png"
-  # Move original
-  /bin/mv "${basepath}uploads/${name}.${ext}" "${basepath}images/${name}.${ext}"
+  /usr/bin/convert -background none -resize ${thumb} "${basepath}images/${name}.${ext}" "${basepath}images/${name}_thumb_svg.png"
 
 fi

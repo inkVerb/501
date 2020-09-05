@@ -43,7 +43,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
 
     // SQL
     $m_file_base_new_sqlesc = escape_sql($m_file_base_new);
-    $query = "UPDATE media_library SET file_base='$m_file_base_new_sqlesc' WHERE id='$m_id'";
+    $query = "UPDATE media_library SET file_base='$m_file_base_new_sqlesc', date_updated=NOW() WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
@@ -57,10 +57,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         case 'IMAGE':
           if ($m_file_extension == 'svg') {
             // Old name
-            $thumb = $basepath.$m_location.'/'.$m_file_base.'_154_svg.'.$m_file_extension;
+            $thumb = $basepath.$m_location.'/'.$m_file_base.'_thumb_svg.'.$m_file_extension;
             $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
             // New name
-            $thumb_new = $basepath.$m_location.'/'.$m_file_base_new.'_154_svg.'.$m_file_extension;
+            $thumb_new = $basepath.$m_location.'/'.$m_file_base_new.'_thumb_svg.'.$m_file_extension;
             $img_svg_new = $basepath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
 
             // Rename & set variable accordingly, one error and it will read false
@@ -68,6 +68,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
             rename($img_svg, $img_svg_new); $renamed = ( (file_exists($img_svg_new)) && ($renamed != false) ) ? true : false;
           } else {
             // Old name
+            $img_th = $basepath.$m_location.'/'.$m_file_base.'_thumb.'.$m_file_extension;
             $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
             $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
             $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
@@ -76,6 +77,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
             $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
             $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
             // New name
+            $img_th_new = $basepath.$m_location.'/'.$m_file_base_new.'_thumb.'.$m_file_extension;
             $img_xs_new = $basepath.$m_location.'/'.$m_file_base_new.'_154.'.$m_file_extension;
             $img_sm_new = $basepath.$m_location.'/'.$m_file_base_new.'_484.'.$m_file_extension;
             $img_md_new = $basepath.$m_location.'/'.$m_file_base_new.'_800.'.$m_file_extension;
@@ -85,6 +87,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
             $img_or_new = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
 
             // Some of these might not necessarily exist, depending on image size, smaller first
+            if (file_exists($img_th)) {rename($img_th, $img_th_new); $renamed = ( (file_exists($img_th_new)) && ($renamed != false) ) ? true : false;}
             if (file_exists($img_xs)) {rename($img_xs, $img_xs_new); $renamed = ( (file_exists($img_xs_new)) && ($renamed != false) ) ? true : false;}
             if (file_exists($img_sm)) {rename($img_sm, $img_sm_new); $renamed = ( (file_exists($img_sm_new)) && ($renamed != false) ) ? true : false;}
             if (file_exists($img_md)) {rename($img_md, $img_md_new); $renamed = ( (file_exists($img_md_new)) && ($renamed != false) ) ? true : false;}
@@ -170,7 +173,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     // SQL
     $title_text_sqlesc = escape_sql($title_text);
     $alt_text_sqlesc = escape_sql($alt_text);
-    $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc' WHERE id='$m_id'";
+    $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc', date_updated=NOW() WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';

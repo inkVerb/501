@@ -244,6 +244,9 @@ include ('./in.login_check.php');
           }
         });
 
+        // Make sure the delete confirm is hidden (so it doesn't stay shown if delete checkboxes are re-hidden)
+        document.getElementById("bulk_delete_confirm").style.display = "none";
+
       }
 
       // JavaScript to "Select all"
@@ -268,7 +271,7 @@ include ('./in.login_check.php');
     <?php
 
     // Get and display each item
-    $query = "SELECT id, file_base, file_extension, basic_type, size FROM media_library";
+    $query = "SELECT id, file_base, file_extension, basic_type, size FROM media_library ORDER BY id DESC";
     $call = mysqli_query($database, $query);
 
     // Is anything there?
@@ -310,7 +313,7 @@ include ('./in.login_check.php');
             <div onclick="showDelete()" style="cursor: pointer; display: inline;"><b>Delete&#9660;</b></div><br>
             <div id="bulk_delete_div" style="display: none;">
               <br>
-              <label><input type="checkbox" onclick="toggle(this);" /> <b>Select all</b></label>
+              <label><input type="checkbox" onclick="toggle(this);"> <b>Select all</b></label>
             </div>
           </th>
           </tr>

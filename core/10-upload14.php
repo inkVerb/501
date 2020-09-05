@@ -57,7 +57,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       if ($img_w == $img_h) {
         $img_orientation = 'squr';
         // Image size ratios
-        $img_xs = ($img_w > 154) ? '154x154' : 'thum';
+        $img_xs = ($img_w > 154) ? '154x154' : 'none';
         $img_sm = ($img_w > 484) ? '484x484' : 'none';
         $img_md = ($img_w > 800) ? '800x800' : 'none';
         $img_lg = ($img_w > 1280) ? '1280x1280' : 'none';
@@ -66,7 +66,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       } elseif ($img_w > $img_h) {
         $img_orientation = 'wide';
         // Image size ratios
-        $img_xs = ($img_w > 154) ? '154x'.round(154*($img_h/$img_w)) : 'thum';
+        $img_xs = ($img_w > 154) ? '154x'.round(154*($img_h/$img_w)) : 'none';
         $img_sm = ($img_w > 484) ? '484x'.round(484*($img_h/$img_w)) : 'none';
         $img_md = ($img_w > 800) ? '800x'.round(800*($img_h/$img_w)) : 'none';
         $img_lg = ($img_w > 1280) ? '1280x'.round(1280*($img_h/$img_w)) : 'none';
@@ -75,7 +75,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       } elseif ($img_w < $img_h) {
         $img_orientation = 'tall';
         // Image size ratios
-        $img_xs = ($img_w > 154) ? round(154*($img_w/$img_h)).'x154' : 'thum';
+        $img_xs = ($img_w > 154) ? round(154*($img_w/$img_h)).'x154' : 'none';
         $img_sm = ($img_w > 484) ? round(484*($img_w/$img_h)).'x484' : 'none';
         $img_md = ($img_w > 800) ? round(800*($img_w/$img_h)).'x800' : 'none';
         $img_lg = ($img_w > 1280) ? round(1280*($img_w/$img_h)).'x1280' : 'none';
@@ -167,6 +167,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       $final_extension = $file_extension; // Normal circumstances default
       $final_extension = ($file_extension == 'bmp') ? 'png' : $final_extension;
       $final_extension = ($file_extension == 'flv') ? 'mp4' : $final_extension;
+      $final_extension = ($file_extension == 'avi') ? 'mp4' : $final_extension;
+      $final_extension = ($file_extension == 'mkv') ? 'mp4' : $final_extension;
+      $final_extension = ($file_extension == 'mov') ? 'mp4' : $final_extension;
       // Most documents are or are converted to a .pdf, so check that for name conflicts
       $final_extension = ( ($basic_type == 'DOCUMENT') && ($file_extension != 'doc') && ($file_extension != 'txt') ) ? 'pdf' : $final_extension;
       // All audio is converted to .mp3, so check that for name conflicts
@@ -194,7 +197,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
         // Linux process
         switch ($upload_type) {
           case 'img':
-            shell_exec('/var/www/html/web/bash.imageprocess.sh '.$file_basename.' '.$file_extension.' img '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
+            shell_exec('/var/www/html/web/bash.imageprocess.sh '.$file_basename.' '.$file_extension.' '.$img_orientation.' '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
 
           break;
           case 'svg':
@@ -220,6 +223,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
         $file_extension = ($file_extension == 'bmp') ? 'png' : $file_extension;
         $file_mime = ($file_extension == 'flv') ? 'video/mp4' : $file_mime;
         $file_extension = ($file_extension == 'flv') ? 'mp4' : $file_extension;
+        $file_mime = ($file_extension == 'avi') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'avi') ? 'mp4' : $file_extension;
+        $file_mime = ($file_extension == 'mkv') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'mkv') ? 'mp4' : $file_extension;
+        $file_mime = ($file_extension == 'mov') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'mov') ? 'mp4' : $file_extension;
 
         // SQL entry
         $query = "INSERT INTO media_library (size, mime_type, basic_type, location, file_base, file_extension)
