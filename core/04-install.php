@@ -97,7 +97,7 @@ EOF;
       `website` VARCHAR(128) DEFAULT NULL,
       `favnumber` TINYINT DEFAULT NULL,
       `pass` VARCHAR(255) DEFAULT NULL,
-      `type` ENUM('contributor', 'writer', 'editor', 'admin') NOT NULL,
+      `type` ENUM('member', 'contributor', 'writer', 'editor', 'admin') NOT NULL,
       `date_updated` TIMESTAMP NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
