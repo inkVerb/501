@@ -92,7 +92,7 @@ if (isset($_COOKIE['user_key'])) {
     }
     if ((!isset($nologin_allowed)) || ($nologin_allowed != true)) {
       // exit and redirect in one line
-      exit(header("Location: webapp.php"));
+      exit(header("Location: blog.php"));
     }
   }
 

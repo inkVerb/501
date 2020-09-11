@@ -28,7 +28,7 @@ if (isset($_COOKIE['user_key'])) {
     }
     if ( (!isset($nologin_allowed)) || ($nologin_allowed != true) ) {
       // exit and redirect in one line
-      exit(header("Location: webapp.php"));
+      exit(header("Location: blog.php"));
     }
   }
 
@@ -58,7 +58,7 @@ if (isset($_COOKIE['user_key'])) {
   $fullname = $_SESSION['user_name'];
 
 } elseif ( (!isset($nologin_allowed)) || ($nologin_allowed != true) ) {
-  exit(header("Location: webapp.php"));
+  exit(header("Location: blog.php"));
 }
 
 // We're still here, start the head
@@ -75,10 +75,24 @@ if (isset($_COOKIE['user_key'])) {
 
   <!-- TinyMCE -->
   <?php if ($edit_page_yn == true) {
-    echo "
+    ?>
     <script src='tinymce/tinymce.min.js'></script>
     <script type='text/javascript'>
-    tinymce.init({
+      // Allow AJAX to read TinyMCE
+      tinymce.init({
+        setup: function (editor) {
+          editor.on('change', function () {
+            tinymce.triggerSave();
+          });
+        },
+      // Make our Ctrl + S "Save draft" JS function work inside TinyMCE
+      init_instance_callback: function (editor) {
+        editor.addShortcut("ctrl+s", "Save draft", "custom_ctrl_s");
+        editor.addCommand("custom_ctrl_s", function() {
+            ajaxSaveDraft() // Run our "Save" AJAX
+        });
+      },
+
       selector: '.tinymce_editor',
       width: 600,
       height: 300,
@@ -122,7 +136,8 @@ if (isset($_COOKIE['user_key'])) {
       content_css: 'style.css',
 
     });
-    </script>";
+    </script>
+    <?php
   } ?>
   <!-- TinyMCE end -->
 

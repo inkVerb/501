@@ -75,15 +75,30 @@ if (isset($_COOKIE['user_key'])) {
 
   <!-- TinyMCE -->
   <?php if ($edit_page_yn == true) {
-    echo "
+    ?>
     <script src='tinymce/tinymce.min.js'></script>
     <script type='text/javascript'>
-    tinymce.init({
+      // Allow AJAX to read TinyMCE
+      tinymce.init({
+        setup: function (editor) {
+          editor.on('change', function () {
+            tinymce.triggerSave();
+          });
+        },
+      // Make our Ctrl + S "Save draft" JS function work inside TinyMCE
+      init_instance_callback: function (editor) {
+        editor.addShortcut("ctrl+s", "Save draft", "custom_ctrl_s");
+        editor.addCommand("custom_ctrl_s", function() {
+            ajaxSaveDraft() // Run our "Save" AJAX
+        });
+      },
+
       selector: '.tinymce_editor',
-      width: 600,
-      height: 300,
+      width: '100%',
+      min_height: 500,
+      max_height: 700,
       plugins: [
-        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+        'autoresize advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
         'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
         'table emoticons template paste contextmenu styleprops',
 
@@ -122,7 +137,8 @@ if (isset($_COOKIE['user_key'])) {
       content_css: 'style.css',
 
     });
-    </script>";
+    </script>
+    <?php
   } ?>
   <!-- TinyMCE end -->
 
@@ -135,11 +151,11 @@ if (isset($_COOKIE['user_key'])) {
 // Head finished
 
 if ( (isset($user_id)) && (isset($fullname)) ) {
-  echo '<p><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="pieces.php">Pieces</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+  echo '<p><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="pieces.php">Pieces</a> | <a href="medialibrary.php">Media</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
 }
 
-// Title the page so we know where we are
-echo '<h1>'.$head_title.'</h1>';
+// Title the page only if there is a $head_title argument
+echo ( (isset($head_title)) && ($head_title != '') ) ? '<h1>'.$head_title.'</h1>' : false;
 
 ?>
 

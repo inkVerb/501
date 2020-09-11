@@ -28,7 +28,7 @@ if (isset($_COOKIE['user_key'])) {
     }
     if ( (!isset($nologin_allowed)) || ($nologin_allowed != true) ) {
       // exit and redirect in one line
-      exit(header("Location: webapp.php"));
+      exit(header("Location: blog.php"));
     }
   }
 
@@ -58,7 +58,7 @@ if (isset($_COOKIE['user_key'])) {
   $fullname = $_SESSION['user_name'];
 
 } elseif ( (!isset($nologin_allowed)) || ($nologin_allowed != true) ) {
-  exit(header("Location: webapp.php"));
+  exit(header("Location: blog.php"));
 }
 
 // We're still here, start the head

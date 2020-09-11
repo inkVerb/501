@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // SESSION note, then reload this page so the login_check processes
         $_SESSION['just_logged_in'] = true;
-        exit(header("Location: webapp.php"));
+        exit(header("Location: blog.php"));
 
       } else { // Password fail
         echo '<h1>501 Blog login error!</h1>

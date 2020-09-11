@@ -7,7 +7,7 @@ include ('./in.config.php');
 include ('./in.piecefunctions.php');
 
 // Include our login cluster
-$head_title = "Editor"; // Set a <title> name used next
+$head_title = ""; // Setting no title, our users know where they are
 $edit_page_yn = true; // Include JavaScript for TinyMCE?
 $nologin_allowed = false; // Login required?
 include ('./in.login_check.php');
@@ -15,242 +15,487 @@ include ('./in.login_check.php');
 // Include our POST processor
 include ('./in.editprocess.php');
 
-// JavaScript
 ?>
-<div id="use_me"></div>
-  <script>
-    // Navigate away warning (used by pieceInput PHP function)
-		function onNavWarn() {
-      // Normal inputs
-			window.onbeforeunload = function() {
-        // We're done
-  			return true;
-			};
-		}
-		function offNavWarn() {
-			window.onbeforeunload = null;
-		}
+<!-- Page container -->
+<div id="editor-body">
+<!-- Sidebar for meta -->
+<div id="editor-meta-bar">
 
-    // Disable "Enter" key on forms
-    window.addEventListener('keydown',function(e){if(e.keyIdentifier=='U+000A'||e.keyIdentifier=='Enter'||e.keyCode==13){if(e.target.nodeName=='INPUT'&&e.target.type=='text'){e.preventDefault();return false;}}},true);
-  </script>
-<?php
+  <!-- Div for media insert -->
+  <div id="media-insert-container" style="display:none;">
+    <!-- Close button -->
+    <div id="media-insert-closer" onclick="mediaInsertHide();" title="close">&#xd7;</div>
+    <!-- Dropzone -->
+    <div id="media-upload">
 
-// Recovered Autosave?
-if (isset($_SESSION['as_recovered'])) {
-  echo '<pre class="green">Autosave recovered.</pre>';
-  unset($_SESSION['as_recovered']);
-}
+      <form id="dropzone-uploader-media-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
 
-// New or update?
-if (isset($piece_id)) { // Updating piece
-  // Unpublished changes to draft?
-  $query = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$piece_id ORDER BY U.id DESC LIMIT 1";
-  $call = mysqli_query($database, $query);
-  $draft_diff = (mysqli_num_rows($call) == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> in unpublished changes</pre>' : '';
-  echo $draft_diff;
+      <!-- AJAX response from upload.php will go here-->
+      <div id="uploadresponse"></div>
+    </div>
+    <br>
+    <!-- AJAX mediaInsert HTML entity -->
+    <div id="media-insert"></div>
+  </div>
+  <?php
 
-  // Other notices and relevant links
-  if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
-    echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
+
+  // Save button: first save or AJAX?
+  if (isset($piece_id)) {
+    // Save AJAX for existing Piece
+    echo '
+    <input form="edit_piece" type="hidden" id="p_submit_edit" name="p_submit" value="">
+    <button type="button" title="Save (Ctrl + S)" onclick="ajaxSaveDraft(); offNavWarn();" name="save_draft" id="save_draft" class="lt_button small" style="display: inline;">Save draft</button>
+    &nbsp;'; // Space between the buttons
+
   } else {
-    echo '<pre>(unpublished draft)</pre>';
-  }
-  // Preview & change notices
-  echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview</a></pre>';
-  echo '<div id="edit_changes_notice"></div>';
-  // Our edit form
-  echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
-  echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
-} else { // New piece
-  echo '<form action="edit.php" method="post" name="edit_piece" id="edit_piece" id="edit_piece">';
-}
-// Finish the form
-echo '</form>';
 
-// Tell in.editprocess.php that this is a "Piece" form
-echo '<input form="edit_piece" type="hidden" name="piece">';
+    // First Save for new Piece
+    echo '
+    <input form="edit_piece" type="submit" onclick="offNavWarn();" name="p_submit" id="save_draft" value="Save draft">
+    &nbsp;'; // Space between the buttons
 
-// Title & Slug
-echo 'Title: '.pieceInput('p_title', $p_title).'<br><br>';
-if (isset($piece_id)) {
-  echo 'URL: localhost/web/<a href="piece.php?p='.$piece_id.'&preview" id="p_slug_a" target="_blank">'.$p_slug.'</a>&nbsp;<button type="button" onclick="showSlugEdit();">edit</button>';
-  echo '<div id="slug_edit" style="display: none;">&nbsp;&nbsp;'.pieceInput('p_slug', $p_slug).'
-        <button type="button" title="Auto-set from Title" onclick="ajaxResetSlug(); offNavWarn(); showSlugEdit();" class="orange link-button" name="slug_reset">reset</button>
-        <button type="button" title="Save and update slug" onclick="ajaxSaveDraft(); offNavWarn(); showSlugEdit();" name="save_draft">save</button>
-        </div>';
-}
+    // AJAX false triggers in new piece
+    ?>
+      <script>
+        // Ctrl + S = submit Save on new Piece
+        document.addEventListener("keydown", function(cs) {
+          if ( (window.navigator.platform.match("Mac") ? cs.metaKey : cs.ctrlKey) && (cs.keyCode == 83) ) {
+            cs.preventDefault(); // Stop it from doing what it normally does
+            document.getElementById('save_draft').click();
+          }
+        }, false); // Ctrl + S capture
 
-echo '<br><br>';
-
-// Content
-echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
-
-// Save button: first save or AJAX?
-if (isset($piece_id)) {
-  // Save AJAX for existing Piece
-  echo '
-  <input form="edit_piece" type="hidden" id="p_submit_edit" name="p_submit" value="">
-  <button type="button" title="Save (Ctrl + S)" onclick="ajaxSaveDraft(); offNavWarn();" name="save_draft" id="save_draft" class="lt_button small" style="display: inline;">Save draft</button>
-  &nbsp;'; // Space between the buttons
-
-} else {
-
-  // First Save for new Piece
-  echo '
-  <input form="edit_piece" type="submit" onclick="offNavWarn();" name="p_submit" id="save_draft" value="Save draft">
-  &nbsp;'; // Space between the buttons
-
-  // AJAX false triggers in new piece
-  ?>
-    <script>
-      // Ctrl + S = submit Save on new Piece
-      document.addEventListener("keydown", function(cs) {
-        if ( (window.navigator.platform.match("Mac") ? cs.metaKey : cs.ctrlKey) && (cs.keyCode == 83) ) {
-          cs.preventDefault(); // Stop it from doing what it normally does
+        // False AJAX save from TinyMCE Ctrl + S hotkey when AJAX has no piece ID to process
+        function ajaxSaveDraft() {
           document.getElementById('save_draft').click();
         }
-      }, false); // Ctrl + S capture
+      </script>
+    <?php
+  } // Save button
 
-      // False AJAX save from TinyMCE Ctrl + S hotkey when AJAX has no piece ID to process
-      function ajaxSaveDraft() {
-        document.getElementById('save_draft').click();
-      }
-    </script>
-  <?php
-} // Save button
+  // Existing piece? (can't publish without saving once first)
+  if ( (isset($editing_existing_piece)) && ($editing_existing_piece == true) ) {
+    // Editing a published piece?
+    if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
+      echo '
+      <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Update\');" name="edit_update" id="edit_update_button" class="lt_button small" style="display: inline;">Update publication</button>';
 
-// Existing piece? (can't publish without saving once first)
-if ( (isset($editing_existing_piece)) && ($editing_existing_piece == true) ) {
-  // Editing a published piece?
-  if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
-    echo '
-    <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Update\');" name="edit_update" id="edit_update_button" class="lt_button small" style="display: inline;">Update publication</button>';
+    } else {
+      echo '
+      <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Publish\');" name="edit_update" id="edit_publish_button" class="lt_button small" style="display: inline;">Publish</button>';
 
-  } else {
-    echo '
-    <button type="button" title="Save (Ctrl + S)" onclick="buttonFormSubmit(\'Publish\');" name="edit_update" id="edit_publish_button" class="lt_button small" style="display: inline;">Publish</button>';
-
+    }
   }
-}
 
-// AJAX save changes message
-if (isset($piece_id)) {
-  echo '&nbsp;<div id="ajax_save_draft_response" style="display: inline;"></div>';
-}
+  // AJAX save changes message
+  if (isset($piece_id)) {
+    echo '<br><br><div id="ajax_save_draft_response" style="display: inline;"></div><br>';
+  }
 
-// New line
-echo '<br><br>';
+  // Recovered Autosave?
+  if (isset($_SESSION['as_recovered'])) {
+    echo '<pre class="green">Autosave recovered.</pre>';
+    unset($_SESSION['as_recovered']);
+  }
 
-// Type
-$infomsg = '
-<b>Page</b>: hides meta (After, Tags, Links), works in menues, appears as prominent link in "Series lists"<br><br>
-<b>Post</b>: appears in blog lists';
-echo 'Type:'.infoPop('type_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
+  // New or update?
+  if (isset($piece_id)) { // Updating piece
+    // Unpublished changes to draft?
+    $query = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$piece_id ORDER BY U.id DESC LIMIT 1";
+    $call = mysqli_query($database, $query);
+    $draft_diff = (mysqli_num_rows($call) == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> for unpublished changes</pre>' : '';
+    echo $draft_diff;
 
-// Series
-$infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';
-echo 'Series:'.infoPop('series_info', $infomsg).'<br><br>';
+    // Other notices and relevant links
+    if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
+      echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
+    } else {
+      echo '<pre>(unpublished draft)</pre>';
+    }
+    // Preview & change notices
+    echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview</a></pre>';
+    echo '<div id="edit_changes_notice"></div>';
+    // Our edit form
+    echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
+    echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
+  } else { // New piece
+    echo '<form action="edit.php" method="post" name="edit_piece" id="edit_piece" id="edit_piece">';
+  }
+  // Finish the form
+  echo '</form>';
 
-  // Set necessary values
-  // Set a default Series, probably from settings table
-  $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
+  // Type
+  $infomsg = '
+  <b>Page</b>: hides meta (After, Tags, Links), works in menues, appears as prominent link in "Series lists"<br><br>
+  <b>Post</b>: appears in blog lists';
+  echo 'Type:'.infoPop('type_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
 
-  // Accept any set value
-  $p_series = (isset($p_series)) ? $p_series : $de_series;
-  include ('./in.series.php');
+  // Tags
+  $infomsg = 'Tags: comma-separated list;<br>only first three tags show in excerpts & blog pages';
+  echo 'Tags:'.infoPop('tags_info', $infomsg).'<br>'.pieceInput('p_tags', $p_tags).'<br><br>';
 
-// Schedule
-// Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
-echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Scheduled...</label><br><br>';
-echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
-  echo 'Date live: '.
-  pieceInput('p_live_yr', $p_live_yr).', '.
-  pieceInput('p_live_mo', $p_live_mo).' '.
-  pieceInput('p_live_day', $p_live_day).' @ '.
-  pieceInput('p_live_hr', $p_live_hr).':'.
-  pieceInput('p_live_min', $p_live_min).':'.
-  pieceInput('p_live_sec', $p_live_sec).'<br><br>';
-echo '
-</div>';
+  // Series
+  $infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';
+  echo 'Series:'.infoPop('series_info', $infomsg).'<br><br>';
 
-?>
-  <script>
-    // Show slug edit
-    function showSlugEdit() {
-      var x = document.getElementById("slug_edit");
+    // Set necessary values
+    // Set a default Series, probably from settings table
+    $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
+
+    // Accept any set value
+    $p_series = (isset($p_series)) ? $p_series : $de_series;
+    include ('./in.series.php');
+
+  // Schedule
+  // Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
+  echo pieceInput('p_live_schedule', $p_live_schedule).'<label onclick="showGoLiveOptionsLabel()"> Scheduled...</label><br><br>';
+  echo '<div id="goLiveOptions" '.($p_live_schedule == true ? 'style="display:block"' : 'style="display:none"').'>';
+    echo 'Live: '.
+    pieceInput('p_live_yr', $p_live_yr).', '.
+    pieceInput('p_live_mo', $p_live_mo).' '.
+    pieceInput('p_live_day', $p_live_day).' @ '.
+    pieceInput('p_live_hr', $p_live_hr).':'.
+    pieceInput('p_live_min', $p_live_min).':'.
+    pieceInput('p_live_sec', $p_live_sec).'<br><br>';
+  echo '
+  </div>';
+
+  ?>
+<!-- End sidebar for meta -->
+</div>
+
+<!-- Sidebar for main content -->
+<div id="editor-main-content">
+  <?php
+
+  // Tell in.editprocess.php that this is a "Piece" form
+  echo '<input form="edit_piece" type="hidden" name="piece">';
+
+  // Title & Slug
+  echo pieceInput('p_title', $p_title).'<br><br>';
+  if (isset($piece_id)) {
+    echo 'localhost/web/<a href="piece.php?p='.$piece_id.'&preview" id="p_slug_a" target="_blank">'.$p_slug.'</a>&nbsp;<button type="button" onclick="showSlugEdit();">edit</button>';
+    echo '<div id="slug_edit" style="display: none;">&nbsp;&nbsp;'.pieceInput('p_slug', $p_slug).'
+          <button type="button" title="Auto-set from Title" onclick="ajaxResetSlug(); offNavWarn(); showSlugEdit();" class="orange link-button" name="slug_reset">reset</button>
+          <button type="button" title="Save and update slug" onclick="ajaxSaveDraft(); offNavWarn(); showSlugEdit();" name="save_draft">save</button>
+          </div>';
+    echo '<br><br>';
+  }
+
+  // Content (no label)
+  // Content
+  echo pieceInput('p_content', $p_content);
+
+  // AJAX mediaInsert button
+  echo '<form id="media-insert-form">
+      <input type="hidden" name="u_id" value="'.$user_id.'">
+      <button type="button" class="postform link-button inline orange" onclick="mediaInsert();"><small>insert from media library</small></button>
+    </form><br>';
+
+  // After
+  $infomsg = 'After: unstyled text, HTML not allowed';
+  echo 'After:'.infoPop('after_info', $infomsg).'<br>'.pieceInput('p_after', $p_after).'<br><br>';
+
+  // Links
+  $string1 = htmlspecialchars('<a href="https://inkisaverb.com">Ink is a verb.</a>');
+  $string2 = htmlspecialchars('<a href="https://verb.vip">Get inking. // VIP Linux</a>');
+  $string3 = htmlspecialchars('<a href="http://poetryiscode.com">Poetry is code. | piC</a>');
+  $a_tag = htmlspecialchars('<a>');
+  $infomsg =
+  "
+  <big>Links</big><br>
+  <code>
+  <b>1. Separate [url] [title] [credit] via ;;</b><br>
+  - In any order on a line ([title] before [credit])<br>
+  - Only [url] is required<br>
+  - If no [credit], Credit can be pulled after a | Pipe from [title]<br>
+  - All else after | Pipe gets truncated<br><br>
+  <b>2. Or se an HTML $a_tag tag</b><br>
+  - Title pulled after last | Pipe or // Doubleslash<br><br>
+  <b>Examples:</b><br>
+  https://verb.one<br>
+  https://verb.red ;;Get inking.<br>
+  https://verb.ink;; Ink is a verb.;;inkVerb<br>
+  https://verb.blue;; Inky | Blue Ink<br>
+  $string1<br>
+  $string2<br>
+  $string3<br>
+  </code>
+  ";
+  echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_links).'<br><br>';
+
+
+  ?>
+
+<!-- End sidebar for main content -->
+</div>
+
+<!-- End page container -->
+</div>
+
+<!-- JavaScript for after document -->
+<script src="dropzone.min.js"></script>
+
+<script>
+  // Navigate away warning (used by pieceInput PHP function)
+	function onNavWarn() {
+    // Normal inputs
+		window.onbeforeunload = function() {
+      // We're done
+			return true;
+		};
+	}
+	function offNavWarn() {
+		window.onbeforeunload = null;
+	}
+
+  // Disable "Enter" key on forms
+  window.addEventListener('keydown',function(e){if(e.keyIdentifier=='U+000A'||e.keyIdentifier=='Enter'||e.keyCode==13){if(e.target.nodeName=='INPUT'&&e.target.type=='text'){e.preventDefault();return false;}}},true);
+
+  // Open the media insert, populate via AJAX
+  function mediaInsert() { // These arguments can be anything, same as used in this function
+
+    // Show/hide the media-edit div
+    var x = document.getElementById("media-insert-container");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+
+    // Bind a new event listener every time the <form> is changed:
+    const FORM = document.getElementById("media-insert-form");
+    const AJAX = new XMLHttpRequest(); // AJAX handler
+    const FD = new FormData(FORM); // Bind to-send data to form element
+
+    AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+      document.getElementById("media-insert").innerHTML = event.target.responseText;
+    } );
+
+    AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+      document.getElementById("media-insert").innerHTML =  'Oops! Something went wrong.';
+    } );
+
+    AJAX.open("POST", "ajax.mediainsert.php");
+
+    AJAX.send(FD); // Data sent is from the form
+
+  } // mediaInsert() function
+
+  // Hide media-insert
+  function mediaInsertHide() {
+    document.getElementById("media-insert-container").style.display = "none";
+  }
+  // Dropzone settings
+    Dropzone.options.dropzoneUploaderMediaInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader-media-insert"
+      dictDefaultMessage: 'Drop to upload!',
+      paramName: "upload_file", // We are still using upload_file; default: file
+      maxFilesize: 100, // MB
+      uploadMultiple: true, // Default: false
+        maxFiles: 50,
+        parallelUploads: 1, // Default: 2
+      addRemoveLinks: true, // Default: false
+        dictCancelUpload: "cancel", // Cancel before upload starts text
+        dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+
+      // File types ported over from upload.php, redundant but consistent:
+      acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
+
+      // Process AJAX response from upload.php
+
+      init: function() {
+        var upResponse = ''; // Variable to concatenate multiple AJAX responses
+        this.on('success', function(file, responseText) {
+
+          // Update our upResponse variable
+          upResponse += '<div class="media-upload-info"><b>'+file.name+' info:</b><br>'+responseText+'</div>';
+
+          // Show the filename and HTML response in an alert box for learning purposes
+          //alert(file.name+' :: UPLOAD MESSAGE :: '+responseText);
+
+          // Update our webpage with the current contatenated AJAX responses
+          if (upResponse != '') {
+            // Write the response to HTML element id="uploadresponse"
+            document.getElementById("uploadresponse").innerHTML = upResponse;
+          } else {
+            // Write the response to HTML element id="uploadresponse"
+            document.getElementById("uploadresponse").innerHTML = '<div style="float:left;"><span class="error">Nothing uploaded.</span></div>';
+          }
+
+        });
+
+      } // Process AJAX response
+
+    };
+  // End Dropzone settings
+
+  // Show slug edit
+  function showSlugEdit() {
+    var x = document.getElementById("slug_edit");
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
+  }
+  // Check/uncheck the box = hide/show the Date Live schedule (p_live_schedule) <div>
+  function showGoLiveOptionsBox() {
+    var x = document.getElementById("goLiveOptions");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+  }
+  // JavaScript does not allow onClick action for both the label and the checkbox
+  // So, we make the label open the Date Live schedule div AND check the box...
+  function showGoLiveOptionsLabel() {
+    // Show the Date Live schedule div
+    var x = document.getElementById("goLiveOptions");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+    // Use JavaScript to check the box
+    var y = document.getElementById("p_live_schedule");
+    if (y.checked === false) {
+      y.checked = true;
+    } else {
+      y.checked = false;
+    }
+  }
+
+  // JavaScript for AJAX mediaEdit
+    // Open the media editor, populate via AJAX
+    function mediaEdit(formID, postTo, ajaxLoad, save_message='') { // These arguments can be anything, same as used in this function
+
+      // Show the media-edit div
+      document.getElementById("media-editor-container").style.display = "block";
+
+      // Bind a new event listener every time the <form> is changed:
+      const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
+      const AJAX = new XMLHttpRequest(); // AJAX handler
+      const FD = new FormData(FORM); // Bind to-send data to form element
+
+      AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+        document.getElementById(ajaxLoad).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxLoad is the JS argument in the function
+      } );
+
+      AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+        document.getElementById(ajaxLoad).innerHTML =  'Oops! Something went wrong.';
+      } );
+
+      AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
+
+      AJAX.send(FD); // Data sent is from the form
+
+    } // mediaEdit() function
+
+    // Save media info via AJAX, only indicate "Saved" or other message AJAXed backed from the server
+    function mediaSave(m_id) { // These arguments can be anything, same as used in this function
+
+      // Bind a new event listener every time the <form> is changed:
+      const FORM = document.getElementById("media-edit-form"); // <form> by ID to access, formID is the JS argument in the function
+      const AJAX = new XMLHttpRequest(); // AJAX handler
+      const FD = new FormData(FORM); // Bind to-send data to form element
+
+      AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+        // Parse our response
+        var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
+
+        // Reload the media edit form
+        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
+
+        // Show the message
+        document.getElementById("media-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
+
+        // Style the media type in the Media Library table
+        document.getElementById("mediatype_"+m_id).classList.add('orange');
+        document.getElementById("upload_"+m_id).classList.remove('blue');
+      } );
+
+      AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+        document.getElementById("media-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
+      } );
+
+      AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
+
+      AJAX.send(FD); // Data sent is from the form
+
+    } // mediaSave() function
+
+    // Save new file name via AJAX, only indicate "Saved" or other message AJAXed backed from the server
+    function nameChange(m_id) { // These arguments can be anything, same as used in this function
+
+      // Bind a new event listener every time the <form> is changed:
+      const FORM = document.getElementById("name-change-form"); // <form> by ID to access, formID is the JS argument in the function
+      const AJAX = new XMLHttpRequest(); // AJAX handler
+      const FD = new FormData(FORM); // Bind to-send data to form element
+
+      AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+        // Parse our response
+        var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
+
+        // Reload the media edit form
+        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
+
+        // Show the message
+        document.getElementById("media-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
+
+        // Style & update the name in the Media Library table
+        document.getElementById("filename_"+m_id).innerHTML = jsonMetaEditResponse["file_name"];
+        document.getElementById("filename_"+m_id).classList.add('orange');
+        document.getElementById("upload_"+m_id).classList.remove('blue');
+      } );
+
+      AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+        document.getElementById("media-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
+      } );
+
+      AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
+
+      AJAX.send(FD); // Data sent is from the form
+
+    } // nameChange() function
+
+    // Close the media editor
+    function mediaEditorClose() {
+      document.getElementById("media-editor-container").style.display = "none";
+    }
+
+    // File name change form
+    function changeFileName(m_id, m_file_base, m_file_extension) {
+      const FILE_NAME_FORM = '<form id="name-change-form">\
+        <input type="hidden" value="'+m_id+'" name="m_id">\
+        <input type="hidden" value="'+m_id+'" name="name_change">\
+        <input type="text" name="save_file_name" value="'+m_file_base+'">&nbsp;<b><code>.'+m_file_extension+'</code></b>\
+        <button type="button" onclick="nameChange('+m_id+');">Change file name</button>\
+        &nbsp;&nbsp;<span onclick="changeFileNameClose(\''+m_id+'\', \''+m_file_base+'\', \''+m_file_extension+'\');" class="postform" title="cancel">&#xd7;</span>\
+      </form>';
+      document.getElementById("change-file-name").innerHTML = FILE_NAME_FORM;
+    }
+
+    // Close the file name change form
+    function changeFileNameClose(m_id, m_file_base, m_file_extension) {
+      const PRE_CONTENT = '<pre onclick="changeFileName(\''+m_id+'\', \''+m_file_base+'\', \''+m_file_extension+'\');" class="postform blue" title="change file name">'+m_file_base+'.'+m_file_extension+'</pre>';
+      document.getElementById("change-file-name").innerHTML = PRE_CONTENT;
+    }
+
+    // JavaScript to show/hide edit link
+    function showActions(m_id) {
+      var x = document.getElementById("showaction"+m_id);
       if (x.style.display === "inline") {
         x.style.display = "none";
       } else {
         x.style.display = "inline";
       }
     }
-    // Check/uncheck the box = hide/show the Date Live schedule (p_live_schedule) <div>
-    function showGoLiveOptionsBox() {
-      var x = document.getElementById("goLiveOptions");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-    }
-    // JavaScript does not allow onClick action for both the label and the checkbox
-    // So, we make the label open the Date Live schedule div AND check the box...
-    function showGoLiveOptionsLabel() {
-      // Show the Date Live schedule div
-      var x = document.getElementById("goLiveOptions");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-      // Use JavaScript to check the box
-      var y = document.getElementById("p_live_schedule");
-      if (y.checked === false) {
-        y.checked = true;
-      } else {
-        y.checked = false;
-      }
-    }
-  </script>
+
+</script>
+
 <?php
-
-// Tags
-$infomsg = 'Tags: comma-separated list;<br>only first three tags show in excerpts & blog pages';
-echo 'Tags:'.infoPop('tags_info', $infomsg).'<br>'.pieceInput('p_tags', $p_tags).'<br><br>';
-
-// After
-$infomsg = 'After: unstyled text, HTML not allowed';
-echo 'After:'.infoPop('after_info', $infomsg).'<br>'.pieceInput('p_after', $p_after).'<br><br>';
-
-// Links
-$string1 = htmlspecialchars('<a href="https://inkisaverb.com">Ink is a verb.</a>');
-$string2 = htmlspecialchars('<a href="https://verb.vip">Get inking. // VIP Linux</a>');
-$string3 = htmlspecialchars('<a href="http://poetryiscode.com">Poetry is code. | piC</a>');
-$a_tag = htmlspecialchars('<a>');
-$infomsg =
-"
-<big>Links</big><br>
-<code>
-<b>1. Separate [url] [title] [credit] via ;;</b><br>
-- In any order on a line ([title] before [credit])<br>
-- Only [url] is required<br>
-- If no [credit], Credit can be pulled after a | Pipe from [title]<br>
-- All else after | Pipe gets truncated<br><br>
-<b>2. Or se an HTML $a_tag tag</b><br>
-- Title pulled after last | Pipe or // Doubleslash<br><br>
-<b>Examples:</b><br>
-https://verb.one<br>
-https://verb.red ;;Get inking.<br>
-https://verb.ink;; Ink is a verb.;;inkVerb<br>
-https://verb.blue;; Inky | Blue Ink<br>
-$string1<br>
-$string2<br>
-$string3<br>
-</code>
-";
-echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_links).'<br><br>';
-
 // JavaScript functions for editing existing pieces
 if (isset($piece_id)) {
   ?>
@@ -352,7 +597,7 @@ if (isset($piece_id)) {
             // Start the Autosave 30 second repeating Timer
             autoSaveTimer.start();
           } else {
-            var changesMessage = '<p class="orange">Connection issue or last browser session not closed correctly: Something has changed since last save!<br><form id="save_diff_error" name="save_diff_error" method="post" action="hist.php?o='+pID+'&a=1"><input type="hidden" form="save_diff_error" name="old_as" value=\''+recover_as+'\'><input type="submit" class="orange" value="See diff...">&nbsp;<button type="button" class="red" onclick="dismissASdiff();">Dismiss forever</button></form>';
+            var changesMessage = '<pre class="orange"><small>Connection issue or browser closed incorrectly:<br>Something has changed since last save!</small></pre><form id="save_diff_error" name="save_diff_error" method="post" action="hist.php?o='+pID+'&a=1"><input type="hidden" form="save_diff_error" name="old_as" value=\''+recover_as+'\'><input type="submit" class="orange" value="See diff...">&nbsp;<button type="button" class="red" onclick="dismissASdiff();">Dismiss forever</button></form>';
             document.getElementById("edit_changes_notice").innerHTML = changesMessage;
           }
         }

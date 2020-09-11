@@ -40,7 +40,7 @@ if (isset($_COOKIE['user_id'])) {
       </html>';
 
       // We could just redirect to the main page instead
-      //header("Location: webapp.php");
+      //header("Location: blog.php");
       exit();
     }
 
@@ -64,7 +64,7 @@ if (isset($_COOKIE['user_id'])) {
   </html>';
 
   // We could just redirect to the main page instead
-  //header("Location: webapp.php");
+  //header("Location: blog.php");
   exit();
 }
 

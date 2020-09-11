@@ -324,7 +324,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } // mediaEdit AJAX loader
 
 } else { // End POST check
-  header("Location: webapp.php");
+  header("Location: blog.php");
   exit();
 }
 

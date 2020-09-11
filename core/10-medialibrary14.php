@@ -73,7 +73,7 @@ include ('./in.login_check.php');
     <!-- AJAX response from upload.php will go here-->
     <div id="uploadresponse"></div>
   </div>
-<br>
+  <br>
   <!-- Iterate through each item in the media libary -->
   <div id="media-list">
     <?php
@@ -93,7 +93,7 @@ include ('./in.login_check.php');
     ?>
     <script>
       // Open the media editor, populate via AJAX
-      function mediaEdit(formID, postTo, ajaxUpdate, save_message='') { // These arguments can be anything, same as used in this function
+      function mediaEdit(formID, postTo, ajaxUpdate) { // These arguments can be anything, same as used in this function
 
         // Show the media-edit div
         document.getElementById("media-editor-container").style.display = "block";

@@ -17,7 +17,6 @@ include ('./in.editprocess.php');
 
 // JavaScript
 ?>
-<div id="use_me"></div>
   <script>
     // Navigate away warning (used by pieceInput PHP function)
 		function onNavWarn() {
@@ -47,7 +46,7 @@ if (isset($piece_id)) { // Updating piece
   // Unpublished changes to draft?
   $query = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$piece_id ORDER BY U.id DESC LIMIT 1";
   $call = mysqli_query($database, $query);
-  $draft_diff = (mysqli_num_rows($call) == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> in unpublished changes</pre>' : '';
+  $draft_diff = (mysqli_num_rows($call) == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> for unpublished changes</pre>' : '';
   echo $draft_diff;
 
   // Other notices and relevant links
@@ -352,7 +351,7 @@ if (isset($piece_id)) {
             // Start the Autosave 30 second repeating Timer
             autoSaveTimer.start();
           } else {
-            var changesMessage = '<p class="orange">Connection issue or last browser session not closed correctly: Something has changed since last save!<br><form id="save_diff_error" name="save_diff_error" method="post" action="hist.php?o='+pID+'&a=1"><input type="hidden" form="save_diff_error" name="old_as" value=\''+recover_as+'\'><input type="submit" class="orange" value="See diff...">&nbsp;<button type="button" class="red" onclick="dismissASdiff();">Dismiss forever</button></form>';
+            var changesMessage = '<pre class="orange"><small>Connection issue or browser closed incorrectly:<br>Something has changed since last save!</small></pre><form id="save_diff_error" name="save_diff_error" method="post" action="hist.php?o='+pID+'&a=1"><input type="hidden" form="save_diff_error" name="old_as" value=\''+recover_as+'\'><input type="submit" class="orange" value="See diff...">&nbsp;<button type="button" class="red" onclick="dismissASdiff();">Dismiss forever</button></form>';
             document.getElementById("edit_changes_notice").innerHTML = changesMessage;
           }
         }

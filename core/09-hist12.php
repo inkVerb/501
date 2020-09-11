@@ -369,7 +369,7 @@ echo '
     <div class="col">';
     // Editing a current draft?
     if (($diff_type == 'p') && ($p_id = "draft_")) {
-      echo '<code class="link-button green" onclick="restoreAutosave();">edit current draft</code>';
+      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
     } elseif ($diff_type == 'as') {
       echo '<code><input form="restore_autosave" type="submit" class="green postform link-button" value="restore this autosave"></code>';
     } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
