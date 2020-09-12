@@ -9,7 +9,7 @@ include ('./in.functions.php');
 
 // Include our login cluster
 $head_title = "Editor"; // Set a <title> name used next
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
 
 // Title the page so we know where we are
 

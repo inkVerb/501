@@ -6,7 +6,8 @@ include ('./in.config.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Preview?
 if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {

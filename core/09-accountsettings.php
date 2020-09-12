@@ -9,7 +9,8 @@ include ('./in.functions.php');
 // Include our login cluster
 $head_title = "Account Settings"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // We must be logged in!
 // See if we have a cookie

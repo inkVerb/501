@@ -6,7 +6,7 @@ include ('./in.config.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
 
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 

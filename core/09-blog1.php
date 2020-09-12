@@ -6,7 +6,8 @@ include ('./in.config.php');
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
 $nologin_allowed = true; // Login required?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Check the database for published pieces
 $query = "SELECT piece_id, title, slug, content, after, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC";

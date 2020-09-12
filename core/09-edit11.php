@@ -10,7 +10,8 @@ include ('./in.piecefunctions.php');
 $head_title = "Editor"; // Set a <title> name used next
 $edit_page_yn = true; // Include JavaScript for TinyMCE?
 $nologin_allowed = false; // Login required?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Include our POST processor
 include ('./in.editprocess.php');

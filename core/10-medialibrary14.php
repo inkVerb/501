@@ -6,7 +6,8 @@ include ('./in.config.php');
 // Include our login cluster
 $head_title = 'Media Library'; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 ?>
 <script src="dropzone.min.js"></script>
@@ -28,7 +29,6 @@ include ('./in.login_check.php');
     acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
 
     // Process AJAX response from upload.php
-
     init: function() {
       var upResponse = ''; // Variable to concatenate multiple AJAX responses
       this.on('success', function(file, responseText) {

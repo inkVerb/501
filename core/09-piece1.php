@@ -6,9 +6,10 @@ include ('./in.config.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
-// Preview? (logged-in requirement is redundant from in.login_check.php, but smart)
+// Preview? (logged-in requirement is redundant from in.logincheck.php, but smart)
 if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {
   $from_where = "pieces WHERE ";
   echo '<h2><code>(Draft Preview!)</code></h2>';

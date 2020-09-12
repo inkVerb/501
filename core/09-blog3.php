@@ -6,7 +6,8 @@ include ('./in.config.php');
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
 $nologin_allowed = true; // Login required?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Cut wordlength function
 $limited = array(); // Create our limit-note array

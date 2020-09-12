@@ -9,7 +9,8 @@ include ('./in.functions.php');
 // Include our login cluster
 $head_title = "Webapp Dashboard"; // Set a <title> name used next
 $nologin_allowed = true; // Login required?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Just logged out?
 if ((isset($_SESSION['just_logged_out'])) && ($_SESSION['just_logged_out'] == true)) {
@@ -95,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // SESSION note, then reload this page so the login_check processes
+        // SESSION note, then reload this page so the logincheck processes
         $_SESSION['just_logged_in'] = true;
         exit(header("Location: blog.php"));
 

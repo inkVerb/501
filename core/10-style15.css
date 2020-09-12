@@ -242,6 +242,16 @@ div#media-editor {
 	border-color: #777;
 }
 
+div#media-insert-editor {
+	width: 100%;
+	background-color: #fff;
+	padding: 10px;
+	border: solid;
+	border-radius: 0px;
+	border-width: 5px;
+	border-color: #777;
+}
+
 div.media-upload-info {
 	float:left;
 	padding: 5px 10px 5px 10px;;
@@ -300,13 +310,25 @@ div#media-insert-container {
 
 div#editor-meta-bar
 div#media-insert-container
-div#media-upload {
+div#media-upload,
+div#editor-meta-bar
+div#media-insert-container
+div#media-insert,
+div#editor-meta-bar
+div#media-insert-container
+div#media-insert
+div#media-insert-editor {
 	width: 95%;
 }
 
 table#media-table {
 	width: 100%;
 	min-width: 150px;
+}
+
+table#media-insert-table {
+	width: 50%;
+	max-width: 50px;
 }
 
 /* Pieces table */

@@ -2,6 +2,7 @@
 
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
+include ('./in.logincheck.php');
 
 // Check & validate for what we need
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (filter_var($_POST['m_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) ) {
@@ -324,7 +325,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } // mediaEdit AJAX loader
 
 } else { // End POST check
-  header("Location: blog.php");
   exit();
 }
 

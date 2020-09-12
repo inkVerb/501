@@ -12,7 +12,8 @@ include ('./in.metaeditfunctions.php');
 // Include our login cluster
 $head_title = "Publication History"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {

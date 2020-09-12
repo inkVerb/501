@@ -6,7 +6,8 @@ include ('./in.config.php');
 // Include our login cluster
 $head_title = 'Media Library'; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 ?>
 <script src="dropzone.min.js"></script>

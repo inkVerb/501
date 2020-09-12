@@ -1,23 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- CSS file included as <link> -->
-  <link href="style.css" rel="stylesheet" type="text/css" />
-
-  <!-- One line of PHP with our <title> -->
-  <title><?php echo $head_title; ?></title>
-
-  <!-- Medium editor -->
-  <link rel="stylesheet" href="medium/css/medium-editor.css">
-  <link rel="stylesheet" href="medium/css/themes/default.css">
-  <!-- Medium editor -->
-
-
-</head>
-<body>
-
-<h1>501 Blog</h1>
-
 <?php
 
 // See if we have a cookie
@@ -46,7 +26,7 @@ if (isset($_COOKIE['user_key'])) {
       unset($_COOKIE['user_key']);
       setcookie('user_key', null, 86401);
     }
-    if ((!isset($nologin_allowed)) || ($nologin_allowed != true)) {
+    if ( (!isset($nologin_allowed)) || ($nologin_allowed != true) ) {
       // exit and redirect in one line
       exit(header("Location: blog.php"));
     }
@@ -69,17 +49,16 @@ if (isset($_COOKIE['user_key'])) {
       echo '<p class="error">SQL error!</p>';
       exit();
     }
-}
 
 // See if we are logged in by now
-if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+} elseif ( (isset($_SESSION['user_id'])) && (isset($_SESSION['user_name'])) ) {
 
   // Set our variables
   $user_id = $_SESSION['user_id'];
   $fullname = $_SESSION['user_name'];
 
-echo '<p>Hi, '.$fullname.'! <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
-
+} elseif ( (!isset($nologin_allowed)) || ($nologin_allowed != true) ) {
+  exit(header("Location: blog.php"));
 }
 
 ?>

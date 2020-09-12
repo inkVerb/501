@@ -7,10 +7,12 @@ include ('./in.config.php');
 include ('./in.piecefunctions.php');
 
 // Include our login cluster
-$head_title = ""; // Setting no title, our users know where they are
+$heading = ""; // Setting no title, our users know where they are
+$head_title = "Editor";
 $edit_page_yn = true; // Include JavaScript for TinyMCE?
 $nologin_allowed = false; // Login required?
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Include our POST processor
 include ('./in.editprocess.php');
@@ -286,6 +288,7 @@ include ('./in.editprocess.php');
   // Hide media-insert
   function mediaInsertHide() {
     document.getElementById("media-insert-container").style.display = "none";
+    document.getElementById("uploadresponse").innerHTML = '';
   }
   // Dropzone settings
     Dropzone.options.dropzoneUploaderMediaInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader-media-insert"
@@ -302,9 +305,14 @@ include ('./in.editprocess.php');
       // File types ported over from upload.php, redundant but consistent:
       acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
 
-      // Process AJAX response from upload.php
-
+      // Initiation
       init: function() {
+        // Refresh Dropzone box after upload
+        this.on("complete", function(file) {
+           this.removeAllFiles(true);
+        });
+
+        // Process AJAX response from upload.php
         var upResponse = ''; // Variable to concatenate multiple AJAX responses
         this.on('success', function(file, responseText) {
 
@@ -325,7 +333,7 @@ include ('./in.editprocess.php');
 
         });
 
-      } // Process AJAX response
+      } // End initialization
 
     };
   // End Dropzone settings
@@ -372,7 +380,7 @@ include ('./in.editprocess.php');
     function mediaEdit(formID, postTo, ajaxLoad, save_message='') { // These arguments can be anything, same as used in this function
 
       // Show the media-edit div
-      document.getElementById("media-editor-container").style.display = "block";
+      document.getElementById("media-insert-editor-container").style.display = "block";
 
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
@@ -406,10 +414,10 @@ include ('./in.editprocess.php');
         var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
 
         // Reload the media edit form
-        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
+        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-insert-editor');
 
         // Show the message
-        document.getElementById("media-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
+        document.getElementById("media-insert-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
 
         // Style the media type in the Media Library table
         document.getElementById("mediatype_"+m_id).classList.add('orange');
@@ -417,7 +425,7 @@ include ('./in.editprocess.php');
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-        document.getElementById("media-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
+        document.getElementById("media-insert-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
       } );
 
       AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
@@ -439,10 +447,10 @@ include ('./in.editprocess.php');
         var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
 
         // Reload the media edit form
-        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-editor');
+        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-insert-editor');
 
         // Show the message
-        document.getElementById("media-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
+        document.getElementById("media-insert-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
 
         // Style & update the name in the Media Library table
         document.getElementById("filename_"+m_id).innerHTML = jsonMetaEditResponse["file_name"];
@@ -451,7 +459,7 @@ include ('./in.editprocess.php');
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-        document.getElementById("media-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
+        document.getElementById("media-insert-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
       } );
 
       AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
@@ -462,7 +470,7 @@ include ('./in.editprocess.php');
 
     // Close the media editor
     function mediaEditorClose() {
-      document.getElementById("media-editor-container").style.display = "none";
+      document.getElementById("media-insert-editor-container").style.display = "none";
     }
 
     // File name change form

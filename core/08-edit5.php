@@ -10,6 +10,7 @@ include ('./in.piecefunctions.php');
 // Include our login cluster
 $head_title = "Editor"; // Set a <title> name used next
 include ('./in.logincheck.php');
+include ('./in.head.php');
 
 // Include our POST processor
 include ('./in.editprocess.php');
@@ -80,7 +81,17 @@ echo 'Content:<br>'.pieceInput('p_content', $p_content).'<br><br>';
 echo 'After:<br>'.pieceInput('p_after', $p_after).'<br><br>';
 
 // Two submit buttons
-echo '<input type="submit" name="p_submit" value="Save">';
+echo '<input type="submit" name="p_submit" value="Save draft">';
+echo '&nbsp;'; // Space between the buttons
+// Existing piece? (can't publish without saving once first)
+if ((isset($editing_existing_piece)) && ($editing_existing_piece == true)) {
+  // Editing a published piece?
+  if ((isset($editing_published_piece)) && ($editing_published_piece == true)) {
+    echo '<input type="submit" name="p_submit" value="Update">';
+  } else {
+    echo '<input type="submit" name="p_submit" value="Publish">';
+  }
+}
 echo '</form>';
 
 ?>

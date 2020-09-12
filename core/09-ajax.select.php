@@ -1,6 +1,7 @@
 <?php
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.config.php');
+include ('./in.logincheck.php');
 
 if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series']))) {
 

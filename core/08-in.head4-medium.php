@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- CSS file included as <link> -->
+  <link href="style.css" rel="stylesheet" type="text/css" />
+
+  <!-- One line of PHP with our <title> -->
+  <title><?php echo $head_title; ?></title>
+
+  <!-- Medium editor -->
+  <link rel="stylesheet" href="medium/css/medium-editor.css">
+  <link rel="stylesheet" href="medium/css/themes/default.css">
+  <!-- Medium editor -->
+
+</head>
+<body>
+
+<h1>501 Blog</h1>
+
+<?php // Start php
+
+// See if we are logged in by now
+if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+
+  // Set our variables
+  $user_id = $_SESSION['user_id'];
+  $fullname = $_SESSION['user_name'];
+
+echo '<p>Hi, '.$fullname.'! <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+
+}
+
+?>

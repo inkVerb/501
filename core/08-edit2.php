@@ -9,7 +9,7 @@ include ('./in.piecefunctions.php');
 
 // Include our login cluster
 $head_title = "Editor"; // Set a <title> name used next
-include ('./in.login_check.php');
+include ('./in.logincheck.php');
 
 // Include our POST processor
 include ('./in.editprocess.php');
