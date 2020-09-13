@@ -190,21 +190,24 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } else {
 
     // Get the media item info from the database
-    $query = "SELECT size, mime_type, basic_type, file_base, file_extension, title_text, alt_text FROM media_library WHERE id='$m_id'";
+    $query = "SELECT id, size, mime_type, basic_type, file_base, file_extension, location, title_text, alt_text FROM media_library WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     // Shoule be 1 row
     if (mysqli_num_rows($call) == 1) {
       // Assign the values
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $m_size = "$row[0]";
-        $m_mime_type = "$row[1]";
-        $m_basic_type = "$row[2]";
-        $m_file_base = "$row[3]";
-        $m_file_extension = "$row[4]";
-        $m_title_text = "$row[5]";
-        $m_alt_text = "$row[6]";
+        $m_id = "$row[0]";
+        $m_size = "$row[1]";
+        $m_mime_type = "$row[2]";
+        $m_basic_type = "$row[3]";
+        $m_file_base = "$row[4]";
+        $m_file_extension = "$row[5]";
+        $m_location = "$row[6]";
+        $m_title_text = "$row[7]";
+        $m_alt_text = "$row[8]";
+
     } else {
-      echo '<h1 id="media-editor-content" class="error">Error!</h1>
+      echo '<b id="media-editor-content" class="error">Error!</b>
       <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
       <p class="error">Database error: Media item not found.</p>';
       exit();
@@ -225,7 +228,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         $media_type_pretty = 'Document: ';
         break;
       default:
-        echo '<h1 id="media-editor-content" class="error">Error!</h1>
+        echo '<b id="media-editor-content" class="error">Error!</b>
         <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
         <p class="error">Database error: Media type is impossible.</p>';
         exit();
@@ -294,9 +297,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         $media_type_pretty .= 'PDF';
         break;
       default:
-        echo '<h1 id="media-editor-content" class="error">Error!</h1>
+        echo '<b id="media-editor-content" class="error">Error!</b>
         <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
-        <p class="error">Database error: Media mime type is impossible.</p>';
+        <p class="error">Database error: Media mime type is impossible. '.$m_mime_type.'</p>';
         exit();
     }
 
@@ -314,7 +317,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $file_name_pre = '<pre onclick="changeFileName(\''.$m_id.'\', \''.$m_file_base.'\', \''.$m_file_extension.'\');" class="postform blue" title="change file name">'.$m_file_base.'.'.$m_file_extension.'</pre>';
 
     echo '
-      <h1 id="media-editor-content">'.$media_type_pretty.'</h1>
+      <b id="media-editor-content">'.$media_type_pretty.'</b>
       <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
       <pre>'.human_file_size($m_size).' ('.$m_size.' bytes)</pre>
       <div id="change-file-name">'.$file_name_pre.'</div>
@@ -327,6 +330,117 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         <button type="button" onclick="mediaSave('.$m_id.');">Save</button>
       </form>
     ';
+
+
+    // Fill-in the row per media type
+    $basepath = 'media/';
+    $origpath = 'media/original/';
+    switch ($m_basic_type) {
+      case 'IMAGE':
+        if ($m_file_extension == 'svg') {
+
+          $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+          // Set links
+          $img_svg_link = (file_exists($img_svg)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_svg.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \'50\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_svg)).')' : '';
+
+          // File links
+          echo '<pre id="filelink_'.$m_id.'"><small>SVG insert:<br>'.$img_svg_link.'</small></pre>';
+
+        } else {
+
+          $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
+          $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
+          $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
+          $img_lg = $basepath.$m_location.'/'.$m_file_base.'_1280.'.$m_file_extension;
+          $img_xl = $basepath.$m_location.'/'.$m_file_base.'_1920.'.$m_file_extension;
+          $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+          // Original and Blog image sizes
+          list($img_fl_w, $img_fl_h) = (file_exists($img_fl)) ? getimagesize($img_fl) : '';
+          list($img_or_w, $img_or_h) = (file_exists($img_or)) ? getimagesize($img_or) : '';
+
+          // Orientation
+          if ($img_fl_w == $img_fl_h) {
+            $img_orientation = 'squr';
+          } elseif ($img_fl_w > $img_fl_h) {
+            $img_orientation = 'wide';
+          } elseif ($img_fl_w < $img_fl_h) {
+            $img_orientation = 'tall';
+          }
+
+          // Set links
+          $img_xs_link = (file_exists($img_xs)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_xs.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 154 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_xs)).')<br>' : '';
+          $img_sm_link = (file_exists($img_sm)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_sm.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 484 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_sm)).')<br>' : '';
+          $img_md_link = (file_exists($img_md)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_md.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 800 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_md)).')<br>' : '';
+          $img_lg_link = (file_exists($img_lg)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_lg.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 1280 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_lg)).')<br>' : '';
+          $img_xl_link = (file_exists($img_xl)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_xl.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 1920 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_xl)).')<br>' : '';
+          $img_fl_link = (file_exists($img_fl)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_fl.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \''.$img_fl_w.'\', \''.$img_fl_h.'\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_fl)).')<br>' : '';
+          $img_or_link = (file_exists($img_or)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_or.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \''.$img_or_w.'\', \''.$img_or_h.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_or)).')<br>' : '';
+
+          // File links
+          echo '<pre id="filelink_'.$m_id.'"><small>IMG ('.$img_orientation.') insert:<br>'.$img_fl_link.$img_or_link.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
+
+        }
+      break;
+      case 'VIDEO':
+
+        $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+        $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+        // Set links
+        $vid_web_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_web.'\', \''.$m_mime_type.'\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_web)).')<br>' : '';
+        $vid_ori_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_ori.'\', \''.$m_mime_type.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_ori)).')<br>' : '';
+
+        // File links
+        echo '<pre id="filelink_'.$m_id.'"><small>VID insert:<br>'.$vid_web_link.$vid_ori_link.'</small></pre>';
+
+      break;
+      case 'AUDIO':
+
+        $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
+        $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+
+        // Set links
+        $aud_web_link = (file_exists($aud_web)) ? '<button class="postform orange" onclick="addAudioToTiny(\''.$aud_web.'\', \''.$m_mime_type.'\');">&larr; blog mp3</button>&nbsp;('.human_file_size(filesize($aud_web)).')<br>' : '';
+        $aud_ori_link = (file_exists($aud_ori)) ? '<button class="postform orange" onclick="addAudioToTiny(\''.$aud_ori.'\', \''.$m_mime_type.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($aud_ori)).')<br>' : '';
+
+        // File links
+        echo '<pre id="filelink_'.$m_id.'"><small>AUD insert:<br>'.$aud_web_link.$aud_ori_link.'</small></pre>';
+      break;
+      case 'DOCUMENT':
+
+        $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt_text.'" src="thumb-doc.png">';
+
+        if ( ($m_file_extension == 'txt') || ($m_file_extension == 'doc') ) {
+
+          $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          $doc_title = ((isset($m_title_text)) && ($m_title_text != '')) ? 'Document: '.$m_title_text : 'View/download document';
+
+          // Set links
+          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; blog</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
+
+          // File links
+          echo '<pre id="filelink_'.$m_id.'"><small>DOC insert:<br>'.$doc_web_link.'</small></pre>';
+
+        } else {
+
+          $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
+          $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          $doc_title = ((isset($m_title_text)) && ($m_title_text != '')) ? 'Document: '.$m_title_text : 'View/download document';
+
+          // Set links
+          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; blog pdf</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
+          $doc_ori_link = (file_exists($doc_ori)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_ori.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($doc_ori)).')<br>' : '';
+
+          // File links
+          echo '<pre id="filelink_'.$m_id.'"><small>DOC insert:<br>'.$doc_web_link.$doc_ori_link.'</small></pre>';
+        }
+      break;
+
+    } // Mimetype switch
+
 
   } // mediaEdit AJAX loader
 

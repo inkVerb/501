@@ -20,25 +20,26 @@ include ('./in.editprocess.php');
 ?>
 <!-- Page container -->
 <div id="editor-body">
+
+<!-- Div for media insert -->
+<div id="media-insert-container" style="display:none;">
+  <!-- Close button -->
+  <div id="media-insert-closer" onclick="mediaInsertHide();" title="close"><b>&#xd7;</b></div>
+  <!-- Dropzone -->
+  <div id="media-upload">
+
+    <form id="dropzone-uploader-media-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
+
+    <!-- AJAX response from upload.php will go here-->
+    <div id="uploadresponse"></div>
+  </div>
+  <br>
+  <!-- AJAX mediaInsert HTML entity -->
+  <div id="media-insert"></div>
+</div>
+
 <!-- Sidebar for meta -->
 <div id="editor-meta-bar">
-
-  <!-- Div for media insert -->
-  <div id="media-insert-container" style="display:none;">
-    <!-- Close button -->
-    <div id="media-insert-closer" onclick="mediaInsertHide();" title="close">&#xd7;</div>
-    <!-- Dropzone -->
-    <div id="media-upload">
-
-      <form id="dropzone-uploader-media-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
-
-      <!-- AJAX response from upload.php will go here-->
-      <div id="uploadresponse"></div>
-    </div>
-    <br>
-    <!-- AJAX mediaInsert HTML entity -->
-    <div id="media-insert"></div>
-  </div>
   <?php
 
 
@@ -192,7 +193,7 @@ include ('./in.editprocess.php');
   // AJAX mediaInsert button
   echo '<form id="media-insert-form">
       <input type="hidden" name="u_id" value="'.$user_id.'">
-      <button type="button" class="postform link-button inline orange" onclick="mediaInsert();"><small>insert from media library</small></button>
+      <button type="button" class="postform link-button inline orange" onclick="mediaInsert(); mediaInsertShowHide();"><small>insert from media library</small></button>
     </form><br>';
 
   // After
@@ -255,16 +256,18 @@ include ('./in.editprocess.php');
   // Disable "Enter" key on forms
   window.addEventListener('keydown',function(e){if(e.keyIdentifier=='U+000A'||e.keyIdentifier=='Enter'||e.keyCode==13){if(e.target.nodeName=='INPUT'&&e.target.type=='text'){e.preventDefault();return false;}}},true);
 
-  // Open the media insert, populate via AJAX
-  function mediaInsert() { // These arguments can be anything, same as used in this function
-
-    // Show/hide the media-edit div
+  // Show/hide the media-edit div
+  function mediaInsertShowHide() {
     var x = document.getElementById("media-insert-container");
     if (x.style.display === "block") {
       x.style.display = "none";
     } else {
       x.style.display = "block";
     }
+  }
+
+  // Open the media insert, populate via AJAX
+  function mediaInsert() { // These arguments can be anything, same as used in this function
 
     // Bind a new event listener every time the <form> is changed:
     const FORM = document.getElementById("media-insert-form");
@@ -312,24 +315,11 @@ include ('./in.editprocess.php');
            this.removeAllFiles(true);
         });
 
-        // Process AJAX response from upload.php
-        var upResponse = ''; // Variable to concatenate multiple AJAX responses
-        this.on('success', function(file, responseText) {
+        // Process AJAX success from upload.php
+        this.on('success', function(file) {
 
-          // Update our upResponse variable
-          upResponse += '<div class="media-upload-info"><b>'+file.name+' info:</b><br>'+responseText+'</div>';
-
-          // Show the filename and HTML response in an alert box for learning purposes
-          //alert(file.name+' :: UPLOAD MESSAGE :: '+responseText);
-
-          // Update our webpage with the current contatenated AJAX responses
-          if (upResponse != '') {
-            // Write the response to HTML element id="uploadresponse"
-            document.getElementById("uploadresponse").innerHTML = upResponse;
-          } else {
-            // Write the response to HTML element id="uploadresponse"
-            document.getElementById("uploadresponse").innerHTML = '<div style="float:left;"><span class="error">Nothing uploaded.</span></div>';
-          }
+          // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
+          mediaInsert();
 
         });
 
@@ -414,7 +404,7 @@ include ('./in.editprocess.php');
         var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
 
         // Reload the media edit form
-        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-insert-editor');
+        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfoinsert.php', 'media-insert-editor');
 
         // Show the message
         document.getElementById("media-insert-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
@@ -428,7 +418,7 @@ include ('./in.editprocess.php');
         document.getElementById("media-insert-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
       } );
 
-      AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
+      AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
       AJAX.send(FD); // Data sent is from the form
 
@@ -447,7 +437,7 @@ include ('./in.editprocess.php');
         var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
 
         // Reload the media edit form
-        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfo.php', 'media-insert-editor');
+        mediaEdit('mediaEdit_'+m_id, 'ajax.mediainfoinsert.php', 'media-insert-editor');
 
         // Show the message
         document.getElementById("media-insert-editor-saved-message").innerHTML = jsonMetaEditResponse["message"];
@@ -462,7 +452,7 @@ include ('./in.editprocess.php');
         document.getElementById("media-insert-editor-saved-message").innerHTML =  'Oops! Something went wrong.';
       } );
 
-      AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
+      AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
       AJAX.send(FD); // Data sent is from the form
 
@@ -500,6 +490,24 @@ include ('./in.editprocess.php');
         x.style.display = "inline";
       }
     }
+
+  // Functions for inserting media items
+
+  function addImageToTiny(thisFile, thisAlt='', thisTitle='', w='', h='') {
+    tinymce.activeEditor.insertContent('<img alt="'+thisAlt+'" title="'+thisTitle+'" width="'+w+'" height="'+h+'" src="http://localhost/web/'+thisFile+'">');
+  }
+
+  function addVideoToTiny(thisFile, mimeType='', h='', w='', poster='') {
+    tinymce.activeEditor.insertContent('<video height="'+h+'" width="'+w+'" controls><source src="http://localhost/web/'+thisFile+'" type="'+mimeType+'">Not supported.</video> ');
+  }
+
+  function addAudioToTiny(thisFile, mimeType='') {
+    tinymce.activeEditor.insertContent('<audio controls><source src="http://localhost/web/'+thisFile+'" type="'+mimeType+'">Not supported.</audio> ');
+  }
+
+  function addDocToTiny(thisFile, thisName, thisTitle='') {
+    tinymce.activeEditor.insertContent('<a alt="'+thisTitle+'" title="'+thisTitle+'" href="http://localhost/web/'+thisFile+'">'+thisName+'</a>');
+  }
 
 </script>
 

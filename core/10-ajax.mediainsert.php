@@ -49,13 +49,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 
     // Start our HTML table
     echo '
+    <div id="media-insert-table-container">
     <table class="contentlib" id="media-insert-table">
+      <!-- Set our column widths without creating a row -->
+      <colgroup>
+       <col span="1" style="width: 20%;">
+       <col span="1" style="width: 80%;">
+      </colgroup>
       <tbody>
-        <tr>
-        <td width="20%"></td>
-        <td width="20%"></td>
-        <td width="60%"></td>
-        </tr>
+
     ';
 
     // Start our row colors
@@ -84,7 +86,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
       $ajax_edit = '<form id="mediaEdit_'.$m_id.'">
           <input type="hidden" value="'.$m_id.'" name="m_id">
           <div id="showaction'.$m_id.'" style="display: none;">
-            <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfo.php\', \'media-insert-editor\');"><small>edit</small></button>
+            <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfoinsert.php\', \'media-insert-editor\');"><small>edit / insert</small></button>
           </div>
         </form>';
 
@@ -102,18 +104,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
-
-            // Info
-            echo '<td class="media-lib-info">';
-
-            $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-            // Set links
-            $img_svg_link = (file_exists($img_svg)) ? '<a href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
-
-            // File links
-            echo '<pre id="filelink_'.$m_id.'"><small>SVG: '.$img_svg_link.'</small></pre>';
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           } else {
 
@@ -123,43 +114,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
-
-            // Info
-            echo '<td class="media-lib-info">';
-
-            $img_xs = $basepath.$m_location.'/'.$m_file_base.'_154.'.$m_file_extension;
-            $img_sm = $basepath.$m_location.'/'.$m_file_base.'_484.'.$m_file_extension;
-            $img_md = $basepath.$m_location.'/'.$m_file_base.'_800.'.$m_file_extension;
-            $img_lg = $basepath.$m_location.'/'.$m_file_base.'_1280.'.$m_file_extension;
-            $img_xl = $basepath.$m_location.'/'.$m_file_base.'_1920.'.$m_file_extension;
-            $img_fl = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-            $img_or = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-            // Original and Blog image sizes
-            list($img_fl_w, $img_fl_h) = (file_exists($img_fl)) ? getimagesize($img_fl) : '';
-            list($img_or_w, $img_or_h) = (file_exists($img_or)) ? getimagesize($img_or) : '';
-
-            // Orientation
-            if ($img_fl_w == $img_fl_h) {
-              $img_orientation = 'squr';
-            } elseif ($img_fl_w > $img_fl_h) {
-              $img_orientation = 'wide';
-            } elseif ($img_fl_w < $img_fl_h) {
-              $img_orientation = 'tall';
-            }
-
-            // Set links
-            $img_xs_link = (file_exists($img_xs)) ? '<a href="http://localhost/web/'.$img_xs.'">154</a>&nbsp;('.human_file_size(filesize($img_xs)).')&nbsp;' : '';
-            $img_sm_link = (file_exists($img_sm)) ? '<a href="http://localhost/web/'.$img_sm.'">484</a>&nbsp;('.human_file_size(filesize($img_sm)).')&nbsp;' : '';
-            $img_md_link = (file_exists($img_md)) ? '<a href="http://localhost/web/'.$img_md.'">800</a>&nbsp;('.human_file_size(filesize($img_md)).')&nbsp;' : '';
-            $img_lg_link = (file_exists($img_lg)) ? '<a href="http://localhost/web/'.$img_lg.'">1280</a>&nbsp;('.human_file_size(filesize($img_lg)).')&nbsp;' : '';
-            $img_xl_link = (file_exists($img_xl)) ? '<a href="http://localhost/web/'.$img_xl.'">1920</a>&nbsp;('.human_file_size(filesize($img_xl)).')&nbsp;' : '';
-            $img_fl_link = (file_exists($img_fl)) ? '<a href="http://localhost/web/'.$img_fl.'">blog '.$m_file_extension.'</a>'.'&nbsp;'.$img_fl_w.'x'.$img_fl_h.'&nbsp;('.human_file_size(filesize($img_fl)).')&nbsp;' : '';
-            $img_or_link = (file_exists($img_or)) ? '<a href="http://localhost/web/'.$img_or.'">orig '.$m_file_extension.'</a>'.'&nbsp;'.$img_or_w.'x'.$img_or_h.'&nbsp;('.human_file_size(filesize($img_or)).')&nbsp;' : '';
-
-            // File links
-            echo '<pre id="filelink_'.$m_id.'"><small>IMG: '.$img_fl_link.$img_or_link.'<br><br>'.$img_orientation.'&nbsp;'.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           }
         break;
@@ -171,20 +126,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
           echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
           // Filename
-          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
-
-          // Info
-          echo '<td class="media-lib-info">';
-
-          $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-          $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-          // Set links
-          $vid_web_link = (file_exists($vid_web)) ? '<a href="http://localhost/web/'.$vid_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
-          $vid_ori_link = (file_exists($vid_ori)) ? '<a href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
-
-          // File links
-          echo '<pre id="filelink_'.$m_id.'"><small>VID: '.$vid_web_link.$vid_ori_link.'</small></pre>';
+          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
         break;
         case 'AUDIO':
@@ -195,20 +137,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
           echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
           // Filename
-          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
+          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
-          // Info
-          echo '<td class="media-lib-info">';
-
-          $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
-          $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-          // Set links
-          $aud_web_link = (file_exists($aud_web)) ? '<a href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
-          $aud_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
-
-          // File links
-          echo '<pre id="filelink_'.$m_id.'"><small>AUD: '.$aud_web_link.$aud_ori_link.'</small></pre>';
         break;
         case 'DOCUMENT':
 
@@ -220,18 +150,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
-
-            // Info
-            echo '<td class="media-lib-info">';
-
-            $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-            // Set links
-            $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
-
-            // File links
-            echo '<pre id="filelink_'.$m_id.'"><small>DOC: '.$doc_web_link.'</small></pre>';
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           } else {
 
@@ -239,20 +158,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit.'</td>';
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
-            // Info
-            echo '<td class="media-lib-info">';
-
-            $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
-            $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-            // Set links
-            $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
-            $doc_ori_link = (file_exists($doc_ori)) ? '<a href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
-
-            // File links
-            echo '<pre id="filelink_'.$m_id.'"><small>DOC: '.$doc_web_link.$doc_ori_link.'</small></pre>';
           }
         break;
 
@@ -272,6 +179,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
     echo "
       </tbody>
     </table>
+    </div>
     ";
 
   } // End check for if there is anything in the media_library database

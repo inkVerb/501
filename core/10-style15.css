@@ -1,8 +1,18 @@
 /* Other CSS files */
 @import "./dropzone.min.css"; /* Dropzone */
 
-form input.error {
-	border: 2px solid #cc3333;
+
+/* All content */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+header div#page_head {
+	padding: 1em;
 }
 
 /* Notice hides */
@@ -22,6 +32,9 @@ form input.error {
   animation-fill-mode: forwards;
 }
 
+form input.error {
+	border: 2px solid #cc3333;
+}
 .error,
 a.error,
 a.error:visited {
@@ -242,16 +255,6 @@ div#media-editor {
 	border-color: #777;
 }
 
-div#media-insert-editor {
-	width: 100%;
-	background-color: #fff;
-	padding: 10px;
-	border: solid;
-	border-radius: 0px;
-	border-width: 5px;
-	border-color: #777;
-}
-
 div.media-upload-info {
 	float:left;
 	padding: 5px 10px 5px 10px;;
@@ -263,8 +266,7 @@ div#media-editor-container {
 	z-index: 99 !important; /* So it appears above everything */
 }
 
-div#media-editor-closer,
-div#media-insert-closer {
+div#media-editor-closer {
 	text-align: right;
 	float: right;
 	cursor: pointer;
@@ -273,62 +275,101 @@ div#media-insert-closer {
 	font-size: 2em;
 }
 
+div#media-insert-closer {
+	text-align: right;
+	cursor: pointer;
+	display: block;
+	font-size: 2em;
+	clear: both;
+}
 h1#media-editor-content {
 	display: inline;
   vertical-align: top;
 }
 
+/* Editor wrapper */
 div#editor-body {
 	width: 100%;
 	min-width: 960px;
-	padding: 5px;
-}
-
-div#editor-meta-bar {
-	display: block;
-	float: right;
-	width: 30%;
+	position:relative;
 }
 
 div#editor-main-content {
-	display: block;
-	float: left;
-	width: 65%;
+	border-style: solid;
+	border-width: medium;
+	border-color: #ddd;
+	padding: 1em;
+	margin-left: 1em;
+	margin-right: 25em;
 }
 
-div#editor-meta-bar
+div#editor-meta-bar {
+	background-color: #fff;
+	border-style: solid;
+	border-width: medium;
+	border-color: #ddd;
+	position: absolute;
+	padding: 0.5em;
+	right: 1em;
+	margin: 0 1em 0.5em 1em;
+	width: 20em;
+}
+
 div#media-insert-container {
 	background-color: #fff;
-  position: fixed;
+	border-style: solid;
+	border-width: medium;
+	border-color: #ddd;
+  position: absolute;
+	padding: 0.5em;
+	right: 1em;
+	margin: 0 1em 0.5em 1em;
+	width: 20em;
+	height: 100%;
 	z-index: 99 !important; /* So it appears above everything */
 }
 
-div#editor-meta-bar
-div#media-insert-container {
-	width: 30%;
-}
-
+/* Media Insert items */
 div#editor-meta-bar
 div#media-insert-container
 div#media-upload,
 div#editor-meta-bar
 div#media-insert-container
-div#media-insert,
-div#editor-meta-bar
-div#media-insert-container
-div#media-insert
-div#media-insert-editor {
+div#media-insert {
 	width: 95%;
 }
 
-table#media-table {
-	width: 100%;
-	min-width: 150px;
+/* Media Insert mini ML AJAX element */
+div#media-insert-table-container {
+	width: 98%;
+	height: 38%;
+	position: absolute;
+	overflow-y: auto; /* Only vertical scroll bar */
+	overflow-x: hidden; /* Only vertical scroll bar */
 }
 
+/* Media Insert items (mini ML inside div#media-insert) */
+div#editor-meta-bar
+div#media-insert-container
+div#media-insert
+div#media-insert-editor,
+div#editor-meta-bar
+div#media-insert-container
+div#media-insert
 table#media-insert-table {
-	width: 50%;
-	max-width: 50px;
+	width: 100%;
+	margin-right: 1em;
+	margin-left: 1em;
+}
+
+div#media-insert-container
+div#media-insert
+div#media-insert-editor {
+	background-color: #fff;
+	padding: 0.5em;
+	border: solid;
+	border-width: 5px;
+	border-color: #777;
 }
 
 /* Pieces table */

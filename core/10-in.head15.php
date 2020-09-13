@@ -84,7 +84,7 @@
 // Head links
 
 if ( (isset($user_id)) && (isset($fullname)) ) {
-  echo '<p><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="pieces.php">Pieces</a> | <a href="medialibrary.php">Media</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
+  echo '<div id="page_head"><b>501 Blog</b> :: Hi, '.$fullname.'! | <a href="blog.php">View blog</a> | <a href="edit.php"><b>+</b> Ink new</a> | <a href="pieces.php">Pieces</a> | <a href="medialibrary.php">Media</a> | <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></div>';
 }
 
 // Title the page only if there is a $heading argument
