@@ -300,7 +300,7 @@ div#editor-main-content {
 	border-color: #ddd;
 	padding: 1em;
 	margin-left: 1em;
-	margin-right: 25em;
+	margin-right: 27em;
 }
 
 div#editor-meta-bar {
@@ -312,7 +312,7 @@ div#editor-meta-bar {
 	padding: 0.5em;
 	right: 1em;
 	margin: 0 1em 0.5em 1em;
-	width: 20em;
+	width: 22em;
 }
 
 div#media-insert-container {
@@ -324,7 +324,7 @@ div#media-insert-container {
 	padding: 0.5em;
 	right: 1em;
 	margin: 0 1em 0.5em 1em;
-	width: 20em;
+	width: 22em;
 	height: 100%;
 	z-index: 99 !important; /* So it appears above everything */
 }
@@ -341,7 +341,7 @@ div#media-insert {
 
 /* Media Insert mini ML AJAX element */
 div#media-insert-table-container {
-	width: 98%;
+	width: 98%; /* Leave room for the vertical scroll bar */
 	height: 38%;
 	position: absolute;
 	overflow-y: auto; /* Only vertical scroll bar */
