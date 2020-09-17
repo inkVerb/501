@@ -19,8 +19,8 @@ include ('./in.head.php');
     paramName: "upload_file", // We are still using upload_file; default: file
     maxFilesize: 5, // MB
     addRemoveLinks: true, // Default: false
-      dictCancelUpload: "cancel", // Cancel before upload starts text
-      dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
 
     // Process AJAX response from upload.php
     init: function() {

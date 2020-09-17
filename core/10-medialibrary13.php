@@ -14,16 +14,16 @@ include ('./in.head.php');
 
 <!-- Dropzone settings -->
 <script>
-  Dropzone.options.dropzoneUploaderMediaLibrary = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader-media-library"
+  Dropzone.options.dropzoneUploaderMediaLibrary = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
     dictDefaultMessage: 'Drop to upload!',
     paramName: "upload_file", // We are still using upload_file; default: file
     maxFilesize: 5, // MB
     uploadMultiple: true, // Default: false
-      maxFiles: 50,
-      parallelUploads: 1, // Default: 2
+    maxFiles: 50,
+    parallelUploads: 1, // Default: 2
     addRemoveLinks: true, // Default: false
-      dictCancelUpload: "cancel", // Cancel before upload starts text
-      dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
 
     // File types ported over from upload.php, redundant but consistent:
     acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, video/webm, video/x-theora+ogg, video/ogg, video/mp4, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
@@ -35,9 +35,6 @@ include ('./in.head.php');
 
         // Update our upResponse variable
         upResponse += '<b>'+file.name+' info:</b><br>'+responseText;
-
-        // Show the filename and HTML response in an alert box for learning purposes
-        //alert(file.name+' :: UPLOAD MESSAGE :: '+responseText);
 
         // Update our webpage with the current contatenated AJAX responses
         if (upResponse != '') {

@@ -294,38 +294,38 @@ include ('./in.editprocess.php');
     document.getElementById("uploadresponse").innerHTML = '';
   }
   // Dropzone settings
-    Dropzone.options.dropzoneUploaderMediaInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader-media-insert"
-      dictDefaultMessage: 'Drop to upload!',
-      paramName: "upload_file", // We are still using upload_file; default: file
-      maxFilesize: 100, // MB
-      uploadMultiple: true, // Default: false
-        maxFiles: 50,
-        parallelUploads: 1, // Default: 2
-      addRemoveLinks: true, // Default: false
-        dictCancelUpload: "cancel", // Cancel before upload starts text
-        dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+  Dropzone.options.dropzoneUploaderMediaInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
+    dictDefaultMessage: 'Drop to upload!',
+    paramName: "upload_file", // Becomes $_FILES['upload_file']; default: "file"
+    maxFilesize: 100, // MB
+    uploadMultiple: true, // Default: false
+    maxFiles: 50,
+    parallelUploads: 1, // Default: 2
+    addRemoveLinks: true, // Default: false
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
 
-      // File types ported over from upload.php, redundant but consistent:
-      acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
+    // File types ported over from upload.php, redundant but consistent:
+    acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp, video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime, audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac, text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
 
-      // Initiation
-      init: function() {
-        // Refresh Dropzone box after upload
-        this.on("complete", function(file) {
-           this.removeAllFiles(true);
-        });
+    // Initiation
+    init: function() {
+      // Refresh Dropzone box after upload
+      this.on("complete", function(file) {
+         this.removeAllFiles(true);
+      });
 
-        // Process AJAX success from upload.php
-        this.on('success', function(file) {
+      // Process AJAX success from upload.php
+      this.on('success', function(file) {
 
-          // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
-          mediaInsert();
+        // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
+        mediaInsert();
 
-        });
+      });
 
-      } // End initialization
+    } // End initialization
 
-    };
+  };
   // End Dropzone settings
 
   // Show slug edit
