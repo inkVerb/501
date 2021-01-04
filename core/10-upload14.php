@@ -279,7 +279,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     }
 
 } elseif ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_SESSION['user_id'])) ) {
-  $errors = '<span class="error">Upload error, files may be empty or in raw data format, such as raw FLAC audio files.</span><hr>';
+  $errors = '<span class="error">Upload error, files may be empty, too large, or in raw data format, such as raw FLAC audio files.</span><hr>';
   // Show our $errors
   echo $errors;
 } else { // End POST check

@@ -21,6 +21,9 @@ fi
 # Get video dimensions & orientation
 v_height=$(ffmpeg -i "${basepath}uploads/${name}.${ext}" 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f2)
 v_width=$(ffmpeg -i "${basepath}uploads/${name}.${ext}" 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f1)
+# ffmpeg requires height and width be divisible by 2 (divide by 2, the multiply by two; any remainder 1 will be lost)
+v_height=$(expr $v_height / 2 \* 2 )
+v_width=$(expr $v_width / 2 \* 2 )
 # 960 maximum size, ideal for web, anything larger use a CDN
 if [ "$v_height" -gt "$v_width" ]; then
   # Don't up-scale a small video

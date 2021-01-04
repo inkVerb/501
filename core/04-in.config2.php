@@ -1,6 +1,6 @@
 <?php
 
-// Start our $SESSION
+// Start our $_SESSION
 session_start();
 
 // MySQLi Connection
