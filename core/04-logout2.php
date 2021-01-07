@@ -6,7 +6,7 @@ session_start();
 // Logout with Session Destroy Team Three
 $_SESSION = array(); // Reset the `_SESSION` array
 session_destroy(); // Destroy the session itself
-setcookie(session_name(), null, time()86401); // Set any _SESSION cookies to expire in Jan 1970
+setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
 
 // Start the session again so variables work
 session_start();
