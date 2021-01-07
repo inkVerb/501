@@ -55,7 +55,7 @@ include ('./in.editprocess.php');
 
     // First Save for new Piece
     echo '
-    <input form="edit_piece" type="submit" onclick="offNavWarn();" name="p_submit" id="save_draft" value="Save draft">
+    <input form="edit_piece" type="submit" onclick="offNavWarn(); var f=this; setTimeout(function(){f.disabled=true;}, 0); return true;" name="p_submit" id="save_draft" value="Save draft">
     &nbsp;'; // Space between the buttons
 
     // AJAX false triggers in new piece
