@@ -33,11 +33,10 @@ if (isset($_COOKIE['user_id'])) {
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
     $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]";
-      $fullname = "$row[1]";
+      $fullname = "$row[0]";
 
       // Set the $_SESSION array
-      $_SESSION['user_id'] = $user_id;
+      $_SESSION['user_id'] = $_COOKIE['user_id'];
       $_SESSION['user_name'] = $fullname;
 
       // Show a message
