@@ -20,9 +20,9 @@ include ('./in.functions.php');
 /// Neither
 
 // See if we are already logged in
-if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+if ((isset($_SESSION['user_id'])) && (isset($_SESSION['full_name']))) {
   $user_id = $_SESSION['user_id'];
-  $fullname = $_SESSION['user_name'];
+  $fullname = $_SESSION['full_name'];
 
   // Show a message
   echo "<h1>Logged In</h1>
@@ -55,7 +55,7 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
 
         // Set the $_SESSION array
         $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_name'] = $fullname;
+        $_SESSION['full_name'] = $fullname;
 
         // Show a message
         echo "<h1>Login success!</h1>

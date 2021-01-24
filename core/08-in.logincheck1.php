@@ -43,7 +43,7 @@ if (isset($_COOKIE['user_key'])) {
 
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
-      $_SESSION['user_name'] = $fullname;
+      $_SESSION['full_name'] = $fullname;
 
     } else {
       echo '<p class="error">SQL error!</p>';
@@ -52,11 +52,11 @@ if (isset($_COOKIE['user_key'])) {
 
 
 // See if we are already logged in
-} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['full_name']))) {
 
   // Set our variables
   $user_id = $_SESSION['user_id'];
-  $fullname = $_SESSION['user_name'];
+  $fullname = $_SESSION['full_name'];
 
 // Not logged in
 } else {

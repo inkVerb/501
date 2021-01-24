@@ -22,7 +22,7 @@ if (isset($_COOKIE['user_id'])) {
 
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
-      $_SESSION['user_name'] = $fullname;
+      $_SESSION['full_name'] = $fullname;
 
       // Show a message
       echo "<h1>Cookie</h1>
@@ -34,9 +34,9 @@ if (isset($_COOKIE['user_id'])) {
 
 
 // See if we are already logged in
-} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['full_name']))) {
   $user_id = $_SESSION['user_id'];
-  $fullname = $_SESSION['user_name'];
+  $fullname = $_SESSION['full_name'];
 
   // Show a message
   echo "<h1>Logged In</h1>
@@ -69,7 +69,7 @@ if (isset($_COOKIE['user_id'])) {
 
         // Set the $_SESSION array
         $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_name'] = $fullname;
+        $_SESSION['full_name'] = $fullname;
 
         // Remember me for $_COOKIE['user_id'] ?
         if (isset($_POST['rememberme'])) {

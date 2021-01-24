@@ -20,11 +20,11 @@
 <?php // Start php
 
 // See if we are logged in by now
-if ((isset($_SESSION['user_id'])) && (isset($_SESSION['user_name']))) {
+if ((isset($_SESSION['user_id'])) && (isset($_SESSION['full_name']))) {
 
   // Set our variables
   $user_id = $_SESSION['user_id'];
-  $fullname = $_SESSION['user_name'];
+  $fullname = $_SESSION['full_name'];
 
 echo '<p>Hi, '.$fullname.'! <a href="account.php">Account Settings</a> | <a href="logout.php">Logout</a></p>';
 

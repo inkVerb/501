@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Set the $_SESSION array
         $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_name'] = $fullname;
+        $_SESSION['full_name'] = $fullname;
 
         // Remember me for $_COOKIE['user_id'] ?
         if (isset($_POST['rememberme'])) {

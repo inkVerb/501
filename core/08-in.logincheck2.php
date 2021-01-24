@@ -43,7 +43,7 @@ if (isset($_COOKIE['user_key'])) {
 
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
-      $_SESSION['user_name'] = $fullname;
+      $_SESSION['full_name'] = $fullname;
 
     } else {
       echo '<p class="error">SQL error!</p>';

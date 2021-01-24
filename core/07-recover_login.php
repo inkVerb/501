@@ -33,7 +33,7 @@ if (isset($_GET['s'])) {
       $fullname = "$row[1]";
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
-      $_SESSION['user_name'] = $fullname;
+      $_SESSION['full_name'] = $fullname;
 
       // Set the key to "dead" so it can't be used again
       $query = "UPDATE strings SET usable='dead' WHERE random_string='$secure_string_sqlesc' AND userid='$user_id'";
