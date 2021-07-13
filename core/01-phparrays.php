@@ -22,7 +22,7 @@ echo "<br>";
 echo $autoArray[3];
 echo "<br><br>";
 
-// Assign array values directly
+// Assign array values to variables via one list
 list($a_one, $a_two, $a_three, $a_four) = $autoArray;
 echo "<b>Same, using <code>list()</code>:</b><br>";
 echo $a_one;
