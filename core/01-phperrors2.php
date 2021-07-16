@@ -3,7 +3,7 @@
 $live = true;
 
 // Create our error handler to print errors
-function vip_error($e_number, $e_message, $e_file, $e_line, $e_vars) {
+function vip_error($e_number, $e_message, $e_file, $e_line) {
 	// Get our live setting
 	global $live;
 

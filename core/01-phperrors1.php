@@ -1,7 +1,7 @@
 <?php
 
 // Create our error handler to print errors
-function vip_error($e_number, $e_message, $e_file, $e_line, $e_vars) {
+function vip_error($e_number, $e_message, $e_file, $e_line) {
 
 	// Build the error message
 	$message = "Hey, silly! Error in '$e_file' on line $e_line:\n$e_message\n";
