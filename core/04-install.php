@@ -148,10 +148,10 @@ echo '
 <form action="install.php" method="post">';
 
 echo '<b>Database info</b><br><br>
-Name: <input type="text" name="db_name"><br><br>
-Username: <input type="text" name="db_user"><br><br>
-Password: <input type="text" name="db_pass"><br><br>
-Host: <input type="text" name="db_host" value="localhost"> (leave as <i>localhost</i> unless told otherwise)<br><br>
+Database name: <input type="text" name="db_name"><br><br>
+Database username: <input type="text" name="db_user"><br><br>
+Database password: <input type="text" name="db_pass"><br><br>
+Database host: <input type="text" name="db_host" value="localhost"> (leave as <i>localhost</i> unless told otherwise)<br><br>
 <br><br>
 <b>Admin user</b><br><br>';
 

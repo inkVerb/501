@@ -149,8 +149,8 @@ $favnumber = null;
   <form action="forgot.php" method="post">';
 
   // Use null where errors would normally go
-  echo 'Email: '.formInput('email', $email, null).'<br><br>';
-  echo 'Favorite number: '.formInput('favnumber', $favnumber, null).'<br><br>';
+  echo 'Email: '.formInput('email', $email, $check_err).'<br><br>';
+  echo 'Favorite number: '.formInput('favnumber', $favnumber, $check_err).'<br><br>';
 
   echo '
     <input type="submit" value="Recover account">
