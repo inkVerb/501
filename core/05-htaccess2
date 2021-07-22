@@ -1,6 +1,6 @@
 RewriteEngine on
 
-# Absolute path destination
+# Relative path destination
 
-# 1. relative to: localhost
-RewriteRule ^/?([a-zA-Z0-9_]+)$ /web/pretty_page.php?n=$1 [L]
+# 2. relative to: localhost
+RewriteRule ^/?([a-zA-Z0-9_]+)$ pretty_page.php?n=$1 [L]
