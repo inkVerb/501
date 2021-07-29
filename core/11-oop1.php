@@ -1,8 +1,9 @@
 <?php
 
-// Define the "Topic" class
-class Topic{
+// Class
+class Topic {
 
+  // Methods
   function course() {
     return "VIP Linux";
   }
@@ -17,14 +18,14 @@ class Topic{
 
 }
 
-// Create the "Topic" object
-$topicObject = new Topic();
-
-// Use the "Topic" object and its functions
-echo $booksObject->course();
+// Object
+$topicObject = new Topic;
+exit();
+// Use
+echo $topicObject->course();
 echo "<br>..<br>";
-echo $booksObject->website();
+echo $topicObject->website();
 echo "<br>..<br>";
-echo $booksObject->slogan();
+echo $topicObject->slogan();
 
 ?>

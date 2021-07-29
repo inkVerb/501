@@ -1,0 +1,81 @@
+<?php
+
+// Database info
+$db_name = 'test_pdo';
+$db_user = 'pdo_user';
+$db_pass = 'pdopassword';
+$db_host = 'localhost';
+
+// Database connection
+$nameHostChar = "mysql:host=$db_host; dbname=$db_name; charset=utf8";
+$opt = [
+  PDO::ATTR_EMULATE_PREPARES => false,
+  PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+  PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_BOTH,
+];
+$database = new PDO($nameHostChar, $db_user, $db_pass, $opt);
+
+// PDO error handler function
+function pdo_error($query, $error_message) {
+    echo "SQL error from <pre>$query</pre><br>$error_message";
+    exit();
+}
+
+// Create a table
+try {
+  $query = "
+  CREATE TABLE IF NOT EXISTS `fruit` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(90) NOT NULL,
+    `color` VARCHAR(90) DEFAULT NULL,
+    `locale` VARCHAR(128) DEFAULT NULL,
+    `market` VARCHAR(128) DEFAULT NULL,
+    `date_updated` TIMESTAMP NOT NULL,
+    PRIMARY KEY (`id`)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+  ";
+  $statement = $database->query($query);
+} catch (PDOException $error) {
+  pdo_error($query, $error->getMessage());
+}
+
+// If it worked, show a message
+if ($statement) {
+  echo "Created table using this query:<br><code>$query</code>";
+}
+
+// Populate the table
+try {
+  $query  = "
+  START TRANSACTION;
+  INSERT INTO fruit (name) VALUES ('apple');
+  INSERT INTO fruit (name) VALUES ('kiwi');
+  COMMIT;
+  ";
+  $statement = $database->exec($query);
+} catch (PDOException $error) {
+  pdo_error($query, $error->getMessage());
+}
+
+// If it worked, show another message
+if ($statement) {
+  echo "<br><br>Inserted rows using this query:<br><code>$query</code><br><hr><br>";
+}
+
+// Fetch the rows
+try {
+  $query  = "SELECT * FROM fruit";
+  $statement = $database->query($query);
+} catch (PDOException $error) {
+  pdo_error($query, $error->getMessage());
+}
+
+while ($row = $statement->fetch(PDO::FETCH_NUM)) {
+  $f_name = "$row[0]";
+  $f_color = "$row[1]";
+  $f_locale = "$row[2]";
+  $f_market = "$row[3]";
+  echo "Name: $f_name Color: $f_color Farm: $f_locale Sold in: $f_market<br>";
+}
+
+?>

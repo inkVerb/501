@@ -1,0 +1,5 @@
+git clone https://github.com/inkverb/tinymce-dist.git
+sudo mv tinymce-dist web/tinymce
+
+git clone https://github.com/poetryisCODE/htmldiff.git && \
+sudo cp htmldiff.js/htmldiff.min.js web/

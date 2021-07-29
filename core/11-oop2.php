@@ -1,14 +1,14 @@
 <?php
 
 // Define the "Topic" class
-class Topic{
+class Topic {
 
-  // Declare class variables
+  // Declare class properties
   var $course;
   var $website;
   var $slogan;
 
-  // Create functions, setting the class variables we just declared
+  // Define methods, setting the class properties we just declared
   function setCourse($arg) {
     $this->course = $arg;
   }
@@ -21,27 +21,27 @@ class Topic{
     $this->slogan = $arg;
   }
 
-  // Create functions to return the class variables
-  function getCourse() {
+  // Define methods to return the class properties
+  function retCourse() {
     return $this->course;
   }
 
-  function getWebsite() {
+  function retWebsite() {
     return $this->website;
   }
 
-  function getSlogan() {
+  function retSlogan() {
     return $this->slogan;
   }
 
 }
 
-// Create the "Topic" objects
-$Shell = new Topic();
-$BASH = new Topic();
-$PHP = new Topic();
+// Instantiate the "Topic" objects
+$Shell = new Topic;
+$BASH = new Topic;
+$PHP = new Topic;
 
-// Set values from "Topic" object functions
+// Set values for "Topic" object via methods
 $Shell->setCourse("Shell 101");
 $Shell->setWebsite("verb.vip/101");
 $Shell->setSlogan("Learn the Linux Shell");
@@ -54,26 +54,26 @@ $PHP->setCourse("PHP 501");
 $PHP->setWebsite("verb.vip/501");
 $PHP->setSlogan("Learn the PHP Linux stack");
 
-// Get values from "Topic" object functions
+// Get values from "Topic" object via methods
 echo "<h1>Shell</h1>";
-echo $Shell->getCourse();
+echo $Shell->retCourse();
 echo "<br>..<br>";
-echo $Shell->getWebsite();
+echo $Shell->retWebsite();
 echo "<br>..<br>";
-echo $Shell->getSlogan();
+echo $Shell->retSlogan();
 
 echo "<h1>BASH</h1>";
-echo $BASH->getCourse();
+echo $BASH->retCourse();
 echo "<br>..<br>";
-echo $BASH->getWebsite();
+echo $BASH->retWebsite();
 echo "<br>..<br>";
-echo $BASH->getSlogan();
+echo $BASH->retSlogan();
 
 echo "<h1>PHP</h1>";
-echo $PHP->getCourse();
+echo $PHP->retCourse();
 echo "<br>..<br>";
-echo $PHP->getWebsite();
+echo $PHP->retWebsite();
 echo "<br>..<br>";
-echo $PHP->getSlogan();
+echo $PHP->retSlogan();
 
 ?>
