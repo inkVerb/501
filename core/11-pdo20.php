@@ -21,33 +21,20 @@ function pdo_error($query, $error_message) {
     exit();
 }
 
-// Create a table
+// Fetch the rows
 try {
-  $query = "
-  CREATE TABLE IF NOT EXISTS `fruit` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(90) NOT NULL,
-    `color` VARCHAR(90) DEFAULT NULL,
-    `locale` VARCHAR(90) DEFAULT NULL,
-    `market` VARCHAR(90) DEFAULT NULL,
-    `date_updated` TIMESTAMP NOT NULL,
-    PRIMARY KEY (`id`)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-  ";
+  $query = "SELECT * FROM fruit";
   $statement = $database->query($query);
 } catch (PDOException $error) {
   pdo_error($query, $error->getMessage());
 }
 
-// Ternary $statement test
-echo ($statement) ? "\$statement success" : "\$statement fail: $statement";
-
-// If it worked, show a message
-if ($statement) {
-  echo "<br><br>
-  Created table using <code>query()</code> for this query:<br>
-  <code>$query</code><br>
-  <hr><br>";
+while ($row = $statement->fetch(PDO::FETCH_NUM)) {
+  $f_name = "$row[1]";
+  $f_color = "$row[2]";
+  $f_locale = "$row[3]";
+  $f_market = "$row[4]";
+  echo "Name: $f_name Color: $f_color Farm: $f_locale Sold in: $f_market<br>";
 }
 
 ?>
