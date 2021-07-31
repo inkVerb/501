@@ -47,6 +47,7 @@ class DB {
 
     // $vals into an array so we can pass it to `execute()`
     $vals_arr = preg_split('~,\s*~', $vals);
+    //$vals_arr = explode(",", str_replace(["'", ' '], '', $vals));
 
     // Iterate ? for each value in $vals
     $args = implode(',', array_fill(0, count($vals_arr), '?'));
@@ -256,7 +257,8 @@ echo "<hr><br>";
 
 // INSERT the row
 echo "INSERT<br>";
-$val = $pdo->insert('fruit', 'name, color, locale, market', "'banana', 'green', 'Thailad', 'Southeast Asia'");
+$vals_string = "Southeast Asia"; // Anything with spaces must be passed as a variable so quotes don't end up in the database
+$val = $pdo->insert('fruit', 'name, color, locale, market', "banana, green, Thailad, $vals_string");
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
