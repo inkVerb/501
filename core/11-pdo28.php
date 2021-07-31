@@ -159,7 +159,7 @@ $pdo = new DB;
 // Use //
 
 // SELECT current row
-echo "Before UPDATE:<br>";
+echo "Before INSERT:<br>";
 $val = $pdo->select('fruit', 'name', 'banana');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 

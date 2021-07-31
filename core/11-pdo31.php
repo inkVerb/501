@@ -88,6 +88,7 @@ class DB {
 
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
+    echo $val."<br>";
 
     // Success statement
     $this->change = ($statement->rowCount() >= 1) ? true : false;
@@ -207,7 +208,7 @@ class DB {
     // Prepare SQL SET statement
     $set_statement = "";
     foreach ( $set_array as $k => $v ) {
-      $set_statement .= "$k='$v',";
+      $set_statement .= "$k=?,";
     }
     $set_statement = rtrim($set_statement, ','); // remove last comma
 
@@ -218,7 +219,9 @@ class DB {
 
     // Try the query
     try {
-      $statement = $database->query($query);
+      //$statement = $database->query($query);
+      $statement = $database->prepare($query);
+      $statement->execute($vals_arr);
     } catch (PDOException $error) {
       $this->pdo_error($query, $error->getMessage());
     }
@@ -265,7 +268,16 @@ foreach ($val as $one) {
 }
 echo "<hr><br>";
 
-// DELETE the row again
+// UPDATE the database
+echo "UPDATE<br>";
+$val = $pdo->update('fruit', 'color, locale', 'blue, Florida', 'name', 'apple');
+
+// SELECT updated row again
+echo "<br>After UPDATE:<br>";
+$val = $pdo->select('fruit', 'name', 'apple');
+echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+
+// DELETE the row we added
 echo "DELETE<br>";
 $val = $pdo->delete('fruit', 'name', 'banana');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";

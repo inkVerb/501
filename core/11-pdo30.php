@@ -229,7 +229,7 @@ $pdo = new DB;
 // Use //
 
 // SELECT multiple current rows
-echo "Before INSERT:<br>";
+echo "Before INSERT: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
@@ -243,7 +243,7 @@ echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT multiple updated rows
-echo "<br>After INSERT:<br>";
+echo "<br>After INSERT: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
@@ -257,7 +257,7 @@ echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT multiple updated rows
-echo "<br>After INSERT:<br>";
+echo "<br>After INSERT: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
@@ -266,7 +266,7 @@ echo "<hr><br>";
 
 
 // SELECT complex multiple rows
-echo "<br>SELECT complex multiple:<br>";
+echo "<br>SELECT complex multiple: selectcomplex('fruit', 'name', 'apple')<br>";
 $val = $pdo->selectcomplex('fruit', 'name', 'apple');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
@@ -274,7 +274,7 @@ foreach ($val as $one) {
 echo "<hr><br>";
 
 // SELECT complex multiple rows again
-echo "<br>SELECT complex multiple again:<br>";
+echo "<br>SELECT complex multiple again: selectcomplex('fruit', 'name, color', 'apple, yellow')<br>";
 $val = $pdo->selectcomplex('fruit', 'name, color', 'apple, yellow');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
@@ -287,7 +287,7 @@ $val = $pdo->delete('fruit', 'color', 'yellow');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT multiple rows again
-echo "<br>After DELETE:<br>";
+echo "<br>After DELETE: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";

@@ -190,7 +190,7 @@ $pdo = new DB;
 // Use //
 
 // SELECT multiple current rows
-echo "Before UPDATE:<br>";
+echo "Before INSERT:<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
   echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
