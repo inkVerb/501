@@ -45,20 +45,18 @@ class DB {
 
     global $database;
 
+    // $vals into an array so we can pass it to `execute()`
+    $vals_arr = preg_split('~,\s*~', $vals);
+
     // Iterate ? for each value in $vals
-    //$vals_arr = preg_split('~,\s*~', $vals);
-    //$vals_arr = explode(',', $vals);
-    //$args = '';
-    //foreach ($vals_arr as $i) { $args .= '?,'; }
-    //$args = rtrim($args, ','); // remove last comma
+    $args = implode(',', array_fill(0, count($vals_arr), '?'));
 
     // Try the query
-    //$query = "INSERT INTO $table ($cols) VALUES ($args);";
-    $query = "INSERT INTO $table ($cols) VALUES ($vals);"; // execute([$string]) fails
+    $query = "INSERT INTO $table ($cols) VALUES ($args);"; //
     try {
-      //$statement = $database->prepare($query);
-      //$statement->execute([$vals]);
-      $statement = $database->query($query); // execute([$string]) fails
+      $statement = $database->prepare($query); //
+      $statement->execute($vals_arr); //
+      //$statement = $database->query($query); // execute([$string]) fails
     } catch (PDOException $error) {
       $this->pdo_error($query, $error->getMessage());
     }
