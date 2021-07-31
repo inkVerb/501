@@ -45,10 +45,20 @@ class DB {
 
     global $database;
 
+    // Iterate ? for each value in $vals
+    //$vals_arr = preg_split('~,\s*~', $vals);
+    //$vals_arr = explode(',', $vals);
+    //$args = '';
+    //foreach ($vals_arr as $i) { $args .= '?,'; }
+    //$args = rtrim($args, ','); // remove last comma
+
     // Try the query
-    $query = "INSERT INTO $table ($cols) VALUES ($vals);";
+    //$query = "INSERT INTO $table ($cols) VALUES ($args);";
+    $query = "INSERT INTO $table ($cols) VALUES ($vals);"; // execute([$string]) fails
     try {
-      $statement = $database->query($query);
+      //$statement = $database->prepare($query);
+      //$statement->execute([$vals]);
+      $statement = $database->query($query); // execute([$string]) fails
     } catch (PDOException $error) {
       $this->pdo_error($query, $error->getMessage());
     }
@@ -70,10 +80,10 @@ class DB {
     global $database;
 
     // Try the query
-    $query = "DELETE FROM $table WHERE $col='$val'";
+    $query = "DELETE FROM $table WHERE $col=?";
     try {
       $statement = $database->prepare($query);
-      $statement->execute();
+      $statement->execute([$val]);
     } catch (PDOException $error) {
       $this->pdo_error($query, $error->getMessage());
     }
@@ -93,15 +103,16 @@ class DB {
 
     global $database;
 
-    // Prepare SQL query
-    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
+    // Prepare SQL SET query
+    $query = "SELECT $cols FROM $table WHERE $wcol=?";
 
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
 
     // Try the query
     try {
-      $statement = $database->query($query);
+      $statement = $database->prepare($query);
+      $statement->execute([$vcol]);
     } catch (PDOException $error) {
       $this->pdo_error($query, $error->getMessage());
     }
@@ -110,6 +121,78 @@ class DB {
     return $statement->fetch();
 
   } // select()
+
+  // SELECT multiple rows method
+  public function selectmulti($table, $cols = '*', $wcol = '*', $vcol = '*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->selectmulti($table, $columns='*', $where_col='*', $where_value='*');
+    // foreach ($val as $one) { echo "Some Col: $one->some_col<br>"; }
+
+    global $database;
+
+    // Prepare SQL SET query
+    $query = "SELECT $cols FROM $table";
+    // WHERE arguments
+    $query .= (($wcol == '*') || ($vcol == '*')) ?
+    "" :
+    " WHERE $wcol=?";
+
+    // Try the query
+    try {
+      $statement = $database->prepare($query);
+      (($wcol == '*') || ($vcol == '*')) ?
+      $statement->execute() :
+      $statement->execute([$vcol]);
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Uncomment for curiosity
+    echo "\$query = <code>$query</code><br>";
+
+    // Return fetched SQL response object
+    return $statement->fetchAll();
+
+  } // selectmulti()
+
+  // SELECT complex multiple rows method
+  public function selectcomplex($table, $wcols, $vcols, $cols = '*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->selectcomplex($table, $where_col_list, $where_value_list, $columns='*');
+    // foreach ($val as $one) { echo "Some Col: $one->some_col<br>"; }
+
+    global $database;
+
+    // Prepare array of $cols=key & $vals=value
+    $wcols_arr = preg_split('~,\s*~', $wcols);
+    $vcols_arr = preg_split('~,\s*~', $vcols);
+    $where_array = array_combine($wcols_arr, $vcols_arr);
+
+    // Prepare SQL SET statement
+    $where_statement = "";
+    foreach ( $where_array as $k => $v ) {
+      $where_statement .= "$k='$v' AND ";
+    }
+    $where_statement = rtrim($where_statement, ' AND '); // remove last AND
+
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE $where_statement";
+
+    // Try the query
+    try {
+      $statement = $database->prepare($query);
+      $statement->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Uncomment for curiosity
+    echo "\$query = <code>$query</code><br>";
+
+    // Return fetched SQL response object
+    return $statement->fetchAll();
+
+  } // selectcomplex()
 
   // UPDATE method
   public function update($table, $cols, $vals, $wcol, $vcol) {
@@ -130,7 +213,6 @@ class DB {
     }
     $set_statement = rtrim($set_statement, ','); // remove last comma
 
-    // Prepare SQL query
     $query = "UPDATE $table SET $set_statement WHERE $wcol='$vcol';";
 
     // Uncomment for curiosity
@@ -158,10 +240,18 @@ $pdo = new DB;
 
 // Use //
 
-// SELECT current row
-echo "Before UPDATE:<br>";
-$val = $pdo->select('fruit', 'name', 'banana');
+// SELECT apple row
+echo "SELECT apple:<br>";
+$val = $pdo->select('fruit', 'name', 'apple');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+
+// SELECT multiple rows
+echo "<br>SELECT multiple:<br>";
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
 
 // INSERT the row
 echo "INSERT<br>";
@@ -169,19 +259,24 @@ $val = $pdo->insert('fruit', 'name, color, locale, market', "'banana', 'green', 
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
-// SELECT updated row
+// SELECT multiple updated rows
 echo "<br>After INSERT:<br>";
-$val = $pdo->select('fruit', 'name', 'banana');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
 
 // DELETE the row again
 echo "DELETE<br>";
 $val = $pdo->delete('fruit', 'name', 'banana');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
-// SELECT updated row again
+// SELECT multiple rows again
 echo "<br>After DELETE:<br>";
-$val = $pdo->select('fruit', 'name', 'banana');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
-
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
 ?>

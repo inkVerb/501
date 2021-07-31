@@ -9,9 +9,11 @@ class DB {
   private $db_host = 'localhost';
 
   // Global result properties
-  public $worked;
   public $change;
   public $lastid;
+  // Usage $pdo = new DB;
+  // $val = ($pdo->change) ? true : false;
+  // $val = $pdo->lastid;
 
   // Database connection
   protected function conn() {
@@ -42,7 +44,6 @@ class DB {
     echo "\$query = <code>$query</code><br>";
 
     // Success statements
-    $this->worked = ($statement) ? true : false;
     $this->change = ($statement->rowCount() == 1) ? true : false;
     $this->lastid = $this->conn()->lastInsertId();
 
@@ -60,32 +61,24 @@ class DB {
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
 
-    // Success statements
-    $this->worked = ($statement) ? true : false;
+    // Success statement
     $this->change = ($statement->rowCount() >= 1) ? true : false;
 
   } // delete()
 
   // SELECT method
-  public function select($table, $cols = '*', $wcol = '*', $vcol = '*') {
+  public function select($table, $wcol, $vcol, $cols='*') {
     // Usage $pdo = new DB;
-    // $val = $pdo->select($table, $columns, $where_col, $where_value);
+    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
 
-    $query = "SELECT $cols FROM $table";
-
-    // WHERE arguments
-    $query .= (($wcol == '*') || ($vcol == '*')) ?
-    "" :
-    " WHERE $wcol='$vcol'";
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
 
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
 
-    // Build the connection statement
+    // Run the connection statement
     $statement = $this->conn()->query($query);
-
-    // Success statements
-    $this->worked = ($statement) ? true : false;
 
     // Return fetched SQL response object
     return $statement->fetch();
@@ -109,16 +102,16 @@ class DB {
     }
     $set_statement = rtrim($set_statement, ','); // remove last comma
 
+    // Prepare SQL query
     $query = "UPDATE $table SET $set_statement WHERE $wcol='$vcol';";
 
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
 
-    // Build the connection statement
+    // Run the connection statement
     $statement = $this->conn()->query($query);
 
-    // Success statements
-    $this->worked = ($statement) ? true : false;
+    // Success statement
     $this->change = ($statement->rowCount() > 0) ? true : false;
 
     // Return fetched SQL response object
@@ -133,35 +126,30 @@ $pdo = new DB;
 
 // Use //
 
-echo "Before INSERT:<br>";
-
 // SELECT current row
-$val = $pdo->select('fruit', '*', 'name', 'banana');
-echo ($pdo->worked) ? "Query worked<br>" : "Query failed<br>";
+echo "Before INSERT:<br>";
+$val = $pdo->select('fruit', 'name', 'banana');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 
-// INSERT  the database
+// INSERT the row
+echo "INSERT<br>";
 $val = $pdo->insert('fruit', 'name, color, locale, market', "'banana', 'green', 'Thailad', 'Southeast Asia'");
-echo ($pdo->worked) ? "Query worked with " . $pdo->lastid . "<br>" : "Query failed<br>";
-echo ($pdo->changed) ? "Stuff changed<br><br>" : "No change<br><br>";
-
-echo "After INSERT:<br>";
+echo "Last new ID: $pdo->lastid<br>";
+echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT updated row
-$val = $pdo->select('fruit', '*', 'name', 'banana');
-echo ($pdo->worked) ? "Query worked<br>" : "Query failed<br>";
+echo "<br>After INSERT:<br>";
+$val = $pdo->select('fruit', 'name', 'banana');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 
-// DELETE the database again
+// DELETE the row
+echo "DELETE<br>";
 $val = $pdo->delete('fruit', 'name', 'banana');
-echo ($pdo->worked) ? "Query worked<br>" : "Query failed<br>";
-echo ($pdo->changed) ? "Stuff changed<br><br>" : "No change<br><br>";
-
-echo "After DELETE:<br>";
+echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT updated row again
-$val = $pdo->select('fruit', '*', 'name', 'banana');
-echo ($pdo->worked) ? "Query worked<br>" : "Query failed<br>";
+echo "<br>After DELETE:<br>";
+$val = $pdo->select('fruit', 'name', 'banana');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 
 ?>

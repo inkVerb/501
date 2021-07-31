@@ -25,18 +25,17 @@ class DB {
   } // conn()
 
   // SELECT method
-  public function select($table, $cols = '*', $wcol = '*', $vcol = '*') {
+  public function select($table, $wcol, $vcol, $cols='*') {
     // Usage $pdo = new DB;
-    // $val = $pdo->select($table, $columns, $where_col, $where_value);
+    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
 
-    $query = "SELECT $cols FROM $table";
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
 
-    // WHERE arguments
-    $query .= (($wcol == '*') || ($vcol == '*')) ?
-    "" :
-    " WHERE $wcol='$vcol'";
+    // Uncomment for curiosity
+    echo "\$query = <code>$query</code><br>";
 
-    // Build the connection statement
+    // Run the connection statement
     $statement = $this->conn()->query($query);
 
     // Return fetched SQL response object
@@ -52,7 +51,7 @@ $pdo = new DB;
 // Use //
 
 // Use the database call
-$val = $pdo->select('fruit', '*', 'name', 'apple');
+$val = $pdo->select('fruit', 'name', 'apple');
 
 // Display on webpage
 echo $val->color;

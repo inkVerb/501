@@ -111,6 +111,76 @@ class DB {
 
   } // select()
 
+  // SELECT multiple rows method
+  public function selectmulti($table, $cols = '*', $wcol = '*', $vcol = '*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->selectmulti($table, $columns='*', $where_col='*', $where_value='*');
+    // foreach ($val as $one) { echo "Some Col: $one->some_col<br>"; }
+
+    global $database;
+
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table";
+    // WHERE arguments
+    $query .= (($wcol == '*') || ($vcol == '*')) ?
+    "" :
+    " WHERE $wcol='$vcol'";
+
+    // Try the query
+    try {
+      $statement = $database->prepare($query);
+      $statement->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Uncomment for curiosity
+    echo "\$query = <code>$query</code><br>";
+
+    // Return fetched SQL response object
+    return $statement->fetchAll();
+
+  } // selectmulti()
+
+  // SELECT complex multiple rows method
+  public function selectcomplex($table, $wcols, $vcols, $cols = '*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->selectcomplex($table, $where_col_list, $where_value_list, $columns='*');
+    // foreach ($val as $one) { echo "Some Col: $one->some_col<br>"; }
+
+    global $database;
+
+    // Prepare array of $cols=key & $vals=value
+    $wcols_arr = preg_split('~,\s*~', $wcols);
+    $vcols_arr = preg_split('~,\s*~', $vcols);
+    $where_array = array_combine($wcols_arr, $vcols_arr);
+
+    // Prepare SQL SET statement
+    $where_statement = "";
+    foreach ( $where_array as $k => $v ) {
+      $where_statement .= "$k='$v' AND ";
+    }
+    $where_statement = rtrim($where_statement, ' AND '); // remove last AND
+
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE $where_statement";
+
+    // Try the query
+    try {
+      $statement = $database->prepare($query);
+      $statement->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Uncomment for curiosity
+    echo "\$query = <code>$query</code><br>";
+
+    // Return fetched SQL response object
+    return $statement->fetchAll();
+
+  } // selectcomplex()
+
   // UPDATE method
   public function update($table, $cols, $vals, $wcol, $vcol) {
     // Usage $pdo = new DB;
@@ -158,30 +228,69 @@ $pdo = new DB;
 
 // Use //
 
-// SELECT current row
+// SELECT multiple current rows
 echo "Before UPDATE:<br>";
-$val = $pdo->select('fruit', 'name', 'banana');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
 
-// INSERT the row
+// INSERT one row
 echo "INSERT<br>";
-$val = $pdo->insert('fruit', 'name, color, locale, market', "'banana', 'green', 'Thailad', 'Southeast Asia'");
+$val = $pdo->insert('fruit', 'name, color, locale, market', "'apple', 'yellow', 'Japan', 'Asia'");
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
-// SELECT updated row
+// SELECT multiple updated rows
 echo "<br>After INSERT:<br>";
-$val = $pdo->select('fruit', 'name', 'banana');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
+
+// INSERT another row
+echo "INSERT<br>";
+$val = $pdo->insert('fruit', 'name, color, locale, market', "'apple', 'yellow', 'Korea', 'Pacifica'");
+echo "Last new ID: $pdo->lastid<br>";
+echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
+
+// SELECT multiple updated rows
+echo "<br>After INSERT:<br>";
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
+
+
+// SELECT complex multiple rows
+echo "<br>SELECT complex multiple:<br>";
+$val = $pdo->selectcomplex('fruit', 'name', 'apple');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
+
+// SELECT complex multiple rows again
+echo "<br>SELECT complex multiple again:<br>";
+$val = $pdo->selectcomplex('fruit', 'name, color', 'apple, yellow');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
 
 // DELETE the row again
 echo "DELETE<br>";
-$val = $pdo->delete('fruit', 'name', 'banana');
+$val = $pdo->delete('fruit', 'color', 'yellow');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
-// SELECT updated row again
+// SELECT multiple rows again
 echo "<br>After DELETE:<br>";
-$val = $pdo->select('fruit', 'name', 'banana');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
-
+$val = $pdo->selectmulti('fruit');
+foreach ($val as $one) {
+  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+}
+echo "<hr><br>";
 ?>

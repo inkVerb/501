@@ -8,9 +8,6 @@ class DB {
   private $db_pass = 'pdopassword';
   private $db_host = 'localhost';
 
-  // Global success property
-  public $worked;
-
   // Database connection
   protected function conn() {
     // Usage (inside other methods of this class)
@@ -28,21 +25,17 @@ class DB {
   } // conn()
 
   // SELECT method
-  public function select($table, $cols = '*', $wcol = '*', $vcol = '*') {
+  public function select($table, $wcol, $vcol, $cols='*') {
     // Usage $pdo = new DB;
-    // $val = $pdo->select($table, $columns, $where_col, $where_value);
+    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
 
-    $query = "SELECT $cols FROM $table";
-
-    // WHERE arguments
-    $query .= (($wcol == '*') || ($vcol == '*')) ?
-    "" :
-    " WHERE $wcol='$vcol'";
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
 
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
 
-    // Build the connection statement
+    // Run the connection statement
     $statement = $this->conn()->query($query);
 
     // Return fetched SQL response object
@@ -67,16 +60,14 @@ class DB {
     }
     $set_statement = rtrim($set_statement, ','); // remove last comma
 
+    // Prepare SQL query
     $query = "UPDATE $table SET $set_statement WHERE $wcol='$vcol';";
 
     // Uncomment for curiosity
     echo "\$query = <code>$query</code><br>";
 
-    // Build the connection statement
+    // Run the connection statement
     $statement = $this->conn()->query($query);
-
-    // Success statement
-    $this->worked = ($statement) ? true : false;
 
     // Return fetched SQL response object
     return $statement->fetch();
@@ -90,30 +81,27 @@ $pdo = new DB;
 
 // Use //
 
-echo "Before UPDATE:<br>";
-
 // SELECT current row
-$val = $pdo->select('fruit', '*', 'name', 'apple');
+echo "Before UPDATE:<br>";
+$val = $pdo->select('fruit', 'name', 'apple');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 
 // UPDATE the database
+echo "UPDATE<br>";
 $val = $pdo->update('fruit', 'color', 'red', 'name', 'apple');
-echo ($pdo->worked) ? "Query worked<br><br>" : "Query failed<br><br>";
-
-echo "After UPDATE:<br>";
 
 // SELECT updated row
-$val = $pdo->select('fruit');
+echo "<br>After UPDATE:<br>";
+$val = $pdo->select('fruit', 'name', 'apple');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 
 // UPDATE the database again
+echo "UPDATE<br>";
 $val = $pdo->update('fruit', 'color, locale', 'green, Maine', 'name', 'apple');
-echo ($pdo->worked) ? "Query worked<br><br>" : "Query failed<br><br>";
-
-echo "After UPDATE:<br>";
 
 // SELECT updated row again
-$val = $pdo->select('fruit', '*', 'name', 'apple');
+echo "<br>After UPDATE:<br>";
+$val = $pdo->select('fruit', 'name', 'apple');
 echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
 
 ?>

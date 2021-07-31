@@ -57,23 +57,41 @@ $PHP->setSlogan("Learn the PHP Linux stack");
 // Get values from "Topic" object via methods
 echo "<h1>Shell</h1>";
 echo $Shell->retCourse();
+echo "<br>";
+echo $Shell->course;
 echo "<br>..<br>";
 echo $Shell->retWebsite();
+echo "<br>";
+echo $Shell->website;
 echo "<br>..<br>";
 echo $Shell->retSlogan();
+echo "<br>";
+echo $Shell->slogan;
 
 echo "<h1>BASH</h1>";
 echo $BASH->retCourse();
+echo "<br>";
+echo $BASH->course;
 echo "<br>..<br>";
 echo $BASH->retWebsite();
+echo "<br>";
+echo $BASH->website;
 echo "<br>..<br>";
 echo $BASH->retSlogan();
+echo "<br>";
+echo $BASH->slogan;
 
 echo "<h1>PHP</h1>";
 echo $PHP->retCourse();
+echo "<br>";
+echo $PHP->course;
 echo "<br>..<br>";
 echo $PHP->retWebsite();
+echo "<br>";
+echo $PHP->website;
 echo "<br>..<br>";
 echo $PHP->retSlogan();
+echo "<br>";
+echo $PHP->slogan;
 
 ?>
