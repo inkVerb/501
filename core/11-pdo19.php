@@ -7,7 +7,7 @@ $db_pass = 'pdopassword';
 $db_host = 'localhost';
 
 // Database connection
-$nameHostChar = "mysql:host=$db_host; dbname=$db_name; charset=utf8";
+$nameHostChar = "mysql:host=$db_host; dbname=$db_name; charset=utf8mb4";
 $opt = [
   PDO::ATTR_EMULATE_PREPARES => false,
   PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

@@ -10,4 +10,4 @@ DEFINE ('DB_HOST', 'localhost');
 $database = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 // Character seting
-mysqli_set_charset($database, 'utf8');
+mysqli_set_charset($database, 'utf8mb4');

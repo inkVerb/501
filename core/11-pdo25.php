@@ -13,7 +13,7 @@ class DB {
     // Usage (inside other methods of this class)
     // $statement = $this->conn()->query($query);
 
-    $nameHostChar = "mysql:host=$this->db_host; dbname=$this->db_name; charset=utf8";
+    $nameHostChar = "mysql:host=$this->db_host; dbname=$this->db_name; charset=utf8mb4";
     $opt = [
       PDO::ATTR_EMULATE_PREPARES => false,
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

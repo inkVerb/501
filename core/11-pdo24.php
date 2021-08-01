@@ -10,7 +10,7 @@ class DB {
     // Usage $pdo = new DB;
     // $statement = $pdo->conn()->query($query);
 
-    $nameHostChar = "mysql:host=$this->db_host; dbname=$this->db_name; charset=utf8";
+    $nameHostChar = "mysql:host=$this->db_host; dbname=$this->db_name; charset=utf8mb4";
     $opt = [
       PDO::ATTR_EMULATE_PREPARES => false,
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
