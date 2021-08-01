@@ -41,7 +41,7 @@ class DB {
   // INSERT method
   public function insert($table, $cols, $vals) {
     // Usage $pdo = new DB;
-    // $val = $pdo->insert($table, $columns, $values);
+    // $pdo->insert($table, $columns, $values);
 
     global $database;
 
@@ -65,7 +65,7 @@ class DB {
   // DELETE method
   public function delete($table, $col, $val) {
     // Usage $pdo = new DB;
-    // $val = $pdo->delete($table, $column, $value);
+    // $pdo->delete($table, $column, $value);
 
     global $database;
 
@@ -193,14 +193,13 @@ $pdo = new DB;
 echo "Before INSERT:<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
 // INSERT the row
 echo "INSERT<br>";
-$vals_string = "Southeast Asia"; // Anything with spaces must be passed as a variable so quotes don't end up in the database
-$val = $pdo->insert('fruit', 'name, color, locale, market', "banana, green, Thailad, $vals_string");
+$pdo->insert('fruit', 'name, color, locale, market', "'banana', 'green', 'Thailad', 'Southeast Asia'");
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
@@ -208,20 +207,20 @@ echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 echo "<br>After INSERT:<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
 // DELETE the row again
 echo "DELETE<br>";
-$val = $pdo->delete('fruit', 'name', 'banana');
+$pdo->delete('fruit', 'name', 'banana');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT multiple rows again
 echo "<br>After DELETE:<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 ?>

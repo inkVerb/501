@@ -41,7 +41,7 @@ class DB {
   // INSERT method
   public function insert($table, $cols, $vals) {
     // Usage $pdo = new DB;
-    // $val = $pdo->insert($table, $columns, $values);
+    // $pdo->insert($table, $columns, $values);
 
     global $database;
 
@@ -65,7 +65,7 @@ class DB {
   // DELETE method
   public function delete($table, $col, $val) {
     // Usage $pdo = new DB;
-    // $val = $pdo->delete($table, $column, $value);
+    // $pdo->delete($table, $column, $value);
 
     global $database;
 
@@ -232,13 +232,13 @@ $pdo = new DB;
 echo "Before INSERT: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
 // INSERT one row
 echo "INSERT<br>";
-$val = $pdo->insert('fruit', 'name, color, locale, market', "'apple', 'yellow', 'Japan', 'Asia'");
+$pdo->insert('fruit', 'name, color, locale, market', "'apple', 'yellow', 'Japan', 'Asia'");
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
@@ -246,13 +246,13 @@ echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 echo "<br>After INSERT: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
 // INSERT another row
 echo "INSERT<br>";
-$val = $pdo->insert('fruit', 'name, color, locale, market', "'apple', 'yellow', 'Korea', 'Pacifica'");
+$pdo->insert('fruit', 'name, color, locale, market', "'apple', 'yellow', 'Korea', 'Pacifica'");
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
@@ -260,7 +260,7 @@ echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 echo "<br>After INSERT: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
@@ -269,7 +269,7 @@ echo "<hr><br>";
 echo "<br>SELECT complex multiple: selectcomplex('fruit', 'name', 'apple')<br>";
 $val = $pdo->selectcomplex('fruit', 'name', 'apple');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
@@ -277,20 +277,20 @@ echo "<hr><br>";
 echo "<br>SELECT complex multiple again: selectcomplex('fruit', 'name, color', 'apple, yellow')<br>";
 $val = $pdo->selectcomplex('fruit', 'name, color', 'apple, yellow');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 
 // DELETE the row again
 echo "DELETE<br>";
-$val = $pdo->delete('fruit', 'color', 'yellow');
+$pdo->delete('fruit', 'color', 'yellow');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
 // SELECT multiple rows again
 echo "<br>After DELETE: selectmulti('fruit')<br>";
 $val = $pdo->selectmulti('fruit');
 foreach ($val as $one) {
-  echo "Name: $one->name Color: $one->color Locale: $one->locale<br>";
+  echo "Name: $one->name Color: $one->color Locale: $one->locale Market: $one->market<br>";
 }
 echo "<hr><br>";
 ?>

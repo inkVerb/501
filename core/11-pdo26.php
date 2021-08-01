@@ -84,7 +84,7 @@ $pdo = new DB;
 // SELECT current row
 echo "Before UPDATE:<br>";
 $val = $pdo->select('fruit', 'name', 'apple');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+echo "Name: $val->name Color: $val->color Locale: $val->locale Market: $val->market<br><hr><br>";
 
 // UPDATE the database
 echo "UPDATE<br>";
@@ -93,7 +93,7 @@ $val = $pdo->update('fruit', 'color', 'red', 'name', 'apple');
 // SELECT updated row
 echo "<br>After UPDATE:<br>";
 $val = $pdo->select('fruit', 'name', 'apple');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+echo "Name: $val->name Color: $val->color Locale: $val->locale Market: $val->market<br><hr><br>";
 
 // UPDATE the database again
 echo "UPDATE<br>";
@@ -102,6 +102,6 @@ $val = $pdo->update('fruit', 'color, locale', 'green, Maine', 'name', 'apple');
 // SELECT updated row again
 echo "<br>After UPDATE:<br>";
 $val = $pdo->select('fruit', 'name', 'apple');
-echo "Name: $val->name Color: $val->color Locale: $val->locale<br><hr><br>";
+echo "Name: $val->name Color: $val->color Locale: $val->locale Market: $val->market<br><hr><br>";
 
 ?>
