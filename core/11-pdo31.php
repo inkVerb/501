@@ -257,8 +257,7 @@ echo "<hr><br>";
 
 // INSERT the row
 echo "INSERT<br>";
-$vals_string = "Southeast Asia"; // Anything with spaces must be passed as a variable so quotes don't end up in the database
-$val = $pdo->insert('fruit', 'name, color, locale, market', "banana, green, Thailad, $vals_string");
+$val = $pdo->insert('fruit', 'name, color, locale, market', "banana, green, Thailad, Southeast Asia");
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
