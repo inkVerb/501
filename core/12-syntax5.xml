@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<rootelement>
+
+  <something attrib="&quot; &apos; &lt; &gt; &amp;">
+    <spchar>
+      &quot; &apos; &lt; &gt; &amp;
+    </spchar>
+  </something>
+
+<!-- uncomment to see broken
+  <something attrib="" ' < > &">
+    <spchar> " ' < > & </spchar>
+  </something>
+-->
+
+  <spcharcdata>
+    <![CDATA[ " ' < > & ]]>
+  </spcharcdata>
+
+  <spcharcdata>
+    <![CDATA[ " ' < > & ] [] ]]>
+  </spcharcdata>
+
+</rootelement>

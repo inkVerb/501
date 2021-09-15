@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<something>
+  
+  <s:table xmlns:s="https://verb.ink/stock">
+    <s:type>Folding</s:type>
+    <s:color>Black</s:color>
+  </s:table>
+  <s:table xmlns:s="https://verb.ink/stock">
+    <s:type>Fixed</s:type>
+    <s:color>Gray</s:color>
+  </s:table>
+
+  <p:table xmlns:p="https://verb.ink/product">
+    <p:th>
+      <p:td>Name</p:td>
+      <p:td>Size</p:td>
+    </p:th>
+    <p:tr>
+      <p:td>Apple</p:td>
+      <p:td>Large</p:td>
+    </p:tr>
+    <p:tr>
+      <p:td>Shirt</p:td>
+      <p:td>Medium</p:td>
+    </p:tr>
+  </p:table>
+
+  <p:table xmlns:p="https://verb.ink/product">
+    <p:th>
+      <p:td>Name</p:td>
+      <p:td>Size</p:td>
+    </p:th>
+    <p:tr>
+      <p:td>Apple</p:td>
+      <p:td>Large</p:td>
+    </p:tr>
+    <p:tr>
+      <p:td>Shirt</p:td>
+      <p:td>Medium</p:td>
+    </p:tr>
+  </p:table>
+
+  <art:table xmlns:art="https://verb.ink/artwork">
+    <art:th>
+      <art:td>Title</art:td>
+      <art:td>City</art:td>
+    </art:th>
+    <art:tr>
+      <art:td>Taipei 101</art:td>
+      <art:td>Taipei</art:td>
+    </art:tr>
+    <art:tr>
+      <art:td>The Bean</art:td>
+      <art:td>Chicago</art:td>
+    </art:tr>
+  </art:table>
+
+</something>

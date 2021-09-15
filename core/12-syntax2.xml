@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<sometag>
+  <innertag>
+    something here
+  </innertag>
+</sometag>
+
+<tag attribute="one">
+  something also here one
+</tag>
+
+<selfclosing/>
+
+<selfclosewattrib attrbt="something here attribute"/>

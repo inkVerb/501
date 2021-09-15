@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<xs:schema  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xs:simpleType name="sportattrlist">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="skateboard"/>
+      <xs:enumeration value="soccer"/>
+      <xs:enumeration value="golf"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="personattrlist">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="val1"/>
+      <xs:enumeration value="val2"/>
+      <xs:enumeration value="val3"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="visitor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string">
+          <xs:attribute name="attr" type="xs:string" default="user"/>
+        </xs:element>
+
+        <xs:element name="login" type="xs:string"/>
+        <xs:element name="phone" type="xs:string"/>
+        <xs:element name="email" type="xs:string"/>
+
+        <xs:element name="sport" type="xs:string">
+          <xs:attribute name="type" type="sportattrlist" default="skateboard"/>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="person">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="one" type="xs:string"/>
+        <xs:element name="two" type="xs:string"/>
+        <xs:element name="also" type="xs:string"/>
+        <xs:element name="there" type="xs:string"/>
+
+        <xs:element name="self_close" type="xs:string"/>
+
+        <xs:element name="attribs" type="xs:string">
+          <xs:attribute name="attr" type="personattrlist" default="val1"/>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!DOCTYPE root SYSTEM "validate.dtd">
+
+<root>
+
+  <visitor>
+    <name level="admin">John Doe</name>
+    <login>jdoe</login>
+    <phone>555-1212</phone>
+    <email>jdoe@verb.ink</email>
+    <sport type="skateboard"/>
+  </visitor>
+
+  <visitor>
+    <name level="user">Smithy Mars</name>
+    <login>smithymars</login>
+    <phone>555-1515</phone>
+    <email>smithy@inkisaverb.com</email>
+    <sport type="soccer"/>
+  </visitor>
+
+  <person>
+    <one>value 1</one>
+    <two>value 2</two>
+    <also>also value</also>
+    <there>there value</there>
+    <self_close/>
+    <attribs attr="val1">some attributed thing</attribs>
+  </person>
+
+</root>

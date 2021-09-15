@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<something>
+
+  <table>
+    <type>Folding</type>
+    <color>Black</color>
+  </table>
+  <table>
+    <type>Fixed</type>
+    <color>Gray</color>
+  </table>
+
+  <table>
+    <th>
+      <td>Name</td>
+      <td>Size</td>
+    </th>
+    <tr>
+      <td>Apple</td>
+      <td>Large</td>
+    </tr>
+    <tr>
+      <td>Shirt</td>
+      <td>Medium</td>
+    </tr>
+  </table>
+
+  <table>
+    <th>
+      <td>Title</td>
+      <td>City</td>
+    </th>
+    <tr>
+      <td>Taipei 101</td>
+      <td>Taipei</td>
+    </tr>
+    <tr>
+      <td>The Bean</td>
+      <td>Chicago</td>
+    </tr>
+  </table>
+
+</something>
