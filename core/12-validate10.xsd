@@ -51,6 +51,7 @@
         <xs:element name="attribs" type="xs:string">
           <xs:attribute name="attr" type="personattrlist" default="val1"/>
         </xs:element>
+        
       </xs:sequence>
     </xs:complexType>
   </xs:element>
