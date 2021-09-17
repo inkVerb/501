@@ -13,7 +13,7 @@
 
   // Prepare the XML document
   $xml_text = <<<EOF
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 
   <spcharcdata>

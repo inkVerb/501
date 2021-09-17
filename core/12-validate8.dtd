@@ -1,23 +1,18 @@
 <!ELEMENT visitor (name,login,phone,email)>
+<!ATTLIST visitor level (admin|user) "user" >
 <!ELEMENT name (#PCDATA)>
-<!ATTLIST name
-  type (admin | user)
->
 <!ELEMENT login (#PCDATA)>
 <!ELEMENT phone (#PCDATA)>
 <!ELEMENT email (#PCDATA)>
 <!ELEMENT sport EMPTY>
-<!ATTLIST sport
-  type (skateboard | soccer | golf)
->
+<!ATTLIST sport type (skateboard | soccer | golf) "skateboard" >
 
 <!ELEMENT person (one,two,also,there)>
+<!ATTLIST person att (val1 | val2 | val3) "val1" >
 <!ELEMENT one (#PCDATA)>
 <!ELEMENT two (#PCDATA)>
 <!ELEMENT also (#PCDATA)>
 <!ELEMENT there (#PCDATA)>
 <!ELEMENT self_close EMPTY>
 <!ELEMENT attribs (#PCDATA)>
-<!ATTLIST attribs
-  attr (val1 | val2 | val3)
->
+<!ATTLIST attribs attr (val1 | val2 | val3) "val1" >

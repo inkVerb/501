@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="validate.xsd"
@@ -20,7 +20,7 @@
     <sport type="soccer"/>
   </visitor>
 
-  <person>
+  <person att="val1">
     <one>value 1</one>
     <two>value 2</two>
     <also>also value</also>

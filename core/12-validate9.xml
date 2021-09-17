@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 
   <!-- Schema -->
@@ -22,11 +22,9 @@
 
     <xs:element name="visitor">
       <xs:complexType>
+        <xs:attribute name="attr" type="xs:string" default="user"/>
         <xs:sequence>
-          <xs:element name="name" type="xs:string">
-            <xs:attribute name="attr" type="xs:string" default="user"/>
-          </xs:element>
-
+          <xs:element name="name" type="xs:string"/>
           <xs:element name="login" type="xs:string"/>
           <xs:element name="phone" type="xs:string"/>
           <xs:element name="email" type="xs:string"/>
@@ -34,13 +32,13 @@
           <xs:element name="sport" type="xs:string">
             <xs:attribute name="type" type="sportattrlist" default="skateboard"/>
           </xs:element>
-          
         </xs:sequence>
       </xs:complexType>
     </xs:element>
 
     <xs:element name="person">
       <xs:complexType>
+        <xs:attribute name="att" type="personattrlist" default="val1"/>
         <xs:sequence>
           <xs:element name="one" type="xs:string"/>
           <xs:element name="two" type="xs:string"/>
@@ -59,23 +57,23 @@
   </xs:schema>
 
   <!-- Content -->
-  <visitor>
-    <name level="admin">John Doe</name>
+  <visitor level="admin">
+    <name>John Doe</name>
     <login>jdoe</login>
     <phone>555-1212</phone>
     <email>jdoe@verb.ink</email>
     <sport type="skateboard"/>
   </visitor>
 
-  <visitor>
-    <name level="user">Smithy Mars</name>
+  <visitor level="user">
+    <name>Smithy Mars</name>
     <login>smithymars</login>
     <phone>555-1515</phone>
     <email>smithy@inkisaverb.com</email>
     <sport type="soccer"/>
   </visitor>
 
-  <person>
+  <person att="val1">
     <one>value 1</one>
     <two>value 2</two>
     <also>also value</also>

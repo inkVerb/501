@@ -1,26 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <!DOCTYPE root SYSTEM "validate.dtd">
 
 <root>
 
-  <visitor>
-    <name level="admin">John Doe</name>
+  <visitor level="admin">
+    <name>John Doe</name>
     <login>jdoe</login>
     <phone>555-1212</phone>
     <email>jdoe@verb.ink</email>
     <sport type="skateboard"/>
   </visitor>
 
-  <visitor>
-    <name level="user">Smithy Mars</name>
+  <visitor level="user">
+    <name>Smithy Mars</name>
     <login>smithymars</login>
     <phone>555-1515</phone>
     <email>smithy@inkisaverb.com</email>
     <sport type="soccer"/>
   </visitor>
 
-  <person>
+  <person att="val1">
     <one>value 1</one>
     <two>value 2</two>
     <also>also value</also>

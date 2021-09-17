@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <xs:schema  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             targetNamespace="http://inkisaverb.com/something.xsd"
@@ -22,11 +22,9 @@
 
   <xs:element name="visitor">
     <xs:complexType>
+      <xs:attribute name="attr" type="xs:string" default="user"/>
       <xs:sequence>
-        <xs:element name="name" type="xs:string">
-          <xs:attribute name="attr" type="xs:string" default="user"/>
-        </xs:element>
-
+        <xs:element name="name" type="xs:string"/>
         <xs:element name="login" type="xs:string"/>
         <xs:element name="phone" type="xs:string"/>
         <xs:element name="email" type="xs:string"/>
@@ -40,6 +38,7 @@
 
   <xs:element name="person">
     <xs:complexType>
+      <xs:attribute name="att" type="personattrlist" default="val1"/>
       <xs:sequence>
         <xs:element name="one" type="xs:string"/>
         <xs:element name="two" type="xs:string"/>
@@ -51,7 +50,7 @@
         <xs:element name="attribs" type="xs:string">
           <xs:attribute name="attr" type="personattrlist" default="val1"/>
         </xs:element>
-        
+
       </xs:sequence>
     </xs:complexType>
   </xs:element>
