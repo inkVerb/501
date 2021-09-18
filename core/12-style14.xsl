@@ -25,8 +25,17 @@
               <td><xsl:value-of select="phone"/></td>
               <td><xsl:value-of select="email"/></td>
               <td><xsl:value-of select="sport/@type"/></td>
-              <td><xsl:value-of select="year"/></td>
-              <td><xsl:value-of select="@level"/></td>
+              <td>
+                <xsl:choose>
+                  <xsl:when test="year&lt;2000">Antique</xsl:when>
+                  <xsl:otherwise><xsl:value-of select="year"/></xsl:otherwise>
+                </xsl:choose>
+              </td>
+              <td>
+                <xsl:if test="@level='admin'">
+                  <b><xsl:value-of select="@level"/></b>
+                </xsl:if>
+              </td>
             </tr>
 
           </xsl:for-each>
