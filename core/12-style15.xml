@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="style.xsl" ?>
+
+<root>
+
+  <header>
+    <title>Visitors</title>
+    <subheading>Interplanetary Prominence</subheading>
+    <credit-url>https://inkisaverb.com/vip</credit-url>
+    <description>
+      <![CDATA[Here, you can learn all about our visitors.]]>
+    </description>
+  </header>
+
+  <visitor level="admin">
+    <name>John Doe</name>
+    <login>jdoe</login>
+    <phone>555-1212</phone>
+    <email>jdoe@verb.ink</email>
+    <sport type="skateboard"/>
+    <year>1995</year>
+  </visitor>
+
+  <visitor level="user">
+    <name>Smithy Mars</name>
+    <login>smithymars</login>
+    <phone>555-1515</phone>
+    <email>smithy@inkisaverb.com</email>
+    <sport type="soccer"/>
+    <year>1989</year>
+  </visitor>
+
+  <visitor level="user">
+    <name>Marshan Wills</name>
+    <login>mwills</login>
+    <phone>555-2727</phone>
+    <email>marwills@verb.vip</email>
+    <sport type="golf"/>
+    <year>1990</year>
+  </visitor>
+
+  <visitor level="user">
+    <name>Jupiter Song</name>
+    <login>jupitersong</login>
+    <phone>555-3535</phone>
+    <email>jupiters@verb.red</email>
+    <sport type="skateboard"/>
+    <year>2001</year>
+  </visitor>
+
+  <visitor level="user">
+    <name>Neptune Lo</name>
+    <login>nlo</login>
+    <phone>555-0101</phone>
+    <email>nlo@verb.blue</email>
+    <sport type="skateboard"/>
+    <year>2010</year>
+  </visitor>
+
+</root>
