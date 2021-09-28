@@ -12,6 +12,14 @@
     </description>
   </header>
 
+  <meta>
+    <!-- Choose one to watch changes -->
+    <status>open</status>
+    <!-- <status>open</status> -->
+    <!-- <status>closed</status> -->
+    <!-- <status></status> -->
+  </meta>
+
   <visitor level="admin">
     <name>John Doe</name>
     <login>jdoe</login>
