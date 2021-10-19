@@ -20,45 +20,45 @@
     <!-- <status></status> -->
   </meta>
 
-  <visitor level="admin">
+  <visitor login="jdoe">
     <name>John Doe</name>
-    <login>jdoe</login>
+    <level>admin</level>
     <phone>555-1212</phone>
     <email>jdoe@verb.ink</email>
     <sport type="skateboard"/>
     <year>1995</year>
   </visitor>
 
-  <visitor level="user">
+  <visitor login="smithymars">
     <name>Smithy Mars</name>
-    <login>smithymars</login>
+    <level>user</level>
     <phone>555-1515</phone>
     <email>smithy@inkisaverb.com</email>
     <sport type="soccer"/>
     <year>1989</year>
   </visitor>
 
-  <visitor level="user">
+  <visitor login="mwills">
     <name>Marshan Wills</name>
-    <login>mwills</login>
+    <level>user</level>
     <phone>555-2727</phone>
     <email>marwills@verb.vip</email>
     <sport type="golf"/>
     <year>1990</year>
   </visitor>
 
-  <visitor level="user">
+  <visitor login="jupitersong">
     <name>Jupiter Song</name>
-    <login>jupitersong</login>
+    <level>user</level>
     <phone>555-3535</phone>
     <email>jupiters@verb.red</email>
     <sport type="skateboard"/>
     <year>2001</year>
   </visitor>
 
-  <visitor level="user">
+  <visitor login="nlo">
     <name>Neptune Lo</name>
-    <login>nlo</login>
+    <level>user</level>
     <phone>555-0101</phone>
     <email>nlo@verb.blue</email>
     <sport type="skateboard"/>
