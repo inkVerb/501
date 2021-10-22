@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<conf>
+
+	<displays>
+
+	  <display id="1">
+			<order>0</order>
+			<brightness>41</brightness>
+			<mode mirror="1">join</mode>
+			<wallpaper>~/Pictures/samson.jpg</wallpaper>
+			<meta>~/.config/device/benq</meta>
+	  </display>
+
+		<display id="2">
+			<order>1</order>
+			<brightness>40</brightness>
+			<mode mirror="2">join</mode>
+			<wallpaper>~/Pictures/bronson.jpg</wallpaper>
+			<meta>~/.config/device/asus-57</meta>
+	  </display>
+
+	</displays>
+
+	<mice>
+
+	  <mouse id="1">
+	    <type>normal</type>
+	    <speed>5</speed>
+			<dcspeed>3</dcspeed>
+	    <handed>right</handed>
+	    <scroll>natural</scroll>
+			<tracking>relative</tracking>
+			<meta>~/.config/device/mouse-xb73</meta>
+	  </mouse>
+
+		<mouse id="2">
+			<type>pad</type>
+			<speed>0</speed>
+			<dcspeed>4</dcspeed>
+			<handed>right</handed>
+			<scroll>natural</scroll>
+			<tracking>absolute</tracking>
+			<meta>~/.config/device/touchpad</meta>
+		</mouse>
+
+	</mice>
+
+  <audio>
+
+		<adevice id="1">
+			<type>out</type>
+	    <level>57</level>
+	    <channel>stereo</channel>
+	    <mute>false</mute>
+			<priority>0</priority>
+			<meta>~/.config/device/speaker-b</meta>
+	  </adevice>
+
+		<adevice id="2">
+			<type>in</type>
+			<level>89</level>
+			<channel>stereo</channel>
+			<mute>true</mute>
+			<priority>0</priority>
+			<meta>~/.config/device/yeti-5</meta>
+		</adevice>
+
+	</audio>
+
+</conf>
