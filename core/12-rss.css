@@ -1,0 +1,35 @@
+/* Displayed */
+rss {
+  display: block;
+  font-family: sans-serif;
+}
+title {
+  display: block;
+  margin: 5px;
+  padding: 2px;
+  color: #888;
+  border-bottom: 1px solid #ccc;
+}
+link {
+  display: block;
+  font-size: small;
+  padding-left: 12px;
+}
+item {
+  display: block;
+  padding: 3px 20px 3px 20px;
+}
+docs {
+  display: block;
+  background-color: #eee;
+  margin: 15px;
+  text-align: center;
+  padding: 5px;
+  color: #808080;
+  border: 1px solid #ccc;
+}
+
+/* Not Displayed */
+  language, lastBuildDate, ttl, guid, category, description, pubDate {
+  display: none;
+}
