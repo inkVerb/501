@@ -13,7 +13,7 @@ class Loopie {
   protected  $protectedProp = "Protected Prop";
   private    $privateProp = "Private Prop";
 
-  // Declare a method we won't see in the loop
+  // Declare a method, methods aren't seen in a reflection loop
   function cantSeeMe() {
     echo "nothere";
   }

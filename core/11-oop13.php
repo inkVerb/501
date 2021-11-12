@@ -24,16 +24,24 @@ class classB extends classA {
 
 }
 
+// Before instantiation
+echo "<h1>Static methods called by uninstantiated class</h1>";
+echo '<code>classA::staticA();</code> ' . classA::staticA();
+echo "<br>..<br>";
+echo '<code>classB::staticB();</code> ' . classB::staticB();
+echo "<br>..<br>";
+
 // Instantiate
 $ObjectA = new classA;
 $ObjectB = new classB;
 
 // Display
-echo "<h1>Methods called by class</h1>";
+echo "<h1>Static methods called by instantiated class</h1>";
 echo '<code>classA::staticA();</code> ' . classA::staticA();
 echo "<br>..<br>";
 echo '<code>classB::staticB();</code> ' . classB::staticB();
 echo "<br>..<br>";
+echo "<h2>Public methods called as if static would break script</h2>";
 //echo '<code>classA::publicA();</code> ' . classA::publicA();
 echo "<br>..<br>";
 //echo '<code>classB::publicB();</code> ' . classB::publicB();

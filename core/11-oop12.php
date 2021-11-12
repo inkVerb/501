@@ -56,16 +56,24 @@ class classB extends classA {
 
 }
 
-// Instantiate
-$ObjectA = new classA;
-$ObjectB = new classB;
-
-// Display
-echo "<h1>Properties called by class</h1>";
+// Before instantiation
+echo "<h1>Static properties called by uninstantiated class</h1>";
 echo '<code>classA::$staticA</code> ' . classA::$staticA;
 echo "<br>..<br>";
 echo '<code>classB::$staticB</code> ' . classB::$staticB;
 echo "<br>..<br>";
+
+// Instantiate
+$ObjectA = new classA;
+$ObjectB = new classB;
+
+// After instantiation
+echo "<h1>Static properties called by instantiated class</h1>";
+echo '<code>classA::$staticA</code> ' . classA::$staticA;
+echo "<br>..<br>";
+echo '<code>classB::$staticB</code> ' . classB::$staticB;
+echo "<br>..<br>";
+echo "<h2>Public properties called as if static would break script</h2>";
 //echo '<code>classA::$publicA</code> ' . classA::$publicA;
 echo "<br>..<br>";
 //echo '<code>classB::$publicB</code> ' . classB::$publicB;
@@ -82,6 +90,7 @@ echo "<br>..<br>";
 echo "<br>..<br>";
 //echo '<code>$ObjectA->AClassPublicB();</code> ' . $ObjectA->AClassPublicB();
 echo "<br>..<br>";
+
 echo "<h1>Class B object methods</h1>";
 echo '<code>$ObjectB->APublic();</code> ' . $ObjectB->BPublic();
 echo "<br>..<br>";

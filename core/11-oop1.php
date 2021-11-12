@@ -20,7 +20,7 @@ class Topic {
 
 // Object
 $topicObject = new Topic;
-exit();
+//exit(); // Uncomment to terminate script before using
 // Use
 echo $topicObject->course();
 echo "<br>..<br>";

@@ -40,17 +40,17 @@ $ObjectFirst->MethodSet("One arg", "Two arg");
 $ObjectAlso->MethodSet("One also", "Two also");
 
 // Return and echo the values from the objects
-echo "<h1>Shell</h1>";
+echo "<h1>First</h1>";
 echo '$ObjectFirst->MethodReturn(1); ' . $ObjectFirst->MethodReturn(1);
 echo "<br>..<br>";
 echo '$ObjectFirst->MethodReturn(2); ' . $ObjectFirst->MethodReturn(2);
 echo "<br>..<br>";
-echo '$ObjectFirst->MethodReturn(); ' . $ObjectFirst->MethodReturn();
-echo "<h1>Shell</h1>";
+//echo '$ObjectFirst->MethodReturn(); ' . $ObjectFirst->MethodReturn(); // Will break script
+echo "<h1>Also</h1>";
 echo '$ObjectAlso->MethodReturn(1); ' . $ObjectAlso->MethodReturn(1);
 echo "<br>..<br>";
 echo '$ObjectAlso->MethodReturn(2); ' . $ObjectAlso->MethodReturn(2);
 echo "<br>..<br>";
-echo '$ObjectAlso->MethodReturn(); ' . $ObjectAlso->MethodReturn();
+//echo '$ObjectAlso->MethodReturn(); ' . $ObjectAlso->MethodReturn(); // Will break script
 
 ?>

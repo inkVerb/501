@@ -3,14 +3,14 @@
 /// Create the parent
 class ParentClass {
 
-  var $parentProperty;
+  var $parentProperty = "parent property";
 
 }
 
 // Create the child
 class ChildClass extends ParentClass {
 
-  var $childProperty;
+  var $childProperty = "child property";
 
 }
 
