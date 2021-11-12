@@ -1,0 +1,10 @@
+Requirements:
+
+- MySQL/Mariadb
+- `extension=pdo_mysql`
+- Database with:
+  - Character set: utf8mb4
+  - Coallation: utf8mb4_unicode_ci
+  - `CREATE DATABASE database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+  
+  

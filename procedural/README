@@ -1,0 +1,5 @@
+Requirements:
+
+- mysql/mariadb
+
+- `extension=pdo_mysql`

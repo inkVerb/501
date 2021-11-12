@@ -1,6 +1,6 @@
 <?php
 
-// MySQLi Connection
+// MySQLi config
 DEFINE ('DB_NAME', 'food_db');
 DEFINE ('DB_USER', 'food_usr');
 DEFINE ('DB_PASSWORD', 'foodpassword');

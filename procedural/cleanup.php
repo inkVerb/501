@@ -4,7 +4,7 @@
 
 // Our config file must have absolute paths, so let's re-arrange thigns...
 
-// MySQLi config
+// MySQLi Connection
 require_once ('/var/www/html/web/in.sql.php');
 
 // Database connection

@@ -3,7 +3,7 @@
 // Start our $_SESSION
 session_start();
 
-// MySQLi Connection
+// MySQLi config
 require_once ('./in.sql.php');
 
 // Database connection

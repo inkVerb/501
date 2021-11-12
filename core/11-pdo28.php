@@ -29,7 +29,7 @@ class DB {
     // $val = DB::esc($string);
 
     $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
-    return PDO::quote($trimmed_data);
+    return $trimmed_data;
   } // esc()
 
   // PDO error handler

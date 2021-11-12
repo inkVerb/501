@@ -132,10 +132,12 @@ EOF;
 
     } else {
       echo '<p>Could not run the installer.</p>';
+      exit();
     }
 
   } else {
     echo '<p>Serious error.</p>';
+    exit();
   }
 
 } // Finish POST if

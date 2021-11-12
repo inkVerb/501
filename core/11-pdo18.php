@@ -17,8 +17,8 @@ $database = new PDO($nameHostChar, $db_user, $db_pass, $opt);
 
 // PDO error handler function
 function pdo_error($query, $error_message) {
-    echo "SQL error from <pre>$query</pre><br>$error_message";
-    exit();
+  echo "SQL error from <pre>$query</pre><br>$error_message";
+  exit();
 }
 
 // Create a table

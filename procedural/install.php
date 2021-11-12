@@ -62,10 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Heredoc:
     $sqlConfigFile = <<<EOF
     <?php
-    \$db_name = '$db_name';
-    \$db_user = '$db_user';
-    \$db_pass = '$db_pass';
-    \$db_host = '$db_host';
+    DEFINE ('DB_NAME', '$db_name');
+    DEFINE ('DB_USER', '$db_user');
+    DEFINE ('DB_PASSWORD', '$db_pass');
+    DEFINE ('DB_HOST', '$db_host');
 EOF;
 
     // Write the file:
@@ -79,14 +79,13 @@ EOF;
       require_once ('./in.config.php');
     } // Now we have a database connection and we can begin making queries
 
+
     // Set the character settings in the database
-    $query = "ALTER DATABASE $db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $query = "ALTER DATABASE webapp_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not update the database, quitting.</p>';
-      //exit();
+      exit();
     }
 
     // Create our tables
@@ -102,12 +101,10 @@ EOF;
       `date_updated` TIMESTAMP NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the users database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `strings` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -117,12 +114,10 @@ EOF;
       `date_expires` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the strings database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `pieces` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -139,12 +134,10 @@ EOF;
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the pieces database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `publications` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -161,12 +154,10 @@ EOF;
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the publications database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `publication_history` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -181,12 +172,10 @@ EOF;
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the publication_history database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `series` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -194,21 +183,12 @@ EOF;
       `slug` VARCHAR(90) NOT NULL,
       `template` INT UNSIGNED DEFAULT NULL,
       PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+    INSERT INTO series (name, slug) VALUES ('Blog', 'blog')";
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the series database table, quitting.</p>';
-      //exit();
-    }
-    $query = "INSERT INTO series (name, slug) VALUES ('Blog', 'blog')";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
-      echo '<p>Could not create the series database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `media_library` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -224,12 +204,10 @@ EOF;
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the media_library database table, quitting.</p>';
-      //exit();
+      exit();
     }
     $query = "CREATE TABLE IF NOT EXISTS `media_images` (
       `m_id` INT UNSIGNED NOT NULL,
@@ -243,29 +221,29 @@ EOF;
       `xl` VARCHAR(9) NOT NULL,
       PRIMARY KEY (`m_id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
-    $statement = $database->query($query);
-    if ($statement) {
-      $installrun = true;
-    } else {
+    $call = mysqli_query($database, $query);
+    if (!$call) {
       echo '<p>Could not create the media_images database table, quitting.</p>';
-      //exit();
+      exit();
     }
 
     // Add the first admin user
 
     // Prepare our database values for entry
     $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    $fullname_sqlesc = DB::esc($fullname);
-    $username_sqlesc = DB::esc($username);
-    $email_sqlesc = DB::esc($email);
-    $favnumber_sqlesc = DB::esc($favnumber);
+    // mysqli_real_escape_string() prepares it for security
+    $fullname_sqlesc = mysqli_real_escape_string($database, $fullname);
+    $username_sqlesc = mysqli_real_escape_string($database, $username);
+    // Our config function escape_sql() does the same thing, but better
+    $email_sqlesc = escape_sql($email);
+    $favnumber_sqlesc = escape_sql($favnumber);
 
     // Run the query
     $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
     VALUES ('$fullname_sqlesc', '$username_sqlesc', '$email_sqlesc', '$favnumber_sqlesc', '$password_hashed', 'admin')";
 		// inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
-    $statement = $database->query($query);
-    if ($statement) {
+    $call = mysqli_query($database, $query);
+    if (mysqli_affected_rows($database) == 1) {
       echo '<h1>All set!</h1>';
       echo '<p>Everything is ready for you to login!</p>
       <p>Username: '.$username.'</p>
