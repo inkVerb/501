@@ -13,7 +13,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series']))) {
   $result = str_replace('--','—',$result); // to em-dash
   $result = substr($result, 0, 90); // Limit to 90 characters
   $new_series = $result;
-  $new_series_sqlesc = escape_sql($new_series);
+  $new_series_sqlesc = DB::esc($new_series);
 
   // Series slug
     // Generate the slug
@@ -23,7 +23,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series']))) {
 
 
     // Check that the slug isn't already used
-    $s_slug_test_sqlesc = escape_sql($s_slug);
+    $s_slug_test_sqlesc = DB::esc($s_slug);
     $query = "SELECT id FROM series WHERE slug='$s_slug'";
     $call = mysqli_query($database, $query);
     if (mysqli_num_rows($call) == 1) {

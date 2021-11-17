@@ -24,19 +24,19 @@ function preview_text($text, $limit, $lid) {
 
 // Check the database for published pieces
 $query = "SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC";
-$call = mysqli_query($database, $query);
+$row = $pdo->try_select($query); // try_ method for complex queries
 // Start our show_div counter
 $show_div_count = 1;
 // We have many entries, this will iterate one post per each
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+while ($row) {
   // Assign the values
-  $p_id = "$row[0]";
-  $p_title = "$row[1]";
-  $p_slug = "$row[2]";
-  $p_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-  $p_tags_sqljson = "$row[4]";
-  $p_live = "$row[5]";
-  $p_update = "$row[6]";
+  $p_id = "$row->piece_id";
+  $p_title = "$row->title";
+  $p_slug = "$row->slug";
+  $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+  $p_tags_sqljson = "$row->tags";
+  $p_live = "$row->date_live";
+  $p_update = "$row->date_updated";
 
   // Start our hoverable <div>
   echo '<div onmouseover="showTags'.$show_div_count.'()" onmouseout="showTags'.$show_div_count.'()">';

@@ -12,65 +12,6 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.logincheck.php');
 include ('./in.head.php');
 
-// We must be logged in!
-// See if we have a cookie
-if (isset($_COOKIE['user_id'])) {
-  $user_id = $_COOKIE['user_id'];
-  $user_id_sqlesc = escape_sql($user_id);
-  $query = "SELECT fullname FROM users WHERE id='$user_id_sqlesc'";
-  $call = mysqli_query($database, $query);
-  // Check to see that our SQL query returned exactly 1 row
-  if (mysqli_num_rows($call) == 1) {
-    // Assign the values
-    $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $fullname = "$row[0]";
-
-      // Set the $_SESSION array
-      $_SESSION['user_id'] = $user_id;
-      $_SESSION['full_name'] = $fullname;
-
-      // Show a message
-      echo "<p>$fullname, you are logged in from a cookie!</p>";
-
-    } else { // Back-up plan just in case the impossible happens
-      echo '<p class="error">Serious error.</p>';
-
-      // We must finish the HTML page before we exit
-      echo '
-      </body>
-      </html>';
-
-      // We could just redirect to the main page instead
-      //header("Location: blog.php");
-      exit();
-    }
-
-
-// See if we are already logged in
-} elseif ((isset($_SESSION['user_id'])) && (isset($_SESSION['full_name']))) {
-  $user_id = $_SESSION['user_id'];
-  $fullname = $_SESSION['full_name'];
-
-  // Show a message
-  echo "<p>$fullname, you are logged in and ready to do stuff!</p>";
-
-} else {
-  // Show a message
-  echo "<h1>Not logged in</h1>
-  <p>You are not logged in!</p>";
-
-  // We must finish the HTML page before we exit
-  echo '
-  </body>
-  </html>';
-
-  // We could just redirect to the main page instead
-  //header("Location: blog.php");
-  exit();
-}
-
-
-
 // POSTed form?
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

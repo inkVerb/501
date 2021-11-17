@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checks_out = true;
 
     // if SELECT: Query user info from the database if everything checks out
-    $username_sqlesc = escape_sql($username);
-    $favnumber_sqlesc = escape_sql($favnumber);
+    $username_sqlesc = DB::esc($username);
+    $favnumber_sqlesc = DB::esc($favnumber);
     $query = "SELECT id FROM users WHERE username='$username_sqlesc' AND favnumber='$favnumber_sqlesc'";
     $call = mysqli_query($database, $query);
     // Check to see that our SQL query returned exactly 1 row

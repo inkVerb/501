@@ -30,7 +30,7 @@ if (isset($_POST['as_json'])) {
   }
   // Get our info, update the dateabse, redirect to the Editor
   $piece_id = filter_var($as_diff_array["piece_id"], FILTER_VALIDATE_INT);
-  $piece_id_sqlesc = escape_sql($piece_id);
+  $piece_id_sqlesc = DB::esc($piece_id);
   $p_title = checkPiece('p_title',$as_diff_array["p_title"]);
     // Apply Title to Slug if empty
     if ((empty($as_diff_array["p_slug"])) || (empty($as_diff_array["p_slug"] == ''))) {
@@ -40,7 +40,7 @@ if (isset($_POST['as_json'])) {
     }
 
     // Check that the slug isn't already used
-    $p_slug_test_sqlesc = escape_sql($p_slug);
+    $p_slug_test_sqlesc = DB::esc($p_slug);
     $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
     $call = mysqli_query($database, $query);
     if (mysqli_num_rows($call) > 0) {
@@ -50,7 +50,7 @@ if (isset($_POST['as_json'])) {
       while ($dup = true) {
         $add_num = $add_num + 1;
         $new_p_slug = $p_slug.'-'.$add_num;
-        $new_p_slug_test_sqlesc = escape_sql($new_p_slug);
+        $new_p_slug_test_sqlesc = DB::esc($new_p_slug);
 
         // Check again
         $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
@@ -69,10 +69,10 @@ if (isset($_POST['as_json'])) {
   $p_update = date("Y-m-d H:i:s", substr($as_diff_array["as_time"], 0, 10));
 
   // Prepare our database values for entry
-  $p_title_sqlesc = escape_sql($p_title);
-  $p_slug_sqlesc = escape_sql($p_slug);
-  $p_content_sqlesc = escape_sql($p_content);
-  $p_after_sqlesc = escape_sql($p_after);
+  $p_title_sqlesc = DB::esc($p_title);
+  $p_slug_sqlesc = DB::esc($p_slug);
+  $p_content_sqlesc = DB::esc($p_content);
+  $p_after_sqlesc = DB::esc($p_after);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 

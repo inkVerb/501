@@ -15,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if  ( (isset($_POST['p_id']))
   &&   (filter_var($_POST['p_id'], FILTER_VALIDATE_INT)) ) {
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p_id']);
-    $piece_id_sqlesc = escape_sql($piece_id);
+    $piece_id_sqlesc = DB::esc($piece_id);
   } elseif ( (isset($_POST['edit_piece']))
         &&   (filter_var($_POST['edit_piece'], FILTER_VALIDATE_INT)) ) {
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['edit_piece']);
-    $piece_id_sqlesc = escape_sql($piece_id);
+    $piece_id_sqlesc = DB::esc($piece_id);
   } else {
     exit();
   }
@@ -48,7 +48,7 @@ if ( (isset($_POST['edit_piece']))
     $p_slug = checkPiece('p_slug',$_POST['p_slug']);
   }
   // Check that the slug isn't already used
-  $p_slug_test_sqlesc = escape_sql($p_slug);
+  $p_slug_test_sqlesc = DB::esc($p_slug);
   $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc' AND NOT piece_id='$piece_id_sqlesc'";
   $call = mysqli_query($database, $query);
   if (mysqli_num_rows($call) == 1) {
@@ -82,7 +82,7 @@ if ( (isset($_POST['edit_piece']))
   } else {
     $p_live = date("Y-m-d H:i:s");
   }
-  $p_live_sqlesc = escape_sql($p_live);
+  $p_live_sqlesc = DB::esc($p_live);
 
   // Series
   // Set a default Series, probably from settings table
@@ -104,9 +104,9 @@ if ( (isset($_POST['edit_piece']))
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
   // Prepare our database values for entry
-  $p_title_sqlesc = escape_sql($p_title);
-  $p_slug_sqlesc = escape_sql($p_slug);
-  $p_after_sqlesc = escape_sql($p_after);
+  $p_title_sqlesc = DB::esc($p_title);
+  $p_slug_sqlesc = DB::esc($p_slug);
+  $p_after_sqlesc = DB::esc($p_after);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 

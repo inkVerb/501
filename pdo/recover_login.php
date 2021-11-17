@@ -8,7 +8,7 @@ if (isset($_GET['s'])) {
 
   // Assign the GET value
   $secure_string = $_GET['s'];
-  $secure_string_sqlesc = escape_sql($secure_string); // We need to SQL escape this because it is a user input
+  $secure_string_sqlesc = DB::esc($secure_string); // We need to SQL escape this because it is a user input
 
   // Assign the current time
   $time_now = date("Y-m-d H:i:s");

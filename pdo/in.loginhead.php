@@ -15,17 +15,15 @@ if (isset($_COOKIE['user_key'])) {
 
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
-  $user_key_sqlesc = escape_sql($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
-  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_sqlesc' AND usable='cookie_login' AND  date_expires > '$time_now'";
-  $call = mysqli_query($database, $query);
-  if (mysqli_num_rows($call) == 1) {
+  $user_key_sqlesc = DB::esc($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_sqlesc' AND usable='live' AND  date_expires > '$time_now'";
+  $row = $pdo->try_select($query); // try_ method for complex queries
+  if ($pdo->rows == 1) {
     // Assign the values
-    $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]";
+    $user_id = "$row->userid";
   } else { // Destroy cookies, SESSION, and redirect
-    $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key_sqlesc'";
-    $call = mysqli_query($database, $query);
-    if (!$call) { // It doesn't matter if the key is there or not, just that SQL is working
+    $call = $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
+    if (!$pdo->ok) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
     } else {
       $_SESSION = array(); // Reset the `_SESSION` array
@@ -38,27 +36,24 @@ if (isset($_COOKIE['user_key'])) {
     exit(header("Location: blog.php"));
   }
 
-
   // Get the user's info from the users table
-  $query = "SELECT fullname FROM users WHERE id='$user_id'";
-  $call = mysqli_query($database, $query);
+  $row = $pdo->select('users', 'id', $user_id, 'fullname');
   // Check to see that our SQL query returned exactly 1 row
-  if (mysqli_num_rows($call) == 1) {
+  if ($pdo->rows == 1) {
     // Assign the values
-    $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $fullname = "$row[0]";
+    $fullname = "$row->fullname";
 
-      // Set the $_SESSION array
-      $_SESSION['user_id'] = $user_id;
-      $_SESSION['full_name'] = $fullname;
+    // Set the $_SESSION array
+    $_SESSION['user_id'] = $user_id;
+    $_SESSION['full_name'] = $fullname;
 
-      // Show a message
-      echo "<h1>501 Blog</h1>
-      <p>Hi, $fullname!</p>";
-    } else {
-      echo "Database error!";
-      exit();
-    }
+    // Show a message
+    echo "<h1>501 Blog</h1>
+    <p>Hi, $fullname!</p>";
+  } else {
+    echo "Database error!";
+    exit();
+  }
 
 
 // See if we are already logged in
@@ -80,17 +75,15 @@ if (isset($_COOKIE['user_key'])) {
     $checks_out = true;
 
     // if SELECT: Query user info from the database if everything checks out
-    $username_sqlesc = escape_sql($username);
-    $password_to_check = escape_sql($password);
-    $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
-    $call = mysqli_query($database, $query);
+    $username_sqlesc = DB::esc($username);
+    $password_to_check = DB::esc($password);
+    $row = select('users', 'username', $username_sqlesc, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
-    if (mysqli_num_rows($call) == 1) {
+    if ($pdo->rows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $user_id = "$row[0]";
-        $fullname = "$row[1]";
-        $hashed_password = "$row[2]";
+      $user_id = "$row->id";
+      $fullname = "$row->fullname";
+      $hashed_password = "$row->pass";
 
       // Test our password against the hash
       if (password_verify($password_to_check, $hashed_password)) {
@@ -112,14 +105,12 @@ if (isset($_COOKIE['user_key'])) {
             $random_string = alnumString(255);
 
             // Check to see if the string already exists in the database
-            $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
-            $call = mysqli_query($database, $query);
-            while (mysqli_num_rows($call) == 1) {
+            $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
+            while ($pdo->rows >= 1) {
               $random_string = alnumString(32);
               // Check again
-              $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
-              $call = mysqli_query($database, $query);
-              if (mysqli_num_rows($call) == 0) {
+              $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
+              if ($pdo->rows == 0) {
                 break;
               }
             }
@@ -128,11 +119,10 @@ if (isset($_COOKIE['user_key'])) {
             $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
 
             // Add the string to the database
-            $query = "INSERT INTO strings (userid, random_string, usable, date_expires) VALUES ('$user_id', '$random_string', 'cookie_login', '$date_expires')";
-            $call = mysqli_query($database, $query);
+            $call = insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
 
             // Database error or success?
-            if (mysqli_affected_rows($database) != 1) { // If it didn't run okay
+            if ($pdo->change) { // If it didn't run okay
               echo "There was a database error!";
             } else {
               // Set the cookie $_COOKIE['user_key']

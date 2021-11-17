@@ -43,7 +43,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $m_file_base_new = preg_replace($regex_replace,"-", $_POST['save_file_name']); // Lowercase, all non-alnum to hyphen
 
     // SQL
-    $m_file_base_new_sqlesc = escape_sql($m_file_base_new);
+    $m_file_base_new_sqlesc = DB::esc($m_file_base_new);
     $query = "UPDATE media_library SET file_base='$m_file_base_new_sqlesc', date_updated=NOW() WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {
@@ -172,8 +172,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $alt_text = htmlspecialchars($_POST['alt_text']);
 
     // SQL
-    $title_text_sqlesc = escape_sql($title_text);
-    $alt_text_sqlesc = escape_sql($alt_text);
+    $title_text_sqlesc = DB::esc($title_text);
+    $alt_text_sqlesc = DB::esc($alt_text);
     $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc', date_updated=NOW() WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
     if ($call) {

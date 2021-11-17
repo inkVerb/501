@@ -93,8 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email_sqlesc = escape_sql($email);
     $favnumber_sqlesc = escape_sql($favnumber);
 
-"UPDATE ads SET epoch_wk_reset='$resetEpoch', week_view_count=0, week_cat_count=0, week_tag_count=0, week_search_count=0, WHERE ad_id='$ad_id'";
-
     // Prepare the query
     if (isset($password)) { // Changing password?
       $query = "UPDATE users SET fullname='$fullname_sqlesc', username='$username_sqlesc', email='$email_sqlesc', favnumber='$favnumber_sqlesc', pass='$password_hashed' WHERE id='$user_id'";

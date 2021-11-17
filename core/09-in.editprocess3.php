@@ -211,7 +211,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       AND tags=CAST('$p_tags_sqljson' AS JSON)
       AND links=CAST('$p_links_sqljson' AS JSON)";
       $call = mysqli_query($database, $query);
-      // If there were no changes
+      // If there were no duplicates
       if (mysqli_num_rows($call) == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {

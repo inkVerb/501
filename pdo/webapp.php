@@ -35,17 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checks_out = true;
 
     // if SELECT: Query user info from the database if everything checks out
-    $username_sqlesc = escape_sql($username);
-    $password_to_check = escape_sql($password);
-    $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
-    $call = mysqli_query($database, $query);
+    $username_sqlesc = DB::esc($username);
+    $password_to_check = DB::esc($password);
+    $row = $pdo->select('users', 'username', $username_sqlesc, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
-    if (mysqli_num_rows($call) == 1) {
+    if ($pdo->rows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $user_id = "$row[0]";
-        $fullname = "$row[1]";
-        $hashed_password = "$row[2]";
+      $user_id = "$row->id";
+      $fullname = "$row->fullname";
+      $hashed_password = "$row->pass";
 
       // Test our password against the hash
       if (password_verify($password_to_check, $hashed_password)) {
@@ -67,14 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $random_string = alnumString(255);
 
             // Check to see if the string already exists in the database
-            $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
-            $call = mysqli_query($database, $query);
-            while (mysqli_num_rows($call) == 1) {
+            $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
+            while ($pdo->rows >= 1) {
               $random_string = alnumString(32);
               // Check again
-              $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
-              $call = mysqli_query($database, $query);
-              if (mysqli_num_rows($call) == 0) {
+              $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
+              if ($pdo->rows == 0) {
                 break;
               }
             }
@@ -83,11 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
 
             // Add the string to the database
-            $query = "INSERT INTO strings (userid, random_string, usable, date_expires) VALUES ('$user_id', '$random_string', 'cookie_login', '$date_expires')";
-            $call = mysqli_query($database, $query);
+            $call = $pdo->insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
 
             // Database error or success?
-            if (mysqli_affected_rows($database) != 1) { // If it didn't run okay
+            if (!$pdo->change) { // If it didn't run okay
               echo "There was a database error!";
             } else {
               // Set the cookie $_COOKIE['user_key']
@@ -102,12 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       } else { // Password fail
         echo '<h1>501 Blog login error!</h1>
-        <p class="error">Login error!</p>';
+        <p class="error">Login password error!</p>';
       }
 
     } else { // Username fail
       echo '<h1>501 Blog login error!</h1>
-      <p class="error">Login error!</p>';
+      <p class="error">Login username error!</p>';
     } // End database check
 
   // If errors in form

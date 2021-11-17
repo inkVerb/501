@@ -24,7 +24,7 @@
 
 // Query the Serieses
 $query = "SELECT id, name FROM series";
-$call = mysqli_query($database, $query);
+$row = $pdo->try_select($query);
 
 // Start the select input
 // We need the div with our AJAX form inside so the input value is reset on success
@@ -33,9 +33,9 @@ echo '
 <select form="edit_piece" name="p_series" onchange="onNavWarn();" onkeyup="onNavWarn();" onclick="onNavWarn();">';
 
 // Iterate each Series
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
-  $s_id = "$row[0]";
-  $s_name = "$row[1]";
+while ($row) {
+  $s_id = "$row->id";
+  $s_name = "$row->name";
   $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the current Series
   echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
 }

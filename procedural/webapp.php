@@ -102,12 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       } else { // Password fail
         echo '<h1>501 Blog login error!</h1>
-        <p class="error">Login error!</p>';
+        <p class="error">Login password error!</p>';
       }
 
     } else { // Username fail
       echo '<h1>501 Blog login error!</h1>
-      <p class="error">Login error!</p>';
+      <p class="error">Login username error!</p>';
     } // End database check
 
   // If errors in form

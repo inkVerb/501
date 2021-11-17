@@ -6,10 +6,9 @@ include ('./in.config.php');
 // Delete the cookie in the database if one exists
 if (isset($_COOKIE['user_key'])) {
   $user_key = $_COOKIE['user_key'];
-  $user_key_sqlesc = escape_sql($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
-  $query = "UPDATE strings SET usable='dead' WHERE BINARY random_string='$user_key_sqlesc'";
-  $call = mysqli_query($database, $query);
-  if (!$call) {
+  $user_key_sqlesc = DB::esc($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $call = $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
+  if (!$pdo->change) {
     echo '<p class="error">SQL key error!</p>';
   }
 }

@@ -134,6 +134,8 @@ EOF;
       `content` LONGTEXT DEFAULT NULL,
       `after` TINYTEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
+      `tags` JSON DEFAULT NULL,
+      `links` JSON DEFAULT NULL,
       `date_live` TIMESTAMP NULL,
       `date_created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -157,6 +159,8 @@ EOF;
       `content` LONGTEXT DEFAULT NULL,
       `after` TINYTEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
+      `tags` JSON DEFAULT NULL,
+      `links` JSON DEFAULT NULL,
       `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
@@ -177,6 +181,8 @@ EOF;
       `content` LONGTEXT DEFAULT NULL,
       `after` TINYTEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
+      `tags` JSON DEFAULT NULL,
+      `links` JSON DEFAULT NULL,
       `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
@@ -255,10 +261,10 @@ EOF;
 
     // Prepare our database values for entry
     $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    $fullname_sqlesc = DB::esc($fullname);
-    $username_sqlesc = DB::esc($username);
-    $email_sqlesc = DB::esc($email);
-    $favnumber_sqlesc = DB::esc($favnumber);
+    $fullname_sqlesc = DB::DB::esc($fullname);
+    $username_sqlesc = DB::DB::esc($username);
+    $email_sqlesc = DB::DB::esc($email);
+    $favnumber_sqlesc = DB::DB::esc($favnumber);
 
     // Run the query
     $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)

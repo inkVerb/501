@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- CSS file included as <link> -->
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
 <?php
 
 // Include our config (with SQL) up near the top of our PHP file
@@ -5,12 +13,6 @@ include ('./in.config.php');
 
 // Include our functions
 include ('./in.functions.php');
-
-// Include our login cluster
-$head_title = "Account Settings"; // Set a <title> name used next
-$edit_page_yn = false; // Include JavaScript for TinyMCE?
-include ('./in.logincheck.php');
-include ('./in.head.php');
 
 // We must be logged in!
 // See if we have a cookie
@@ -30,10 +32,11 @@ if (isset($_COOKIE['user_id'])) {
       $_SESSION['full_name'] = $fullname;
 
       // Show a message
-      echo "<p>$fullname, you are logged in from a cookie!</p>";
+      echo "<h1>Cookie</h1>
+      <p>$fullname, you are already logged in from a cookie!</p>";
 
     } else { // Back-up plan just in case the impossible happens
-      echo '<p class="error">Serious error.</p>';
+      echo '<p class="error">Serious error. '.$query.'</p>';
 
       // We must finish the HTML page before we exit
       echo '
@@ -41,7 +44,7 @@ if (isset($_COOKIE['user_id'])) {
       </html>';
 
       // We could just redirect to the main page instead
-      //header("Location: blog.php");
+      //header("Location: webapp.php");
       exit();
     }
 
@@ -52,7 +55,8 @@ if (isset($_COOKIE['user_id'])) {
   $fullname = $_SESSION['full_name'];
 
   // Show a message
-  echo "<p>$fullname, you are logged in and ready to do stuff!</p>";
+  echo "<h1>Logged In</h1>
+  <p>$fullname, you are logged in and ready to do stuff!</p>";
 
 } else {
   // Show a message
@@ -65,7 +69,7 @@ if (isset($_COOKIE['user_id'])) {
   </html>';
 
   // We could just redirect to the main page instead
-  //header("Location: blog.php");
+  //header("Location: webapp.php");
   exit();
 }
 
@@ -88,8 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username_sqlesc = escape_sql($username);
     $email_sqlesc = escape_sql($email);
     $favnumber_sqlesc = escape_sql($favnumber);
-
-"UPDATE ads SET epoch_wk_reset='$resetEpoch', week_view_count=0, week_cat_count=0, week_tag_count=0, week_search_count=0, WHERE ad_id='$ad_id'";
 
     // Prepare the query
     if (isset($password)) { // Changing password?
@@ -119,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 } // Finish POST if
 
+
 // Retrieve the user info from the database
 $query = "SELECT fullname, username, email, favnumber FROM users WHERE id='$user_id'";
 // Run the query
@@ -131,9 +134,10 @@ if (mysqli_num_rows($call) == 1) {
     $email = "$row[2]";
     $favnumber = "$row[3]";
 
+
   // Our actual settings page
 
-  // Settings form
+  echo '<h1>Account Settings</h1>';
   echo '
   <form action="account.php" method="post">';
 
@@ -153,5 +157,7 @@ if (mysqli_num_rows($call) == 1) {
   echo '<p class="errors">No account detected!</p>';
 }
 
-// Footer
-include ('./in.footer.php');
+?>
+
+</body>
+</html>
