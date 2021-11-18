@@ -4,7 +4,7 @@
 function metaeditform($name, $p_id) {
 
   // Validate the $p_id
-  if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
+  if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit ();}
 
   // Get the page we're going to
   switch ($name) {
@@ -96,7 +96,7 @@ function piecesaction($action, $p_id) {
   global $database;
 
   // Validate the $p_id
-  if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit();}
+  if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit ();}
 
   // Choose the action
   switch ($action) {
@@ -108,7 +108,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;
@@ -120,7 +120,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;
@@ -134,7 +134,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;
@@ -149,7 +149,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;
@@ -169,7 +169,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;
@@ -183,7 +183,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;
@@ -197,7 +197,7 @@ function piecesaction($action, $p_id) {
       } else {
         unset($piecesactionsuccess);
         echo '<pre>Major database error!</pre>';
-        exit();
+        exit ();
       }
 
       break;

@@ -4,7 +4,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Include our pieces functions
@@ -14,7 +14,7 @@ include ('./in.metaeditfunctions.php');
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($_POST['action'])) ) {
 
   // Validate & filter
-  if (!filter_var($_POST['p'], FILTER_VALIDATE_INT)) {exit();}
+  if (!filter_var($_POST['p'], FILTER_VALIDATE_INT)) {exit ();}
   $piece_id = $_POST['p'];
   $action = filter_var($_POST['action'], FILTER_SANITIZE_STRING); // Remove any HTML tags
 
@@ -22,7 +22,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
   piecesaction($action, $piece_id);
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 
 }
 ?>

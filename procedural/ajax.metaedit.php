@@ -8,7 +8,7 @@ include_once ('./in.piecefunctions.php');
 
 // Require login
 if (!isset($_SESSION['user_id'])) {
-  exit();
+  exit ();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['edit_piece']);
     $piece_id_sqlesc = escape_sql($piece_id);
   } else {
-    exit();
+    exit ();
   }
 } else {
-  exit();
+  exit ();
 }
 
 // Save
@@ -34,7 +34,7 @@ if ( (isset($_POST['edit_piece']))
   // Pub Status
   if ( ($_POST['p_pubyn'] != 'published') && ($_POST['p_pubyn'] != 'pre-draft') ) {
     echo '<b class="error">impossible error</b>';
-    exit();
+    exit ();
   }
   $p_pubyn = ($_POST['p_pubyn'] == 'published') ? $_POST['p_pubyn'] : 'pre-draft';
 
@@ -159,7 +159,7 @@ if ( (isset($_POST['edit_piece']))
 
   // We're done here
   echo $json_response;
-  exit();
+  exit ();
 
 // Editing
 } elseif (isset($_POST['p_id'])) {
@@ -304,5 +304,5 @@ if ( (isset($_POST['edit_piece']))
   echo '</td></tr>';
 
 } else {
-  exit();
+  exit ();
 }

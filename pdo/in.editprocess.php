@@ -24,8 +24,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
   // Check for existing publication
   $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id_sqlesc'";
-  $row = try_select($query);
-  if ($pdo->rows == 1) {
+  $row = $pdo->try_select($query);
+  if ($pdo->numrows == 1) {
     $pubstatus = "$row->pubstatus";
   } else {
     $pubstatus = 'none';
@@ -49,8 +49,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   } else {
     $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc'";
   }
-  $row = try_select($query);
-  if ($pdo->rows > 0) {
+  $row = $pdo->try_select($query);
+  if ($pdo->numrows > 0) {
     $add_num = 0;
     $dup = true;
     // If there were no changes
@@ -65,8 +65,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       } else {
         $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc'";
       }
-      $row = try_select($query);
-      if ($pdo->rows == 0) {
+      $row = $pdo->try_select($query);
+      if ($pdo->numrows == 0) {
         $p_slug = $new_p_slug;
         break;
       }
@@ -92,8 +92,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   if (filter_var($_POST['p_series'], FILTER_VALIDATE_INT)) {
     $p_series = $_POST['p_series'];
     $query = "SELECT id FROM series WHERE id='$p_series'";
-    $row = try_select($query);
-    if ($pdo->rows != 1) {
+    $row = $pdo->try_select($query);
+    if ($pdo->numrows != 1) {
       $p_series = $de_series;
     }
   } else {
@@ -164,9 +164,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     AND BINARY date_live='$p_live_sqlesc'
     AND tags=CAST('$p_tags_sqljson' AS JSON)
     AND links=CAST('$p_links_sqljson' AS JSON)"; // This is how to test if a JSON string matches
-    $row = try_select($query);
+    $row = $pdo->try_select($query);
     // If there were no changes
-    if ($pdo->rows == 1) {
+    if ($pdo->numrows == 1) {
       // Get the date_live to see if that is the only change
        $p_live_found = $row->date_live;
        // A NULL value can fool some tests, if the date_live is NULL and Scheduled... not set, set $p_live_found as a dummy string so it doesn't fool us
@@ -180,9 +180,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // For the Publish button, we at least need to know the piece indeed exists
     } else {
       $query = "SELECT id FROM pieces WHERE id='$piece_id_sqlesc'";
-      $row = try_select($query);
+      $row = $pdo->try_select($query);
       // If there were no changes
-      if ($pdo->rows == 1) {
+      if ($pdo->numrows == 1) {
         // We are editing a piece that has been saved, publication is allowed
         $editing_existing_piece = true;
       }
@@ -204,8 +204,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           // Do we need a new scheduled time?
           if ($p_live_schedule == 'waiting') {
             $querysc = "SELECT date_live FROM pieces WHERE id='$piece_id_sqlesc'";
-            $rowsc = select('pieces', 'id', $piece_id_sqlesc, 'date_live');
-            if ($pdo->rows == 1) {
+            $rowsc = $pdo->select('pieces', 'id', $piece_id_sqlesc, 'date_live');
+            if ($pdo->numrows == 1) {
               $p_live = $rowsc->date_live;
               $p_live_schedule = true; // Set this for the rest of our form
             } else {
@@ -257,9 +257,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       AND BINARY date_live='$p_live_sqlesc'
       AND tags=CAST('$p_tags_sqljson' AS JSON)
       AND links=CAST('$p_links_sqljson' AS JSON)";
-      $row = try_select($query);
+      $row = $pdo->try_select($query);
       // If there were no duplicates
-      if ($pdo->rows == 0) {
+      if ($pdo->numrows == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
           $query = "INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc';";
@@ -302,7 +302,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
            echo '<p class="green">'.$publication_message.'</p>';
         } else {
           echo '<p class="error">Serious error.</p>';
-          exit();
+          exit ();
         }
       } else {
         echo '<p class="orange">No change to publication.</p>';
@@ -322,7 +322,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
     // Run the query
-    $call = try_insert($query);
+    $pdo->try_insert($query);
     // Test the query
     if ($pdo->ok) {
       // Change
@@ -332,24 +332,24 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $piece_id  = $pdo->lastid;
         // Redirect so we have the GET argument in the URL
         header("Location: edit.php?p=$piece_id");
-        exit();
+        exit ();
       // No change
     } elseif (!$pdo->change) {
         echo '<p class="orange">Error, not saved.</p>';
-        exit();
+        exit ();
       }
     } else {
       echo '<p class="error">Serious error.</p>';
-      exit();
+      exit ();
     }
 
   } // End new/update if
 
   // Look for a publications piece by that ID, regardless of what happened, after everything happened
   $query = "SELECT id FROM publications WHERE piece_id='$piece_id_sqlesc' AND pubstatus='published'";
-  $row = try_select($query);
+  $row = $pdo->try_select($query);
   // Shoule be 1 row
-  if ($pdo->rows == 1) {
+  if ($pdo->numrows == 1) {
     $editing_published_piece = true;
   }
 
@@ -366,9 +366,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     // Retrieve existing piece from history
     $query = "SELECT piece_id, type, series, title, slug, content, after, tags, links, date_live FROM publication_history WHERE id='$revert_id'";
-    $row = try_select($query);
+    $row = $pdo->try_select($query);
     // Shoule be 1 row
-    if ($pdo->rows == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
         $piece_id = "$row->piece_id";
@@ -405,15 +405,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         }
 
         $query = "SELECT status FROM pieces WHERE id='$piece_id'";
-        $row = try_select($query);
+        $row = $pdo->try_select($query);
         // Shoule be 1 row
-        if ($pdo->rows == 1) {
+        if ($pdo->numrows == 1) {
           // Assign the values
           $row = mysqli_fetch_array($call, MYSQLI_NUM);
             $p_status = "$row->status";
           } else {
             echo '<p class="error">Impossible error.</p>';
-            exit();
+            exit ();
           }
 
       // We are editing a piece that has been saved, publication is allowed
@@ -422,7 +422,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       } else {
         // ID does not match, redirect to blank editor
         header("Location: edit.php");
-        exit();
+        exit ();
       }
 
   // ID is not from SESSION, it is from GET
@@ -434,17 +434,17 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     // Look for a publications piece, regardless of what happens, before anything else happens
     $query = "SELECT id FROM publications WHERE piece_id='$piece_id_sqlesc' AND pubstatus='published'";
-    $row = try_select($query);
+    $row = $pdo->try_select($query);
     // Shoule be 1 row
-    if ($pdo->rows == 1) {
+    if ($pdo->numrows == 1) {
       $editing_published_piece = true;
     }
 
     // Retrieve existing piece
     $query = "SELECT type, status, series, title, slug, content, after, tags, links, date_live FROM pieces WHERE id='$piece_id_sqlesc'";
-    $row = try_select($query);
+    $row = $pdo->try_select($query);
     // Shoule be 1 row
-    if ($pdo->rows == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
       $row = mysqli_fetch_array($call, MYSQLI_NUM);
         $p_type = "$row->type";
@@ -480,7 +480,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       } else {
         // ID does not match, redirect to blank editor
         header("Location: edit.php");
-        exit();
+        exit ();
       }
     }
 

@@ -28,7 +28,7 @@ if (isset($_COOKIE['user_key'])) {
     }
     if ((!isset($nologin_allowed)) || ($nologin_allowed != true)) {
       // exit and redirect in one line
-      exit(header("Location: webapp.php"));
+      exit (header("Location: webapp.php"));
     }
   }
 
@@ -47,7 +47,7 @@ if (isset($_COOKIE['user_key'])) {
 
     } else {
       echo '<p class="error">SQL error!</p>';
-      exit();
+      exit ();
     }
 
 
@@ -61,7 +61,7 @@ if (isset($_COOKIE['user_key'])) {
 // Not logged in
 } else {
   // exit and redirect in one line
-  exit(header("Location: webapp.php"));
+  exit (header("Location: webapp.php"));
 }
 
 // Echo our header links

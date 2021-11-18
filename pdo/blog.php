@@ -24,11 +24,11 @@ function preview_text($text, $limit, $lid) {
 
 // Check the database for published pieces
 $query = "SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC";
-$row = $pdo->try_select($query); // try_ method for complex queries
+$rows = $pdo->try_select_multi($query); // try_ method for complex queries
 // Start our show_div counter
 $show_div_count = 1;
 // We have many entries, this will iterate one post per each
-while ($row) {
+foreach ($rows as $row) {
   // Assign the values
   $p_id = "$row->piece_id";
   $p_title = "$row->title";

@@ -283,7 +283,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
   // Show our $errors
   echo $errors;
 } else { // End POST check
-  exit();
+  exit ();
 }
 
 ?>

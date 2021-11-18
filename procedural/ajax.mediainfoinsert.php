@@ -35,7 +35,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
       // We're done here
       $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
       echo $json_response;
-      exit();
+      exit ();
     }
 
     // Assign and sanitize
@@ -210,7 +210,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
       echo '<b id="media-editor-content" class="error">Error!</b>
       <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
       <p class="error">Database error: Media item not found.</p>';
-      exit();
+      exit ();
     }
 
     // Assign a "pretty" value for basic media type
@@ -231,7 +231,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         echo '<b id="media-editor-content" class="error">Error!</b>
         <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
         <p class="error">Database error: Media type is impossible.</p>';
-        exit();
+        exit ();
     }
 
     // Assign a "pretty" value for specific media mime type
@@ -300,7 +300,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         echo '<b id="media-editor-content" class="error">Error!</b>
         <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
         <p class="error">Database error: Media mime type is impossible. '.$m_mime_type.'</p>';
-        exit();
+        exit ();
     }
 
     // This is a handy function to make file sizes in bytes readable by humans
@@ -445,7 +445,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } // mediaEdit AJAX loader
 
 } else { // End POST check
-  exit();
+  exit ();
 }
 
 ?>

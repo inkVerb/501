@@ -26,12 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username_sqlesc = DB::esc($username);
     $favnumber_sqlesc = DB::esc($favnumber);
     $query = "SELECT id FROM users WHERE username='$username_sqlesc' AND favnumber='$favnumber_sqlesc'";
-    $call = mysqli_query($database, $query);
+    $row = $pdo->try_select($query);
     // Check to see that our SQL query returned exactly 1 row
-    if (mysqli_num_rows($call) == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $user_id = "$row[0]";
+        $user_id = "$row->id";
 
       } else { // Favorite number fail
         echo '<p class="error">Recovery error!</p>';

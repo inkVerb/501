@@ -15,30 +15,28 @@ if (isset($_GET['s'])) {
 
   // See if the string is in the database and has not yet expired
   $query = "SELECT userid FROM strings WHERE BINARY random_string='$secure_string_sqlesc' AND date_expires > '$time_now'";
-  $call = mysqli_query($database, $query);
+  $row = $pdo->try_select($query);
   // Check to see that our SQL query returned exactly 1 row
-  if (mysqli_num_rows($call) == 1) {
+  if ($pdo->numrows == 1) {
     // Assign the values
-    $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]";
+    $user_id = "$row->userid";
 
 
     $query = "SELECT id, fullname FROM users WHERE id='$user_id'";
-    $call = mysqli_query($database, $query);
+    $row = $pdo->try_select($query);
     // Check to see that our SQL query returned exactly 1 row
-    if (mysqli_num_rows($call) == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $user_id = "$row[0]"; // Reassign this just to be sure
-      $fullname = "$row[1]";
+      $user_id = "$row->id"; // Reassign this just to be sure
+      $fullname = "$row->fullname";
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
       $_SESSION['full_name'] = $fullname;
 
       // Set the key to "dead" so it can't be used again
       $query = "UPDATE strings SET usable='dead' WHERE random_string='$secure_string_sqlesc' AND userid='$user_id'";
-      $call = mysqli_query($database, $query);
-      if (!$call) {
+      $pdo->try_update($query);
+      if (!$pdo->ok) {
         echo '<p class="error">Strange error killing a real key!</p>';
       }
       // Redirect to the webapp page

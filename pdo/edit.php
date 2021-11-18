@@ -107,8 +107,8 @@ include ('./in.editprocess.php');
   if (isset($piece_id)) { // Updating piece
     // Unpublished changes to draft?
     $query = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$piece_id ORDER BY U.id DESC LIMIT 1";
-    $call = $pdo->try_select($query);
-    $draft_diff = ($pdo->rows == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> for unpublished changes</pre>' : '';
+    $pdo->try_select($query);
+    $draft_diff = ($pdo->numrows == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> for unpublished changes</pre>' : '';
     echo $draft_diff;
 
     // Other notices and relevant links

@@ -35,7 +35,7 @@ if (isset($_COOKIE['user_key'])) {
       setcookie('user_key', null, 86401);
     }
     // exit and redirect in one line
-    exit(header("Location: webapp.php"));
+    exit (header("Location: webapp.php"));
   }
 
 
@@ -57,7 +57,7 @@ if (isset($_COOKIE['user_key'])) {
       <p>Hi, $fullname!</p>";
     } else {
       echo "Database error!";
-      exit();
+      exit ();
     }
 
 

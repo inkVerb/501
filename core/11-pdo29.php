@@ -35,7 +35,7 @@ class DB {
   // PDO error handler
   protected function pdo_error($query, $error_message) {
     echo "SQL error from <pre>$query</pre><br>$error_message";
-    exit();
+    exit ();
   } // pdo_error()
 
   // INSERT method

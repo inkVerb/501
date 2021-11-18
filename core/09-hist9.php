@@ -15,7 +15,7 @@ include ('./in.head.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // What type of comparison? Prepare SQL queries accordingly
@@ -81,7 +81,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
     if ($piece_id_p == $piece_id_o) {
       $piece_id = $piece_id_p;
     } else {
-      exit(header("Location: blog.php"));
+      exit (header("Location: blog.php"));
     }
 
 } elseif ((isset($_GET['r'])) && (filter_var($_GET['r'], FILTER_VALIDATE_INT))) {
@@ -112,13 +112,13 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
     $o_update = "$row[5]";
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Check our SQL queries
 if ((!$call_p) || (!$call_o)) {
   echo '<pre>Major database error!</pre>';
-  exit();
+  exit ();
 }
 
   // Create the text to compare via heredoc

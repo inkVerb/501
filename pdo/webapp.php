@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password_to_check = DB::esc($password);
     $row = $pdo->select('users', 'username', $username_sqlesc, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
-    if ($pdo->rows == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
       $user_id = "$row->id";
       $fullname = "$row->fullname";
@@ -66,11 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Check to see if the string already exists in the database
             $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
-            while ($pdo->rows >= 1) {
+            while ($pdo->numrows >= 1) {
               $random_string = alnumString(32);
               // Check again
               $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
-              if ($pdo->rows == 0) {
+              if ($pdo->numrows == 0) {
                 break;
               }
             }
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
 
             // Add the string to the database
-            $call = $pdo->insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
+            $pdo->insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
 
             // Database error or success?
             if (!$pdo->change) { // If it didn't run okay
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // SESSION note, then reload this page so the logincheck processes
         $_SESSION['just_logged_in'] = true;
-        exit(header("Location: blog.php"));
+        exit (header("Location: blog.php"));
 
       } else { // Password fail
         echo '<h1>501 Blog login error!</h1>

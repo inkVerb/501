@@ -29,7 +29,7 @@ if (isset($_COOKIE['user_id'])) {
       <p>$fullname, you are already logged in from a cookie!</p>";
     } else {
       echo "Database error!";
-      exit();
+      exit ();
     }
 
 

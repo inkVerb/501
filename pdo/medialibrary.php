@@ -269,10 +269,10 @@ include ('./in.head.php');
 
     // Get and display each item
     $query = "SELECT id, file_base, file_extension, basic_type, location, size, alt_text FROM media_library ORDER BY id DESC";
-    $call = mysqli_query($database, $query);
+    $rows = $pdo->try_select_multi($query);
 
     // Is anything there?
-    if (mysqli_num_rows($call) == 0) {
+    if ($pdo->numrows == 0) {
 
       echo '<div style="display:block;clear:both;"><p style="display:inline;">Nothing yet. Upload a file to add to your Media Library.</p></div>';
 
@@ -319,15 +319,15 @@ include ('./in.head.php');
       // Start our row colors
       $table_row_color = 'blues';
       // We have many entries, this will iterate one post per each
-      while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+      foreach ($rows as $row) {
         // Assign the values
-        $m_id = "$row[0]";
-        $m_file_base = "$row[1]";
-        $m_file_extension = "$row[2]";
-        $m_basic_type = "$row[3]";
-        $m_location = "$row[4]";
-        $m_size = "$row[5]";
-        $m_alt = "$row[6]";
+        $m_id = "$row->id";
+        $m_file_base = "$row->file_base";
+        $m_file_extension = "$row->file_extension";
+        $m_basic_type = "$row->basic_type";
+        $m_location = "$row->location";
+        $m_size = "$row->size";
+        $m_alt = "$row->alt_text";
 
         // Proper filename
         $m_filename = $m_file_base.'.'.$m_file_extension;

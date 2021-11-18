@@ -18,11 +18,11 @@ if (isset($_COOKIE['user_key'])) {
   $user_key_sqlesc = DB::esc($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
   $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_sqlesc' AND usable='live' AND  date_expires > '$time_now'";
   $row = $pdo->try_select($query); // try_ method for complex queries
-  if ($pdo->rows == 1) {
+  if ($pdo->numrows == 1) {
     // Assign the values
     $user_id = "$row->userid";
   } else { // Destroy cookies, SESSION, and redirect
-    $call = $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
+    $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
     if (!$pdo->ok) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
     } else {
@@ -33,13 +33,13 @@ if (isset($_COOKIE['user_key'])) {
       setcookie('user_key', null, 86401);
     }
     // exit and redirect in one line
-    exit(header("Location: blog.php"));
+    exit (header("Location: blog.php"));
   }
 
   // Get the user's info from the users table
   $row = $pdo->select('users', 'id', $user_id, 'fullname');
   // Check to see that our SQL query returned exactly 1 row
-  if ($pdo->rows == 1) {
+  if ($pdo->numrows == 1) {
     // Assign the values
     $fullname = "$row->fullname";
 
@@ -52,7 +52,7 @@ if (isset($_COOKIE['user_key'])) {
     <p>Hi, $fullname!</p>";
   } else {
     echo "Database error!";
-    exit();
+    exit ();
   }
 
 
@@ -79,7 +79,7 @@ if (isset($_COOKIE['user_key'])) {
     $password_to_check = DB::esc($password);
     $row = select('users', 'username', $username_sqlesc, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
-    if ($pdo->rows == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
       $user_id = "$row->id";
       $fullname = "$row->fullname";
@@ -106,11 +106,11 @@ if (isset($_COOKIE['user_key'])) {
 
             // Check to see if the string already exists in the database
             $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
-            while ($pdo->rows >= 1) {
+            while ($pdo->numrows >= 1) {
               $random_string = alnumString(32);
               // Check again
               $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string');
-              if ($pdo->rows == 0) {
+              if ($pdo->numrows == 0) {
                 break;
               }
             }
@@ -119,7 +119,7 @@ if (isset($_COOKIE['user_key'])) {
             $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
 
             // Add the string to the database
-            $call = insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
+            $pdo->insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
 
             // Database error or success?
             if ($pdo->change) { // If it didn't run okay

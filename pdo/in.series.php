@@ -23,8 +23,7 @@
 <?php
 
 // Query the Serieses
-$query = "SELECT id, name FROM series";
-$row = $pdo->try_select($query);
+$rows = $pdo->try_select_multi("SELECT id, name FROM series"); // Simple, but needs custom $pdo->try_ method
 
 // Start the select input
 // We need the div with our AJAX form inside so the input value is reset on success
@@ -33,7 +32,7 @@ echo '
 <select form="edit_piece" name="p_series" onchange="onNavWarn();" onkeyup="onNavWarn();" onclick="onNavWarn();">';
 
 // Iterate each Series
-while ($row) {
+foreach ($rows as $row) {
   $s_id = "$row->id";
   $s_name = "$row->name";
   $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the current Series

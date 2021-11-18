@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Get the IDs for our deleted pieces
@@ -27,14 +27,14 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // Group check
   if ((!$call1) || (!$call2) || (!$call3)) {
     echo '<pre>Major database error!</pre>';
-    exit();
+    exit ();
   }
 
 }
 
 // Mild SQL okay check
 if ($call) {
-  exit(header("Location: trash.php"));
+  exit (header("Location: trash.php"));
 } else {
   echo '<pre>Major database error!</pre>';
 }

@@ -246,34 +246,32 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live'";
-$call = mysqli_query($database, $query);
+$rows = $pdo->select_multi('pieces', 'status', 'live', 'id, type, status, pub_yn, title, date_live, date_created');
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+foreach ($rows as $row) {
   // Assign the values
-  $p_id = "$row[0]";
-  $p_type = "$row[1]";
-  $p_status = "$row[2]";
-  $p_pub_yn = $row[3]; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
-  $p_title = "$row[4]";
-  $p_date_live = "$row[5]";
-  $p_date_created = "$row[6]";
+  $p_id = "$row->id";
+  $p_type = "$row->type";
+  $p_status = "$row->status";
+  $p_pub_yn = $row->pub_yn; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
+  $p_title = "$row->title";
+  $p_date_live = "$row->date_live";
+  $p_date_created = "$row->date_created";
 
   // Unpublished changes to draft?
   $query_uc = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$p_id ORDER BY U.id DESC LIMIT 1";
-  $call_uc = mysqli_query($database, $query_uc);
-  $draft_diff = (mysqli_num_rows($call_uc) == 0) ? '<code class="gray" title="Unpublished changes in draft, view in history or click \'Edit &rarr;\' > \'Update publication\' to publish"><i>(pending changes)</i></code>' : '';
+  $call_uc = $pdo->try_select($query_uc);
+  $draft_diff = ($pdo->numrows == 0) ? '<code class="gray" title="Unpublished changes in draft, view in history or click \'Edit &rarr;\' > \'Update publication\' to publish"><i>(pending changes)</i></code>' : '';
 
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
     $query_pub = "SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id='$p_id'";
-    $call_pub = mysqli_query($database, $query_pub);
-    $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
+    $row_pub = $pdo->try_select($query_pub);
       // Update the $p_status
-      $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
+      $p_status = ("$row_pub->status" == 'live') ? "$row_pub->pubstatus" : "$row_pub->status";
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }

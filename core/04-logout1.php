@@ -16,6 +16,6 @@ sleep(5);
 
 // Redirect to our webapp
 header("Location: webapp.php");
-exit();
+exit ();
 
 ?>

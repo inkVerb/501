@@ -14,5 +14,5 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_SESSION['user_id'])) ) 
   include ('./in.editprocess.php');
 
 } else {
-  exit();
+  exit ();
 }

@@ -31,7 +31,7 @@ class DB {
   // $val = ($pdo->change) ? true : false; // insert() delete() update()
   // $val = ($pdo->ok) ? true : false; // all
   // $val = $pdo->lastid; // insert()
-  // $val = $pdo->rows; // select()
+  // $val = $pdo->numrows; // select()
 
   // Escape method
   static function esc($data) {
@@ -45,13 +45,14 @@ class DB {
   // PDO error handler
   protected function pdo_error($query, $error_message) {
     echo "SQL error from <pre>$query</pre><br>$error_message";
-    exit();
+    exit ();
   } // pdo_error()
 
   // INSERT method
   public function insert($table, $cols, $vals) {
     // Usage $pdo = new DB;
     // $pdo->insert($table, $columns, $values);
+    // $pdo->insert('table', 'col1, col2', "'$val1', '$val2'");
 
     global $database;
 
@@ -77,7 +78,6 @@ class DB {
   public function delete($table, $col, $val) {
     // Usage $pdo = new DB;
     // $pdo->delete($table, $column, $value);
-    // check: $pdo->delete = true;
 
     global $database;
 
@@ -121,41 +121,12 @@ class DB {
     }
 
     // Rows
-    $this->rows = $statement->rowCount();
+    $this->numrows = $statement->rowCount();
 
     // Return fetched SQL response object
     return $statement->fetch();
 
   } // select()
-
-  // SELECT WHERE BINARY method for keys
-  public function key_select($table, $wcol, $vcol, $cols='*') {
-    // Usage $pdo = new DB;
-    // $val = $pdo->key_select($table, $where_col, $where_value, $columns='*');
-    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
-
-    global $database;
-
-    // Prepare SQL query
-    $query = "SELECT $cols FROM $table WHERE BINARY $wcol='$vcol'";
-
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    $this->rows = $statement->rowCount();
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // key_select()
 
   // UPDATE method
   public function update($table, $cols, $vals, $wcol, $vcol) {
@@ -197,6 +168,35 @@ class DB {
     return $statement->fetch();
 
   } // update()
+
+  // SELECT WHERE BINARY method for keys
+  public function key_select($table, $wcol, $vcol, $cols='*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->key_select($table, $where_col, $where_value, $columns='*');
+    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
+
+    global $database;
+
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE BINARY $wcol='$vcol'";
+
+    // Uncomment for curiosity
+    //echo "\$query = <code>$query</code><br>";
+
+    // Try the query
+    try {
+      $statement = $database->query($query);
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Rows
+    $this->numrows = $statement->rowCount();
+
+    // Return fetched SQL response object
+    return $statement->fetch();
+
+  } // key_select()
 
   // UPDATE  WHERE BINARY method for keys
   public function key_update($table, $cols, $vals, $wcol, $vcol) {
@@ -244,6 +244,7 @@ class DB {
   // try_insert method for complex queries
   public function try_insert($query) {
     // Usage $pdo = new DB;
+    // $pdo->try_insert($query);
 
     global $database;
 
@@ -263,6 +264,8 @@ class DB {
 
   // try_delete method for complex queries
   public function try_delete($query) {
+    // Usage $pdo = new DB;
+    // $pdo->try_delete($query);
     global $database;
 
     // Try the query
@@ -291,7 +294,7 @@ class DB {
     }
 
     // Rows
-    $this->rows = $statement->rowCount();
+    $this->numrows = $statement->rowCount();
 
     // Return fetched SQL response object
     return $statement->fetch();
@@ -300,6 +303,8 @@ class DB {
 
   // try_update method for complex queries
   public function try_update($query) {
+    // Usage $pdo = new DB;
+    // $pdo->try_update($query);
     global $database;
 
     // Try the query
@@ -317,6 +322,56 @@ class DB {
     return $statement->fetch();
 
   } // try_update()
+
+  // SELECT method for multiple rows
+  public function select_multi($table, $wcol, $vcol, $cols='*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->select_multi($table, $where_col, $where_value, $columns='*');
+    // foreach ($rows as $row) {$val = $row->colname;}
+
+    global $database;
+
+    // Prepare SQL query
+    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
+
+    // Try the query
+    try {
+      $statement = $database->prepare($query);
+      $statement->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Rows
+    $this->numrows = $statement->rowCount();
+
+    // Return fetched SQL response object
+    return $statement->fetchAll();
+
+  } // select_multi()
+
+  // SELECT method for multiple rows with complex queries
+  public function try_select_multi($query) {
+    // Usage $pdo = new DB;
+    // $rows = $pdo->try_select_multi($query);
+    // foreach ($rows as $row) {$val = $row->colname;}
+    global $database;
+
+    // Try the query
+    try {
+      $statement = $database->prepare($query);
+      $statement->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Rows
+    $this->numrows = $statement->rowCount();
+
+    // Return fetched SQL response object
+    return $statement->fetchAll();
+
+  } // try_select_multi()
 
 } // class DB
 

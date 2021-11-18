@@ -20,6 +20,6 @@ $_SESSION['just_logged_out'] = true;
 
 // Redirect to our webapp
 header("Location: webapp.php");
-exit();
+exit ();
 
 ?>

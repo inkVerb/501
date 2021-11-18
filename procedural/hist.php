@@ -17,7 +17,7 @@ include ('./in.head.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // What type of comparison? Prepare SQL queries accordingly
@@ -26,7 +26,7 @@ if (isset($_POST['as_json'])) {
   // Validate & parse our JSON from the Autosave
   $as_diff_array = json_decode($_POST['as_json'], true); // We need true because we are not working with OOP in PHP yet
   if (json_last_error() != JSON_ERROR_NONE) {
-    exit(header("Location: blog.php"));
+    exit (header("Location: blog.php"));
   }
   // Get our info, update the dateabse, redirect to the Editor
   $piece_id = filter_var($as_diff_array["piece_id"], FILTER_VALIDATE_INT);
@@ -82,10 +82,10 @@ if (isset($_POST['as_json'])) {
   if ($call) {
     $_SESSION['as_recovered'] = true;
     header("Location: edit.php?p=$piece_id");
-    exit();
+    exit ();
   } else {
     echo 'SQL error recovering piece.';
-    exit();
+    exit ();
   }
 
 // Most recent draft
@@ -129,7 +129,7 @@ if (isset($_POST['as_json'])) {
   if (json_last_error() == JSON_ERROR_NONE) {
     $as_diff_json_string = $_POST['old_as']; // We use this when recovering
   } else {
-    exit(header("Location: blog.php"));
+    exit (header("Location: blog.php"));
   }
 
   $piece_id_o = preg_replace("/[^0-9]/"," ", $_GET['o']);
@@ -163,7 +163,7 @@ if (isset($_POST['as_json'])) {
     if ($piece_id_p == $piece_id_o) {
       $piece_id = $piece_id_p;
     } else {
-      exit(header("Location: blog.php"));
+      exit (header("Location: blog.php"));
     }
 
     // Form for our recover
@@ -193,9 +193,10 @@ if (isset($_POST['as_json'])) {
     $p_title = "$row[1]";
     $p_slug = "$row[2]";
     $p_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_tags_json = "$row[4]";
-    $p_links_json = "$row[5]";
-    $p_update = "$row[6]";
+    $p_after = "$row[4]";
+    $p_tags_json = "$row[5]";
+    $p_links_json = "$row[6]";
+    $p_update = "$row[7]";
     $p_id = $piece_id_c;
   $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
     // Assign the values
@@ -213,7 +214,7 @@ if (isset($_POST['as_json'])) {
     if ($piece_id_p == $piece_id_o) {
       $piece_id = $piece_id_p;
     } else {
-      exit(header("Location: blog.php"));
+      exit (header("Location: blog.php"));
     }
 
 // Most recent published History
@@ -249,13 +250,13 @@ if (isset($_POST['as_json'])) {
     $o_update = "$row[7]";
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Check our SQL queries
 if ((!$call_p) || (!$call_o)) {
   echo '<pre>Major database error!</pre>';
-  exit();
+  exit ();
 }
 
 // Process for use in HTML

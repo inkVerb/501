@@ -122,18 +122,17 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, title, date_live, date_created FROM pieces WHERE status='dead'";
-$call = mysqli_query($database, $query);
+$rows = $pdo->select_multi('pieces', 'status', 'dead', 'id, type, title, date_live, date_created');
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+foreach ($rows as $row) {
   // Assign the values
-  $p_id = "$row[0]";
-  $p_type = "$row[1]";
-  $p_title = "$row[2]";
-  $p_date_live = "$row[3]";
-  $p_date_created = "$row[4]";
+  $p_id = "$row->id";
+  $p_type = "$row->type";
+  $p_title = "$row->title";
+  $p_date_live = "$row->date_live";
+  $p_date_created = "$row->date_created";
 
   // Dead or live?
   $status_class = 'pieces_dead';

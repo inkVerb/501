@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $query = "UPDATE users SET fullname='$fullname_sqlesc', username='$username_sqlesc', email='$email_sqlesc', favnumber='$favnumber_sqlesc' WHERE id='$user_id'";
     }
     // Run the query
-    $call = $pdo->try_update($query);
+    $pdo->try_update($query);
     // Test the query
     if ($pdo->ok) {
       // Change
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Retrieve the user info from the database
 $row = $pdo->select('users', 'id', $user_id, 'fullname, username, email, favnumber');
 // Test the query
-if ($pdo->rows == 1) {
+if ($pdo->numrows == 1) {
 	$fullname = "$row->fullname";
 	$username = "$row->username";
   $email = "$row->email";

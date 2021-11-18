@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Delete
@@ -36,12 +36,12 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
 
         // Check SQL
         if (!$call) {
-          exit('<pre class="error">Could not delete file from database: '.$m_basic_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
+          exit ('<pre class="error">Could not delete file from database: '.$m_basic_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
         }
 
       // Check file system
       } else {
-        exit('<pre class="error">Could not delete file from server: '.$m_basic_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
+        exit ('<pre class="error">Could not delete file from server: '.$m_basic_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
       }
 
     } // End file
@@ -49,11 +49,11 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
   } // for loop
 
   // Done, go home
-  exit(header("Location: medialibrary.php"));
+  exit (header("Location: medialibrary.php"));
 
 // Fail, get out of here
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 ?>

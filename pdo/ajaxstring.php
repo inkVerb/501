@@ -13,14 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $random_string = alnumString(32);
 
   // Check to see if the string already exists in the database
-  $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
-  $call = mysqli_query($database, $query);
-  while (mysqli_num_rows($call) != 0) {
+  $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string'); // "BINARY" makes sure case and characters are exact
+  while ($pdo->numrows != 0) {
     $random_string = alnumString(32);
     // Check again
-    $query = "SELECT random_string FROM strings WHERE BINARY random_string='$random_string'"; // "BINARY" makes sure case and characters are exact
-    $call = mysqli_query($database, $query);
-    if (mysqli_num_rows($call) == 0) {
+    $row = $pdo->key_select('strings', 'random_string', $random_string, 'random_string'); // "BINARY" makes sure case and characters are exact
+    if ($pdo->numrows == 0) {
       break;
     }
   }
@@ -30,11 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Add the string to the database
   $userID_sqlesc = DB::esc($userID); // SQL espace just in case, even though it is not user input
-  $query = "INSERT INTO strings (userid, random_string, date_expires) VALUES ('$userID_sqlesc', '$random_string', '$date_expires')";
-  $call = mysqli_query($database, $query);
+  $call = $pdo->insert('strings', 'userid, random_string, date_expires', "'$userID_sqlesc', '$random_string', '$date_expires'");
 
   // Database error or success?
-  if (mysqli_affected_rows($database) != 1) { // If it didn't run okay
+  if (!$pdo->change) { // If it didn't run okay
     echo "There was a database error!<br>$query";
 
   } else { // It ran okay

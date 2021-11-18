@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Delete
@@ -19,14 +19,12 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
     }
 
     // Get the file name from the database
-    $query = "SELECT file_base, basic_type, file_extension, location FROM media_library WHERE id='$m_id'";
-    $call = mysqli_query($database, $query);
-
-    while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
-      $m_file_base = "$row[0]";
-      $m_basic_type = "$row[1]";
-      $m_file_extension = "$row[2]";
-      $m_location = "$row[3]";
+    $rows = $pdo->select_multi('media_library', 'id', $m_id, 'file_base, basic_type, file_extension, location');
+    foreach ($rows as $row) {
+      $m_file_base = "$row->file_base";
+      $m_basic_type = "$row->basic_type";
+      $m_file_extension = "$row->file_extension";
+      $m_location = "$row->location";
 
       // File & conversion links
       $basepath = 'media/';
@@ -102,22 +100,20 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
       if ( $deleted == true ) {
 
         // Delete the database entry
-        $query = "DELETE FROM media_library WHERE id='$m_id'";
-        $call = mysqli_query($database, $query);
+        $pdo->delete('media_library', 'id', $m_id);
 
-        if ( ($call) && ($m_basic_type == 'IMAGE') ) {
-          $query = "DELETE FROM media_images WHERE m_id='$m_id'";
-          $call = mysqli_query($database, $query);
+        if ( ($pdo->ok) && ($m_basic_type == 'IMAGE') ) {
+          $pdo->delete('media_images', 'm_id', $m_id);
         }
 
         // Check SQL
-        if (!$call) { // Both $call statements will stack and be tested here either way
-          exit('<pre class="error">Could not delete file from database: '.$m_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
+        if (!$pdo->ok) { // Both $call statements will stack and be tested here either way
+          exit ('<pre class="error">Could not delete file from database: '.$m_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
         }
 
       // Check file system
       } else {
-        exit('<pre class="error">Could not delete file from server: '.$m_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
+        exit ('<pre class="error">Could not delete file from server: '.$m_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
       }
 
     } // End file
@@ -125,11 +121,11 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
   } // for loop
 
   // Done, go home
-  exit(header("Location: medialibrary.php"));
+  exit (header("Location: medialibrary.php"));
 
 // Fail, get out of here
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 ?>

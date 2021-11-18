@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
@@ -15,7 +15,7 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   $query = "UPDATE publications SET pubstatus='published' WHERE id='$piece_id'";
   $call = mysqli_query($database, $query);
   if ($call) {
-    exit(header("Location: pieces.php"));
+    exit (header("Location: pieces.php"));
   } else {
     echo '<pre>Major database error!</pre>';
   }
@@ -24,7 +24,7 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   $bulk =  true;
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 ?>

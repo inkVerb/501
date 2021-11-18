@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
@@ -13,13 +13,13 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p']);
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 $query = "UPDATE publications SET pubstatus='redrafting' WHERE id='$piece_id'";
 $call = mysqli_query($database, $query);
 if ($call) {
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 } else {
   echo '<pre>Major database error!</pre>';
 }

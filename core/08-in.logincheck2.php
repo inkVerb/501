@@ -28,7 +28,7 @@ if (isset($_COOKIE['user_key'])) {
     }
     if ((!isset($nologin_allowed)) || ($nologin_allowed != true)) {
       // exit and redirect in one line
-      exit(header("Location: blog.php"));
+      exit (header("Location: blog.php"));
     }
   }
 
@@ -47,7 +47,7 @@ if (isset($_COOKIE['user_key'])) {
 
     } else {
       echo '<p class="error">SQL error!</p>';
-      exit();
+      exit ();
     }
 }
 

@@ -23,7 +23,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
       $result = strtolower(preg_replace($regex_replace,"-", $new_series)); // Lowercase, all non-alnum to hyphen
       $s_slug = substr($result, 0, 90); // Limit to 90 characters
 
-
       // Check that the slug isn't already used
       $s_slug_test_sqlesc = escape_sql($s_slug);
       $query = "SELECT id FROM series WHERE slug='$s_slug'";

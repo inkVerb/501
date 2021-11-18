@@ -23,12 +23,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
       $result = strtolower(preg_replace($regex_replace,"-", $new_series)); // Lowercase, all non-alnum to hyphen
       $s_slug = substr($result, 0, 90); // Limit to 90 characters
 
-
       // Check that the slug isn't already used
       $s_slug_test_sqlesc = DB::esc($s_slug);
-      $query = "SELECT id FROM series WHERE slug='$s_slug'";
-      $call = mysqli_query($database, $query);
-      if (mysqli_num_rows($call) == 1) {
+      $row = $pdo->select('series', 'slug', $s_slug, 'id');
+      if ($pdo->numrows == 1) {
         $add_num = 0;
         $dup = true;
         // If there were no changes
@@ -37,9 +35,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
           $try_s_slug = $s_slug_test_sqlesc.'-'.$add_num;
 
           // Check again
-          $query = "SELECT id FROM series WHERE slug='$try_s_slug'";
-          $call = mysqli_query($database, $query);
-          if (mysqli_num_rows($call) == 0) {
+          $row = $pdo->select('series', 'slug', $try_s_slug, 'id');
+          if ($pdo->numrows == 0) {
             $new_s_slug = $try_s_slug;
             break;
           }
@@ -50,11 +47,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
 
     // Add the new Series
     if ((isset($new_series_sqlesc)) && (isset($new_s_slug_sqlesc))) {
-      $query = "INSERT INTO series (name, slug) VALUES ('$new_series_sqlesc', '$new_s_slug_sqlesc')";
-      $call = mysqli_query($database, $query);
-      if ($call) {
+      $row = $pdo->insert('series', 'name, slug', "'$new_series_sqlesc', '$new_s_slug_sqlesc'");
+      if ($pdo->ok) {
         // Get the most recent ID of the last INSERT statement
-        $p_series = $database->insert_id;
+        $p_series = $pdo->lastid;
       }
     }
   } // End empty check
@@ -62,8 +58,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
 // Recreate the select input
 
 // Query the Serieses
-$query = "SELECT id, name FROM series";
-$call = mysqli_query($database, $query);
+$rows = $pdo->try_select_multi("SELECT id, name FROM series"); // Simple, but needs custom $pdo->try_ method
 
 // Start the select input
 // We need the div with our AJAX form inside so the input value is reset on success
@@ -72,9 +67,9 @@ echo '
 <select form="edit_piece" name="p_series" onchange="onNavWarn();" onkeyup="onNavWarn();" onclick="onNavWarn();">';
 
 // Iterate each Series
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
-  $s_id = "$row[0]";
-  $s_name = "$row[1]";
+foreach ($rows as $row) {
+  $s_id = "$row->id";
+  $s_name = "$row->name";
   $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the Series
   echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
 }

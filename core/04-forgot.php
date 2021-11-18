@@ -42,7 +42,7 @@ if (isset($_COOKIE['user_id'])) {
 
       // We could just redirect to the main page instead
       //header("Location: webapp.php");
-      exit();
+      exit ();
 
     } else { // Back-up plan just in case the impossible happens
       echo '<p class="error">Serious error.</p>';
@@ -54,7 +54,7 @@ if (isset($_COOKIE['user_id'])) {
 
       // We could just redirect to the main page instead
       //header("Location: webapp.php");
-      exit();
+      exit ();
     }
 
 // See if we are already logged in
@@ -73,7 +73,7 @@ if (isset($_COOKIE['user_id'])) {
 
   // We could just redirect to the main page instead
   //header("Location: webapp.php");
-  exit();
+  exit ();
 
 }
 
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </html>';
 
         // We could just redirect to the main page instead
-        exit();
+        exit ();
 
 
       } else { // Username fail

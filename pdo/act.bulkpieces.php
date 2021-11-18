@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Include our pieces functions
@@ -24,7 +24,7 @@ if ($_POST['bluksubmit'] == 'republish') {
   }
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 }
 
 // unpublish
@@ -40,7 +40,7 @@ if ($_POST['bluksubmit'] == 'unpublish') {
   }
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 }
 
 // make post
@@ -56,7 +56,7 @@ if ($_POST['bluksubmit'] == 'make post') {
   }
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 }
 
 // make page
@@ -72,7 +72,7 @@ if ($_POST['bluksubmit'] == 'make page') {
   }
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 }
 
 // undelete
@@ -88,7 +88,7 @@ if ($_POST['bluksubmit'] == 'undelete') {
   }
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 }
 
 // delete
@@ -104,7 +104,7 @@ if ($_POST['bluksubmit'] == 'delete') {
   }
 
   // Done, go home
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 }
 
 // restore (trash)
@@ -120,7 +120,7 @@ if ($_POST['bluksubmit'] == 'restore') {
   }
 
   // Done, go home
-  exit(header("Location: trash.php"));
+  exit (header("Location: trash.php"));
 }
 
 // delete forever (trash)
@@ -136,7 +136,7 @@ if ($_POST['bluksubmit'] == 'delete forever') {
   }
 
   // Done, go home
-  exit(header("Location: trash.php"));
+  exit (header("Location: trash.php"));
 }
 
 

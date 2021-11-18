@@ -74,7 +74,7 @@ EOF;
     // Include our config file (which includes the newly-written SQL config) if it exists
     if (!file_exists('./in.sql.php')) {
       echo '<p>Could not create the database config file, quitting.</p>';
-      exit();
+      exit ();
     } else {
       require_once ('./in.config.php');
     } // Now we have a database connection and we can begin making queries
@@ -85,7 +85,7 @@ EOF;
     $call = mysqli_query($database, $query);
     if (!$call) {
       echo '<p>Could not update the database, quitting.</p>';
-      exit();
+      exit ();
     }
 
     // Create our table
@@ -104,7 +104,7 @@ EOF;
     $call = mysqli_query($database, $query);
     if (!$call) {
       echo '<p>Could not create the necessary database tables, quitting.</p>';
-      exit();
+      exit ();
     }
 
     // Add the first admin user
@@ -128,16 +128,16 @@ EOF;
       echo '<p>Everything is ready for you to login!</p>
       <p>Username: '.$username.'</p>
       <p>Password: <i>(Whatever password you just used)</i></p>';
-      exit(); // Finish
+      exit (); // Finish
 
     } else {
       echo '<p>Could not run the installer.</p>';
-      exit();
+      exit ();
     }
 
   } else {
     echo '<p>Serious error.</p>';
-    exit();
+    exit ();
   }
 
 } // Finish POST if

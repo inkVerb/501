@@ -30,13 +30,13 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   $query = "SELECT title, piece_id, content, after, tags, links, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug='$p_slug'";
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 // Check the database for published pieces
 $call = mysqli_query($database, $query);
 $row = mysqli_fetch_array($call, MYSQLI_NUM);
-  // Assign the values
+  // Assign the values based on results from if statement just above
   $p_title = "$row[0]";
   if (isset($p_id)) {
     $p_slug = "$row[1]";

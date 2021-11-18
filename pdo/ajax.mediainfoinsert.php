@@ -17,17 +17,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $ajax_response = array();
 
     // Get the old file name
-    $query = "SELECT file_base, basic_type, file_extension, location FROM media_library WHERE id='$m_id'";
-    $call = mysqli_query($database, $query);
+    $row = $pdo->select('media_library', 'id', $m_id, 'file_base, basic_type, file_extension, location');
     // Shoule be 1 row
-    if (mysqli_num_rows($call) == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $m_file_base = "$row[0]";
-        $m_basic_type = "$row[1]";
-        $m_file_extension = "$row[2]";
-        $m_location = "$row[3]";
-      }
+      $m_file_base = "$row->file_base";
+      $m_basic_type = "$row->basic_type";
+      $m_file_extension = "$row->file_extension";
+      $m_location = "$row->location";
+    }
 
     if (!file_exists("media/$m_location/$m_old_file_name")) {
       $ajax_response['message'] = '<span class="error notehide">Error!</span>';
@@ -35,7 +33,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
       // We're done here
       $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
       echo $json_response;
-      exit();
+      exit ();
     }
 
     // Assign and sanitize
@@ -45,8 +43,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     // SQL
     $m_file_base_new_sqlesc = DB::esc($m_file_base_new);
     $query = "UPDATE media_library SET file_base='$m_file_base_new_sqlesc', date_updated=NOW() WHERE id='$m_id'";
-    $call = mysqli_query($database, $query);
-    if ($call) {
+    $pdo->try_update($query);
+    if ($pdo->change) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
       $ajax_response['file_name'] = "$m_file_base_new.$m_file_extension";
 
@@ -175,8 +173,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $title_text_sqlesc = DB::esc($title_text);
     $alt_text_sqlesc = DB::esc($alt_text);
     $query = "UPDATE media_library SET title_text='$title_text_sqlesc', alt_text='$alt_text_sqlesc', date_updated=NOW() WHERE id='$m_id'";
-    $call = mysqli_query($database, $query);
-    if ($call) {
+    $pdo->try_update($query);
+    if ($pdo->change) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
     } else {
       $ajax_response['message'] = '<span class="error notehide">Error!</span>';
@@ -190,27 +188,25 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } else {
 
     // Get the media item info from the database
-    $query = "SELECT id, size, mime_type, basic_type, file_base, file_extension, location, title_text, alt_text FROM media_library WHERE id='$m_id'";
-    $call = mysqli_query($database, $query);
+    $row = $pdo->select('media_library', 'id', $m_id, 'id, size, mime_type, basic_type, file_base, file_extension, location, title_text, alt_text');
     // Shoule be 1 row
-    if (mysqli_num_rows($call) == 1) {
+    if ($pdo->numrows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $m_id = "$row[0]";
-        $m_size = "$row[1]";
-        $m_mime_type = "$row[2]";
-        $m_basic_type = "$row[3]";
-        $m_file_base = "$row[4]";
-        $m_file_extension = "$row[5]";
-        $m_location = "$row[6]";
-        $m_title_text = "$row[7]";
-        $m_alt_text = "$row[8]";
+      $m_id = "$row->id";
+      $m_size = "$row->size";
+      $m_mime_type = "$row->mime_type";
+      $m_basic_type = "$row->basic_type";
+      $m_file_base = "$row->file_base";
+      $m_file_extension = "$row->file_extension";
+      $m_location = "$row->location";
+      $m_title_text = "$row->title_text";
+      $m_alt_text = "$row->alt_text";
 
     } else {
       echo '<b id="media-editor-content" class="error">Error!</b>
       <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
       <p class="error">Database error: Media item not found.</p>';
-      exit();
+      exit ();
     }
 
     // Assign a "pretty" value for basic media type
@@ -231,7 +227,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         echo '<b id="media-editor-content" class="error">Error!</b>
         <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
         <p class="error">Database error: Media type is impossible.</p>';
-        exit();
+        exit ();
     }
 
     // Assign a "pretty" value for specific media mime type
@@ -300,7 +296,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         echo '<b id="media-editor-content" class="error">Error!</b>
         <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>
         <p class="error">Database error: Media mime type is impossible. '.$m_mime_type.'</p>';
-        exit();
+        exit ();
     }
 
     // This is a handy function to make file sizes in bytes readable by humans
@@ -445,7 +441,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } // mediaEdit AJAX loader
 
 } else { // End POST check
-  exit();
+  exit ();
 }
 
 ?>

@@ -8,7 +8,7 @@ include_once ('./in.piecefunctions.php');
 
 // Require login
 if (!isset($_SESSION['user_id'])) {
-  exit();
+  exit ();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['edit_piece']);
     $piece_id_sqlesc = DB::esc($piece_id);
   } else {
-    exit();
+    exit ();
   }
 } else {
-  exit();
+  exit ();
 }
 
 // Save
@@ -34,7 +34,7 @@ if ( (isset($_POST['edit_piece']))
   // Pub Status
   if ( ($_POST['p_pubyn'] != 'published') && ($_POST['p_pubyn'] != 'pre-draft') ) {
     echo '<b class="error">impossible error</b>';
-    exit();
+    exit ();
   }
   $p_pubyn = ($_POST['p_pubyn'] == 'published') ? $_POST['p_pubyn'] : 'pre-draft';
 
@@ -159,7 +159,7 @@ if ( (isset($_POST['edit_piece']))
 
   // We're done here
   echo $json_response;
-  exit();
+  exit ();
 
 // Editing
 } elseif (isset($_POST['p_id'])) {
@@ -173,60 +173,58 @@ if ( (isset($_POST['edit_piece']))
   }
 
   // Retrieve existing piece
-  $query = "SELECT pub_yn, series, title, slug, after, tags, links, date_live FROM pieces WHERE id='$piece_id_sqlesc'";
-  $call = mysqli_query($database, $query);
+  $row = $pdo->select('pieces', 'id', $piece_id_sqlesc, 'pub_yn, series, title, slug, after, tags, links, date_live');
   // Shoule be 1 row
   if (mysqli_num_rows($call) == 1) {
     // Assign the values
-    $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $p_pubyn = "$row[0]";
-      $p_series = "$row[1]";
-      $p_title = "$row[2]";
-      $p_slug = "$row[3]";
-      $p_after = "$row[4]";
-      $p_tags_json = "$row[5]";
-      $p_links_sqljson = "$row[6]";
-      $p_live = "$row[7]";
+    $p_pubyn = "$row->pub_yn";
+    $p_series = "$row->series";
+    $p_title = "$row->title";
+    $p_slug = "$row->slug";
+    $p_after = "$row->after";
+    $p_tags_json = "$row->tags";
+    $p_links_sqljson = "$row->links";
+    $p_live = "$row->date_live";
 
-      // Pub Status
-      $p_pubyn = ($p_pubyn == true) ? 'published' : 'pre-draft';
+    // Pub Status
+    $p_pubyn = ($p_pubyn == true) ? 'published' : 'pre-draft';
 
-      // Process tags for use in HTML
-      $p_tags = implode(', ', json_decode($p_tags_json, true));
+    // Process tags for use in HTML
+    $p_tags = implode(', ', json_decode($p_tags_json, true));
 
-      // Process links for use in HTML
-      if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
-      // Only if we actually have links
-      if (!empty($links_array)) {
-        $links = ''; // Start the $links set
-        foreach ($links_array as $line_item) {
-          $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
-          $links .= $link_item."\n";
-        }
-        // Set our final value
-        $p_links = $links;
+    // Process links for use in HTML
+    if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+    // Only if we actually have links
+    if (!empty($links_array)) {
+      $links = ''; // Start the $links set
+      foreach ($links_array as $line_item) {
+        $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+        $links .= $link_item."\n";
       }
-
-      // Parse $p_live
-      // Test our $p_live when converting it to the epoch
-      if ($p_live_epoch = strtotime($p_live)) { // Our accepted timestamp format
-        $p_live_schedule = true;
-        // Send to it's variables
-        $p_live_yr = date("Y", $p_live_epoch);
-        $p_live_mo = date("m", $p_live_epoch);
-        $p_live_day = date("d", $p_live_epoch);
-        $p_live_hr = date("H", $p_live_epoch);
-        $p_live_min = date("i", $p_live_epoch);
-        $p_live_sec = date("s", $p_live_epoch);
-
-      } else { // Not our format, probably NULL, do not schedule
-        $p_live_schedule = false;
-
-      }
-
-    } else {
-      echo '<b class="error">serious database error!</b>';
+      // Set our final value
+      $p_links = $links;
     }
+
+    // Parse $p_live
+    // Test our $p_live when converting it to the epoch
+    if ($p_live_epoch = strtotime($p_live)) { // Our accepted timestamp format
+      $p_live_schedule = true;
+      // Send to it's variables
+      $p_live_yr = date("Y", $p_live_epoch);
+      $p_live_mo = date("m", $p_live_epoch);
+      $p_live_day = date("d", $p_live_epoch);
+      $p_live_hr = date("H", $p_live_epoch);
+      $p_live_min = date("i", $p_live_epoch);
+      $p_live_sec = date("s", $p_live_epoch);
+
+    } else { // Not our format, probably NULL, do not schedule
+      $p_live_schedule = false;
+
+    }
+
+  } else {
+    echo '<b class="error">serious database error!</b>';
+  }
 
   // Our pieceInput globals
   $edit_piece_id = $piece_id;
@@ -249,8 +247,7 @@ if ( (isset($_POST['edit_piece']))
  // Series
   echo '<label class="metaedit">Series:<br></label>';
   // Query the Serieses
-  $query = "SELECT id, name FROM series";
-  $call = mysqli_query($database, $query);
+  $rows = $pdo->try_select_multi("SELECT id, name FROM series"); // Simple, but needs custom $pdo->try_ method
 
   // Start the select input
   // We need the div with our AJAX form inside so the input value is reset on success
@@ -258,9 +255,9 @@ if ( (isset($_POST['edit_piece']))
   <div id="p_series'.$piece_id.'">
   <select form="meta_edit_form_'.$piece_id.'" name="p_series">';
     // Iterate each Series
-    while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
-      $s_id = "$row[0]";
-      $s_name = "$row[1]";
+    foreach ($rows as $row) {
+      $s_id = "$row->id";
+      $s_name = "$row->name";
       $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the current Series
       echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
     }
@@ -304,5 +301,5 @@ if ( (isset($_POST['edit_piece']))
   echo '</td></tr>';
 
 } else {
-  exit();
+  exit ();
 }

@@ -206,7 +206,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         }
       } else {
         echo '<p class="error">Serious error.</p>';
-        exit();
+        exit ();
       }
 
     // Identical piece found
@@ -254,7 +254,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
            echo '<p class="green">'.$publication_message.'</p>';
         } else {
           echo '<p class="error">Serious error.</p>';
-          exit();
+          exit ();
         }
       } else {
         echo '<p class="orange">No change to publication.</p>';
@@ -284,15 +284,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $piece_id  = $database->insert_id;
         // Redirect so we have the GET argument in the URL
         header("Location: edit.php?p=$piece_id");
-        exit();
+        exit ();
       // No change
       } elseif (mysqli_affected_rows($database) == 0) {
         echo '<p class="orange">Error, not saved.</p>';
-        exit();
+        exit ();
       }
     } else {
       echo '<p class="error">Serious error.</p>';
-      exit();
+      exit ();
     }
 
   } // End new/update if
@@ -365,7 +365,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
             $p_status = "$row[0]";
           } else {
             echo '<p class="error">Impossible error.</p>';
-            exit();
+            exit ();
           }
 
       // We are editing a piece that has been saved, publication is allowed
@@ -374,7 +374,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       } else {
         // ID does not match, redirect to blank editor
         header("Location: edit.php");
-        exit();
+        exit ();
       }
 
   // ID is not from SESSION, it is from GET
@@ -432,7 +432,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       } else {
         // ID does not match, redirect to blank editor
         header("Location: edit.php");
-        exit();
+        exit ();
       }
     }
 

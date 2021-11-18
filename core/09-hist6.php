@@ -15,7 +15,7 @@ include ('./in.head.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
@@ -23,7 +23,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 $query_p = "SELECT id, title, slug, content, after, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1";
@@ -76,7 +76,7 @@ EOP;
 
 if ((!$call_p) || (!$call_o)) {
   echo '<pre>Major database error!</pre>';
-  exit();
+  exit ();
 }
 
 echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';

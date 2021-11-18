@@ -5,7 +5,7 @@ include ('./in.config.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
@@ -13,7 +13,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
 
 } else {
-  exit(header("Location: blog.php"));
+  exit (header("Location: blog.php"));
 }
 
 $query1 = "DELETE FROM pieces WHERE status='dead' AND id='$p_id'";
@@ -27,7 +27,7 @@ if ($call2) {
   $call3 = mysqli_query($database, $query3);
 }
 if ($call3) {
-  exit(header("Location: pieces.php"));
+  exit (header("Location: pieces.php"));
 } else {
   echo '<pre>Major database error!</pre>';
 }
