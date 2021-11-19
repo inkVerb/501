@@ -197,23 +197,23 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
         // Linux process
         switch ($upload_type) {
           case 'img':
-            shell_exec('/var/www/html/web/bash.imageprocess.sh '.$file_basename.' '.$file_extension.' '.$img_orientation.' '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
+            shell_exec('./bash.imageprocess.sh '.$file_basename.' '.$file_extension.' '.$img_orientation.' '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
 
           break;
           case 'svg':
-            shell_exec('/var/www/html/web/bash.imageprocess.sh '.$file_basename.' '.$file_extension.' svg');
+            shell_exec('./bash.imageprocess.sh '.$file_basename.' '.$file_extension.' svg');
 
           break;
           case 'vid':
-            shell_exec('/var/www/html/web/bash.videoprocess.sh '.$file_basename.' '.$file_extension);
+            shell_exec('./bash.videoprocess.sh '.$file_basename.' '.$file_extension);
 
           break;
           case 'aud':
-            shell_exec('/var/www/html/web/bash.audioprocess.sh '.$file_basename.' '.$file_extension);
+            shell_exec('./bash.audioprocess.sh '.$file_basename.' '.$file_extension);
 
           break;
           case 'doc':
-            shell_exec('/var/www/html/web/bash.documprocess.sh '.$file_basename.' '.$file_extension.' pdf');
+            shell_exec('./bash.documprocess.sh '.$file_basename.' '.$file_extension.' pdf');
 
           break;
         }

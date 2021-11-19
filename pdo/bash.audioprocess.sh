@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Instructions
-## File must be correctly named and in /srv/www/html/web/media/uploads/
-## Directories must exist: /srv/www/html/web/media/uploads /srv/www/html/web/media/audio /srv/www/html/web/media/original/audio
+## File must be correctly named and in ./media/uploads/
+## Directories must exist: ./media/uploads ./media/audio ./media/original/audio
 
 # How to use:
 ## bash.audioprocess.sh [file basename] [file extension]
 # Eg:
 ## bash.audioprocess.sh file_name ogg
 
-basepath="/srv/www/html/web/media/"
+basepath="./media/"
 name="$1"
 ext="$2"
 

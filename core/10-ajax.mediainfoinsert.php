@@ -391,7 +391,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
 
         // Set links
         $vid_web_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_web.'\', \''.$m_mime_type.'\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_web)).')<br>' : '';
-        $vid_ori_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_ori.'\', \''.$m_mime_type.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_ori)).')<br>' : '';
+        $vid_ori_link = (file_exists($vid_ori)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_ori.'\', \''.$m_mime_type.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_ori)).')<br>' : '';
 
         // File links
         echo '<pre id="filelink_'.$m_id.'"><small>VID insert:<br>'.$vid_web_link.$vid_ori_link.'</small></pre>';
@@ -431,7 +431,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
           $doc_title = ((isset($m_title_text)) && ($m_title_text != '')) ? 'Document: '.$m_title_text : 'View/download document';
 
           // Set links
-          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; blog pdf</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
+          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.pdf\', \''.$doc_title.'\');">&larr; blog pdf</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
           $doc_ori_link = (file_exists($doc_ori)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_ori.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($doc_ori)).')<br>' : '';
 
           // File links

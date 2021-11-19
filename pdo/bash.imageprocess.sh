@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Instructions
-## File must be correctly named and in /srv/www/html/web/media/uploads/
-## Directories must exist: /srv/www/html/web/media/uploads /srv/www/html/web/media/images /srv/www/html/web/media/original/images
+## File must be correctly named and in ./media/uploads/
+## Directories must exist: ./media/uploads ./media/images ./media/original/images
 
 # How to use:
 ## bash.imageprocess.sh [file basename] [file extension] [img/svg] [orientation: tall/wide/squr] [xs max] [sm max] [md max] [lg max] [xl max]
@@ -11,7 +11,7 @@
 ## bash.imageprocess.sh file_name svg
 
 thumb="50x50"
-basepath="/srv/www/html/web/media/"
+basepath="./media/"
 name="$1"
 ext="$2"
 
