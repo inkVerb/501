@@ -370,51 +370,49 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $piece_id = "$row->piece_id";
-        $p_type = "$row->type";
-        $p_series = "$row->series";
-        $p_title = "$row->title";
-        $p_slug = "$row->slug";
-        $p_content = "$row->content";
-        $p_after = "$row->after";
-        $p_tags_json = "$row->tags";
-        $p_links_sqljson = "$row->links";
-        $p_live = "$row->date_live";
-        $editing_published_piece = true;
+      $piece_id = "$row->piece_id";
+      $p_type = "$row->type";
+      $p_series = "$row->series";
+      $p_title = "$row->title";
+      $p_slug = "$row->slug";
+      $p_content = "$row->content";
+      $p_after = "$row->after";
+      $p_tags_json = "$row->tags";
+      $p_links_sqljson = "$row->links";
+      $p_live = "$row->date_live";
+      $editing_published_piece = true;
 
-        // Indicate a historical edit
-        echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
+      // Indicate a historical edit
+      echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
 
-        // Process tags for use in HTML
-        $p_tags = implode(', ', json_decode($p_tags_json, true));
+      // Process tags for use in HTML
+      $p_tags = implode(', ', json_decode($p_tags_json, true));
 
-        // Process links for use in HTML
-        if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
-        // Only if we actually have links
-        if (!empty($links_array)) {
-          $links = ''; // Start the $links set
-          foreach ($links_array as $line_item) {
-            $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
-            $links .= $link_item."\n";
-          }
-          // Set our final value
-          $p_links = $links;
-        } else {
-          $p_links = '';
+      // Process links for use in HTML
+      if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+      // Only if we actually have links
+      if (!empty($links_array)) {
+        $links = ''; // Start the $links set
+        foreach ($links_array as $line_item) {
+          $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+          $links .= $link_item."\n";
         }
+        // Set our final value
+        $p_links = $links;
+      } else {
+        $p_links = '';
+      }
 
-        $query = "SELECT status FROM pieces WHERE id='$piece_id'";
-        $row = $pdo->try_select($query);
-        // Shoule be 1 row
-        if ($pdo->numrows == 1) {
-          // Assign the values
-          $row = mysqli_fetch_array($call, MYSQLI_NUM);
-            $p_status = "$row->status";
-          } else {
-            echo '<p class="error">Impossible error.</p>';
-            exit ();
-          }
+      $query = "SELECT status FROM pieces WHERE id='$piece_id'";
+      $row = $pdo->try_select($query);
+      // Shoule be 1 row
+      if ($pdo->numrows == 1) {
+        // Assign the values
+        $p_status = "$row->status";
+      } else {
+        echo '<p class="error">Impossible error.</p>';
+        exit ();
+      }
 
       // We are editing a piece that has been saved, publication is allowed
       $editing_existing_piece = true;
@@ -446,33 +444,32 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
       // Assign the values
-      $row = mysqli_fetch_array($call, MYSQLI_NUM);
-        $p_type = "$row->type";
-        $p_status = "$row->status";
-        $p_series = "$row->series";
-        $p_title = "$row->title";
-        $p_slug = "$row->slug";
-        $p_content = "$row->content";
-        $p_after = "$row->after";
-        $p_tags_json = "$row->tags";
-        $p_links_sqljson = "$row->links";
-        $p_live = "$row->date_live";
+      $p_type = "$row->type";
+      $p_status = "$row->status";
+      $p_series = "$row->series";
+      $p_title = "$row->title";
+      $p_slug = "$row->slug";
+      $p_content = "$row->content";
+      $p_after = "$row->after";
+      $p_tags_json = "$row->tags";
+      $p_links_sqljson = "$row->links";
+      $p_live = "$row->date_live";
 
-        // Process tags for use in HTML
-        $p_tags = implode(', ', json_decode($p_tags_json, true));
+      // Process tags for use in HTML
+      $p_tags = implode(', ', json_decode($p_tags_json, true));
 
-        // Process links for use in HTML
-        if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
-        // Only if we actually have links
-        if (!empty($links_array)) {
-          $links = ''; // Start the $links set
-          foreach ($links_array as $line_item) {
-            $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
-            $links .= $link_item."\n";
-          }
-          // Set our final value
-          $p_links = $links;
+      // Process links for use in HTML
+      if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+      // Only if we actually have links
+      if (!empty($links_array)) {
+        $links = ''; // Start the $links set
+        foreach ($links_array as $line_item) {
+          $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+          $links .= $link_item."\n";
         }
+        // Set our final value
+        $p_links = $links;
+      }
 
       // We are editing a piece that has been saved, publication is allowed
       $editing_existing_piece = true;

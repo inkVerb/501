@@ -268,9 +268,9 @@ function piecesaction($action, $p_id) {
       break;
     case 'make post':
       $pdo->try_update("UPDATE publications SET type='post', date_updated=NOW() WHERE piece_id='$p_id'");
-      $call1 = mysqli_query($database, $query1);
+      $call1 = $pdo->ok;
       $pdo->try_update("UPDATE pieces SET type='post', date_updated=NOW() WHERE id='$p_id'");
-      $call2 = mysqli_query($database, $query2);
+      $call2 = $pdo->ok;
       if (($call1) && ($call2)) {
         $piecesactionsuccess = true;
       } else {
@@ -282,9 +282,9 @@ function piecesaction($action, $p_id) {
       break;
     case 'make page':
       $pdo->try_update("UPDATE publications SET type='page', date_updated=NOW() WHERE piece_id='$p_id'");
-      $call1 = mysqli_query($database, $query1);
+      $call1 = $pdo->ok;
       $pdo->try_update("UPDATE pieces SET type='page', date_updated=NOW() WHERE id='$p_id'");
-      $call2 = mysqli_query($database, $query2);
+      $call2 = $pdo->ok;
       if (($call1) && ($call2)) {
         $piecesactionsuccess = true;
       } else {

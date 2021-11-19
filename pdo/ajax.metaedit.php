@@ -50,8 +50,8 @@ if ( (isset($_POST['edit_piece']))
   // Check that the slug isn't already used
   $p_slug_test_sqlesc = DB::esc($p_slug);
   $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc' AND NOT piece_id='$piece_id_sqlesc'";
-  $call = mysqli_query($database, $query);
-  if (mysqli_num_rows($call) == 1) {
+  $pdo->try_select($query);
+  if ($pdo->numrows == 1) {
     $add_num = 0;
     $dup = true;
     // If there were no changes
@@ -61,8 +61,8 @@ if ( (isset($_POST['edit_piece']))
 
       // Check again
       $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id_sqlesc'";
-      $call = mysqli_query($database, $query);
-      if (mysqli_num_rows($call) == 0) {
+      $pdo->try_select($query);
+      if ($pdo->numrows == 0) {
         $p_slug = $new_p_slug;
         break;
       }
@@ -90,8 +90,8 @@ if ( (isset($_POST['edit_piece']))
   if (filter_var($_POST['p_series'], FILTER_VALIDATE_INT)) {
     $p_series = $_POST['p_series'];
     $query = "SELECT id FROM series WHERE id='$p_series'";
-    $call = mysqli_query($database, $query);
-    if (mysqli_num_rows($call) != 1) {
+    $pdo->select('series', 'id', $p_series, 'id');
+    if ($pdo->numrows != 1) {
       $p_series = $de_series;
     }
   } else {
@@ -122,9 +122,9 @@ if ( (isset($_POST['edit_piece']))
   AND tags=CAST('$p_tags_sqljson' AS JSON)
   AND links=CAST('$p_links_sqljson' AS JSON)
   AND BINARY date_live='$p_live_sqlesc'";
-  $calls = mysqli_query($database, $querys);
+  $pdo->try_select($querys);
   // If there is no match
-  if (mysqli_num_rows($calls) == 0) {
+  if ($pdo->numrows == 0) {
 
     //  Schedule?
     if ($p_live_schedule == false) { // No empty live date for publishing pieces
@@ -134,7 +134,8 @@ if ( (isset($_POST['edit_piece']))
     }
 
     // Run our pieces UPDATE
-    $callu = mysqli_query($database, $queryu);
+    $pdo->try_update($queryu);
+    $callu = $pdo->ok;
 
         // publications UPDATE?
     if ($p_pubyn == 'pre-draft') {
@@ -142,7 +143,8 @@ if ( (isset($_POST['edit_piece']))
       $ajax_response['message'] = 'pre-draft saved';
     } elseif ($p_pubyn == 'published') {
       $queryp = "UPDATE publications SET pubstatus='published', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
-      $callp = mysqli_query($database, $queryp);
+      $pdo->try_update($queryp);
+      $callp = $pdo->ok;
       $ajax_response['message'] = 'piece updated';
     }
 
@@ -166,16 +168,16 @@ if ( (isset($_POST['edit_piece']))
 
   // Look for a publications piece, regardless of what happens, before anything else happens
   $query = "SELECT id FROM publications WHERE piece_id='$piece_id_sqlesc' AND pubstatus='published'";
-  $call = mysqli_query($database, $query);
+  $pdo->try_select($query);
   // Shoule be 1 row
-  if (mysqli_num_rows($call) == 1) {
+  if ($pdo->numrows == 1) {
     $editing_published_piece = true;
   }
 
   // Retrieve existing piece
   $row = $pdo->select('pieces', 'id', $piece_id_sqlesc, 'pub_yn, series, title, slug, after, tags, links, date_live');
   // Shoule be 1 row
-  if (mysqli_num_rows($call) == 1) {
+  if ($pdo->numrows == 1) {
     // Assign the values
     $p_pubyn = "$row->pub_yn";
     $p_series = "$row->series";

@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Instructions
-## File must be correctly named and in /var/www/html/web/media/uploads/
-## Directories must exist: /var/www/html/web/media/uploads /var/www/html/web/media/video /var/www/html/web/media/original/video
+## File must be correctly named and in /srv/www/html/web/media/uploads/
+## Directories must exist: /srv/www/html/web/media/uploads /srv/www/html/web/media/video /srv/www/html/web/media/original/video
 
 # How to use:
 ## bash.videoprocess.sh [file basename] [file extension]
 # Eg:
 ## bash.videoprocess.sh file_name mp4
 
-basepath="/var/www/html/web/media/"
+basepath="/srv/www/html/web/media/"
 name="$1"
 ext="$2"
 

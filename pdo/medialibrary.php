@@ -279,7 +279,7 @@ include ('./in.head.php');
     } else {
 
       // Message at top
-      $num_items = (mysqli_num_rows($call) == 1) ? mysqli_num_rows($call).' media item' : mysqli_num_rows($call).' media items';
+      $num_items = ($pdo->numrows == 1) ? $pdo->numrows.' media item' : $pdo->numrows.' media items';
       echo '<div style="display:block;clear:both;"><p style="display:inline;"><b>'.$num_items.'</b>&nbsp;&nbsp;<div id="media-editor-saved-message" style="display:inline;"></div></p></div>';
 
 

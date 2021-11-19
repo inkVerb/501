@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Instructions
-## File must be correctly named and in /var/www/html/web/media/uploads/
-## Directories must exist: /var/www/html/web/media/uploads /var/www/html/web/media/docs /var/www/html/web/media/original/docs
+## File must be correctly named and in /srv/www/html/web/media/uploads/
+## Directories must exist: /srv/www/html/web/media/uploads /srv/www/html/web/media/docs /srv/www/html/web/media/original/docs
 
 # How to use:
 ## bash.documprocess.sh [file basename] [file extension] [output extension]
 # Eg:
 ## bash.documprocess.sh file_name docx pdf
 
-basepath="/var/www/html/web/media/"
+basepath="/srv/www/html/web/media/"
 name="$1"
 ext="$2"
 out="$3"

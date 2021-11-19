@@ -9,12 +9,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Get the IDs for our deleted pieces
-$query = "SELECT id FROM pieces WHERE status='dead'";
-$call = mysqli_query($database, $query);
+$rows = $pdo->select_multi('pieces', 'status', 'dead', 'id');
 // We have many entries, this will iterate one post per each
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+foreach ($rows as $row) {
   // Assign the values
-  $piece_id = "$row[0]";
+  $piece_id = "$row->id";
 
   // Delete each item
   $pdo->try_delete("DELETE FROM pieces WHERE status='dead' AND id='$piece_id'");

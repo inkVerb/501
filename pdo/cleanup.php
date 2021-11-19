@@ -5,10 +5,10 @@
 // Our config file must have absolute paths, so let's re-arrange thigns...
 
 // MySQLi Connection
-require_once ('/var/www/html/web/in.sql.php');
+require_once ('./in.sql.php');
 
 // Database connection
-$database = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+require_once ('./in.conf.php');
 
 // Run the SQL query
 $pdo->try_delete("DELETE FROM strings WHERE date_expires < NOW()");
