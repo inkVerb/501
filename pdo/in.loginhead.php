@@ -15,14 +15,14 @@ if (isset($_COOKIE['user_key'])) {
 
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
-  $user_key_sqlesc = DB::esc($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
-  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_sqlesc' AND usable='live' AND  date_expires > '$time_now'";
+  $user_key_trim = DB::trimspace($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_trim' AND usable='live' AND  date_expires > '$time_now'";
   $row = $pdo->try_select($query); // try_ method for complex queries
   if ($pdo->numrows == 1) {
     // Assign the values
     $user_id = "$row->userid";
   } else { // Destroy cookies, SESSION, and redirect
-    $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
+    $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_trim);
     if (!$pdo->ok) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
     } else {
@@ -75,9 +75,9 @@ if (isset($_COOKIE['user_key'])) {
     $checks_out = true;
 
     // if SELECT: Query user info from the database if everything checks out
-    $username_sqlesc = DB::esc($username);
-    $password_to_check = DB::esc($password);
-    $row = select('users', 'username', $username_sqlesc, 'id, fullname, pass');
+    $username_trim = DB::trimspace($username);
+    $password_to_check = DB::trimspace($password);
+    $row = select('users', 'username', $username_trim, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
     if ($pdo->numrows == 1) {
       // Assign the values

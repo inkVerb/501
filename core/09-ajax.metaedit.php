@@ -119,8 +119,8 @@ if ( (isset($_POST['edit_piece']))
   AND BINARY title='$p_title_sqlesc'
   AND BINARY slug='$p_slug_sqlesc'
   AND BINARY after='$p_after_sqlesc'
-  AND tags=CAST('$p_tags_sqljson' AS JSON)
-  AND links=CAST('$p_links_sqljson' AS JSON)
+  AND tags='$p_tags_sqljson'
+  AND links='$p_links_sqljson'
   AND BINARY date_live='$p_live_sqlesc'";
   $calls = mysqli_query($database, $querys);
   // If there is no match

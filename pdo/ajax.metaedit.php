@@ -15,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if  ( (isset($_POST['p_id']))
   &&   (filter_var($_POST['p_id'], FILTER_VALIDATE_INT)) ) {
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p_id']);
-    $piece_id_sqlesc = DB::esc($piece_id);
+    $piece_id_trim = DB::trimspace($piece_id);
   } elseif ( (isset($_POST['edit_piece']))
         &&   (filter_var($_POST['edit_piece'], FILTER_VALIDATE_INT)) ) {
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['edit_piece']);
-    $piece_id_sqlesc = DB::esc($piece_id);
+    $piece_id_trim = DB::trimspace($piece_id);
   } else {
     exit ();
   }
@@ -48,8 +48,8 @@ if ( (isset($_POST['edit_piece']))
     $p_slug = checkPiece('p_slug',$_POST['p_slug']);
   }
   // Check that the slug isn't already used
-  $p_slug_test_sqlesc = DB::esc($p_slug);
-  $query = "SELECT id FROM publications WHERE slug='$p_slug_test_sqlesc' AND NOT piece_id='$piece_id_sqlesc'";
+  $p_slug_test_trim = DB::trimspace($p_slug);
+  $query = "SELECT id FROM publications WHERE slug='$p_slug_test_trim' AND NOT piece_id='$piece_id_trim'";
   $pdo->try_select($query);
   if ($pdo->numrows == 1) {
     $add_num = 0;
@@ -57,10 +57,10 @@ if ( (isset($_POST['edit_piece']))
     // If there were no changes
     while ($dup = true) {
       $add_num = $add_num + 1;
-      $new_p_slug = $p_slug_test_sqlesc.'-'.$add_num;
+      $new_p_slug = $p_slug_test_trim.'-'.$add_num;
 
       // Check again
-      $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id_sqlesc'";
+      $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id_trim'";
       $pdo->try_select($query);
       if ($pdo->numrows == 0) {
         $p_slug = $new_p_slug;
@@ -82,7 +82,7 @@ if ( (isset($_POST['edit_piece']))
   } else {
     $p_live = date("Y-m-d H:i:s");
   }
-  $p_live_sqlesc = DB::esc($p_live);
+  $p_live_trim = DB::trimspace($p_live);
 
   // Series
   // Set a default Series, probably from settings table
@@ -104,9 +104,9 @@ if ( (isset($_POST['edit_piece']))
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
   // Prepare our database values for entry
-  $p_title_sqlesc = DB::esc($p_title);
-  $p_slug_sqlesc = DB::esc($p_slug);
-  $p_after_sqlesc = DB::esc($p_after);
+  $p_title_trim = DB::trimspace($p_title);
+  $p_slug_trim = DB::trimspace($p_slug);
+  $p_after_trim = DB::trimspace($p_after);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
@@ -115,22 +115,22 @@ if ( (isset($_POST['edit_piece']))
   $ajax_response['title'] = $p_title;
 
   // Check for differences in the database
-  $querys = "SELECT id FROM pieces WHERE id='$piece_id_sqlesc'
-  AND BINARY title='$p_title_sqlesc'
-  AND BINARY slug='$p_slug_sqlesc'
-  AND BINARY after='$p_after_sqlesc'
-  AND tags=CAST('$p_tags_sqljson' AS JSON)
-  AND links=CAST('$p_links_sqljson' AS JSON)
-  AND BINARY date_live='$p_live_sqlesc'";
+  $querys = "SELECT id FROM pieces WHERE id='$piece_id_trim'
+  AND BINARY title='$p_title_trim'
+  AND BINARY slug='$p_slug_trim'
+  AND BINARY after='$p_after_trim'
+  AND tags='$p_tags_sqljson'
+  AND links='$p_links_sqljson'
+  AND BINARY date_live='$p_live_trim'";
   $pdo->try_select($querys);
   // If there is no match
   if ($pdo->numrows == 0) {
 
     //  Schedule?
     if ($p_live_schedule == false) { // No empty live date for publishing pieces
-      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
+      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_trim', slug='$p_slug_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id_trim'";
     } elseif ($p_live_schedule == true) { // Unscheduled publish goes live now
-      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
+      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_trim', slug='$p_slug_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_trim', date_updated=NOW() WHERE id='$piece_id_trim'";
     }
 
     // Run our pieces UPDATE
@@ -142,7 +142,7 @@ if ( (isset($_POST['edit_piece']))
       $callp = true; // We have a test later
       $ajax_response['message'] = 'pre-draft saved';
     } elseif ($p_pubyn == 'published') {
-      $queryp = "UPDATE publications SET pubstatus='published', series=$p_series, title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
+      $queryp = "UPDATE publications SET pubstatus='published', series=$p_series, title='$p_title_trim', slug='$p_slug_trim', content='$p_content_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_trim', date_updated=NOW() WHERE piece_id='$piece_id_trim'";
       $pdo->try_update($queryp);
       $callp = $pdo->ok;
       $ajax_response['message'] = 'piece updated';
@@ -167,7 +167,7 @@ if ( (isset($_POST['edit_piece']))
 } elseif (isset($_POST['p_id'])) {
 
   // Look for a publications piece, regardless of what happens, before anything else happens
-  $query = "SELECT id FROM publications WHERE piece_id='$piece_id_sqlesc' AND pubstatus='published'";
+  $query = "SELECT id FROM publications WHERE piece_id='$piece_id_trim' AND pubstatus='published'";
   $pdo->try_select($query);
   // Shoule be 1 row
   if ($pdo->numrows == 1) {
@@ -175,7 +175,7 @@ if ( (isset($_POST['edit_piece']))
   }
 
   // Retrieve existing piece
-  $row = $pdo->select('pieces', 'id', $piece_id_sqlesc, 'pub_yn, series, title, slug, after, tags, links, date_live');
+  $row = $pdo->select('pieces', 'id', $piece_id_trim, 'pub_yn, series, title, slug, after, tags, links, date_live');
   // Shoule be 1 row
   if ($pdo->numrows == 1) {
     // Assign the values

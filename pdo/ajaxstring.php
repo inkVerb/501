@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $date_expires = date("Y-m-d H:i:s", time() + 20);
 
   // Add the string to the database
-  $userID_sqlesc = DB::esc($userID); // SQL espace just in case, even though it is not user input
-  $call = $pdo->insert('strings', 'userid, random_string, date_expires', "'$userID_sqlesc', '$random_string', '$date_expires'");
+  $userID_trim = DB::trimspace($userID); // SQL espace just in case, even though it is not user input
+  $call = $pdo->insert('strings', 'userid, random_string, date_expires', "'$userID_trim', '$random_string', '$date_expires'");
 
   // Database error or success?
   if (!$pdo->change) { // If it didn't run okay

@@ -6,8 +6,8 @@ include ('./in.config.php');
 // Delete the cookie in the database if one exists
 if (isset($_COOKIE['user_key'])) {
   $user_key = $_COOKIE['user_key'];
-  $user_key_sqlesc = DB::esc($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
-  $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
+  $user_key_trim = DB::trimspace($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_trim);
   if (!$pdo->change) {
     echo '<p class="error">SQL key error!</p>';
   }

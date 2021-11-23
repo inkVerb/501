@@ -15,7 +15,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
     $result = str_replace('--','—',$result); // to em-dash
     $result = substr($result, 0, 90); // Limit to 90 characters
     $new_series = $result;
-    $new_series_sqlesc = DB::esc($new_series);
+    $new_series_trim = DB::trimspace($new_series);
 
     // Series slug
       // Generate the slug
@@ -24,7 +24,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
       $s_slug = substr($result, 0, 90); // Limit to 90 characters
 
       // Check that the slug isn't already used
-      $s_slug_test_sqlesc = DB::esc($s_slug);
+      $s_slug_test_trim = DB::trimspace($s_slug);
       $row = $pdo->select('series', 'slug', $s_slug, 'id');
       if ($pdo->numrows == 1) {
         $add_num = 0;
@@ -32,7 +32,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
         // If there were no changes
         while ($dup = true) {
           $add_num = $add_num + 1;
-          $try_s_slug = $s_slug_test_sqlesc.'-'.$add_num;
+          $try_s_slug = $s_slug_test_trim.'-'.$add_num;
 
           // Check again
           $row = $pdo->select('series', 'slug', $try_s_slug, 'id');
@@ -42,12 +42,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
           }
         }
       } else {
-        $new_s_slug_sqlesc = $s_slug_test_sqlesc;
+        $new_s_slug_trim = $s_slug_test_trim;
       }
 
     // Add the new Series
-    if ((isset($new_series_sqlesc)) && (isset($new_s_slug_sqlesc))) {
-      $row = $pdo->insert('series', 'name, slug', "'$new_series_sqlesc', '$new_s_slug_sqlesc'");
+    if ((isset($new_series_trim)) && (isset($new_s_slug_trim))) {
+      $row = $pdo->insert('series', 'name, slug', "'$new_series_trim', '$new_s_slug_trim'");
       if ($pdo->ok) {
         // Get the most recent ID of the last INSERT statement
         $p_series = $pdo->lastid;

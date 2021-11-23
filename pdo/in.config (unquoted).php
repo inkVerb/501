@@ -4,9 +4,9 @@
 session_start();
 
 // In case you want to show errors
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+//ini_set('display_errors', '1');
+//ini_set('display_startup_errors', '1');
+//error_reporting(E_ALL);
 
 // MySQLi config
 require_once ('./in.sql.php');
@@ -27,13 +27,11 @@ class DB {
   public $change;
   public $lastid;
   public $rows;
-  static $rowcount;
   // Usage $pdo = new DB;
   // $val = ($pdo->change) ? true : false; // insert() delete() update()
   // $val = ($pdo->ok) ? true : false; // all
   // $val = $pdo->lastid; // insert()
   // $val = $pdo->numrows; // select()
-  // $val = DB::$rowcount; // exec_select()
 
   // trimspace method (not sufficient to prevent SQL injection, nor escape all SQL data)
   static function trimspace($data) {
@@ -302,30 +300,6 @@ class DB {
     return $statement->fetch();
 
   } // try_select()
-
-  // exec_select method for complex queries
-  static function exec_select($query) {
-    // Usage $pdo = new DB;
-    // $query = $database->prepare($sql_statement);
-    // $query->bindParam(...);
-    // $rows = DB::exec_select($query);
-    // if ($query->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
-    // if (DB::$rowcount > 0) {do something}
-
-    // Try the query
-    try {
-      $query->execute();
-    } catch (PDOException $error) {
-      $query->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    self::$rowcount = $query->rowCount();
-
-    // Return fetched SQL response object
-    return $query->fetchAll();
-
-  } // exec_select()
 
   // try_update method for complex queries
   public function try_update($query) {

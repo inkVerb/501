@@ -216,8 +216,8 @@ $infomsg =
 - Only [url] is required<br>
 - If no [credit], Credit can be pulled after a | Pipe from [title]<br>
 - All else after | Pipe gets truncated<br><br>
-<b>2. Or se an HTML $a_tag tag</b><br>
-- Title pulled after last | Pipe or // Doubleslash<br><br>
+<b>2. Or use an HTML $a_tag tag</b><br>
+- title= attribute pulled after last | Pipe or // Doubleslash<br><br>
 <b>Examples:</b><br>
 https://verb.one<br>
 https://verb.red ;;Get inking.<br>

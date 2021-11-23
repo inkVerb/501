@@ -86,7 +86,7 @@ function checkPiece($name, $value) {
   } elseif ($name == 'p_live_schedule') {
     $result = ($value == true)
     ? true : false;
-    define (p_live_schedule, $result); // Define a constant to allow scheduling so it edures multiple function calls
+    define ('p_live_schedule', $result); // Define a constant to allow scheduling so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app
 
   } elseif ($name == 'p_live_yr') {
@@ -94,14 +94,14 @@ function checkPiece($name, $value) {
     // Our date range is from the creation of the Gutenberg press through the millenium of Christ
     $result = (((preg_match($regex, $value)) && (1500 <= $value) && (3300 >= $max)) && (p_live_schedule == true))
     ? $value : $p_live_yr_curr;
-    define (limit_day_yr, $result); // Define a constant for date-range so it edures multiple function calls
+    define ('limit_day_yr', $result); // Define a constant for date-range so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app
 
   } elseif ($name == 'p_live_mo') {
     $regex = '/(0[1-9]|1[0-2])$/i';
     $result = ((preg_match($regex, $value)) && (p_live_schedule == true))
     ? $value : $p_live_mo_curr;
-    define (limit_day_mo, $result); // Define a constant for date-range so it edures multiple function calls
+    define ('limit_day_mo', $result); // Define a constant for date-range so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app
 
   } elseif ($name == 'p_live_day') {

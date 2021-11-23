@@ -134,8 +134,8 @@ EOF;
       `content` LONGTEXT DEFAULT NULL,
       `after` TINYTEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
-      `tags` JSON DEFAULT NULL,
-      `links` JSON DEFAULT NULL,
+      `tags` LONGTEXT DEFAULT NULL,
+      `links` LONGTEXT DEFAULT NULL,
       `date_live` TIMESTAMP NULL,
       `date_created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -159,8 +159,8 @@ EOF;
       `content` LONGTEXT DEFAULT NULL,
       `after` TINYTEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
-      `tags` JSON DEFAULT NULL,
-      `links` JSON DEFAULT NULL,
+      `tags` LONGTEXT DEFAULT NULL,
+      `links` LONGTEXT DEFAULT NULL,
       `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
@@ -181,8 +181,8 @@ EOF;
       `content` LONGTEXT DEFAULT NULL,
       `after` TINYTEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
-      `tags` JSON DEFAULT NULL,
-      `links` JSON DEFAULT NULL,
+      `tags` LONGTEXT DEFAULT NULL,
+      `links` LONGTEXT DEFAULT NULL,
       `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
@@ -261,14 +261,14 @@ EOF;
 
     // Prepare our database values for entry
     $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    $fullname_sqlesc = DB::DB::esc($fullname);
-    $username_sqlesc = DB::DB::esc($username);
-    $email_sqlesc = DB::DB::esc($email);
-    $favnumber_sqlesc = DB::DB::esc($favnumber);
+    $fullname_trim = DB::trimspace($fullname);
+    $username_trim = DB::trimspace($username);
+    $email_trim = DB::trimspace($email);
+    $favnumber_trim = DB::trimspace($favnumber);
 
     // Run the query
     $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
-    VALUES ('$fullname_sqlesc', '$username_sqlesc', '$email_sqlesc', '$favnumber_sqlesc', '$password_hashed', 'admin')";
+    VALUES ('$fullname_trim', '$username_trim', '$email_trim', '$favnumber_trim', '$password_hashed', 'admin')";
 		// inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
     $statement = $database->query($query);
     if ($statement) {

@@ -25,17 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Prepare our database values for entry
     $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    $fullname_sqlesc = DB::esc($fullname);
-    $username_sqlesc = DB::esc($username);
-    $email_sqlesc = DB::esc($email);
-    $favnumber_sqlesc = DB::esc($favnumber);
+    $fullname_trim = DB::trimspace($fullname);
+    $username_trim = DB::trimspace($username);
+    $email_trim = DB::trimspace($email);
+    $favnumber_trim = DB::trimspace($favnumber);
 
     // Prepare the query
     if (isset($password)) { // Changing password?
-      $query = "UPDATE users SET fullname='$fullname_sqlesc', username='$username_sqlesc', email='$email_sqlesc', favnumber='$favnumber_sqlesc', pass='$password_hashed' WHERE id='$user_id'";
+      $query = "UPDATE users SET fullname='$fullname_trim', username='$username_trim', email='$email_trim', favnumber='$favnumber_trim', pass='$password_hashed' WHERE id='$user_id'";
   		// inline password hash: $query = "INSERT INTO users (name, username, email, pass) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "')";
     } else { // Not changing password
-      $query = "UPDATE users SET fullname='$fullname_sqlesc', username='$username_sqlesc', email='$email_sqlesc', favnumber='$favnumber_sqlesc' WHERE id='$user_id'";
+      $query = "UPDATE users SET fullname='$fullname_trim', username='$username_trim', email='$email_trim', favnumber='$favnumber_trim' WHERE id='$user_id'";
     }
     // Run the query
     $pdo->try_update($query);

@@ -7,13 +7,13 @@ if (isset($_COOKIE['user_key'])) {
 
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
-  $user_key_sqlesc = DB::esc($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
-  $row = $pdo->key_select('strings', 'random_string', $user_key_sqlesc, 'userid');
+  $user_key_trim = DB::trimspace($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
+  $row = $pdo->key_select('strings', 'random_string', $user_key_trim, 'userid');
   if ($pdo->numrows == 1) {
     // Assign the values
     $user_id = "$row->userid";
   } else { // Destroy cookies, SESSION, and redirect
-    $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_sqlesc);
+    $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_trim);
     if (!$pdo->change) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
     } else {
