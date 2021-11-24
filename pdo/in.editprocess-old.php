@@ -23,11 +23,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   }
 
   // Check for existing publication
-  $rows = $pdo->select('publications', 'piece_id', $piece_id_trim, 'pubstatus');
+  $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id_trim'";
+  $row = $pdo->try_select($query);
   if ($pdo->numrows == 1) {
-    foreach ($rows as $row) {
-      $pubstatus = "$row->pubstatus";
-    }
+    $pubstatus = "$row->pubstatus";
   } else {
     $pubstatus = 'none';
   }
@@ -46,14 +45,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   // Check that the slug isn't already used
   $p_slug_test_trim = DB::trimspace($p_slug);
   if (isset($piece_id)) { // We don't want a dup from for own piece
-    $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug AND NOT id=:id");
-    $query->bindParam(':slug', $p_slug_test_trim);
-    $query->bindParam(':id', $piece_id_trim);
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_trim' AND NOT id='$piece_id_trim'";
   } else {
-    $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug");
-    $query->bindParam(':slug', $p_slug_test_trim);
+    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_trim'";
   }
-  $pdo->exec_($query);
+  $row = $pdo->try_select($query);
   if ($pdo->numrows > 0) {
     $add_num = 0;
     $dup = true;
@@ -65,14 +61,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
       // Check again
       if (isset($piece_id)) { // We don't want a dup from for own piece
-        $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug AND NOT id=:id");
-        $query->bindParam(':slug', $new_p_slug_test_trim);
-        $query->bindParam(':id', $piece_id_trim);
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_trim' AND NOT id='$piece_id_trim'";
       } else {
-        $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug");
-        $query->bindParam(':slug', $new_p_slug_test_trim);
+        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_trim'";
       }
-      $pdo->exec_($query);
+      $row = $pdo->try_select($query);
       if ($pdo->numrows == 0) {
         $p_slug = $new_p_slug;
         break;
@@ -98,7 +91,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
   if (filter_var($_POST['p_series'], FILTER_VALIDATE_INT)) {
     $p_series = $_POST['p_series'];
-    $query = $pdo->select('series', 'id', $p_series, 'id');
+    $query = "SELECT id FROM series WHERE id='$p_series'";
+    $row = $pdo->try_select($query);
     if ($pdo->numrows != 1) {
       $p_series = $de_series;
     }
@@ -149,86 +143,44 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ( ($p_status == 'draft') && ($p_live_schedule != true) ) { // No empty live date for publishing pieces
       $p_live = NULL;
       $p_live_trim = DB::trimspace($p_live); // Needs to be set
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE id=:id");
-      $queryu->bindParam(':id', $piece_id_trim);
-      $queryu->bindParam(':type', $p_type_trim);
-      $queryu->bindParam(':series', $p_series_trim);
-      $queryu->bindParam(':title', $p_title_trim);
-      $queryu->bindParam(':slug', $p_slug_trim);
-      $queryu->bindParam(':content', $p_content_trim);
-      $queryu->bindParam(':after', $p_after_trim);
-      $queryu->bindParam(':tags', $p_tags_sqljson);
-      $queryu->bindParam(':links', $p_links_sqljson);
-      $queryu->bindParam(':date_live', NULL);
+      $queryu = "UPDATE pieces SET type='$p_type_trim', series=$p_series_trim, title='$p_title_trim', slug='$p_slug_trim', content='$p_content_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NULL, date_updated=NOW() WHERE id='$piece_id_trim'";
     } elseif ( (($p_status == 'publish') || ($p_status == 'update') || ($p_status == 'draft')) && ($p_live_schedule == true) ) { // Unscheduled publish goes live now
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE id=:id");
-      $queryu->bindParam(':id', $piece_id_trim);
-      $queryu->bindParam(':type', $p_type_trim);
-      $queryu->bindParam(':series', $p_series_trim);
-      $queryu->bindParam(':title', $p_title_trim);
-      $queryu->bindParam(':slug', $p_slug_trim);
-      $queryu->bindParam(':content', $p_content_trim);
-      $queryu->bindParam(':after', $p_after_trim);
-      $queryu->bindParam(':tags', $p_tags_sqljson);
-      $queryu->bindParam(':links', $p_links_sqljson);
-      $queryu->bindParam(':date_live', $p_live_trim);
-
+      $queryu = "UPDATE pieces SET type='$p_type_trim', series=$p_series_trim, title='$p_title_trim', slug='$p_slug_trim', content='$p_content_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_trim', date_updated=NOW() WHERE id='$piece_id_trim'";
     } elseif ($p_live_schedule != true) { // Not scheduled, but not a draft save either, so will be scheduled for now with this query
       $p_live_schedule = 'waiting'; // Set this for later
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE id=:id");
-      $queryu->bindParam(':id', $piece_id_trim);
-      $queryu->bindParam(':type', $p_type_trim);
-      $queryu->bindParam(':series', $p_series_trim);
-      $queryu->bindParam(':title', $p_title_trim);
-      $queryu->bindParam(':slug', $p_slug_trim);
-      $queryu->bindParam(':content', $p_content_trim);
-      $queryu->bindParam(':after', $p_after_trim);
-      $queryu->bindParam(':tags', $p_tags_sqljson);
-      $queryu->bindParam(':links', $p_links_sqljson);
-      $queryu->bindParam(':date_live', NOW());
+      $queryu = "UPDATE pieces SET type='$p_type_trim', series=$p_series_trim, title='$p_title_trim', slug='$p_slug_trim', content='$p_content_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live=NOW(), date_updated=NOW() WHERE id='$piece_id_trim'";
     }
 
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
-    $query = $database->prepare("SELECT date_live FROM pieces WHERE BINARY id=:id
-    AND BINARY type=:type
-    AND BINARY series=:series
-    AND BINARY title=:title
-    AND BINARY slug=:slug
-    AND BINARY content=:content
-    AND BINARY after=:after
-    AND BINARY date_live=:date_live
-    AND tags=:tags
-    AND links=:links");
-    $query->bindParam(':id', $piece_id);
-    $query->bindParam(':type', $p_type_trim);
-    $query->bindParam(':series', $p_series_trim);
-    $query->bindParam(':title', $p_title_trim);
-    $query->bindParam(':slug', $p_slug_trim);
-    $query->bindParam(':content', $p_content_trim);
-    $query->bindParam(':after', $p_after_trim);
-    $query->bindParam(':date_live', $p_live_trim);
-    $query->bindParam(':tags', $p_tags_sqljson);
-    $query->bindParam(':links', $p_links_sqljson);
-    $rows = $pdo->exec_($query);
+    $query = "SELECT date_live FROM pieces WHERE BINARY id=$piece_id
+    AND BINARY type='$p_type_trim'
+    AND BINARY series='$p_series_trim'
+    AND BINARY title='$p_title_trim'
+    AND BINARY slug='$p_slug_trim'
+    AND BINARY content='$p_content_trim'
+    AND BINARY after='$p_after_trim'
+    AND BINARY date_live='$p_live_trim'
+    AND tags='$p_tags_sqljson'
+    AND links='$p_links_sqljson'"; // This is how to test if a JSON string matches
+    $row = $pdo->try_select($query);
     // If there were no changes
     if ($pdo->numrows == 1) {
       // Get the date_live to see if that is the only change
-      foreach ($rows as $row) {
-        $p_live_found = $row->date_live;
-      }
-      // A NULL value can fool some tests, if the date_live is NULL and Scheduled... not set, set $p_live_found as a dummy string so it doesn't fool us
-      if ((is_null($p_live_found)) && ($p_live_schedule == false)) {
-        $p_live_found = 'found';
-      }
+       $p_live_found = $row->date_live;
+       // A NULL value can fool some tests, if the date_live is NULL and Scheduled... not set, set $p_live_found as a dummy string so it doesn't fool us
+       if ((is_null($p_live_found)) && ($p_live_schedule == false)) {
+         $p_live_found = 'found';
+       }
 
        // We are editing a piece that has been saved, publication is allowed
        $editing_existing_piece = true;
 
     // For the Publish button, we at least need to know the piece indeed exists
     } else {
-      $pdo->select('pieces', 'id', $piece_id_trim, 'id');
+      $query = "SELECT id FROM pieces WHERE id='$piece_id_trim'";
+      $row = $pdo->try_select($query);
       // If there were no changes
       if ($pdo->numrows == 1) {
         // We are editing a piece that has been saved, publication is allowed
@@ -239,7 +191,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Run the query only if the live date is not a duplicate
     if ( (!isset($p_live_found)) || ( ($p_live_found != 'found') && ($p_live_found != $p_live) ) ) {
       // Run the pieces query
-      $callu = $pdo->exec_($queryu);
+      $callu = $pdo->try_update($queryu);
       // Test the query
       if ($pdo->ok) {
 
@@ -251,12 +203,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
           // Do we need a new scheduled time?
           if ($p_live_schedule == 'waiting') {
+            $querysc = "SELECT date_live FROM pieces WHERE id='$piece_id_trim'";
             $rowsc = $pdo->select('pieces', 'id', $piece_id_trim, 'date_live');
             if ($pdo->numrows == 1) {
-              foreach ($rowsc as $row) {
-                $p_live = $row->date_live;
-                $p_live_schedule = true; // Set this for the rest of our form
-              }
+              $p_live = $rowsc->date_live;
+              $p_live_schedule = true; // Set this for the rest of our form
             } else {
               echo '<p class="error">Serious error.</p>';
             }
@@ -296,46 +247,33 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Publishing?
     if ( ($p_status == 'publish') || ($p_status == 'update') ) {
       // Make sure there are no duplicates, we don't need a revision history where no changes were made
-      $query = $database->prepare("SELECT id FROM publications WHERE BINARY piece_id=:piece_id
-      AND BINARY type=:type
-      AND BINARY series=:series
-      AND BINARY title=:title
-      AND BINARY slug=:slug
-      AND BINARY content=:content
-      AND BINARY after=:after
-      AND BINARY date_live=:date_live
-      AND tags=:tags
-      AND links=:links");
-      $query->bindParam(':piece_id', $piece_id_trim);
-      $query->bindParam(':type', $p_type_trim);
-      $query->bindParam(':series', $p_series_trim);
-      $query->bindParam(':title', $p_title_trim);
-      $query->bindParam(':slug', $p_slug_trim);
-      $query->bindParam(':content', $p_content_trim);
-      $query->bindParam(':after', $p_after_trim);
-      $query->bindParam(':date_live', $p_live_trim);
-      $query->bindParam(':tags', $p_tags_sqljson);
-      $query->bindParam(':links', $p_links_sqljson);
-      $pdo->exec_($query);
+      $query = "SELECT id FROM publications WHERE BINARY piece_id='$piece_id_trim'
+      AND BINARY type='$p_type_trim'
+      AND BINARY series='$p_series_trim'
+      AND BINARY title='$p_title_trim'
+      AND BINARY slug='$p_slug_trim'
+      AND BINARY content='$p_content_trim'
+      AND BINARY after='$p_after_trim'
+      AND BINARY date_live='$p_live_trim'
+      AND tags='$p_tags_sqljson'
+      AND links='$p_links_sqljson'";
+      $row = $pdo->try_select($query);
       // If there were no duplicates
       if ($pdo->numrows == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
-          $query = $database->prepare("INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id;");
-          $query->bindParam(':id', $piece_id_trim);
-          $pdo->exec_($query);
+          $query = "INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_trim';";
+          $pdo->try_insert($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id;");
-          $query->bindParam(':id', $piece_id_trim);
-          $pdo->exec_($query);
+          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_trim';";
+          $pdo->try_insert($query);
           $callh = $pdo->ok;
-          $query = $database->prepare("UPDATE pieces SET pub_yn=true WHERE id=:id");
-          $query->bindParam(':id', $piece_id_trim);
-          $pdo->exec_($query);
+          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id_trim'";
+          $pdo->try_insert($query);
           $callu = $pdo->ok;
           $publication_message = 'Piece published!';
         } elseif ( ($p_status == 'update') || ($pubstatus = 'published') || ($pubstatus = 'redrafting') ) {
-          $query = $database->prepare("UPDATE publications PUB, pieces PCE
+          $query = "UPDATE publications PUB, pieces PCE
           SET PUB.type=PCE.type,
               PUB.pubstatus='published',
               PUB.series=PCE.series,
@@ -347,18 +285,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
               PUB.links=PCE.links,
               PUB.date_live=PCE.date_live,
               PUB.date_updated=PCE.date_updated
-          WHERE PUB.piece_id=:piece_id AND PCE.id=:id");
-          $query->bindParam(':piece_id', $piece_id_trim);
-          $query->bindParam(':id', $piece_id_trim);
-          $pdo->exec_($query);
+          WHERE PUB.piece_id='$piece_id_trim' AND PCE.id='$piece_id_trim'";
+          $pdo->try_update($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id;");
-          $query->bindParam(':id', $piece_id_trim);
-          $pdo->exec_($query);
+          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_trim';";
+          $pdo->try_insert($query);
           $callh = $pdo->ok;
-          $query = $database->prepare("UPDATE pieces SET pub_yn=true WHERE id=:id");
-          $query->bindParam(':id', $piece_id_trim);
-          $pdo->exec_($query);
+          $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id_trim'";
+          $pdo->try_update($query);
           $callu = $pdo->ok;
           $publication_message = 'Publication updated!';
         }
@@ -380,34 +314,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES (:type, :pub_yn, :series, :title, :slug, :content, :after, :tags, :links, NULL)");
-      $query->bindParam(':type', $p_type_trim);
-      $query->bindParam(':pub_yn', false);
-      $query->bindParam(':series', $p_series_trim);
-      $query->bindParam(':title', $p_title_trim);
-      $query->bindParam(':slug', $p_slug_trim);
-      $query->bindParam(':content', $p_content_trim);
-      $query->bindParam(':after', $p_after_trim);
-      $query->bindParam(':tags', $p_tags_sqljson);
-      $query->bindParam(':links', $p_links_sqljson);
+      $query = "INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_trim', false, $p_series_trim, '$p_title_trim', '$p_slug_trim', '$p_content_trim', '$p_after_trim', '$p_tags_sqljson', '$p_links_sqljson', NULL)";
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES (:type, :pub_yn, :series, :title, :slug, :content, :after, :tags, :links, :date_live)");
-      $query->bindParam(':type', $p_type_trim);
-      $query->bindParam(':pub_yn', false);
-      $query->bindParam(':series', $p_series_trim);
-      $query->bindParam(':title', $p_title_trim);
-      $query->bindParam(':slug', $p_slug_trim);
-      $query->bindParam(':content', $p_content_trim);
-      $query->bindParam(':after', $p_after_trim);
-      $query->bindParam(':tags', $p_tags_sqljson);
-      $query->bindParam(':links', $p_links_sqljson);
-      $query->bindParam(':date_live', $p_live_trim);
+      $query = "INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES ('$p_type_trim', false, $p_series_trim, '$p_title_trim', '$p_slug_trim', '$p_content_trim', '$p_after_trim','$p_tags_sqljson', '$p_links_sqljson', '$p_live_trim')";
     }
 
     // Run the query
-    $pdo->exec_($query);
+    $pdo->try_insert($query);
     // Test the query
     if ($pdo->ok) {
       // Change
@@ -431,9 +346,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   } // End new/update if
 
   // Look for a publications piece by that ID, regardless of what happened, after everything happened
-  $query = $database->prepare("SELECT id FROM publications WHERE piece_id=:piece_id AND pubstatus='published'");
-  $query->bindParam(':piece_id', $piece_id_trim);
-  $pdo->exec_($query);
+  $query = "SELECT id FROM publications WHERE piece_id='$piece_id_trim' AND pubstatus='published'";
+  $row = $pdo->try_select($query);
   // Shoule be 1 row
   if ($pdo->numrows == 1) {
     $editing_published_piece = true;
@@ -451,7 +365,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $revert_id = preg_replace("/[^0-9]/"," ", $_GET['h']);
 
     // Retrieve existing piece from history
-    $rowsc = $pdo->select('publication_history', 'id', $piece_id_trim, 'piece_id, type, series, title, slug, content, after, tags, links, date_live');
+    $query = "SELECT piece_id, type, series, title, slug, content, after, tags, links, date_live FROM publication_history WHERE id='$revert_id'";
+    $row = $pdo->try_select($query);
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
       // Assign the values
@@ -463,7 +378,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $p_content = "$row->content";
       $p_after = "$row->after";
       $p_tags_json = "$row->tags";
-      $p_links_json = "$row->links";
+      $p_links_sqljson = "$row->links";
       $p_live = "$row->date_live";
       $editing_published_piece = true;
 
@@ -474,7 +389,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $p_tags = implode(', ', json_decode($p_tags_json, true));
 
       // Process links for use in HTML
-      if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
+      if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
       // Only if we actually have links
       if (!empty($links_array)) {
         $links = ''; // Start the $links set
@@ -488,7 +403,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $p_links = '';
       }
 
-      $query = $pdo->select('pieces', 'id', $piece_id, 'status');
+      $query = "SELECT status FROM pieces WHERE id='$piece_id'";
+      $row = $pdo->try_select($query);
       // Shoule be 1 row
       if ($pdo->numrows == 1) {
         // Assign the values
@@ -515,9 +431,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $piece_id_trim = DB::trimspace($piece_id);
 
     // Look for a publications piece, regardless of what happens, before anything else happens
-    $query = $database->prepare("SELECT id FROM publications WHERE piece_id=:piece_id AND pubstatus='published'");
-    $query->bindParam(':piece_id', $piece_id_trim);
-    $pdo->exec_($query);
+    $query = "SELECT id FROM publications WHERE piece_id='$piece_id_trim' AND pubstatus='published'";
+    $row = $pdo->try_select($query);
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
       $editing_published_piece = true;
@@ -526,41 +441,41 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     // Retrieve existing piece
     $query = $database->prepare("SELECT type, status, series, title, slug, content, after, tags, links, date_live FROM pieces WHERE id=:id");
     $query->bindParam(':id', $piece_id_trim);
-    $rows = $pdo->exec_($query);
+    $rows = $pdo->exec_select($query);
 
     // Shoule be 1 row
-    if ($pdo->numrows > 0) {
+    if ($pdo->rowcount > 0) {
         foreach ($rows as $row) {
-          // Assign the values
-          $p_type = "$row->type";
-          $p_status = "$row->status";
-          $p_series = "$row->series";
-          $p_title = "$row->title";
-          $p_slug = "$row->slug";
-          $p_content = "$row->content";
-          $p_after = "$row->after";
-          $p_tags_json = "$row->tags";
-          $p_links_json = "$row->links";
-          $p_live = "$row->date_live";
+        // Assign the values
+        $p_type = "$row->type";
+        $p_status = "$row->status";
+        $p_series = "$row->series";
+        $p_title = "$row->title";
+        $p_slug = "$row->slug";
+        $p_content = "$row->content";
+        $p_after = "$row->after";
+        $p_tags_json = "$row->tags";
+        $p_links_sqljson = "$row->links";
+        $p_live = "$row->date_live";
 
-          // Process tags for use in HTML
-          $p_tags = implode(', ', json_decode($p_tags_json, true));
+        // Process tags for use in HTML
+        $p_tags = implode(', ', json_decode($p_tags_json, true));
 
-          // Process links for use in HTML
-          if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
-          // Only if we actually have links
-          if (!empty($links_array)) {
-            $links = ''; // Start the $links set
-            foreach ($links_array as $line_item) {
-              $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
-              $links .= $link_item."\n";
-            }
-            // Set our final value
-            $p_links = $links;
+        // Process links for use in HTML
+        if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+        // Only if we actually have links
+        if (!empty($links_array)) {
+          $links = ''; // Start the $links set
+          foreach ($links_array as $line_item) {
+            $link_item = $line_item[0].' ;; '.$line_item[1].' ;; '.$line_item[2];
+            $links .= $link_item."\n";
           }
+          // Set our final value
+          $p_links = $links;
+        }
 
-          // We are editing a piece that has been saved, publication is allowed
-          $editing_existing_piece = true;
+        // We are editing a piece that has been saved, publication is allowed
+        $editing_existing_piece = true;
 
         }
       } else {

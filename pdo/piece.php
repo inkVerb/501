@@ -44,8 +44,8 @@ $row = $pdo->try_select($query);
   }
   $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
   $p_after = "$row->after";
-  $p_tags_sqljson = "$row->tags";
-  $p_links_sqljson = "$row->links";
+  $p_tags_json = "$row->tags";
+  $p_links_json = "$row->links";
   $p_live = "$row->date_live";
   $p_update = "$row->date_updated";
 
@@ -67,7 +67,7 @@ $row = $pdo->try_select($query);
   echo '<br><div class="gray">'.$p_after.'</div><br>';
 
   // Links
-  if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+  if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
   // Only if we actually have links
   if (!empty($links_array)) {
     $p_links = ''; // Start the $p_links set
@@ -83,7 +83,7 @@ $row = $pdo->try_select($query);
   }
 
   // Tags
-  if ($p_tags_sqljson != '[""]') {$tags_array = json_decode($p_tags_sqljson);}
+  if ($p_tags_json != '[""]') {$tags_array = json_decode($p_tags_json);}
   // Only if we actually have tags
   if (!empty($tags_array)) {
     $p_tags = ''; // Start the $p_tags set

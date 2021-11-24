@@ -30,16 +30,17 @@ if (isset($_COOKIE['user_key'])) {
   }
 
   // Get the user's info from the users table
-  $row = $pdo->select('users', 'id', $user_id, 'fullname');
+  $rows = $pdo->select('users', 'id', $user_id, 'fullname');
   // Check to see that our SQL query returned exactly 1 row
   if ($pdo->numrows == 1) {
-    // Assign the values
-    $fullname = "$row->fullname";
+    foreach ($rows as $row) {
+      // Assign the values
+      $fullname = "$row->fullname";
 
-    // Set the $_SESSION array
-    $_SESSION['user_id'] = $user_id;
-    $_SESSION['full_name'] = $fullname;
-
+      // Set the $_SESSION array
+      $_SESSION['user_id'] = $user_id;
+      $_SESSION['full_name'] = $fullname;
+    }
   } else {
     echo '<p class="error">SQL error!</p>';
     exit ();

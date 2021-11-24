@@ -45,8 +45,8 @@ $row = mysqli_fetch_array($call, MYSQLI_NUM);
   }
   $p_content = htmlspecialchars_decode("$row[2]"); // We used htmlspecialchars() to enter the database, now we must reverse it
   $p_after = "$row[3]";
-  $p_tags_sqljson = "$row[4]";
-  $p_links_sqljson = "$row[5]";
+  $p_tags_json = "$row[4]";
+  $p_links_json = "$row[5]";
   $p_live = "$row[6]";
   $p_update = "$row[7]";
 
@@ -68,7 +68,7 @@ $row = mysqli_fetch_array($call, MYSQLI_NUM);
   echo '<br><div class="gray">'.$p_after.'</div><br>';
 
   // Links
-  if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+  if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
   // Only if we actually have links
   if (!empty($links_array)) {
     $p_links = ''; // Start the $p_links set
@@ -84,7 +84,7 @@ $row = mysqli_fetch_array($call, MYSQLI_NUM);
   }
 
   // Tags
-  if ($p_tags_sqljson != '[""]') {$tags_array = json_decode($p_tags_sqljson);}
+  if ($p_tags_json != '[""]') {$tags_array = json_decode($p_tags_json);}
   // Only if we actually have tags
   if (!empty($tags_array)) {
     $p_tags = ''; // Start the $p_tags set

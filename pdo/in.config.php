@@ -26,14 +26,13 @@ class DB {
   // Global result properties & methods
   public $change;
   public $lastid;
-  public $rows;
-  static $rowcount;
+  public $ok;
+  public $numrows;
   // Usage $pdo = new DB;
   // $val = ($pdo->change) ? true : false; // insert() delete() update()
   // $val = ($pdo->ok) ? true : false; // all
   // $val = $pdo->lastid; // insert()
   // $val = $pdo->numrows; // select()
-  // $val = DB::$rowcount; // exec_select()
 
   // trimspace method (not sufficient to prevent SQL injection, nor escape all SQL data)
   static function trimspace($data) {
@@ -49,6 +48,231 @@ class DB {
     echo "SQL error from <pre>$query</pre><br>$error_message";
     exit ();
   } // pdo_error()
+
+  // DELETE method
+  public function delete($table, $col, $val) {
+    // Usage $pdo = new DB;
+    // $pdo->delete($table, $column, $value);
+
+    global $database;
+
+    // Sanitize
+    $cols = preg_replace("/[^0-9a-zA-Z_]/", "", $col);
+    $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
+
+    // Try the query
+    $query = $database->prepare("DELETE FROM $table WHERE $col=:val");
+    $query->bindParam(':val', $val);
+
+    // Try the query
+    try {
+      $query->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Success statement
+    $this->change = ($statement->rowCount() >= 1) ? true : false;
+    $this->ok = ($statement) ? true : false;
+
+  } // delete()
+
+  // SELECT method
+  public function select($table, $wcol, $vcol, $cols='*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
+    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
+
+    global $database;
+
+    // Sanitize
+    $cols = preg_replace("/[^0-9a-zA-Z_, ]/", "", $cols);
+    $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
+    $wcol = preg_replace("/[^0-9a-zA-Z_]/", "", $wcol);
+
+    // Prepare SQL query
+    $query = $database->prepare("SELECT $cols FROM $table WHERE $wcol=:vcol");
+    $query->bindParam(':vcol', $vcol);
+
+    // Try the query
+    try {
+      $query->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Response info
+    $this->numrows = $query->rowCount();
+    $this->ok = ($query) ? true : false;
+
+    // Return fetched SQL response object
+    return $query->fetchAll();
+
+  } // select()
+
+  // SELECT WHERE BINARY method for keys
+  public function key_select($table, $wcol, $vcol, $cols='*') {
+    // Usage $pdo = new DB;
+    // $val = $pdo->key_select($table, $where_col, $where_value, $columns='*');
+    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
+
+    global $database;
+
+    // Sanitize
+    $cols = preg_replace("/[^0-9a-zA-Z_, ]/", "", $cols);
+    $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
+    $wcol = preg_replace("/[^0-9a-zA-Z_]/", "", $wcol);
+
+    // Prepare SQL query
+    $query = $database->prepare("SELECT $cols FROM $table WHERE BINARY $wcol=:vcol");
+    $query->bindParam(':vcol', $vcol);
+
+    // Try the query
+    try {
+      $query->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Response info
+    $this->numrows = $query->rowCount();
+    $this->ok = ($query) ? true : false;
+
+    // Return fetched SQL response object
+    return $query->fetchAll();
+
+  } // key_select()
+
+  // UPDATE method
+  public function update($table, $cols, $vals, $wcol, $vcol) {
+    // Usage $pdo = new DB;
+    // $val = $pdo->update($table, $columns, $values, $where_col, $where_value);
+
+    global $database;
+
+    // Sanitize
+    $cols = preg_replace("/[^0-9a-zA-Z_, ]/", "", $cols);
+    $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
+
+    // Prepare array of $cols=key & $vals=value
+    $cols_arr = preg_split('~,\s*~', $cols);
+    $vals_arr = preg_split('~,\s*~', $vals);
+    $set_array = array_combine($cols_arr, $vals_arr);
+    $bind_array = array();
+
+    // Prepare SQL SET statement
+    $set_statement = "";
+    foreach ( $set_array as $k => $v ) {
+      $set_statement .= "$k=:$k,";
+      $bind_array["$k"]['k'] = ":$k'";
+      $bind_array["$k"]['v'] = $v;
+    }
+    $set_statement = rtrim($set_statement, ','); // remove last comma
+
+    // Prepare SQL query
+    $query = $database->prepare("UPDATE $table SET $set_statement WHERE $wcol='$vcol'");
+
+    // Bind values
+    foreach ( $bind_array as $bind_string ) {
+      $query->bindParam($bind_string['k'], $bind_string['v']);
+    }
+
+    // Try the query
+    try {
+      $query->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Success statement
+    $this->change = ($statement->rowCount() > 0) ? true : false;
+    $this->ok = ($statement) ? true : false;
+
+    // Return fetched SQL response object
+    return $query->fetchAll();
+
+  } // update()
+
+  // UPDATE  WHERE BINARY method for keys
+  public function key_update($table, $cols, $vals, $wcol, $vcol) {
+    // Usage $pdo = new DB;
+    // $val = $pdo->key_update($table, $columns, $values, $where_col, $where_value);
+
+    global $database;
+
+    // Sanitize
+    $cols = preg_replace("/[^0-9a-zA-Z_, ]/", "", $cols);
+    $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
+
+    // Prepare array of $cols=key & $vals=value
+    $cols_arr = preg_split('~,\s*~', $cols);
+    $vals_arr = preg_split('~,\s*~', $vals);
+    $set_array = array_combine($cols_arr, $vals_arr);
+    $bind_array = array();
+
+    // Prepare SQL SET statement
+    $set_statement = "";
+    foreach ( $set_array as $k => $v ) {
+      $set_statement .= "$k=:$k,";
+      $bind_array["$k"] = "':$k', '$v'";
+    }
+    $set_statement = rtrim($set_statement, ','); // remove last comma
+
+    // Prepare SQL query
+    $query = $database->prepare("UPDATE $table SET $set_statement WHERE BINARY $wcol='$vcol'");
+
+    // Bind values
+    foreach ( $bind_array as $bind_string ) {
+      $query->bindParam($bind_string);
+    }
+
+    // Try the query
+    try {
+      $query->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Success statement
+    $this->change = ($statement->rowCount() > 0) ? true : false;
+    $this->ok = ($statement) ? true : false;
+
+    // Return fetched SQL response object
+    return $query->fetchAll();
+
+  } // key_update()
+
+  // exec_ static method to pass properties through a try test
+  public function exec_($query) {
+    // Usage $pdo = new DB;
+    // $query = $database->prepare($sql_statement);
+    // $query->bindParam(...);
+    // $rows = DB::exec_($query);
+    // if ($query->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
+    // if (DB::$numrows > 0) {do something}
+
+    global $database;
+
+    // Try the query
+    try {
+      $query->execute();
+    } catch (PDOException $error) {
+      $this->pdo_error($query, $error->getMessage());
+    }
+
+    // Response info
+    $this->numrows = $query->rowCount();
+    $this->change = ($query->rowCount() > 0) ? true : false;
+    $this->lastid = $database->lastInsertId();
+    $this->ok = ($query) ? true : false;
+
+    // Return fetched SQL response object
+    return $query->fetchAll();
+
+  } // exec_()
+
+
+  //// DEV, after prepared statement PDO porting, delete all methods below ////
 
   // INSERT method
   public function insert($table, $cols, $vals) {
@@ -66,182 +290,12 @@ class DB {
       $this->pdo_error($query, $error->getMessage());
     }
 
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
     // Success statements
     $this->change = ($statement->rowCount() == 1) ? true : false;
     $this->lastid = $database->lastInsertId();
     $this->ok = ($statement) ? true : false;
 
   } // insert()
-
-  // DELETE method
-  public function delete($table, $col, $val) {
-    // Usage $pdo = new DB;
-    // $pdo->delete($table, $column, $value);
-
-    global $database;
-
-    // Try the query
-    $query = "DELETE FROM $table WHERE $col='$val'";
-    try {
-      $statement = $database->prepare($query);
-      $statement->execute();
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
-    // Success statement
-    $this->change = ($statement->rowCount() >= 1) ? true : false;
-    $this->ok = ($statement) ? true : false;
-
-  } // delete()
-
-  // SELECT method
-  public function select($table, $wcol, $vcol, $cols='*') {
-    // Usage $pdo = new DB;
-    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
-    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
-
-    global $database;
-
-    // Prepare SQL query
-    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
-
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    $this->numrows = $statement->rowCount();
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // select()
-
-  // UPDATE method
-  public function update($table, $cols, $vals, $wcol, $vcol) {
-    // Usage $pdo = new DB;
-    // $val = $pdo->update($table, $columns, $values, $where_col, $where_value);
-
-    global $database;
-
-    // Prepare array of $cols=key & $vals=value
-    $cols_arr = preg_split('~,\s*~', $cols);
-    $vals_arr = preg_split('~,\s*~', $vals);
-    $set_array = array_combine($cols_arr, $vals_arr);
-
-    // Prepare SQL SET statement
-    $set_statement = "";
-    foreach ( $set_array as $k => $v ) {
-      $set_statement .= "$k='$v',";
-    }
-    $set_statement = rtrim($set_statement, ','); // remove last comma
-
-    // Prepare SQL query
-    $query = "UPDATE $table SET $set_statement WHERE $wcol='$vcol';";
-
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Success statement
-    $this->change = ($statement->rowCount() > 0) ? true : false;
-    $this->ok = ($statement) ? true : false;
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // update()
-
-  // SELECT WHERE BINARY method for keys
-  public function key_select($table, $wcol, $vcol, $cols='*') {
-    // Usage $pdo = new DB;
-    // $val = $pdo->key_select($table, $where_col, $where_value, $columns='*');
-    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
-
-    global $database;
-
-    // Prepare SQL query
-    $query = "SELECT $cols FROM $table WHERE BINARY $wcol='$vcol'";
-
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    $this->numrows = $statement->rowCount();
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // key_select()
-
-  // UPDATE  WHERE BINARY method for keys
-  public function key_update($table, $cols, $vals, $wcol, $vcol) {
-    // Usage $pdo = new DB;
-    // $val = $pdo->key_update($table, $columns, $values, $where_col, $where_value);
-
-    global $database;
-
-    // Prepare array of $cols=key & $vals=value
-    $cols_arr = preg_split('~,\s*~', $cols);
-    $vals_arr = preg_split('~,\s*~', $vals);
-    $set_array = array_combine($cols_arr, $vals_arr);
-
-    // Prepare SQL SET statement
-    $set_statement = "";
-    foreach ( $set_array as $k => $v ) {
-      $set_statement .= "$k='$v',";
-    }
-    $set_statement = rtrim($set_statement, ','); // remove last comma
-
-    // Prepare SQL query
-    $query = "UPDATE $table SET $set_statement WHERE BINARY $wcol='$vcol';";
-
-    // Uncomment for curiosity
-    //echo "\$query = <code>$query</code><br>";
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Success statement
-    $this->change = ($statement->rowCount() > 0) ? true : false;
-    $this->ok = ($statement) ? true : false;
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // key_update()
-
-  //// "try" methods for complex queries
 
   // try_insert method for complex queries
   public function try_insert($query) {
@@ -303,29 +357,7 @@ class DB {
 
   } // try_select()
 
-  // exec_select method for complex queries
-  static function exec_select($query) {
-    // Usage $pdo = new DB;
-    // $query = $database->prepare($sql_statement);
-    // $query->bindParam(...);
-    // $rows = DB::exec_select($query);
-    // if ($query->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
-    // if (DB::$rowcount > 0) {do something}
 
-    // Try the query
-    try {
-      $query->execute();
-    } catch (PDOException $error) {
-      $query->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    self::$rowcount = $query->rowCount();
-
-    // Return fetched SQL response object
-    return $query->fetchAll();
-
-  } // exec_select()
 
   // try_update method for complex queries
   public function try_update($query) {

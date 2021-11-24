@@ -372,7 +372,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $p_content = "$row[5]";
         $p_after = "$row[6]";
         $p_tags_json = "$row[7]";
-        $p_links_sqljson = "$row[8]";
+        $p_links_json = "$row[8]";
         $p_live = "$row[9]";
         $editing_published_piece = true;
 
@@ -383,7 +383,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $p_tags = implode(', ', json_decode($p_tags_json, true));
 
         // Process links for use in HTML
-        if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+        if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
         // Only if we actually have links
         if (!empty($links_array)) {
           $links = ''; // Start the $links set
@@ -448,14 +448,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $p_content = "$row[5]";
         $p_after = "$row[6]";
         $p_tags_json = "$row[7]";
-        $p_links_sqljson = "$row[8]";
+        $p_links_json = "$row[8]";
         $p_live = "$row[9]";
 
         // Process tags for use in HTML
         $p_tags = implode(', ', json_decode($p_tags_json, true));
 
         // Process links for use in HTML
-        if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+        if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
         // Only if we actually have links
         if (!empty($links_array)) {
           $links = ''; // Start the $links set
