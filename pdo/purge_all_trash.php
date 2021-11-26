@@ -16,7 +16,9 @@ foreach ($rows as $row) {
   $piece_id = "$row->id";
 
   // Delete each item
-  $pdo->try_delete("DELETE FROM pieces WHERE status='dead' AND id='$piece_id'");
+  $query = $database->prepare("DELETE FROM pieces WHERE status='dead' AND id=:id");
+  $query->bindParam(':id', $piece_id);
+  $pdo->exec_($query);
   $call1 = $pdo->ok;
   $pdo->delete('publications', 'piece_id', $piece_id);
   $call2 = $pdo->ok;

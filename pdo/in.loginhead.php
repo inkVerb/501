@@ -16,11 +16,15 @@ if (isset($_COOKIE['user_key'])) {
   // Get the user ID from the key strings table
   $user_key = $_COOKIE['user_key'];
   $user_key_trim = DB::trimspace($user_key); // SQL escape to make sure hackers aren't messing with cookies to inject SQL
-  $query = "SELECT userid FROM strings WHERE BINARY random_string='$user_key_trim' AND usable='live' AND  date_expires > '$time_now'";
-  $row = $pdo->try_select($query); // try_ method for complex queries
+  $query = $database->prepare("SELECT userid FROM strings WHERE BINARY random_string=:random_string AND usable='live' AND  date_expires > :date_expires");
+  $query->bindParam(':random_string', $user_key_trim);
+  $query->bindParam(':date_expires', $time_now);
+  $rows = $pdo->exec_($query);
   if ($pdo->numrows == 1) {
-    // Assign the values
-    $user_id = "$row->userid";
+    foreach ($rows as $row) {
+      // Assign the values
+      $user_id = "$row->userid";
+    }
   } else { // Destroy cookies, SESSION, and redirect
     $pdo->key_update('strings', 'usable', 'dead', 'random_string', $user_key_trim);
     if (!$pdo->ok) { // It doesn't matter if the key is there or not, just that SQL is working
@@ -37,19 +41,21 @@ if (isset($_COOKIE['user_key'])) {
   }
 
   // Get the user's info from the users table
-  $row = $pdo->select('users', 'id', $user_id, 'fullname');
+  $rows = $pdo->select('users', 'id', $user_id, 'fullname');
   // Check to see that our SQL query returned exactly 1 row
   if ($pdo->numrows == 1) {
-    // Assign the values
-    $fullname = "$row->fullname";
+    foreach ($rows as $row) {
+      // Assign the values
+      $fullname = "$row->fullname";
 
-    // Set the $_SESSION array
-    $_SESSION['user_id'] = $user_id;
-    $_SESSION['full_name'] = $fullname;
+      // Set the $_SESSION array
+      $_SESSION['user_id'] = $user_id;
+      $_SESSION['full_name'] = $fullname;
 
-    // Show a message
-    echo "<h1>501 Blog</h1>
-    <p>Hi, $fullname!</p>";
+      // Show a message
+      echo "<h1>501 Blog</h1>
+      <p>Hi, $fullname!</p>";
+    }
   } else {
     echo "Database error!";
     exit ();
@@ -77,14 +83,15 @@ if (isset($_COOKIE['user_key'])) {
     // if SELECT: Query user info from the database if everything checks out
     $username_trim = DB::trimspace($username);
     $password_to_check = DB::trimspace($password);
-    $row = select('users', 'username', $username_trim, 'id, fullname, pass');
+    $rows = select('users', 'username', $username_trim, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
     if ($pdo->numrows == 1) {
-      // Assign the values
-      $user_id = "$row->id";
-      $fullname = "$row->fullname";
-      $hashed_password = "$row->pass";
-
+      foreach ($rows as $row) {
+        // Assign the values
+        $user_id = "$row->id";
+        $fullname = "$row->fullname";
+        $hashed_password = "$row->pass";
+      }
       // Test our password against the hash
       if (password_verify($password_to_check, $hashed_password)) {
 

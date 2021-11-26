@@ -4,9 +4,9 @@
 session_start();
 
 // In case you want to show errors
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+//ini_set('display_errors', '1');
+//ini_set('display_startup_errors', '1');
+//error_reporting(E_ALL);
 
 // MySQLi config
 require_once ('./in.sql.php');
@@ -164,8 +164,6 @@ class DB {
     $set_statement = "";
     foreach ( $set_array as $k => $v ) {
       $set_statement .= "$k=:$k,";
-      $bind_array["$k"]['k'] = ":$k'";
-      $bind_array["$k"]['v'] = $v;
     }
     $set_statement = rtrim($set_statement, ','); // remove last comma
 
@@ -173,8 +171,8 @@ class DB {
     $query = $database->prepare("UPDATE $table SET $set_statement WHERE $wcol='$vcol'");
 
     // Bind values
-    foreach ( $bind_array as $bind_string ) {
-      $query->bindParam($bind_string['k'], $bind_string['v']);
+    foreach ( $set_array as $k => $v ) {
+      $query->bindParam(":$k", $v);
     }
 
     // Try the query
@@ -214,7 +212,6 @@ class DB {
     $set_statement = "";
     foreach ( $set_array as $k => $v ) {
       $set_statement .= "$k=:$k,";
-      $bind_array["$k"] = "':$k', '$v'";
     }
     $set_statement = rtrim($set_statement, ','); // remove last comma
 
@@ -222,8 +219,8 @@ class DB {
     $query = $database->prepare("UPDATE $table SET $set_statement WHERE BINARY $wcol='$vcol'");
 
     // Bind values
-    foreach ( $bind_array as $bind_string ) {
-      $query->bindParam($bind_string);
+    foreach ( $set_array as $k => $v ) {
+      $query->bindParam(":$k", $v);
     }
 
     // Try the query
@@ -234,8 +231,8 @@ class DB {
     }
 
     // Success statement
-    $this->change = ($statement->rowCount() > 0) ? true : false;
-    $this->ok = ($statement) ? true : false;
+    $this->change = ($query->rowCount() > 0) ? true : false;
+    $this->ok = ($query) ? true : false;
 
     // Return fetched SQL response object
     return $query->fetchAll();

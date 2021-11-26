@@ -12,10 +12,14 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p']);
 
-  $pdo->try_delete("DELETE FROM pieces WHERE status='dead' AND id='$p_id'");
+  $query = $database->prepare("DELETE FROM pieces WHERE status='dead' AND id=:id");
+  $query->bindParam(':id', $p_id);
+  $pdo->exec_($query);
   $call1 = $pdo->ok;
   if ($call1) {
-    $pdo->try_delete("DELETE FROM publications WHERE status='dead' AND piece_id='$p_id'");
+    $query = $database->prepare("DELETE FROM publications WHERE status='dead' AND piece_id=:piece_id");
+    $query->bindParam(':piece_id', $p_id);
+    $pdo->exec_($query);
     $call2 = $pdo->ok;
   }
   if ($call2) {

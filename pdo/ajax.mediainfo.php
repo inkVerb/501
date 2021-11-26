@@ -17,14 +17,16 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     $ajax_response = array();
 
     // Get the old file name
-    $row = $pdo->select('media_library', 'id', $m_id, 'file_base, basic_type, file_extension, location');
+    $rows = $pdo->select('media_library', 'id', $m_id, 'file_base, basic_type, file_extension, location');
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
-      // Assign the values
-      $m_file_base = "$row->file_base";
-      $m_basic_type = "$row->basic_type";
-      $m_file_extension = "$row->file_extension";
-      $m_location = "$row->location";
+      foreach ($rows as $row){
+        // Assign the values
+        $m_file_base = "$row->file_base";
+        $m_basic_type = "$row->basic_type";
+        $m_file_extension = "$row->file_extension";
+        $m_location = "$row->location";
+      }
     }
 
     if (!file_exists("media/$m_location/$m_old_file_name")) {
@@ -42,8 +44,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
 
     // SQL
     $m_file_base_new_trim = DB::trimspace($m_file_base_new);
-    $query = "UPDATE media_library SET file_base='$m_file_base_new_trim', date_updated=NOW() WHERE id='$m_id'";
-    $pdo->try_update($query);
+    $query = $database->prepare("UPDATE media_library SET file_base=:file_base, date_updated=NOW() WHERE id=:id");
+    $query->bindParam(':file_base', $m_file_base_new_trim);
+    $query->bindParam(':id', $m_id);
+    $pdo->exec_($query);
     if ($pdo->change) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
       $ajax_response['file_name'] = "$m_file_base_new.$m_file_extension";
@@ -172,8 +176,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
     // SQL
     $title_text_trim = DB::trimspace($title_text);
     $alt_text_trim = DB::trimspace($alt_text);
-    $query = "UPDATE media_library SET title_text='$title_text_trim', alt_text='$alt_text_trim', date_updated=NOW() WHERE id='$m_id'";
-    $pdo->try_update($query);
+    $query = $database->prepare("UPDATE media_library SET title_text=:title_text, alt_text=:alt_text, date_updated=NOW() WHERE id=:id");
+    $query->bindParam(':title_text', $title_text_trim);
+    $query->bindParam(':alt_text', $alt_text_trim);
+    $query->bindParam(':id', $m_id);
+    $pdo->exec_($query);
     if ($pdo->change) {
       $ajax_response['message'] = '<span class="green notehide">Saved</span>';
     } else {
@@ -188,17 +195,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
   } else {
 
     // Get the media item info from the database
-    $row = $pdo->select('media_library', 'id', $m_id, 'size, mime_type, basic_type, file_base, file_extension, title_text, alt_text');
+    $rows = $pdo->select('media_library', 'id', $m_id, 'size, mime_type, basic_type, file_base, file_extension, title_text, alt_text');
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
-      // Assign the values
-      $m_size = "$row->size";
-      $m_mime_type = "$row->mime_type";
-      $m_basic_type = "$row->basic_type";
-      $m_file_base = "$row->file_base";
-      $m_file_extension = "$row->file_extension";
-      $m_title_text = "$row->title_text";
-      $m_alt_text = "$row->alt_text";
+      foreach ($rows as $row){
+        // Assign the values
+        $m_size = "$row->size";
+        $m_mime_type = "$row->mime_type";
+        $m_basic_type = "$row->basic_type";
+        $m_file_base = "$row->file_base";
+        $m_file_extension = "$row->file_extension";
+        $m_title_text = "$row->title_text";
+        $m_alt_text = "$row->alt_text";
+      }
     } else {
       echo '<h1 id="media-editor-content" class="error">Error!</h1>
       <div id="media-editor-closer" onclick="mediaEditorClose();" title="close">&#xd7;</div>

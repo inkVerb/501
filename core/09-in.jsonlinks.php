@@ -106,10 +106,6 @@ if ( ($p_links_check != '') && (!empty($p_links_check)) && (preg_match("/((https
       $part2 = trim($part[1]);
       $part1 = trim($part[0]);
 
-      $part3 = trim($part[2]);
-      $part2 = trim($part[1]);
-      $part1 = trim($part[0]);
-
       // Process 3 parts in reverse order
       // Running last things first, assign values based on the remaining possible outcomes
 

@@ -268,8 +268,8 @@ include ('./in.head.php');
     <?php
 
     // Get and display each item
-    $query = "SELECT id, file_base, file_extension, basic_type, location, size, alt_text FROM media_library ORDER BY id DESC";
-    $rows = $pdo->try_select_multi($query);
+    $query = $database->prepare("SELECT id, file_base, file_extension, basic_type, location, size, alt_text FROM media_library ORDER BY id DESC");
+    $rows = $pdo->exec_($query);
 
     // Is anything there?
     if ($pdo->numrows == 0) {

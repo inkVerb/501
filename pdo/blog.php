@@ -23,8 +23,8 @@ function preview_text($text, $limit, $lid) {
 }
 
 // Check the database for published pieces
-$query = "SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC";
-$rows = $pdo->try_select_multi($query); // try_ method for complex queries
+$query = $database->prepare("SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC");
+$rows = $pdo->exec_($query);
 // Start our show_div counter
 $show_div_count = 1;
 // We have many entries, this will iterate one post per each

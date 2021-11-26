@@ -49,8 +49,10 @@ if ( (isset($_POST['edit_piece']))
   }
   // Check that the slug isn't already used
   $p_slug_test_trim = DB::trimspace($p_slug);
-  $query = "SELECT id FROM publications WHERE slug='$p_slug_test_trim' AND NOT piece_id='$piece_id_trim'";
-  $pdo->try_select($query);
+  $query = $database->prepare("SELECT id FROM publications WHERE slug=:slug AND NOT piece_id=:piece_id");
+  $query->bindParam(':slug', $p_slug_test_trim);
+  $query->bindParam(':piece_id', $piece_id_trim);
+  $pdo->exec_($query);
   if ($pdo->numrows == 1) {
     $add_num = 0;
     $dup = true;
@@ -60,8 +62,10 @@ if ( (isset($_POST['edit_piece']))
       $new_p_slug = $p_slug_test_trim.'-'.$add_num;
 
       // Check again
-      $query = "SELECT id FROM publications WHERE slug='$new_p_slug' AND NOT piece_id='$piece_id_trim'";
-      $pdo->try_select($query);
+      $query = $database->prepare("SELECT id FROM publications WHERE slug=:slug AND NOT piece_id=:piece_id");
+      $query->bindParam(':slug', $new_p_slug);
+      $query->bindParam(':piece_id', $piece_id_trim);
+      $pdo->exec_($query);
       if ($pdo->numrows == 0) {
         $p_slug = $new_p_slug;
         break;
@@ -89,7 +93,7 @@ if ( (isset($_POST['edit_piece']))
   $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
   if (filter_var($_POST['p_series'], FILTER_VALIDATE_INT)) {
     $p_series = $_POST['p_series'];
-    $query = "SELECT id FROM series WHERE id='$p_series'";
+    $query = $database->prepare("SELECT id FROM series WHERE id='$p_series'");
     $pdo->select('series', 'id', $p_series, 'id');
     if ($pdo->numrows != 1) {
       $p_series = $de_series;
@@ -115,26 +119,48 @@ if ( (isset($_POST['edit_piece']))
   $ajax_response['title'] = $p_title;
 
   // Check for differences in the database
-  $querys = "SELECT id FROM pieces WHERE id='$piece_id_trim'
-  AND BINARY title='$p_title_trim'
-  AND BINARY slug='$p_slug_trim'
-  AND BINARY after='$p_after_trim'
-  AND tags='$p_tags_sqljson'
-  AND links='$p_links_sqljson'
-  AND BINARY date_live='$p_live_trim'";
-  $pdo->try_select($querys);
+  $querys = $database->prepare("SELECT id FROM pieces WHERE id=:id
+  AND BINARY title=:title
+  AND BINARY slug=:slug
+  AND BINARY after=:after
+  AND tags=:tags
+  AND links=:links
+  AND BINARY date_live=:date_live");
+  $querys->bindParam(':id', $piece_id_trim);
+  $querys->bindParam(':title', $p_title_trim);
+  $querys->bindParam(':slug', $p_slug_trim);
+  $querys->bindParam(':after', $p_after_trim);
+  $querys->bindParam(':tags', $p_tags_sqljson);
+  $querys->bindParam(':links', $p_links_sqljson);
+  $querys->bindParam(':date_live', $p_live_trim);
+  $pdo->exec_($querys);
   // If there is no match
   if ($pdo->numrows == 0) {
 
     //  Schedule?
     if ($p_live_schedule == false) { // No empty live date for publishing pieces
-      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_trim', slug='$p_slug_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id_trim'";
+      $queryu = $database->prepare("UPDATE pieces SET series=:series, title=:title, slug=:slug, after=:after, tags=:tags, links=:links, date_updated=NOW() WHERE id=:id");
+      $queryu->bindParam(':series', $p_series);
+      $queryu->bindParam(':title', $p_title_trim);
+      $queryu->bindParam(':slug', $p_slug_trim);
+      $queryu->bindParam(':after', $p_after_trim);
+      $queryu->bindParam(':tags', $p_tags_sqljson);
+      $queryu->bindParam(':links', $p_links_sqljson);
+      $queryu->bindParam(':id', $piece_id_trim);
     } elseif ($p_live_schedule == true) { // Unscheduled publish goes live now
-      $queryu = "UPDATE pieces SET series=$p_series, title='$p_title_trim', slug='$p_slug_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_trim', date_updated=NOW() WHERE id='$piece_id_trim'";
+      $queryu = $database->prepare("UPDATE pieces SET series=:, title=:title, slug=:slug, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE id=:id");
+      $queryu->bindParam(':series', $p_series);
+      $queryu->bindParam(':title', $p_title_trim);
+      $queryu->bindParam(':slug', $p_slug_trim);
+      $queryu->bindParam(':after', $p_after_trim);
+      $queryu->bindParam(':tags', $p_tags_sqljson);
+      $queryu->bindParam(':links', $p_links_sqljson);
+      $queryu->bindParam(':date_live', $p_live_trim);
+      $queryu->bindParam(':id', $piece_id_trim);
     }
 
     // Run our pieces UPDATE
-    $pdo->try_update($queryu);
+    $pdo->exec_($queryu);
     $callu = $pdo->ok;
 
         // publications UPDATE?
@@ -142,8 +168,17 @@ if ( (isset($_POST['edit_piece']))
       $callp = true; // We have a test later
       $ajax_response['message'] = 'pre-draft saved';
     } elseif ($p_pubyn == 'published') {
-      $queryp = "UPDATE publications SET pubstatus='published', series=$p_series, title='$p_title_trim', slug='$p_slug_trim', content='$p_content_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_live='$p_live_trim', date_updated=NOW() WHERE piece_id='$piece_id_trim'";
-      $pdo->try_update($queryp);
+      $queryp = $database->prepare("UPDATE publications SET pubstatus='published', series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE piece_id=:piece_id");
+      $queryp->bindParam(':series', $p_series);
+      $queryp->bindParam(':title', $p_title_trim);
+      $queryp->bindParam(':slug', $p_slug_trim);
+      $queryp->bindParam(':content', $p_content_trim);
+      $queryp->bindParam(':after', $p_after_trim);
+      $queryp->bindParam(':tags', $p_tags_sqljson);
+      $queryp->bindParam(':links', $p_links_sqljson);
+      $queryp->bindParam(':date_live', $p_live_trim);
+      $queryp->bindParam(':piece_id', $piece_id_trim);
+      $pdo->exec_($queryp);
       $callp = $pdo->ok;
       $ajax_response['message'] = 'piece updated';
     }
@@ -167,27 +202,29 @@ if ( (isset($_POST['edit_piece']))
 } elseif (isset($_POST['p_id'])) {
 
   // Look for a publications piece, regardless of what happens, before anything else happens
-  $query = "SELECT id FROM publications WHERE piece_id='$piece_id_trim' AND pubstatus='published'";
-  $pdo->try_select($query);
+  $query = $database->prepare("SELECT id FROM publications WHERE piece_id=:piece_id AND pubstatus='published'");
+  $query->bindParam(':piece_id', $piece_id_trim);
+  $pdo->exec_($query);
   // Shoule be 1 row
   if ($pdo->numrows == 1) {
     $editing_published_piece = true;
   }
 
   // Retrieve existing piece
-  $row = $pdo->select('pieces', 'id', $piece_id_trim, 'pub_yn, series, title, slug, after, tags, links, date_live');
+  $rows = $pdo->select('pieces', 'id', $piece_id_trim, 'pub_yn, series, title, slug, after, tags, links, date_live');
   // Shoule be 1 row
   if ($pdo->numrows == 1) {
-    // Assign the values
-    $p_pubyn = "$row->pub_yn";
-    $p_series = "$row->series";
-    $p_title = "$row->title";
-    $p_slug = "$row->slug";
-    $p_after = "$row->after";
-    $p_tags_json = "$row->tags";
-    $p_links_sqljson = "$row->links";
-    $p_live = "$row->date_live";
-
+    foreach ($rows as $row){
+      // Assign the values
+      $p_pubyn = "$row->pub_yn";
+      $p_series = "$row->series";
+      $p_title = "$row->title";
+      $p_slug = "$row->slug";
+      $p_after = "$row->after";
+      $p_tags_json = "$row->tags";
+      $p_links_sqljson = "$row->links";
+      $p_live = "$row->date_live";
+    }
     // Pub Status
     $p_pubyn = ($p_pubyn == true) ? 'published' : 'pre-draft';
 
@@ -249,7 +286,7 @@ if ( (isset($_POST['edit_piece']))
  // Series
   echo '<label class="metaedit">Series:<br></label>';
   // Query the Serieses
-  $rows = $pdo->try_select_multi("SELECT id, name FROM series"); // Simple, but needs custom $pdo->try_ method
+  $rows = $pdo->exec_($database->prepare("SELECT id, name FROM series"));
 
   // Start the select input
   // We need the div with our AJAX form inside so the input value is reset on success

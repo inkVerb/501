@@ -23,7 +23,7 @@
 <?php
 
 // Query the Serieses
-$rows = $pdo->try_select_multi("SELECT id, name FROM series"); // Simple, but needs custom $pdo->try_ method
+$rows = $pdo->exec_($database->prepare("SELECT id, name FROM series"));
 
 // Start the select input
 // We need the div with our AJAX form inside so the input value is reset on success

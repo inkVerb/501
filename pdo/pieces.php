@@ -261,17 +261,21 @@ foreach ($rows as $row) {
   $p_date_created = "$row->date_created";
 
   // Unpublished changes to draft?
-  $query_uc = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$p_id ORDER BY U.id DESC LIMIT 1";
-  $call_uc = $pdo->try_select($query_uc);
+  $query_uc = $database->prepare("SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=:piece_id ORDER BY U.id DESC LIMIT 1");
+  $query_uc->bindParam(':piece_id', $p_id);
+  $pdo->exec_($query_uc);
   $draft_diff = ($pdo->numrows == 0) ? '<code class="gray" title="Unpublished changes in draft, view in history or click \'Edit &rarr;\' > \'Update publication\' to publish"><i>(pending changes)</i></code>' : '';
 
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = "SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id='$p_id'";
-    $row_pub = $pdo->try_select($query_pub);
-      // Update the $p_status
+    $query_pub = $database->prepare("SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id=:piece_id");
+    $query_pub->bindParam(':piece_id', $p_id);
+    $rows_pub = $pdo->exec_($query_pub);
+    // Update the $p_status
+    foreach ($rows_pub as $row_pub) {
       $p_status = ("$row_pub->status" == 'live') ? "$row_pub->pubstatus" : "$row_pub->status";
+    }
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }

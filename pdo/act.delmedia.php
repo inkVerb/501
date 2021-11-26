@@ -19,7 +19,7 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
     }
 
     // Get the file name from the database
-    $rows = $pdo->select_multi('media_library', 'id', $m_id, 'file_base, basic_type, file_extension, location');
+    $rows = $pdo->select('media_library', 'id', $m_id, 'file_base, basic_type, file_extension, location');
     foreach ($rows as $row) {
       $m_file_base = "$row->file_base";
       $m_basic_type = "$row->basic_type";

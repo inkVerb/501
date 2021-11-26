@@ -14,28 +14,34 @@ if (isset($_GET['s'])) {
   $time_now = date("Y-m-d H:i:s");
 
   // See if the string is in the database and has not yet expired
-  $query = "SELECT userid FROM strings WHERE BINARY random_string='$secure_string_trim' AND date_expires > '$time_now'";
-  $row = $pdo->try_select($query);
+  $query = $database->prepare("SELECT userid FROM strings WHERE BINARY random_string=:random_string AND date_expires > :date_expires");
+  $query->bindParam(':random_string', $secure_string_trim);
+  $query->bindParam(':date_expires', $time_now);
+  $row = $pdo->exec_($query);
   // Check to see that our SQL query returned exactly 1 row
   if ($pdo->numrows == 1) {
-    // Assign the values
-    $user_id = "$row->userid";
-
-
-    $query = "SELECT id, fullname FROM users WHERE id='$user_id'";
-    $row = $pdo->try_select($query);
+    foreach ($rows as $row) {
+      // Assign the values
+      $user_id = "$row->userid";
+    }
+    $query = "SELECT fullname FROM users WHERE id=:id";
+    $query->bindParam(':id', $user_id);
+    $rows = $pdo->exec_($query);
     // Check to see that our SQL query returned exactly 1 row
     if ($pdo->numrows == 1) {
-      // Assign the values
-      $user_id = "$row->id"; // Reassign this just to be sure
-      $fullname = "$row->fullname";
+      foreach ($rows as $row) {
+        // Assign the value
+        $fullname = "$row->fullname";
+      }
       // Set the $_SESSION array
       $_SESSION['user_id'] = $user_id;
       $_SESSION['full_name'] = $fullname;
 
       // Set the key to "dead" so it can't be used again
-      $query = "UPDATE strings SET usable='dead' WHERE random_string='$secure_string_trim' AND userid='$user_id'";
-      $pdo->try_update($query);
+      $query = $database->prepare("UPDATE strings SET usable='dead' WHERE random_string=:random_string AND userid=:userid");
+      $query->bindParam(':random_string', $secure_string_trim);
+      $query->bindParam(':userid', $user_id);
+      $pdo->exec_($query);
       if (!$pdo->ok) {
         echo '<p class="error">Strange error killing a real key!</p>';
       }

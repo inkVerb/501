@@ -11,7 +11,7 @@ require_once ('./in.sql.php');
 require_once ('./in.conf.php');
 
 // Run the SQL query
-$pdo->try_delete("DELETE FROM strings WHERE date_expires < NOW()");
+$pdo->exec_($database->prepare("DELETE FROM strings WHERE date_expires < NOW()"));
 // Check to see that our SQL query returned exactly 1 row
 if ($pdo->ok) {
   echo "Old recovery keys deleted.";

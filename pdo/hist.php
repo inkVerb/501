@@ -41,8 +41,10 @@ if (isset($_POST['as_json'])) {
 
     // Check that the slug isn't already used
     $p_slug_test_trim = DB::trimspace($p_slug);
-    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_trim' AND NOT id='$piece_id_trim'";
-    $pdo->try_select($query);
+    $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug AND NOT id=:id");
+    $query->bindParam(':slug', $p_slug_test_trim);
+    $query->bindParam(':id', $piece_id_trim);
+    $pdo->exec_($query);
     if ($pdo->numrows > 0) {
       $add_num = 0;
       $dup = true;
@@ -53,8 +55,10 @@ if (isset($_POST['as_json'])) {
         $new_p_slug_test_trim = DB::trimspace($new_p_slug);
 
         // Check again
-        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_trim' AND NOT id='$piece_id_trim'";
-        $pdo->try_select($query);
+        $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug AND NOT id=:id");
+        $query->bindParam(':slug', $new_p_slug_test_trim);
+        $query->bindParam(':id', $piece_id_trim);
+        $pdo->exec_($query);
         if ($pdo->numrows == 0) {
           $p_slug = $new_p_slug;
           break;
@@ -77,8 +81,15 @@ if (isset($_POST['as_json'])) {
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
   // Run the query
-  $query = "UPDATE pieces SET title='$p_title_trim', slug='$p_slug_trim', content='$p_content_trim', after='$p_after_trim', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id_trim'";
-  $pdo->try_update($query);
+  $query = $database->prepare("UPDATE pieces SET title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:, date_updated=NOW() WHERE id=:id");
+  $query->bindParam(':title', $p_title_trim);
+  $query->bindParam(':slug', $p_slug_trim);
+  $query->bindParam(':content', $p_content_trim);
+  $query->bindParam(':after', $p_after_trim);
+  $query->bindParam(':tags', $p_tags_sqljson);
+  $query->bindParam(':links', $p_links_sqljson);
+  $query->bindParam(':id', $piece_id_trim);
+  $pdo->exec_($query);
   if ($pdo->ok) {
     $_SESSION['as_recovered'] = true;
     header("Location: edit.php?p=$piece_id");
@@ -93,31 +104,36 @@ if (isset($_POST['as_json'])) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
   $diffing = "latest draft v current publication";
-  $query_p = "SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id='$piece_id' ORDER BY id DESC LIMIT 1";
-  $query_o = "SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1";
+  $query_p = $database->prepare("SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
+  $query_p->bindParam(':id', $piece_id);
+  $query_o = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
+  $query_o->bindParam(':piece_id', $piece_id);
   $diff_type = 'p';
   // Values
-  $row_p = $pdo->try_select($query_p);
-    // Assign the values
-    $p_id = "draft_"; // Make sure this can't be a slug, underscore is not allowed for slugs
-    $p_title = "$row_p->title";
-    $p_slug = "$row_p->slug";
-    $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_after = "$row_p->after";
-    $p_tags_json = "$row_p->tags";
-    $p_links_json = "$row_p->links";
-    $p_update = "$row_p->date_updated";
-  $row_o = $pdo->try_select($query_o);
-    // Assign the values
-    $o_id = "$row_o->id";
-    $o_title = "$row_o->title";
-    $o_slug = "$row_o->slug";
-    $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row_o->after";
-    $o_tags_sqljson = "$row_o->tags";
-    $o_links_sqljson = "$row_o->links";
-    $o_update = "$row_o->date_updated";
-
+  $rows_p = $pdo->exec_($query_p);
+    foreach ($rows_p as $row_p) {
+      // Assign the values
+      $p_id = "draft_"; // Make sure this can't be a slug, underscore is not allowed for slugs
+      $p_title = "$row_p->title";
+      $p_slug = "$row_p->slug";
+      $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $p_after = "$row_p->after";
+      $p_tags_json = "$row_p->tags";
+      $p_links_json = "$row_p->links";
+      $p_update = "$row_p->date_updated";
+    }
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $o_id = "$row_o->id";
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+    }
 // Recovered autosave
 } elseif ((isset($_GET['o'])) && (filter_var($_GET['o'], FILTER_VALIDATE_INT))
       &&  (isset($_GET['a'])) && ($_GET['a'] == 1)
@@ -132,20 +148,23 @@ if (isset($_POST['as_json'])) {
 
   $piece_id_o = preg_replace("/[^0-9]/"," ", $_GET['o']);
   $diffing = "recovered autosave (unsaved changes from current browser, not available in any history)";
-  $query_o = "SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id='$piece_id_o' ORDER BY id DESC LIMIT 1";
+  $query_o = $database->prepare("SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
+  $query_o->bindParam(':id', $piece_id_o);
   $row_p = true; // So we don't fail tests since all other scenarios use two calls
   $diff_type = 'as';
   // Values
-  $row_o = $pdo->try_select($query_o);
-    // Assign the values
-    $o_title = "$row_o->title";
-    $o_slug = "$row_o->slug";
-    $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row_o->after";
-    $o_tags_sqljson = "$row_o->tags";
-    $o_links_sqljson = "$row_o->links";
-    $o_update = "$row_o->date_updated";
-    $o_id = $piece_id_o;
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+      $o_id = $piece_id_o;
+    }
     // Assign the values
     $piece_id_p = $as_diff_array["piece_id"];
     $p_title = $as_diff_array["p_title"];
@@ -178,32 +197,38 @@ if (isset($_POST['as_json'])) {
   $piece_id_c = preg_replace("/[^0-9]/"," ", $_GET['c']);
   $piece_id_h = preg_replace("/[^0-9]/"," ", $_GET['h']);
   $diffing = "older publications (not current publication)";
-  $query_p = "SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id='$piece_id_c'";
-  $query_o = "SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id='$piece_id_h'";
+  $query_p = $database->prepare("SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id=:id");
+  $query_p->bindParam(':id', $piece_id_c);
+  $query_o = $database->prepare("SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id=:id");
+  $query_o->bindParam(':id', $piece_id_h);
   $diff_type = 'ch';
   // Values
-  $row_p = $pdo->try_select($query_p);
-    // Assign the values
-    $piece_id_p = "$row_p->piece_id";
-    $p_title = "$row_p->title";
-    $p_slug = "$row_p->slug";
-    $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_after = "$row_o->after";
-    $p_tags_json = "$row_p->tags";
-    $p_links_json = "$row_p->links";
-    $p_update = "$row_p->date_updated";
-    $p_id = $piece_id_c;
-  $row_o = $pdo->try_select($query_o);
-    // Assign the values
-    $piece_id_o = "$row_o->";
-    $o_title = "$row_o->";
-    $o_slug = "$row_o->";
-    $o_content = htmlspecialchars_decode("$row_o->"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row_o->after";
-    $o_tags_sqljson = "$row_o->tags";
-    $o_links_sqljson = "$row_o->links";
-    $o_update = "$row_o->date_updated";
-    $o_id = $piece_id_h;
+  $rows_p = $pdo->exec_($query_p);
+    foreach ($rows_p as $row_p) {
+      // Assign the values
+      $piece_id_p = "$row_p->piece_id";
+      $p_title = "$row_p->title";
+      $p_slug = "$row_p->slug";
+      $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $p_after = "$row_o->after";
+      $p_tags_json = "$row_p->tags";
+      $p_links_json = "$row_p->links";
+      $p_update = "$row_p->date_updated";
+      $p_id = $piece_id_c;
+    }
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $piece_id_o = "$row_o->";
+      $o_title = "$row_o->";
+      $o_slug = "$row_o->";
+      $o_content = htmlspecialchars_decode("$row_o->"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+      $o_id = $piece_id_h;
+    }
 
     // Make sure both history IDs match the same piece ID
     if ($piece_id_p == $piece_id_o) {
@@ -212,36 +237,42 @@ if (isset($_POST['as_json'])) {
       exit (header("Location: blog.php"));
     }
 
+
 // Most recent published History
 } elseif ((isset($_GET['r'])) && (filter_var($_GET['r'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['r']);
   $diffing = "latest publication (not current draft)";
-  $query_p = "SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1";
-  $query_o = "SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1,1";
+  $query_p = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
+  $query_p->bindParam(':piece_id', $piece_id);
+  $query_o = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1,1");
+  $query_o->bindParam(':piece_id', $piece_id);
   $diff_type = 'r';
   // Values
-  $row_p = $pdo->try_select($query_p);
-    // Assign the values
-    $p_id = "$row_p->id";
-    $p_title = "$row_p->title";
-    $p_slug = "$row_p->slug";
-    $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_after = "$row_p->after";
-    $p_tags_json = "$row_p->tags";
-    $p_links_json = "$row_p->links";
-    $p_update = "$row_p->date_updated";
-  $row_o = $pdo->try_select($query_o);
-    // Assign the values
-    $o_id = "$row_o->id";
-    $o_title = "$row_o->title";
-    $o_slug = "$row_o->slug";
-    $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row_o->after";
-    $o_tags_sqljson = "$row_o->tags";
-    $o_links_sqljson = "$row_o->links";
-    $o_update = "$row_o->date_updated";
-
+  $rows_p = $pdo->exec_($query_p);
+    foreach ($rows_p as $row_p) {
+      // Assign the values
+      $p_id = "$row_p->id";
+      $p_title = "$row_p->title";
+      $p_slug = "$row_p->slug";
+      $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $p_after = "$row_p->after";
+      $p_tags_json = "$row_p->tags";
+      $p_links_json = "$row_p->links";
+      $p_update = "$row_p->date_updated";
+    }
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $o_id = "$row_o->id";
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+    }
 } else {
   exit (header("Location: blog.php"));
 }
@@ -393,8 +424,9 @@ document.getElementById("outputDif").innerHTML = difHTML;
 //// Now ends "htmdiff" ////
 
 // Revision history click-list
-$query = "SELECT id, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC";
-$rows = $pdo->try_select_multi($query);
+$query = $database->prepare("SELECT id, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC");
+$query->bindParam(':piece_id', $piece_id);
+$rows = $pdo->exec_($query);
 if ($pdo->numrows > 1) { // Only if there is more than one item
   echo '<p><code><b>Revision history:</b></code></p>';
 

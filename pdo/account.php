@@ -32,13 +32,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Prepare the query
     if (isset($password)) { // Changing password?
-      $query = "UPDATE users SET fullname='$fullname_trim', username='$username_trim', email='$email_trim', favnumber='$favnumber_trim', pass='$password_hashed' WHERE id='$user_id'";
+      $query = $database->prepare("UPDATE users SET fullname=:fullname, username=:username, email=:email, favnumber=:favnumber, pass=:pass WHERE id=:id");
+      $query->bindParam(':id', $user_id);
+      $query->bindParam(':fullname', $fullname_trim);
+      $query->bindParam(':username', $username_trim);
+      $query->bindParam(':email', $email_trim);
+      $query->bindParam(':favnumber', $favnumber_trim);
+      $query->bindParam(':pass', $password_hashed);
   		// inline password hash: $query = "INSERT INTO users (name, username, email, pass) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "')";
     } else { // Not changing password
-      $query = "UPDATE users SET fullname='$fullname_trim', username='$username_trim', email='$email_trim', favnumber='$favnumber_trim' WHERE id='$user_id'";
+      $query = $database->prepare("UPDATE users SET fullname=:fullname, username=:username, email=:email, favnumber=:favnumber WHERE id=:id");
+      $query->bindParam(':id', $user_id);
+      $query->bindParam(':fullname', $fullname_trim);
+      $query->bindParam(':username', $username_trim);
+      $query->bindParam(':email', $email_trim);
+      $query->bindParam(':favnumber', $favnumber_trim);
     }
     // Run the query
-    $pdo->try_update($query);
+    $pdo->exec_($query);
     // Test the query
     if ($pdo->ok) {
       // Change
@@ -59,14 +70,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } // Finish POST if
 
 // Retrieve the user info from the database
-$row = $pdo->select('users', 'id', $user_id, 'fullname, username, email, favnumber');
+$rows = $pdo->select('users', 'id', $user_id, 'fullname, username, email, favnumber');
 // Test the query
 if ($pdo->numrows == 1) {
-	$fullname = "$row->fullname";
-	$username = "$row->username";
-  $email = "$row->email";
-  $favnumber = "$row->favnumber";
-
+  foreach ($rows as $row) {
+  	$fullname = "$row->fullname";
+  	$username = "$row->username";
+    $email = "$row->email";
+    $favnumber = "$row->favnumber";
+  }
   // Our actual settings page
 
   // Settings form

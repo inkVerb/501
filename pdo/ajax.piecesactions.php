@@ -24,21 +24,24 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
 
   // In the SQL query, we will not render, we will only check for proper status
   // Get the new info for the piece & rebuild the table row
-  $row = $pdo->select('pieces', 'id', $piece_id, 'id, type, status, pub_yn');
-  // Start our row colors
-  //$table_row_color = 'renew';
-  // Assign the values
-  $p_id = "$row->id";
-  $p_type = "$row->type";
-  $p_status = "$row->status";
-  $p_pub_yn = $row->pub_yn; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
-
+  $rows = $pdo->select('pieces', 'id', $piece_id, 'id, type, status, pub_yn');
+  foreach ($rows as $row) {
+    // Start our row colors
+    //$table_row_color = 'renew';
+    // Assign the values
+    $p_id = "$row->id";
+    $p_type = "$row->type";
+    $p_status = "$row->status";
+    $p_pub_yn = $row->pub_yn; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
+  }
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $row_pub = $pdo->select('publications', 'piece_id', $p_id, 'status, pubstatus');
+    $rows_pub = $pdo->select('publications', 'piece_id', $p_id, 'status, pubstatus');
       // Update the $p_status
-      $p_status = ("$row_pub->status" == 'live') ? "$row_pub->pubstatus" : "$row_pub->status";
+      foreach ($rows_pub as $row_pub) {
+        $p_status = ("$row_pub->status" == 'live') ? "$row_pub->pubstatus" : "$row_pub->status";
+      }
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }

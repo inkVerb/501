@@ -122,18 +122,17 @@ echo '
 ';
 
 // Get and display each piece
-$rows = $pdo->select_multi('pieces', 'status', 'dead', 'id, type, title, date_live, date_created');
+$rows = $pdo->select('pieces', 'status', 'dead', 'id, type, title, date_live, date_created');
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each
 foreach ($rows as $row) {
-  // Assign the values
-  $p_id = "$row->id";
-  $p_type = "$row->type";
-  $p_title = "$row->title";
-  $p_date_live = "$row->date_live";
-  $p_date_created = "$row->date_created";
-
+    // Assign the values
+    $p_id = "$row->id";
+    $p_type = "$row->type";
+    $p_title = "$row->title";
+    $p_date_live = "$row->date_live";
+    $p_date_created = "$row->date_created";
   // Dead or live?
   $status_class = 'pieces_dead';
 
