@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Get the IDs for our deleted pieces
-$rows = $pdo->select_multi('pieces', 'status', 'dead', 'id');
+$rows = $pdo->select('pieces', 'status', 'dead', 'id');
 // We have many entries, this will iterate one post per each
 foreach ($rows as $row) {
   // Assign the values
