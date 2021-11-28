@@ -1,7 +1,7 @@
 <?php
 
 // Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
+include ('./in.db.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
@@ -54,7 +54,7 @@ foreach ($rows as $row) {
 
   // Content
     // Shorten
-    $p_content = preview_text($p_content, 5, $p_id);
+    $p_content = preview_text($p_content, 200, $p_id);
     // Display
     echo '<br><div class="piece-content">'.$p_content.'</div>';
 

@@ -6,6 +6,7 @@ include ('./in.config.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
+$nologin_allowed = (isset($_GET['preview'])) ? false : true; // Login required?
 include ('./in.logincheck.php');
 include ('./in.head.php');
 

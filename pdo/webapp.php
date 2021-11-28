@@ -1,7 +1,7 @@
 <?php
 
 // Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
+include ('./in.db.php');
 
 // Include our functions
 include ('./in.functions.php');
@@ -80,7 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $date_expires = date("Y-m-d H:i:s", $cookie_expires_30_days_later);
 
             // Add the string to the database
-            $pdo->insert('strings', 'userid, random_string, usable, date_expires', "'$user_id', '$random_string', 'live', '$date_expires'");
+            $query = $database->prepare("INSERT INTO strings (userid, random_string, usable, date_expires) VALUES (:userid, :random_string, 'live', :date_expires)");
+            $query->bindParam(':userid', $user_id);
+            $query->bindParam(':random_string', $random_string);
+            $query->bindParam(':date_expires', $date_expires);
+            $pdo->exec_($query);
 
             // Database error or success?
             if (!$pdo->change) { // If it didn't run okay

@@ -186,6 +186,7 @@ if ($name == 'delete') { // Pieces
 function piecesaction($action, $p_id) {
   // We need our $database inside this function
   global $database;
+  global $pdo;
 
   // Validate the $p_id
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit ();}

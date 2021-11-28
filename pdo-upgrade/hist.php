@@ -30,7 +30,7 @@ if (isset($_POST['as_json'])) {
   }
   // Get our info, update the dateabse, redirect to the Editor
   $piece_id = filter_var($as_diff_array["piece_id"], FILTER_VALIDATE_INT);
-  $piece_id_sqlesc = escape_sql($piece_id);
+  $piece_id_trim = DB::trimspace($piece_id);
   $p_title = checkPiece('p_title',$as_diff_array["p_title"]);
     // Apply Title to Slug if empty
     if ((empty($as_diff_array["p_slug"])) || (empty($as_diff_array["p_slug"] == ''))) {
@@ -40,22 +40,26 @@ if (isset($_POST['as_json'])) {
     }
 
     // Check that the slug isn't already used
-    $p_slug_test_sqlesc = escape_sql($p_slug);
-    $query = "SELECT id FROM pieces WHERE slug='$p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
-    $call = mysqli_query($database, $query);
-    if (mysqli_num_rows($call) > 0) {
+    $p_slug_test_trim = DB::trimspace($p_slug);
+    $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug AND NOT id=:id");
+    $query->bindParam(':slug', $p_slug_test_trim);
+    $query->bindParam(':id', $piece_id_trim);
+    $pdo->exec_($query);
+    if ($pdo->numrows > 0) {
       $add_num = 0;
       $dup = true;
       // If there were no changes
       while ($dup = true) {
         $add_num = $add_num + 1;
         $new_p_slug = $p_slug.'-'.$add_num;
-        $new_p_slug_test_sqlesc = escape_sql($new_p_slug);
+        $new_p_slug_test_trim = DB::trimspace($new_p_slug);
 
         // Check again
-        $query = "SELECT id FROM pieces WHERE slug='$new_p_slug_test_sqlesc' AND NOT id='$piece_id_sqlesc'";
-        $call = mysqli_query($database, $query);
-        if (mysqli_num_rows($call) == 0) {
+        $query = $database->prepare("SELECT id FROM pieces WHERE slug=:slug AND NOT id=:id");
+        $query->bindParam(':slug', $new_p_slug_test_trim);
+        $query->bindParam(':id', $piece_id_trim);
+        $pdo->exec_($query);
+        if ($pdo->numrows == 0) {
           $p_slug = $new_p_slug;
           break;
         }
@@ -69,17 +73,24 @@ if (isset($_POST['as_json'])) {
   $p_update = date("Y-m-d H:i:s", substr($as_diff_array["as_time"], 0, 10));
 
   // Prepare our database values for entry
-  $p_title_sqlesc = escape_sql($p_title);
-  $p_slug_sqlesc = escape_sql($p_slug);
-  $p_content_sqlesc = escape_sql($p_content);
-  $p_after_sqlesc = escape_sql($p_after);
+  $p_title_trim = DB::trimspace($p_title);
+  $p_slug_trim = DB::trimspace($p_slug);
+  $p_content_trim = DB::trimspace($p_content);
+  $p_after_trim = DB::trimspace($p_after);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
   // Run the query
-  $query = "UPDATE pieces SET title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', links='$p_links_sqljson', date_updated=NOW() WHERE id='$piece_id_sqlesc'";
-  $call = mysqli_query($database, $query);
-  if ($call) {
+  $query = $database->prepare("UPDATE pieces SET title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:, date_updated=NOW() WHERE id=:id");
+  $query->bindParam(':title', $p_title_trim);
+  $query->bindParam(':slug', $p_slug_trim);
+  $query->bindParam(':content', $p_content_trim);
+  $query->bindParam(':after', $p_after_trim);
+  $query->bindParam(':tags', $p_tags_sqljson);
+  $query->bindParam(':links', $p_links_sqljson);
+  $query->bindParam(':id', $piece_id_trim);
+  $pdo->exec_($query);
+  if ($pdo->ok) {
     $_SESSION['as_recovered'] = true;
     header("Location: edit.php?p=$piece_id");
     exit ();
@@ -93,33 +104,36 @@ if (isset($_POST['as_json'])) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
   $diffing = "latest draft v current publication";
-  $query_p = "SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id='$piece_id' ORDER BY id DESC LIMIT 1";
-  $query_o = "SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1";
-  $call_p = mysqli_query($database, $query_p);
-  $call_o = mysqli_query($database, $query_o);
+  $query_p = $database->prepare("SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
+  $query_p->bindParam(':id', $piece_id);
+  $query_o = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
+  $query_o->bindParam(':piece_id', $piece_id);
   $diff_type = 'p';
   // Values
-  $row = mysqli_fetch_array($call_p, MYSQLI_NUM);
-    // Assign the values
-    $p_id = "draft_"; // Make sure this can't be a slug, underscore is not allowed for slugs
-    $p_title = "$row[0]";
-    $p_slug = "$row[1]";
-    $p_content = htmlspecialchars_decode("$row[2]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_after = "$row[3]";
-    $p_tags_json = "$row[4]";
-    $p_links_json = "$row[5]";
-    $p_update = "$row[6]";
-  $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
-    // Assign the values
-    $o_id = "$row[0]";
-    $o_title = "$row[1]";
-    $o_slug = "$row[2]";
-    $o_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row[4]";
-    $o_tags_sqljson = "$row[5]";
-    $o_links_sqljson = "$row[6]";
-    $o_update = "$row[7]";
-
+  $rows_p = $pdo->exec_($query_p);
+    foreach ($rows_p as $row_p) {
+      // Assign the values
+      $p_id = "draft_"; // Make sure this can't be a slug, underscore is not allowed for slugs
+      $p_title = "$row_p->title";
+      $p_slug = "$row_p->slug";
+      $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $p_after = "$row_p->after";
+      $p_tags_json = "$row_p->tags";
+      $p_links_json = "$row_p->links";
+      $p_update = "$row_p->date_updated";
+    }
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $o_id = "$row_o->id";
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+    }
 // Recovered autosave
 } elseif ((isset($_GET['o'])) && (filter_var($_GET['o'], FILTER_VALIDATE_INT))
       &&  (isset($_GET['a'])) && ($_GET['a'] == 1)
@@ -134,21 +148,23 @@ if (isset($_POST['as_json'])) {
 
   $piece_id_o = preg_replace("/[^0-9]/"," ", $_GET['o']);
   $diffing = "recovered autosave (unsaved changes from current browser, not available in any history)";
-  $query_o = "SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id='$piece_id_o' ORDER BY id DESC LIMIT 1";
-  $call_o = mysqli_query($database, $query_o);
-  $call_p = true; // So we don't fail tests since all other scenarios use two calls
+  $query_o = $database->prepare("SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
+  $query_o->bindParam(':id', $piece_id_o);
+  $row_p = true; // So we don't fail tests since all other scenarios use two calls
   $diff_type = 'as';
   // Values
-  $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
-    // Assign the values
-    $o_title = "$row[0]";
-    $o_slug = "$row[1]";
-    $o_content = htmlspecialchars_decode("$row[2]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row[3]";
-    $o_tags_sqljson = "$row[4]";
-    $o_links_sqljson = "$row[5]";
-    $o_update = "$row[6]";
-    $o_id = $piece_id_o;
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+      $o_id = $piece_id_o;
+    }
     // Assign the values
     $piece_id_p = $as_diff_array["piece_id"];
     $p_title = $as_diff_array["p_title"];
@@ -181,34 +197,38 @@ if (isset($_POST['as_json'])) {
   $piece_id_c = preg_replace("/[^0-9]/"," ", $_GET['c']);
   $piece_id_h = preg_replace("/[^0-9]/"," ", $_GET['h']);
   $diffing = "older publications (not current publication)";
-  $query_p = "SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id='$piece_id_c'";
-  $query_o = "SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id='$piece_id_h'";
-  $call_p = mysqli_query($database, $query_p);
-  $call_o = mysqli_query($database, $query_o);
+  $query_p = $database->prepare("SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id=:id");
+  $query_p->bindParam(':id', $piece_id_c);
+  $query_o = $database->prepare("SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id=:id");
+  $query_o->bindParam(':id', $piece_id_h);
   $diff_type = 'ch';
   // Values
-  $row = mysqli_fetch_array($call_p, MYSQLI_NUM);
-    // Assign the values
-    $piece_id_p = "$row[0]";
-    $p_title = "$row[1]";
-    $p_slug = "$row[2]";
-    $p_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_after = "$row[4]";
-    $p_tags_json = "$row[5]";
-    $p_links_json = "$row[6]";
-    $p_update = "$row[7]";
-    $p_id = $piece_id_c;
-  $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
-    // Assign the values
-    $piece_id_o = "$row[0]";
-    $o_title = "$row[1]";
-    $o_slug = "$row[2]";
-    $o_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row[4]";
-    $o_tags_sqljson = "$row[5]";
-    $o_links_sqljson = "$row[6]";
-    $o_update = "$row[7]";
-    $o_id = $piece_id_h;
+  $rows_p = $pdo->exec_($query_p);
+    foreach ($rows_p as $row_p) {
+      // Assign the values
+      $piece_id_p = "$row_p->piece_id";
+      $p_title = "$row_p->title";
+      $p_slug = "$row_p->slug";
+      $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $p_after = "$row_p->after";
+      $p_tags_json = "$row_p->tags";
+      $p_links_json = "$row_p->links";
+      $p_update = "$row_p->date_updated";
+      $p_id = $piece_id_c;
+    }
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $piece_id_o = "$row_o->piece_id";
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+      $o_id = $piece_id_h;
+    }
 
     // Make sure both history IDs match the same piece ID
     if ($piece_id_p == $piece_id_o) {
@@ -217,44 +237,48 @@ if (isset($_POST['as_json'])) {
       exit (header("Location: blog.php"));
     }
 
+
 // Most recent published History
 } elseif ((isset($_GET['r'])) && (filter_var($_GET['r'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['r']);
   $diffing = "latest publication (not current draft)";
-  $query_p = "SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1";
-  $query_o = "SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC LIMIT 1,1";
-  $call_p = mysqli_query($database, $query_p);
-  $call_o = mysqli_query($database, $query_o);
+  $query_p = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
+  $query_p->bindParam(':piece_id', $piece_id);
+  $query_o = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1,1");
+  $query_o->bindParam(':piece_id', $piece_id);
   $diff_type = 'r';
   // Values
-  $row = mysqli_fetch_array($call_p, MYSQLI_NUM);
-    // Assign the values
-    $p_id = "$row[0]";
-    $p_title = "$row[1]";
-    $p_slug = "$row[2]";
-    $p_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $p_after = "$row[4]";
-    $p_tags_json = "$row[5]";
-    $p_links_json = "$row[6]";
-    $p_update = "$row[7]";
-  $row = mysqli_fetch_array($call_o, MYSQLI_NUM);
-    // Assign the values
-    $o_id = "$row[0]";
-    $o_title = "$row[1]";
-    $o_slug = "$row[2]";
-    $o_content = htmlspecialchars_decode("$row[3]"); // We used htmlspecialchars() to enter the database, now we must reverse it
-    $o_after = "$row[4]";
-    $o_tags_sqljson = "$row[5]";
-    $o_links_sqljson = "$row[6]";
-    $o_update = "$row[7]";
-
+  $rows_p = $pdo->exec_($query_p);
+    foreach ($rows_p as $row_p) {
+      // Assign the values
+      $p_id = "$row_p->id";
+      $p_title = "$row_p->title";
+      $p_slug = "$row_p->slug";
+      $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $p_after = "$row_p->after";
+      $p_tags_json = "$row_p->tags";
+      $p_links_json = "$row_p->links";
+      $p_update = "$row_p->date_updated";
+    }
+  $rows_o = $pdo->exec_($query_o);
+    foreach ($rows_o as $row_o) {
+      // Assign the values
+      $o_id = "$row_o->id";
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $o_after = "$row_o->after";
+      $o_tags_sqljson = "$row_o->tags";
+      $o_links_sqljson = "$row_o->links";
+      $o_update = "$row_o->date_updated";
+    }
 } else {
   exit (header("Location: blog.php"));
 }
 
 // Check our SQL queries
-if ((!$call_p) || (!$call_o)) {
+if ((!$row_p) || (!$row_o)) {
   echo '<pre>Major database error!</pre>';
   exit ();
 }
@@ -348,7 +372,7 @@ EOP;
 
 echo "<pre><h2>Diffing: $diffing</h2></pre>";
 
-echo '<pre><a href="piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
+echo '<pre><a href="'.$blog_web_base.'/piece.php?p='.$piece_id.'" target="_blank">view on blog</a></pre>';
 
 //// Now starts "htmdiff" ////
 // echo our diff JS
@@ -359,7 +383,7 @@ echo '
 <div class="outercard">
   <div class="row">
     <div class="col">
-      <code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>
+      <code><a class="orange" href="'.$blog_web_base.'/edit.php?h='.$o_id.'">revert</a></code>
       <pre><h3>'.$o_update.'<br>(previous)</h3></pre>
       <div class="card" id="outputOld"></div>
     </div>
@@ -371,11 +395,11 @@ echo '
     <div class="col">';
     // Editing a current draft?
     if (($diff_type == 'p') && ($p_id = "draft_")) {
-      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
+      echo '<code><a class="green" href="'.$blog_web_base.'/edit.php?p='.$piece_id.'">edit current draft</a></code>';
     } elseif ($diff_type == 'as') {
       echo '<code><input form="restore_autosave" type="submit" class="green postform link-button" value="restore this autosave"></code>';
     } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
-      echo '<code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>';
+      echo '<code><a class="orange" href="'.$blog_web_base.'/edit.php?h='.$o_id.'">revert</a></code>';
     }
 echo '
       <pre><h3>'.$p_update.'<br>(latest)</h3></pre>
@@ -400,15 +424,16 @@ document.getElementById("outputDif").innerHTML = difHTML;
 //// Now ends "htmdiff" ////
 
 // Revision history click-list
-$query = "SELECT id, date_updated FROM publication_history WHERE piece_id='$piece_id' ORDER BY id DESC";
-$call = mysqli_query($database, $query);
-if (mysqli_num_rows($call) > 1) { // Only if there is more than one item
+$query = $database->prepare("SELECT id, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC");
+$query->bindParam(':piece_id', $piece_id);
+$rows = $pdo->exec_($query);
+if ($pdo->numrows > 0) { // Only if there is more than one item
   echo '<p><code><b>Revision history:</b></code></p>';
 
   // echo a link to current draft
-  echo '<pre><i><a href="hist.php?p='.$piece_id.'">Diff latest draft</a></i></pre>';
+  echo '<pre><i><a href="'.$blog_web_base.'/hist.php?p='.$piece_id.'">Diff latest draft</a></i></pre>';
 }
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+foreach ($rows as $row) {
   // Retain previous entries, only render HTML if there was one
   if (isset($prev_piece)) {
 
@@ -416,20 +441,20 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     $o_id = $p_id;
 
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $p_id = "$row->id";
+    $p_update = "$row->date_updated";
 
     // echo a link to the past publications
-    echo '<pre><i><a href="hist.php?h='.$o_id.'&c='.$p_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="'.$blog_web_base.'/hist.php?h='.$o_id.'&c='.$p_id.'">'.$p_update.'</a></i></pre>';
 
   } else {
     $prev_piece = true;
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $p_id = "$row->id";
+    $p_update = "$row->date_updated";
 
     // echo a link to the most recent publication
-    echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="'.$blog_web_base.'/hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';
   }
 
 }

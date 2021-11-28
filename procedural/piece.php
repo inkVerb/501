@@ -2,10 +2,11 @@
 // No <head> yet because we might redirect, which uses header() and might break after the <head> tag
 
 // Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
+include ('./in.db.php');
 
 // Include our login cluster
 $head_title = "501 Blog"; // Set a <title> name used next
+$nologin_allowed = (isset($_GET['preview'])) ? false : true; // Login required?
 include ('./in.logincheck.php');
 include ('./in.head.php');
 

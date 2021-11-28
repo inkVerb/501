@@ -1,7 +1,7 @@
 <?php
 
 // Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
+include ('./in.db.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {

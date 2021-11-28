@@ -1,7 +1,7 @@
 <?php
 
 // Include our config (with SQL) up near the top of our PHP file
-include ('./in.config.php');
+include ('./in.db.php');
 
 // Include our POST processor
 include ('./in.piecefunctions.php');
@@ -210,7 +210,7 @@ if (isset($_POST['as_json'])) {
       $p_title = "$row_p->title";
       $p_slug = "$row_p->slug";
       $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
-      $p_after = "$row_o->after";
+      $p_after = "$row_p->after";
       $p_tags_json = "$row_p->tags";
       $p_links_json = "$row_p->links";
       $p_update = "$row_p->date_updated";
@@ -219,10 +219,10 @@ if (isset($_POST['as_json'])) {
   $rows_o = $pdo->exec_($query_o);
     foreach ($rows_o as $row_o) {
       // Assign the values
-      $piece_id_o = "$row_o->";
-      $o_title = "$row_o->";
-      $o_slug = "$row_o->";
-      $o_content = htmlspecialchars_decode("$row_o->"); // We used htmlspecialchars() to enter the database, now we must reverse it
+      $piece_id_o = "$row_o->piece_id";
+      $o_title = "$row_o->title";
+      $o_slug = "$row_o->slug";
+      $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $o_after = "$row_o->after";
       $o_tags_sqljson = "$row_o->tags";
       $o_links_sqljson = "$row_o->links";
@@ -427,7 +427,7 @@ document.getElementById("outputDif").innerHTML = difHTML;
 $query = $database->prepare("SELECT id, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC");
 $query->bindParam(':piece_id', $piece_id);
 $rows = $pdo->exec_($query);
-if ($pdo->numrows > 1) { // Only if there is more than one item
+if ($pdo->numrows > 0) { // Only if there is more than one item
   echo '<p><code><b>Revision history:</b></code></p>';
 
   // echo a link to current draft
@@ -450,8 +450,8 @@ foreach ($rows as $row) {
   } else {
     $prev_piece = true;
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $p_id = "$row->id";
+    $p_update = "$row->date_updated";
 
     // echo a link to the most recent publication
     echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';

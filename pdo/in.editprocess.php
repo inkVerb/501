@@ -321,11 +321,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       if ($pdo->numrows == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
-          $query = $database->prepare("INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id;");
+          $query = $database->prepare("INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id;");
+          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callh = $pdo->ok;
@@ -352,7 +352,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id;");
+          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callh = $pdo->ok;

@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $userID = $_POST['rsuid'];
 
   // Include our config (with SQL) up near the top of our PHP file
-  include ('./in.config.php');
+  include ('./in.db.php');
 
   // Include our string functions
   include ('./in.string_functions.php');

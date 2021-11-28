@@ -211,7 +211,7 @@ function toggle(source) {
 <?php
 
 // Trash link
-echo '<a class="red" href="trash.php">View trash</a>';
+echo '<a class="red" href="'.$blog_web_base.'/trash.php">View trash</a>';
 
 // Simple line
 echo '<br><hr><br>';
@@ -246,34 +246,36 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live'";
-$call = mysqli_query($database, $query);
+$rows = $pdo->select('pieces', 'status', 'live', 'id, type, status, pub_yn, title, date_live, date_created');
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+foreach ($rows as $row) {
   // Assign the values
-  $p_id = "$row[0]";
-  $p_type = "$row[1]";
-  $p_status = "$row[2]";
-  $p_pub_yn = $row[3]; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
-  $p_title = "$row[4]";
-  $p_date_live = "$row[5]";
-  $p_date_created = "$row[6]";
+  $p_id = "$row->id";
+  $p_type = "$row->type";
+  $p_status = "$row->status";
+  $p_pub_yn = $row->pub_yn; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
+  $p_title = "$row->title";
+  $p_date_live = "$row->date_live";
+  $p_date_created = "$row->date_created";
 
   // Unpublished changes to draft?
-  $query_uc = "SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=$p_id ORDER BY U.id DESC LIMIT 1";
-  $call_uc = mysqli_query($database, $query_uc);
-  $draft_diff = (mysqli_num_rows($call_uc) == 0) ? '<code class="gray" title="Unpublished changes in draft, view in history or click \'Edit &rarr;\' > \'Update publication\' to publish"><i>(pending changes)</i></code>' : '';
+  $query_uc = $database->prepare("SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=:piece_id ORDER BY U.id DESC LIMIT 1");
+  $query_uc->bindParam(':piece_id', $p_id);
+  $pdo->exec_($query_uc);
+  $draft_diff = ($pdo->numrows == 0) ? '<code class="gray" title="Unpublished changes in draft, view in history or click \'Edit &rarr;\' > \'Update publication\' to publish"><i>(pending changes)</i></code>' : '';
 
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = "SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id='$p_id'";
-    $call_pub = mysqli_query($database, $query_pub);
-    $row_pub = mysqli_fetch_array($call_pub, MYSQLI_NUM);
-      // Update the $p_status
-      $p_status = ("$row_pub[0]" == 'live') ? "$row_pub[1]" : "$row_pub[0]";
+    $query_pub = $database->prepare("SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id=:piece_id");
+    $query_pub->bindParam(':piece_id', $p_id);
+    $rows_pub = $pdo->exec_($query_pub);
+    // Update the $p_status
+    foreach ($rows_pub as $row_pub) {
+      $p_status = ("$row_pub->status" == 'live') ? "$row_pub->pubstatus" : "$row_pub->status";
+    }
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
   }
@@ -314,8 +316,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <div style="display: inline;" id="title_'.$p_id.'">'.$title_content.'</div><br>
   <div class="bulk_checkbox" style="display: none;"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"></div> '.$p_date_note.'&nbsp'.$draft_diff.'
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style="float: none;" href="edit.php?p='.$p_id.'">Edit &rarr;</a>
-  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>
+  <a style="float: none;" href="'.$blog_web_base.'/edit.php?p='.$p_id.'">Edit &rarr;</a>
+  <a style="float: right;" class="orange" href="'.$blog_web_base.'/piece.php?p='.$p_id.'&preview">preview</a>
   </div>';
 
   echo '</td>';
@@ -327,11 +329,11 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>
-    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('unpublish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('unpublish', $p_id).' <a class="purple" href="'.$blog_web_base.'/hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
     <div id="r_delete_'.$p_id.'" style="display: inherit;">'.metaeditform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'redrafting') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>
-    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('republish', $p_id).' <a class="purple" href="hist.php?p='.$p_id.'">history</a> </div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('republish', $p_id).' <a class="purple" href="'.$blog_web_base.'/hist.php?p='.$p_id.'">history</a> </div>
     <div id="r_delete_'.$p_id.'" style="display: inherit;">'.metaeditform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'pre-draft') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>

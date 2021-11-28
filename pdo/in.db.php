@@ -4,12 +4,12 @@
 session_start();
 
 // In case you want to show errors
-//ini_set('display_errors', '1');
-//ini_set('display_startup_errors', '1');
-//error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 
 // MySQLi config
-require_once ('./in.sql.php');
+require_once ('./in.conf.php');
 
 // Database connection
 $nameHostChar = "mysql:host=$db_host; dbname=$db_name; charset=utf8mb4";
@@ -267,166 +267,6 @@ class DB {
     return $query->fetchAll();
 
   } // exec_()
-
-
-  //// DEV, after prepared statement PDO porting, delete all methods below ////
-
-  // INSERT method
-  public function insert($table, $cols, $vals) {
-    // Usage $pdo = new DB;
-    // $pdo->insert($table, $columns, $values);
-    // $pdo->insert('table', 'col1, col2', "'$val1', '$val2'");
-
-    global $database;
-
-    // Try the query
-    $query = "INSERT INTO $table ($cols) VALUES ($vals);";
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Success statements
-    $this->change = ($statement->rowCount() == 1) ? true : false;
-    $this->lastid = $database->lastInsertId();
-    $this->ok = ($statement) ? true : false;
-
-  } // insert()
-
-  // try_insert method for complex queries
-  public function try_insert($query) {
-    // Usage $pdo = new DB;
-    // $pdo->try_insert($query);
-
-    global $database;
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Success statements
-    $this->change = ($statement->rowCount() == 1) ? true : false;
-    $this->lastid = $database->lastInsertId();
-    $this->ok = ($statement) ? true : false;
-
-  } // try_insert()
-
-  // try_delete method for complex queries
-  public function try_delete($query) {
-    // Usage $pdo = new DB;
-    // $pdo->try_delete($query);
-    global $database;
-
-    // Try the query
-    try {
-      $statement = $database->prepare($query);
-      $statement->execute();
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Success statement
-    $this->change = ($statement->rowCount() >= 1) ? true : false;
-    $this->ok = ($statement) ? true : false;
-
-  } // try_delete()
-
-  // try_select method for complex queries
-  public function try_select($query) {
-    global $database;
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    $this->numrows = $statement->rowCount();
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // try_select()
-
-
-
-  // try_update method for complex queries
-  public function try_update($query) {
-    // Usage $pdo = new DB;
-    // $pdo->try_update($query);
-    global $database;
-
-    // Try the query
-    try {
-      $statement = $database->query($query);
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Success statement
-    $this->change = ($statement->rowCount() > 0) ? true : false;
-    $this->ok = ($statement) ? true : false;
-
-    // Return fetched SQL response object
-    return $statement->fetch();
-
-  } // try_update()
-
-  // SELECT method for multiple rows
-  public function select_multi($table, $wcol, $vcol, $cols='*') {
-    // Usage $pdo = new DB;
-    // $val = $pdo->select_multi($table, $where_col, $where_value, $columns='*');
-    // foreach ($rows as $row) {$val = $row->colname;}
-
-    global $database;
-
-    // Prepare SQL query
-    $query = "SELECT $cols FROM $table WHERE $wcol='$vcol'";
-
-    // Try the query
-    try {
-      $statement = $database->prepare($query);
-      $statement->execute();
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    $this->numrows = $statement->rowCount();
-
-    // Return fetched SQL response object
-    return $statement->fetchAll();
-
-  } // select_multi()
-
-  // SELECT method for multiple rows with complex queries
-  public function try_select_multi($query) {
-    // Usage $pdo = new DB;
-    // $rows = $pdo->try_select_multi($query);
-    // foreach ($rows as $row) {$val = $row->colname;}
-    global $database;
-
-    // Try the query
-    try {
-      $statement = $database->prepare($query);
-      $statement->execute();
-    } catch (PDOException $error) {
-      $this->pdo_error($query, $error->getMessage());
-    }
-
-    // Rows
-    $this->numrows = $statement->rowCount();
-
-    // Return fetched SQL response object
-    return $statement->fetchAll();
-
-  } // try_select_multi()
 
 } // class DB
 

@@ -261,9 +261,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       if (mysqli_num_rows($call) == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
-          $query = "INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc';";
+          $query = "INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc'";
           $callp = mysqli_query($database, $query);
-          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc';";
+          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc'";
           $callh = mysqli_query($database, $query);
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id_sqlesc'";
           $callu = mysqli_query($database, $query);
@@ -283,7 +283,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
               PUB.date_updated=PCE.date_updated
           WHERE PUB.piece_id='$piece_id_sqlesc' AND PCE.id='$piece_id_sqlesc'";
           $callp = mysqli_query($database, $query);
-          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc';";
+          $query = "INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id='$piece_id_sqlesc'";
           $callh = mysqli_query($database, $query);
           $query = "UPDATE pieces SET pub_yn=true WHERE id='$piece_id_sqlesc'";
           $callu = mysqli_query($database, $query);

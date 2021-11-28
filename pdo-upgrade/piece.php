@@ -5,30 +5,30 @@
 include ('./in.db.php');
 
 // Include our login cluster
-$head_title = "501 Blog"; // Set a <title> name used next
-$nologin_allowed = (isset($_GET['preview'])) ? false : true; // Login required?
+$heading = ""; // Setting no title, our users know where they are
+$nologin_allowed = (isset($_GET['preview'])) ? false : $blog_public; // Login required?
 include ('./in.logincheck.php');
-include ('./in.head.php');
+$seo_inf = true; // Should in.head.php include SEO meta?
 
 // Preview?
 if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {
   $from_where = "pieces WHERE ";
-  echo '<h2><code>(Draft Preview!)</code></h2>';
 } else {
   $from_where = "publications WHERE status='live' AND pubstatus='published' AND piece_";
 }
 
+// Piece content
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
   $p_id = preg_replace("/[^0-9]/"," ", $_GET['p']); // Set $p_id via sanitize non-numbers
-  $query = $database->prepare("SELECT title, slug, content, after, tags, links, date_live, date_updated FROM ${from_where}id=:id");
+  $query = $database->prepare("SELECT title, slug, content, after, series, tags, links, date_live, date_updated FROM ${from_where}id=:id");
   $query->bindParam(':id', $p_id);
 } elseif ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
 
   $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase, all non-alnum to hyphen
   $p_slug = substr($result, 0, 90); // Limit to 90 characters
-  $query = $database->prepare("SELECT title, piece_id, content, after, tags, links, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug=:slug");
+  $query = $database->prepare("SELECT title, piece_id, content, after, series, tags, links, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug=:slug");
   $query->bindParam(':slug', $p_slug);
 
 } else {
@@ -47,13 +47,28 @@ $rows = $pdo->exec_($query);
     }
     $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
     $p_after = "$row->after";
+    $p_series_id = "$row->series";
     $p_tags_json = "$row->tags";
     $p_links_json = "$row->links";
     $p_live = "$row->date_live";
     $p_update = "$row->date_updated";
+
+    $rows = $pdo->select('series', 'id', $p_series_id, 'name');
+    foreach ($rows as $row) { $p_series = $row->name; }
   }
+
+  // Header
+  $head_title = $blog_title;
+  $piece_title = $p_title;
+  include ('./in.head.php');
+
+  // Preview?
+  if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {
+    echo '<h2><code>(Draft Preview!)</code></h2>';
+  }
+
   // Linked title (we will create piece.php with a RewriteMod in a later lesson)
-  echo '<h2><a href="piece.php?s='.$p_slug.'">'.$p_title.'</a></h2>';
+  echo '<h2><a href="'.$blog_web_base.'/piece.php?s='.$p_slug.'">'.$p_title.'</a></h2>';
 
   // Date published
   echo '<p class="gray"><small><i>'.$p_live.'</i>';
@@ -103,7 +118,7 @@ $rows = $pdo->exec_($query);
 
   // Edit for logged-in users
   if (isset($user_id)) {
-    echo '<p><a href="edit.php?p='.$p_id.'">Edit</a></p>';
+    echo '<p><a href="'.$blog_web_base.'/edit.php?p='.$p_id.'">Edit</a></p>';
   }
 
 // Footer

@@ -1,7 +1,7 @@
 <?php
 
 // Include our config (with SQL) up near the top of our PHP file
-include_once ('./in.config.php');
+include_once ('./in.db.php');
 
 // Include our piece functions
 include_once ('./in.piecefunctions.php');

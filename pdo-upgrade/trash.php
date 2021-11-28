@@ -89,7 +89,7 @@ function clearPurged(p_id) {
 <?php
 
 // Trash link
-echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
+echo '<a class="blue" href="'.$blog_web_base.'/pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="'.$blog_web_base.'/purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
 
 
 // Simple line
@@ -122,19 +122,17 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, title, date_live, date_created FROM pieces WHERE status='dead'";
-$call = mysqli_query($database, $query);
+$rows = $pdo->select('pieces', 'status', 'dead', 'id, type, title, date_live, date_created');
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each
-while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
-  // Assign the values
-  $p_id = "$row[0]";
-  $p_type = "$row[1]";
-  $p_title = "$row[2]";
-  $p_date_live = "$row[3]";
-  $p_date_created = "$row[4]";
-
+foreach ($rows as $row) {
+    // Assign the values
+    $p_id = "$row->id";
+    $p_type = "$row->type";
+    $p_title = "$row->title";
+    $p_date_live = "$row->date_live";
+    $p_date_created = "$row->date_created";
   // Dead or live?
   $status_class = 'pieces_dead';
 
@@ -161,8 +159,8 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   <b>'.$p_title.'</b><br>
   <div class="del_checkbox" style="display: none;"><input form="bulk_actions" type="checkbox" id="bulk_'.$p_id.'" name="bulk_'.$p_id.'" value="'.$p_id.'"></div> '.$p_date_note.'
   <div id="showviews'.$p_id.'" style="display: none;">
-  <a style="float: none;" href="edit.php?p='.$p_id.'">edit</a>
-  <a style="float: right;" class="orange" href="piece.php?p='.$p_id.'&preview">preview</a>
+  <a style="float: none;" href="'.$blog_web_base.'/edit.php?p='.$p_id.'">edit</a>
+  <a style="float: right;" class="orange" href="'.$blog_web_base.'/piece.php?p='.$p_id.'&preview">preview</a>
   </div></td>';
 
   // Actions

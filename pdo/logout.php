@@ -1,7 +1,7 @@
 <?php
 
 // Using SQL requires our config, which also includes session_start()
-include ('./in.config.php');
+include ('./in.db.php');
 
 // Delete the cookie in the database if one exists
 if (isset($_COOKIE['user_key'])) {

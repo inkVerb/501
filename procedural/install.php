@@ -76,7 +76,7 @@ EOF;
       echo '<p>Could not create the database config file, quitting.</p>';
       exit ();
     } else {
-      require_once ('./in.config.php');
+      require_once ('./in.db.php');
     } // Now we have a database connection and we can begin making queries
 
 

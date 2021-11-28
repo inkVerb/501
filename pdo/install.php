@@ -55,28 +55,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // No errors, all ready
   if (($no_form_errors == true) && (!isset($no_db_cred_errors))) {
 
-    // Write our database connection file with:
-    //// 1. A heredoc
-    //// 2. the file_put_contents() function
+    // Web base URL
+    $page = '/install.php';
+    $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://';
+    $web_base = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $web_base = preg_replace('/'. preg_quote($page, '/') . '$/', '', $web_base);
 
     // Heredoc:
-    $sqlConfigFile = <<<EOF
+    $configFile = <<<EOF
 <?php
 \$db_name = '$db_name';
 \$db_user = '$db_user';
 \$db_pass = '$db_pass';
 \$db_host = '$db_host';
+\$blog_web_base = '$web_base';
 EOF;
 
     // Write the file:
-    file_put_contents('./in.sql.php', $sqlConfigFile);
+    file_put_contents('./in.conf.php', $configFile);
+
 
     // Include our config file (which includes the newly-written SQL config) if it exists
     if (!file_exists('./in.sql.php')) {
       echo '<p>Could not create the database config file, quitting.</p>';
       exit ();
     } else {
-      require_once ('./in.config.php');
+      require_once ('./in.db.php');
     } // Now we have a database connection and we can begin making queries
 
     // Set the character settings in the database
@@ -86,7 +90,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not update the database, quitting.</p>';
-      //exit ();
+      exit ();
     }
 
     // Create our tables
@@ -107,7 +111,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the users database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `strings` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -122,7 +126,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the strings database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `pieces` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -146,7 +150,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the pieces database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `publications` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -170,7 +174,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the publications database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `publication_history` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -192,7 +196,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the publication_history database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `series` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -206,7 +210,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the series database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "INSERT INTO series (name, slug) VALUES ('Blog', 'blog')";
     $statement = $database->query($query);
@@ -214,7 +218,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the series database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `media_library` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -235,7 +239,7 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the media_library database table, quitting.</p>';
-      //exit ();
+      exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `media_images` (
       `m_id` INT UNSIGNED NOT NULL,
@@ -254,7 +258,36 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the media_images database table, quitting.</p>';
-      //exit ();
+      exit ();
+    }
+
+    // Add our new tables for the later app upgrade
+    $query = "CREATE TABLE IF NOT EXISTS `blog_settings` (
+      `web_base` VARCHAR(2048) NOT NULL, -- May be redundant from in.conf.php, but coult be useful for future development
+      `public` BOOLEAN NOT NULL DEFAULT true,
+      `title` VARCHAR(90) DEFAULT '501 Blog',
+      `tagline` VARCHAR(120) DEFAULT 'Where code stacks',
+      `description` LONGTEXT DEFAULT 'Long, poetic explanations of blog contents are useful in search engines, podcasts, and other places on the interwebs.',
+      `keywords` LONGTEXT DEFAULT NULL,
+      `summary_words`  INT UNSIGNED DEFAULT 50,
+      `piece_items`  INT UNSIGNED DEFAULT 10,
+      `feed_items`  INT UNSIGNED DEFAULT 20,
+      `crawler_index` ENUM('index', 'noindex') DEFAULT 'index'
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
+    $statement = $database->query($query);
+    if ($statement) {
+      $installrun = true;
+    } else {
+      echo '<p>Could not create the blog_settings database table, quitting.</p>';
+      exit ();
+    }
+    $query = $database->prepare("INSERT INTO blog_settings (web_base, title, tagline, description, summary_words, piece_items, feed_items, crawler_index) VALUES (:web_base, '501 Blog', 'Where code stacks', 'Long, poetic explanations of blog contents are useful in search engines, podcasts, and other places on the interwebs.', 50, 10, 20, 'index')");
+    $query->bindParam(':web_base', $web_base);
+    try {
+      $query->execute();
+      $installrun = true;
+    } catch (PDOException $error) {
+      echo '<p>Could not create the blog_settings database table, quitting.</p>';
     }
 
     // Add the first admin user
