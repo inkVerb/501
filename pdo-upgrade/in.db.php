@@ -277,7 +277,6 @@ $pdo = new DB;
 $query = $database->prepare("SELECT public, title, tagline, description, keywords, summary_words, piece_items, feed_items, crawler_index FROM blog_settings");
 $rows = $pdo->exec_($query);
 foreach ($rows as $row) {
-  // Assign the values
   $blog_public = "$row->public";
   $blog_title = "$row->title";
   $blog_tagline = "$row->tagline";

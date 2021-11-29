@@ -149,7 +149,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ( ($p_status == 'draft') && ($p_live_schedule != true) ) { // No empty live date for publishing pieces
       $p_live = NULL;
       $p_live_trim = DB::trimspace($p_live); // Needs to be set
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=NULL, date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
@@ -159,7 +159,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $queryu->bindParam(':after', $p_after_trim);
       $queryu->bindParam(':tags', $p_tags_sqljson);
       $queryu->bindParam(':links', $p_links_sqljson);
-      $queryu->bindParam(':date_live', NULL);
     } elseif ( (($p_status == 'publish') || ($p_status == 'update') || ($p_status == 'draft')) && ($p_live_schedule == true) ) { // Unscheduled publish goes live now
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
@@ -177,7 +176,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     } elseif ($p_live_schedule != true) { // Not scheduled, but not a draft save either, so will be scheduled for now with this query
       $p_live_schedule = 'waiting'; // Set this for later
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=:date_live, date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_live=NOW(), date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
@@ -187,7 +186,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $queryu->bindParam(':after', $p_after_trim);
       $queryu->bindParam(':tags', $p_tags_sqljson);
       $queryu->bindParam(':links', $p_links_sqljson);
-      $queryu->bindParam(':date_live', NOW());
     }
 
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
@@ -380,9 +378,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES (:type, :pub_yn, :series, :title, :slug, :content, :after, :tags, :links, NULL)");
+      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, NULL)");
       $query->bindParam(':type', $p_type_trim);
-      $query->bindParam(':pub_yn', false);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);
       $query->bindParam(':slug', $p_slug_trim);
@@ -393,9 +390,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES (:type, :pub_yn, :series, :title, :slug, :content, :after, :tags, :links, :date_live)");
+      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :date_live)");
       $query->bindParam(':type', $p_type_trim);
-      $query->bindParam(':pub_yn', false);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);
       $query->bindParam(':slug', $p_slug_trim);

@@ -269,12 +269,13 @@ foreach ($rows as $row) {
   // Determine the published status based on pieces.pup_yn and the publications.pubstatus
   // This does not affect dead pieces that will AJAX back, which would remain dead anyway
   if (($p_pub_yn == true) && ($p_status == 'live')) {
-    $query_pub = $database->prepare("SELECT status, pubstatus FROM publications WHERE status='live' AND piece_id=:piece_id");
+    $query_pub = $database->prepare("SELECT status, pubstatus, slug FROM publications WHERE status='live' AND piece_id=:piece_id");
     $query_pub->bindParam(':piece_id', $p_id);
     $rows_pub = $pdo->exec_($query_pub);
     // Update the $p_status
     foreach ($rows_pub as $row_pub) {
       $p_status = ("$row_pub->status" == 'live') ? "$row_pub->pubstatus" : "$row_pub->status";
+      $p_slug = "$row_pub->slug";
     }
   } elseif (($p_pub_yn == false) && ($p_status == 'live')) {
     $p_status = 'pre-draft';
@@ -329,7 +330,7 @@ foreach ($rows as $row) {
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>
-    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('unpublish', $p_id).' <a class="purple" href="'.$blog_web_base.'/hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="piece.php?p='.$p_id.'">view</a> </div>
+    <div id="r_status_'.$p_id.'" style="display: inherit;">'.metaeditform('unpublish', $p_id).' <a class="purple" href="'.$blog_web_base.'/hist.php?p='.$p_id.'">history</a>&nbsp;&nbsp;<a class="green" href="'.$p_slug.'">view</a> </div>
     <div id="r_delete_'.$p_id.'" style="display: inherit;">'.metaeditform('delete', $p_id).'</div></div>';
   } elseif ($p_status == 'redrafting') {
     echo '<div id="r_undelete_'.$p_id.'" style="display: none;">'.metaeditform('undelete', $p_id).'</div>

@@ -127,7 +127,7 @@ if (isset($_POST['as_json'])) {
   // Validate & parse our JSON from the Autosave
   $as_diff_array = json_decode($_POST['old_as'], true); // We need true because we are not working with OOP in PHP yet
   if (json_last_error() == JSON_ERROR_NONE) {
-    $as_diff_json_string = $_POST['old_as']; // We use this when recovering
+    $as_diff_json_string = htmlspecialchars($_POST['old_as']); // We use this when recovering
   } else {
     exit (header("Location: blog.php"));
   }
@@ -169,7 +169,7 @@ if (isset($_POST['as_json'])) {
     // Form for our recover
     ?>
       <form id="restore_autosave" method="post" action="hist.php?asr=<?php echo $piece_id; ?>">
-        <input form="restore_autosave" type="hidden" name="as_json" value='<?php echo $as_diff_json_string; ?>'>
+        <input form="restore_autosave" type="hidden" name="as_json" value="<?php echo $as_diff_json_string; ?>">
       </form>
     <?php
 

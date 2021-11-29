@@ -17,7 +17,7 @@ include ('./in.head.php');
 
 // Must be logged in
 if (!isset($_SESSION['user_id'])) {
-  exit (header("Location: blog.php"));
+  exit (header("Location: $blog_web_base/"));
 }
 
 // What type of comparison? Prepare SQL queries accordingly
@@ -26,7 +26,7 @@ if (isset($_POST['as_json'])) {
   // Validate & parse our JSON from the Autosave
   $as_diff_array = json_decode($_POST['as_json'], true); // We need true because we are not working with OOP in PHP yet
   if (json_last_error() != JSON_ERROR_NONE) {
-    exit (header("Location: blog.php"));
+    exit (header("Location: $blog_web_base/"));
   }
   // Get our info, update the dateabse, redirect to the Editor
   $piece_id = filter_var($as_diff_array["piece_id"], FILTER_VALIDATE_INT);
@@ -81,7 +81,7 @@ if (isset($_POST['as_json'])) {
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
   // Run the query
-  $query = $database->prepare("UPDATE pieces SET title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:, date_updated=NOW() WHERE id=:id");
+  $query = $database->prepare("UPDATE pieces SET title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, date_updated=NOW() WHERE id=:id");
   $query->bindParam(':title', $p_title_trim);
   $query->bindParam(':slug', $p_slug_trim);
   $query->bindParam(':content', $p_content_trim);
@@ -138,12 +138,13 @@ if (isset($_POST['as_json'])) {
 } elseif ((isset($_GET['o'])) && (filter_var($_GET['o'], FILTER_VALIDATE_INT))
       &&  (isset($_GET['a'])) && ($_GET['a'] == 1)
       &&  (isset($_POST['old_as']))) {
+
   // Validate & parse our JSON from the Autosave
   $as_diff_array = json_decode($_POST['old_as'], true); // We need true because we are not working with OOP in PHP yet
   if (json_last_error() == JSON_ERROR_NONE) {
-    $as_diff_json_string = $_POST['old_as']; // We use this when recovering
+    $as_diff_json_string = htmlspecialchars($_POST['old_as']); // We use this when recovering
   } else {
-    exit (header("Location: blog.php"));
+    exit (header("Location: $blog_web_base/"));
   }
 
   $piece_id_o = preg_replace("/[^0-9]/"," ", $_GET['o']);
@@ -179,13 +180,13 @@ if (isset($_POST['as_json'])) {
     if ($piece_id_p == $piece_id_o) {
       $piece_id = $piece_id_p;
     } else {
-      exit (header("Location: blog.php"));
+      exit (header("Location: $blog_web_base/"));
     }
 
     // Form for our recover
     ?>
       <form id="restore_autosave" method="post" action="hist.php?asr=<?php echo $piece_id; ?>">
-        <input form="restore_autosave" type="hidden" name="as_json" value='<?php echo $as_diff_json_string; ?>'>
+        <input form="restore_autosave" type="hidden" name="as_json" value="<?php echo $as_diff_json_string; ?>">
       </form>
     <?php
 
@@ -234,7 +235,7 @@ if (isset($_POST['as_json'])) {
     if ($piece_id_p == $piece_id_o) {
       $piece_id = $piece_id_p;
     } else {
-      exit (header("Location: blog.php"));
+      exit (header("Location: $blog_web_base/"));
     }
 
 
@@ -274,7 +275,7 @@ if (isset($_POST['as_json'])) {
       $o_update = "$row_o->date_updated";
     }
 } else {
-  exit (header("Location: blog.php"));
+  exit (header("Location: $blog_web_base/"));
 }
 
 // Check our SQL queries

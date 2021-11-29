@@ -4,11 +4,9 @@
 include ('./in.db.php');
 
 // Include our login cluster
-$head_title = $blog_title; // Set a <title> name used next
 $nologin_allowed = $blog_public; // Login required?
 $seo_inf = true; // Should in.head.php include SEO meta?
 include ('./in.logincheck.php');
-include ('./in.head.php');
 
 // Cut wordlength function
 $limited = array(); // Create our limit-note array
@@ -23,8 +21,58 @@ function preview_text($text, $limit, $lid) {
   return $text;
 }
 
+// Series
+if ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
+
+  $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
+  $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase, all non-alnum to hyphen
+  $series_slug = substr($result, 0, 90); // Limit to 90 characters
+  $query = $database->prepare("SELECT id, name FROM series WHERE slug=:slug");
+  $query->bindParam(':slug', $series_slug);
+  $rows = $pdo->exec_($query);
+  if ($pdo->numrows > 0) {
+    foreach ($rows as $row) {
+      $series_id = "$row->id";
+      $series_name = "$row->name";
+    }
+  }
+}
+
+$series_get = (isset($series_slug)) ? "series/$series_slug/" : "?"; // Set series GET string for pagination
+$head_title = (isset($series_name)) ? $blog_title . ' :: ' . $series_name : $blog_title; // Set a <title> name used next
+include ('./in.head.php');
+
+// Pagination
+// Valid the Pagination
+if ((isset($_GET['r'])) && (filter_var($_GET['r'], FILTER_VALIDATE_INT, array('min_range' => 1)))) {
+ $paged = preg_replace("/[^0-9]/","", $_GET['r']);
+} else {
+ $paged = 1;
+}
+// Set pagination variables:
+$pageitems = $blog_piece_items;
+$itemskip = $pageitems * ($paged - 1);
+// We add this to the end of the $query, after DESC
+// LIMIT $itemskip,$pageitems
+
+// Pagination navigation: ow many items total?
+$query = $database->prepare("SELECT id FROM publications WHERE type='post' AND status='live' AND pubstatus='published'");
+$rows = $pdo->exec_($query);
+$totalrows = $pdo->numrows;
+
+$totalpages = floor($totalrows / $pageitems);
+$remainder = $totalrows % $pageitems;
+if ($remainder > 0) {
+$totalpages = $totalpages + 1;
+}
+if ($paged > $totalpages) {
+$totalpages = 1;
+}
+$nextpaged = $paged + 1;
+$prevpaged = $paged - 1;
+
 // Check the database for published pieces
-$query = $database->prepare("SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC");
+$query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
 $rows = $pdo->exec_($query);
 // Start our show_div counter
 $show_div_count = 1;
@@ -35,15 +83,19 @@ foreach ($rows as $row) {
   $p_title = "$row->title";
   $p_slug = "$row->slug";
   $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+  $p_series_id = "$row->series";
   $p_tags_sqljson = "$row->tags";
   $p_live = "$row->date_live";
   $p_update = "$row->date_updated";
+
+  $rows = $pdo->select('series', 'id', $p_series_id, 'name, slug');
+  foreach ($rows as $row) { $p_series = $row->name; $p_series_slug = $row->slug; }
 
   // Start our hoverable <div>
   echo '<div onmouseover="showTags'.$show_div_count.'()" onmouseout="showTags'.$show_div_count.'()">';
 
   // Linked title (we will create piece.php with a RewriteMod in a later lesson)
-  echo '<h2><a title="Continue reading" href="'.$blog_web_base.'/piece.php?s='.$p_slug.'">'.$p_title.'</a></h2>';
+  echo '<h2><a title="Continue reading" href="'.$blog_web_base.'/'.$p_slug.'">'.$p_title.'</a></h2>';
 
   // Date published
   echo '<p class="gray"><small><i>'.$p_live.'</i>';
@@ -51,6 +103,7 @@ foreach ($rows as $row) {
   if ($p_live != $p_update) {
     echo '<br><i>(Updated '.$p_update.')</i>';
   }
+  echo ' :: <a href="'.$blog_web_base.'/series/'.$p_series_slug.'">'.$p_series.'</a>'; // series
   echo '</small></p>';
 
   // Content
@@ -61,7 +114,7 @@ foreach ($rows as $row) {
 
     // Show "read" link if limit_text() cut anything
     if (isset($limited[$p_id])) {
-      echo ' <a title="Continue reading" href="piece.php?s='.$p_slug.'">read <b>&rarr;</b></a>';
+      echo ' <a title="Continue reading" href="'.$blog_web_base.'/'.$p_slug.'">read <b>&rarr;</b></a>';
     }
     echo '<br>';
 
@@ -112,6 +165,42 @@ foreach ($rows as $row) {
   // Increment our show div counter
   ++$show_div_count;
 
+}
+
+// Pagination nav row
+if ($totalpages > 1) {
+	echo "
+	<div class=\"paginate_nav_container\">
+		<div class=\"paginate_nav\">
+			<table>
+				<tr>
+					<td>
+						<a class=\"paginate";
+						if ($paged == 1) {echo " disabled";}
+						echo "\" title=\"Page 1\" href=\"$blog_web_base/${series_get}r=1\">&laquo;</a>
+					</td>
+					<td>
+						<a class=\"paginate";
+            if ($paged == 1) {echo " disabled";}
+           echo "\" title=\"Previous\" href=\"$blog_web_base/${series_get}r=$prevpaged\">&lsaquo;&nbsp;</a>
+					</td>
+					<td>
+						<a class=\"paginate current\" title=\"Next\" href=\"$blog_web_base/${series_get}r=$paged\">Page $paged ($totalpages)</a>
+					</td>
+					<td>
+						<a class=\"paginate";
+            if ($paged == $totalpages) {echo " disabled";}
+           echo "\" title=\"Next\" href=\"$blog_web_base/${series_get}r=$nextpaged\">&nbsp;&rsaquo;</a>
+					</td>
+					 <td>
+						 <a class=\"paginate";
+						 if ($paged == $totalpages) {echo " disabled";}
+	 					echo "\" title=\"Last Page\" href=\"$blog_web_base/${series_get}r=$totalpages\">&raquo;</a>
+					 </td>
+		 		</tr>
+			</table>
+		</div>
+	</div>";
 }
 
 // Footer

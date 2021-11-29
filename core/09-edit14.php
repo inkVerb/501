@@ -324,6 +324,15 @@ if (isset($piece_id)) {
         const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
         var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object just to get the Piece ID
         const as_id = 'as_'+edit_piece_json["piece_id"]; // Set our localStorage autosave name
+        // Function to escape our diff because it will pass through an HTML <form>
+        function htmlchars(string) {
+          return string
+           .replace(/&/g, "&amp;")
+           .replace(/</g, "&lt;")
+           .replace(/>/g, "&gt;")
+           .replace(/"/g, "&quot;")
+           .replace(/'/g, "&#039;");
+        }
         // Create our to-test JSON string from the edit_piece form
         var curr_json = {}; // Create our JSON save-as object
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)
@@ -341,7 +350,7 @@ if (isset($piece_id)) {
           autoSaveTimer.start();
         } else {
           var old_as = localStorage.getItem(as_id); // Use the Piece ID in localStorage name
-          var recover_as = old_as; // Keep it unchanged in case we want to recover it, including the time, which we will soon delete
+          var recover_as = htmlchars(old_as); // Escape it, but keep it unchanged in case we want to recover it, including the time, which we will soon delete
           var old_as_json = JSON.parse(old_as); // Make it a JSON-readable Object
           var old_as_time = old_as_json["as_time"];
           delete old_as_json["as_time"]; // Get rid of the time

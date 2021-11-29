@@ -32,7 +32,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   $query->bindParam(':slug', $p_slug);
 
 } else {
-  exit (header("Location: blog.php"));
+  exit (header("Location: $blog_web_base/"));
 }
 
 // Check the database for published pieces
@@ -53,8 +53,8 @@ $rows = $pdo->exec_($query);
     $p_live = "$row->date_live";
     $p_update = "$row->date_updated";
 
-    $rows = $pdo->select('series', 'id', $p_series_id, 'name');
-    foreach ($rows as $row) { $p_series = $row->name; }
+    $rows = $pdo->select('series', 'id', $p_series_id, 'name, slug');
+    foreach ($rows as $row) { $p_series = $row->name; $p_series_slug = $row->slug; }
   }
 
   // Header
@@ -68,14 +68,15 @@ $rows = $pdo->exec_($query);
   }
 
   // Linked title (we will create piece.php with a RewriteMod in a later lesson)
-  echo '<h2><a href="'.$blog_web_base.'/piece.php?s='.$p_slug.'">'.$p_title.'</a></h2>';
+  echo '<h2><a href="'.$blog_web_base.'/'.$p_slug.'">'.$p_title.'</a></h2>';
 
-  // Date published
+  // Date published & series
   echo '<p class="gray"><small><i>'.$p_live.'</i>';
   // If updated is different, show that too
   if ($p_live != $p_update) {
     echo '<br><i>(Updated '.$p_update.')</i>';
   }
+  echo ' :: <a href="'.$blog_web_base.'/series/'.$p_series_slug.'">'.$p_series.'</a>'; // series
   echo '</small></p>';
 
   // Content
