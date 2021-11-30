@@ -56,7 +56,7 @@ QUIT;
 | **Create directories** : (if using terminal)
 
 ```console
-sudo mkdir -p media/docs media/audio media/video media/images media/uploads media/original/images media/original/video media/original/audio media/original/docs media/profiles
+sudo mkdir -p media/docs media/audio media/video media/images media/uploads media/original/images media/original/video media/original/audio media/original/docs media/pro
 ```
 
 *These are the directories we need in the web folder of the app:*
@@ -72,7 +72,7 @@ media/original/images
 media/original/video
 media/original/audio
 media/original/docs
-media/profiles
+media/pro
 ```
 
 5. Put the contents of "cms/" into the same webfolder
