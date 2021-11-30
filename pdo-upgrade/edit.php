@@ -17,6 +17,9 @@ include ('./in.head.php');
 // Include our POST processor
 include ('./in.editprocess.php');
 
+// Assign featured media values
+include ('./in.featuredmedia.php');
+
 ?>
 
 <!-- Page container -->
@@ -25,7 +28,7 @@ include ('./in.editprocess.php');
 <!-- Div for media insert -->
 <div id="media-insert-container" style="display:none;">
   <!-- Close button -->
-  <div id="media-insert-closer" onclick="mediaInsertHide();" title="close"><b>&#xd7;</b></div>
+  <div id="media-insert-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
   <!-- Dropzone -->
   <div id="media-upload">
 
@@ -37,6 +40,23 @@ include ('./in.editprocess.php');
   <br>
   <!-- AJAX mediaInsert HTML entity -->
   <div id="media-insert"></div>
+</div>
+
+<!-- Div for featured media -->
+<div id="feature-insert-container" style="display:none;">
+  <!-- Close button -->
+  <div id="feature-insert-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
+  <!-- Dropzone -->
+  <div id="media-upload">
+
+    <form id="dropzone-uploader-media-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
+
+    <!-- AJAX response from upload.php will go here-->
+    <div id="featureuploadresponse"></div>
+  </div>
+  <br>
+  <!-- AJAX mediaInsert HTML entity -->
+  <div id="feature-insert"></div>
 </div>
 
 <!-- Sidebar for meta -->
@@ -163,8 +183,35 @@ include ('./in.editprocess.php');
     pieceInput('p_live_hr', $p_live_hr).':'.
     pieceInput('p_live_min', $p_live_min).':'.
     pieceInput('p_live_sec', $p_live_sec).'<br><br>';
+
+    // Close Scheduled interface
   echo '
   </div>';
+
+  // Featured media
+  echo '<p><b>Featured media</b></p>';
+
+  // Featured image
+  echo '<form id="image-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="IMAGE"></form>';
+  echo '<p id="featured_image"><input id="feat_img_id" form="edit_piece" type="hidden" name="p_feat_img" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_img_id.'">';
+  echo 'Image: <code id="feat_img_file" style="cursor:pointer;">'.$feat_img_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\')">remove</small>';
+  echo '<img id="feat_img_thumb" style="display:'.$feat_img_showhide.';" max-width="50px" max-height="50px" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
+  echo '</p>';
+  // Featured audio
+  echo '<form id="audio-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="AUDIO"></form>';
+  echo '<p id="featured_audio"><input id="feat_aud_id" form="edit_piece" type="hidden" name="p_feat_aud" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_aud_id.'">';
+  echo 'Audio: <code id="feat_aud_file" style="cursor:pointer;">'.$feat_aud_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\')">remove</small>';
+  echo '</p>';
+  // Featured video
+  echo '<form id="video-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="VIDEO"></form>';
+  echo '<p id="featured_video"><input id="feat_vid_id" form="edit_piece" type="hidden" name="p_feat_vid" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_vid_id.'">';
+  echo 'Video: <code id="feat_vid_file" style="cursor:pointer;">'.$feat_vid_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\')">remove</small>';
+  echo '</p>';
+  // Featured document
+  echo '<form id="document-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="DOCUMENT"></form>';
+  echo '<p id="featured_document"><input id="feat_doc_id" form="edit_piece" type="hidden" name="p_feat_doc" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_doc_id.'">';
+  echo 'Document: <code id="feat_doc_file" style="cursor:pointer;">'.$feat_doc_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\')">remove</small>';
+  echo '</p>';
 
   ?>
 <!-- End sidebar for meta -->
@@ -195,7 +242,7 @@ include ('./in.editprocess.php');
   // AJAX mediaInsert button
   echo '<form id="media-insert-form">
       <input type="hidden" name="u_id" value="'.$user_id.'">
-      <button type="button" class="postform link-button inline orange" onclick="mediaInsert(); mediaInsertShowHide();"><small>insert from media library</small></button>
+      <button type="button" class="postform link-button inline orange" onclick="mediaInsert(); mediaInsertShowHide(); mediaFeatureHide();"><small>insert from media library</small></button>
     </form><br>';
 
   // After
@@ -267,7 +314,6 @@ include ('./in.editprocess.php');
       x.style.display = "block";
     }
   }
-
   // Open the media insert, populate via AJAX
   function mediaInsert() { // These arguments can be anything, same as used in this function
 
@@ -289,7 +335,6 @@ include ('./in.editprocess.php');
     AJAX.send(FD); // Data sent is from the form
 
   } // mediaInsert() function
-
   // Hide media-insert
   function mediaInsertHide() {
     document.getElementById("media-insert-container").style.display = "none";
@@ -329,6 +374,46 @@ include ('./in.editprocess.php');
 
   };
   // End Dropzone settings
+
+  // Open the media insert, populate via AJAX
+  function mediaFeatureInsert(thisMedia) { // These arguments can be anything, same as used in this function
+
+    if (thisMedia == 'IMAGE') {
+      var inputFormID = 'image-insert-form';
+    } else if (thisMedia == 'AUDIO') {
+      var inputFormID = 'audio-insert-form';
+    } else if (thisMedia == 'VIDEO') {
+      var inputFormID = 'video-insert-form';
+    } else if (thisMedia == 'DOCUMENT') {
+      var inputFormID = 'document-insert-form';
+    }
+
+    // Bind a new event listener every time the <form> is changed:
+    const FORM = document.getElementById(inputFormID);
+    const AJAX = new XMLHttpRequest(); // AJAX handler
+    const FD = new FormData(FORM); // Bind to-send data to form element
+
+    AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+      document.getElementById("feature-insert").innerHTML = event.target.responseText;
+    } );
+
+    AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+      document.getElementById("feature-insert").innerHTML =  'Oops! Something went wrong.';
+    } );
+
+    AJAX.open("POST", "ajax.mediafeature.php");
+
+    AJAX.send(FD); // Data sent is from the form
+
+  } // mediaFeatureInsert() function
+  // Hide feature-insert
+  function mediaFeatureHide() {
+    document.getElementById("feature-insert-container").style.display = "none";
+    document.getElementById("featureuploadresponse").innerHTML = '';
+  }
+  function mediaFeatureShow() {
+    document.getElementById("feature-insert-container").style.display = "block";
+  }
 
   // Show slug edit
   function showSlugEdit() {
@@ -509,6 +594,57 @@ include ('./in.editprocess.php');
 
   function addDocToTiny(thisFile, thisName, thisTitle='') {
     tinymce.activeEditor.insertContent('<a alt="'+thisTitle+'" title="'+thisTitle+'" href="http://localhost/web/'+thisFile+'">'+thisName+'</a>');
+  }
+
+  function setToFeature(thisID, thisFilePath, thisFile, thisMedia, thisImageThumb) {
+    if (thisMedia == 'IMAGE') {
+      var inputID = 'feat_img_id';
+      var showFile = 'feat_img_file';
+      var removeAct = 'feat_img_remove';
+      document.getElementById('feat_img_thumb').src = thisImageThumb;
+      document.getElementById('feat_img_thumb').style.display = "block";
+    } else if (thisMedia == 'AUDIO') {
+      var inputID = 'feat_aud_id';
+      var showFile = 'feat_aud_file';
+      var removeAct = 'feat_aud_remove';
+    } else if (thisMedia == 'VIDEO') {
+      var inputID = 'feat_vid_id';
+      var showFile = 'feat_vid_file';
+      var removeAct = 'feat_vid_remove';
+    } else if (thisMedia == 'DOCUMENT') {
+      var inputID = 'feat_doc_id';
+      var showFile = 'feat_doc_file';
+      var removeAct = 'feat_doc_remove';
+    }
+    var fileLink = '<a href="'+thisFilePath+'" target="_blank" style="text-decoration:none;">'+'<b>'+thisFile+'</b>'+'</a>';
+    document.getElementById(inputID).value = thisID;
+    document.getElementById(showFile).innerHTML = fileLink;
+    document.getElementById(removeAct).style.display = "inline";
+  }
+
+  function clearFeature(thisMedia) {
+    if (thisMedia == 'IMAGE') {
+      var inputID = 'feat_img_id';
+      var showFile = 'feat_img_file';
+      var removeAct = 'feat_img_remove';
+      document.getElementById('feat_img_thumb').src = '';
+      document.getElementById('feat_img_thumb').style.display = "none";
+    } else if (thisMedia == 'AUDIO') {
+      var inputID = 'feat_aud_id';
+      var showFile = 'feat_aud_file';
+      var removeAct = 'feat_aud_remove';
+    } else if (thisMedia == 'VIDEO') {
+      var inputID = 'feat_vid_id';
+      var showFile = 'feat_vid_file';
+      var removeAct = 'feat_vid_remove';
+    } else if (thisMedia == 'DOCUMENT') {
+      var inputID = 'feat_doc_id';
+      var showFile = 'feat_doc_file';
+      var removeAct = 'feat_doc_remove';
+    }
+    document.getElementById(inputID).value = 0;
+    document.getElementById(showFile).innerHTML = '<i class="gray">none</i>';
+    document.getElementById(removeAct).style.display = "none";
   }
 
 </script>
