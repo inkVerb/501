@@ -18,7 +18,29 @@ www
 
 These may be different on your system
 
-2. Create a database and user
+2. Install Linux packages
+
+- `ffmpeg`
+- `pandoc`
+- `texlive-core`
+- `imagemagick`
+
+
+| **Arch/Manjaro** :$
+
+```console
+sudo pacman -S --noconfirm libxml2 xmlstarlet imagemagick ffmpeg pandoc texlive-core
+```
+
+| **Debian/Ubuntu** :$
+
+```console
+sudo apt install -y libxml2-utils xmlstarlet imagemagick ffmpeg pandoc
+```
+
+
+
+3. Create a database and user
 
 | **Create database** : (if using terminal)
 
@@ -29,7 +51,7 @@ FLUSH PRIVILEGES;
 QUIT;
 ```
 
-3. Create directories
+4. Create directories
 
 | **Create directories** : (if using terminal)
 
@@ -53,7 +75,7 @@ media/original/docs
 media/profiles
 ```
 
-4. Put the contents of "cms/" into the same webfolder
+5. Put the contents of "cms/" into the same webfolder
 
 | **Copy web files** : (if using terminal)
 
@@ -62,7 +84,7 @@ sudo cp cms/* /srv/www/html/webappfolder/
 sudo chown -R www:www /srv/www/html/webappfolder
 ```
 
-5. Install
+6. Install
 
 ```console
 webappfolder/install.php

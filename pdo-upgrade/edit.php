@@ -193,24 +193,24 @@ include ('./in.featuredmedia.php');
 
   // Featured image
   echo '<form id="image-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="IMAGE"></form>';
-  echo '<p id="featured_image"><input id="feat_img_id" form="edit_piece" type="hidden" name="p_feat_img" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_img_id.'">';
-  echo 'Image: <code id="feat_img_file" style="cursor:pointer;">'.$feat_img_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\')">remove</small>';
-  echo '<img id="feat_img_thumb" style="display:'.$feat_img_showhide.';" max-width="50px" max-height="50px" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
+  echo '<p id="featured_image">'.pieceInput('p_feat_img', $feat_img_id);
+  echo 'Image: <code id="feat_img_file" style="cursor:pointer;">'.$feat_img_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\')">remove</small>';
+  echo '<img id="feat_img_thumb" style="display:'.$feat_img_thumb_showhide.';" max-width="50px" max-height="50px" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
   echo '</p>';
   // Featured audio
   echo '<form id="audio-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="AUDIO"></form>';
-  echo '<p id="featured_audio"><input id="feat_aud_id" form="edit_piece" type="hidden" name="p_feat_aud" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_aud_id.'">';
-  echo 'Audio: <code id="feat_aud_file" style="cursor:pointer;">'.$feat_aud_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\')">remove</small>';
+  echo '<p id="featured_audio">'.pieceInput('p_feat_aud', $feat_aud_id);
+  echo 'Audio: <code id="feat_aud_file" style="cursor:pointer;">'.$feat_aud_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\')">remove</small>';
   echo '</p>';
   // Featured video
   echo '<form id="video-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="VIDEO"></form>';
-  echo '<p id="featured_video"><input id="feat_vid_id" form="edit_piece" type="hidden" name="p_feat_vid" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_vid_id.'">';
-  echo 'Video: <code id="feat_vid_file" style="cursor:pointer;">'.$feat_vid_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\')">remove</small>';
+  echo '<p id="featured_video">'.pieceInput('p_feat_vid', $feat_vid_id);
+  echo 'Video: <code id="feat_vid_file" style="cursor:pointer;">'.$feat_vid_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\')">remove</small>';
   echo '</p>';
   // Featured document
   echo '<form id="document-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="DOCUMENT"></form>';
-  echo '<p id="featured_document"><input id="feat_doc_id" form="edit_piece" type="hidden" name="p_feat_doc" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$feat_doc_id.'">';
-  echo 'Document: <code id="feat_doc_file" style="cursor:pointer;">'.$feat_doc_file_link.'</code> <i class="gray"><small style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\'); mediaInsertHide(); mediaFeatureShow();">(change)</small></i> <small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\')">remove</small>';
+  echo '<p id="featured_document">'.pieceInput('p_feat_doc', $feat_doc_id);
+  echo 'Document: <code id="feat_doc_file" style="cursor:pointer;">'.$feat_doc_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\')">remove</small>';
   echo '</p>';
 
   ?>

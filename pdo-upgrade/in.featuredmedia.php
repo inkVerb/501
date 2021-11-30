@@ -12,18 +12,20 @@ if ($pdo->numrows == 1) {
     // Assign the values
     $feat_img_id = $p_feat_img;
     $feat_img_file = "$row->file_base"."."."$row->file_extension";
-    $feat_img_thumb = ($row->file_extension == 'svg') ? "$row->file_base".'_thumb_svg.png' : "$row->file_base".'_thumb'."$row->file_extension";
+    $feat_img_thumb = ($row->file_extension == 'svg') ? "$row->file_base".'_thumb_svg.png' : "$row->file_base".'_thumb.'."$row->file_extension";
     $feat_img_file_alt = "$row->alt_text";
     $feat_img_file_location = "$row->location";
     $feat_img_url = $feat_file_basepath.$feat_img_file_location.'/'.$feat_img_file;
     $feat_img_file_link = '<a href="'.$feat_img_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_img_file</b>".'</a>';
-    $feat_img_showhide = 'block';
+    $feat_img_showhide = 'inline';
+    $feat_img_thumb_showhide = 'block';
   }
 } else {
   $feat_img_id = 0;
   $feat_img_file = 'none';
   $feat_img_file_link = '<i class="gray">'.$feat_img_file.'</i>';
   $feat_img_showhide = 'none';
+  $feat_img_thumb_showhide = 'none';
 }
 
 // Featured audio filename
@@ -39,7 +41,7 @@ if ($pdo->numrows == 1) {
     $feat_aud_file_location = "$row->location";
     $feat_aud_url = $feat_file_basepath.$feat_aud_file_location.'/'.$feat_aud_file;
     $feat_aud_file_link = '<a href="'.$feat_aud_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_aud_file</b>".'</a>';
-    $feat_aud_showhide = 'block';
+    $feat_aud_showhide = 'inline';
   }
 } else {
   $feat_aud_id = 0;
@@ -61,7 +63,7 @@ if ($pdo->numrows == 1) {
     $feat_vid_file_location = "$row->location";
     $feat_vid_url = $feat_file_basepath.$feat_vid_file_location.'/'.$feat_vid_file;
     $feat_vid_file_link = '<a href="'.$feat_vid_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_vid_file</b>".'</a>';
-    $feat_vid_showhide = 'block';
+    $feat_vid_showhide = 'inline';
   }
 } else {
   $feat_vid_id = 0;
@@ -83,7 +85,7 @@ if ($pdo->numrows == 1) {
     $feat_doc_file_location = "$row->location";
     $feat_doc_url = $feat_file_basepath.$feat_doc_file_location.'/'.$feat_doc_file;
     $feat_doc_file_link = '<a href="'.$feat_doc_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_doc_file</b>".'</a>';
-    $feat_doc_showhide = 'block';
+    $feat_doc_showhide = 'inline';
   }
 } else {
   $feat_doc_id = 0;

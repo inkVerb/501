@@ -236,16 +236,16 @@ function pieceInput($name, $value) {
     $result = '<textarea form="'.$form_id.$edit_piece_id.'" class="metaedit" id="p_links_'.$edit_piece_id.'" name="p_links">'.$value.'</textarea>';
 
   } elseif ($name == 'p_feat_img') {
-    echo '<input id="feat_img_id" form="edit_piece" type="hidden" name="p_feat_img" onchange="onNavWarn();" onkeyup="onNavWarn(); value="'.$value.'">';
+    echo '<input id="feat_img_id" form="edit_piece" type="hidden" name="p_feat_img" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$value.'">';
 
   } elseif ($name == 'p_feat_aud') {
-    echo '<input id="feat_aud_id" form="edit_piece" type="hidden" name="p_feat_aud" onchange="onNavWarn();" onkeyup="onNavWarn(); value="'.$value.'">';
+    echo '<input id="feat_aud_id" form="edit_piece" type="hidden" name="p_feat_aud" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$value.'">';
 
   } elseif ($name == 'p_feat_vid') {
-    echo '<input id="feat_vid_id" form="edit_piece" type="hidden" name="p_feat_vid" onchange="onNavWarn();" onkeyup="onNavWarn(); value="'.$value.'">';
+    echo '<input id="feat_vid_id" form="edit_piece" type="hidden" name="p_feat_vid" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$value.'">';
 
   } elseif ($name == 'p_feat_doc') {
-    echo '<input id="feat_doc_id" form="edit_piece" type="hidden" name="p_feat_doc" onchange="onNavWarn();" onkeyup="onNavWarn(); value="'.$value.'">';
+    echo '<input id="feat_doc_id" form="edit_piece" type="hidden" name="p_feat_doc" onchange="onNavWarn();" onkeyup="onNavWarn();" value="'.$value.'">';
 
   // Date-time Live
   } elseif ($name == 'p_live_yr') {

@@ -153,7 +153,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ( ($p_status == 'draft') && ($p_live_schedule != true) ) { // No empty live date for publishing pieces
       $p_live = NULL;
       $p_live_trim = DB::trimspace($p_live); // Needs to be set
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_vid=:feat_doc, date_live=NULL, date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=NULL, date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
@@ -170,7 +170,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     } elseif ( (($p_status == 'publish') || ($p_status == 'update') || ($p_status == 'draft')) && ($p_live_schedule == true) ) { // Unscheduled publish goes live now
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_vid=:feat_doc, date_live=:date_live, date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=:date_live, date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
@@ -188,7 +188,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     } elseif ($p_live_schedule != true) { // Not scheduled, but not a draft save either, so will be scheduled for now with this query
       $p_live_schedule = 'waiting'; // Set this for later
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_vid=:feat_doc, date_live=NOW(), date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=NOW(), date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
@@ -217,7 +217,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     AND links=:links
     AND feat_img=:feat_img
     AND feat_aud=:feat_aud
-    AND feat_vid=:feat_vid");
+    AND feat_vid=:feat_vid
+    AND feat_doc=:feat_doc");
     $query->bindParam(':id', $piece_id);
     $query->bindParam(':type', $p_type_trim);
     $query->bindParam(':series', $p_series_trim);
@@ -329,7 +330,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       AND links=:links
       AND feat_img=:feat_img
       AND feat_aud=:feat_aud
-      AND feat_vid=:feat_vid");
+      AND feat_vid=:feat_vid
+      AND feat_doc=:feat_doc");
       $query->bindParam(':piece_id', $piece_id_trim);
       $query->bindParam(':type', $p_type_trim);
       $query->bindParam(':series', $p_series_trim);
