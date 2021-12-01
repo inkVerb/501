@@ -21,14 +21,14 @@ if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
   $p_id = preg_replace("/[^0-9]/"," ", $_GET['p']); // Set $p_id via sanitize non-numbers
-  $query = $database->prepare("SELECT title, slug, content, after, series, tags, links, date_live, date_updated FROM ${from_where}id=:id");
+  $query = $database->prepare("SELECT title, slug, content, after, series, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM ${from_where}id=:id");
   $query->bindParam(':id', $p_id);
 } elseif ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
 
   $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase, all non-alnum to hyphen
   $p_slug = substr($result, 0, 90); // Limit to 90 characters
-  $query = $database->prepare("SELECT title, piece_id, content, after, series, tags, links, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug=:slug");
+  $query = $database->prepare("SELECT title, piece_id, content, after, series, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug=:slug");
   $query->bindParam(':slug', $p_slug);
 
 } else {
@@ -50,6 +50,10 @@ $rows = $pdo->exec_($query);
     $p_series_id = "$row->series";
     $p_tags_json = "$row->tags";
     $p_links_json = "$row->links";
+    $p_feat_img = $row->feat_img;
+    $p_feat_aud = $row->feat_aud;
+    $p_feat_vid = $row->feat_vid;
+    $p_feat_doc = $row->feat_doc;
     $p_live = "$row->date_live";
     $p_update = "$row->date_updated";
 
@@ -78,6 +82,9 @@ $rows = $pdo->exec_($query);
   }
   echo ' :: <a href="'.$blog_web_base.'/series/'.$p_series_slug.'">'.$p_series.'</a>'; // series
   echo '</small></p>';
+
+  // Featured Media
+  include ('./in.featuredmediadisplay.php');
 
   // Content
   echo '<br><div class="piece-content">'.$p_content.'</div><br>';

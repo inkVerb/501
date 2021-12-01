@@ -72,7 +72,7 @@ $nextpaged = $paged + 1;
 $prevpaged = $paged - 1;
 
 // Check the database for published pieces
-$query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+$query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
 $rows = $pdo->exec_($query);
 // Start our show_div counter
 $show_div_count = 1;
@@ -85,9 +85,14 @@ foreach ($rows as $row) {
   $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
   $p_series_id = "$row->series";
   $p_tags_sqljson = "$row->tags";
+  $p_feat_img = $row->feat_img;
+  $p_feat_aud = $row->feat_aud;
+  $p_feat_vid = $row->feat_vid;
+  $p_feat_doc = $row->feat_doc;
   $p_live = "$row->date_live";
   $p_update = "$row->date_updated";
 
+  // Series info
   $rows = $pdo->select('series', 'id', $p_series_id, 'name, slug');
   foreach ($rows as $row) { $p_series = $row->name; $p_series_slug = $row->slug; }
 
@@ -105,6 +110,9 @@ foreach ($rows as $row) {
   }
   echo ' :: <a href="'.$blog_web_base.'/series/'.$p_series_slug.'">'.$p_series.'</a>'; // series
   echo '</small></p>';
+
+  // Featured Media
+  include ('./in.featuredmediadisplay.php');
 
   // Content
     // Shorten

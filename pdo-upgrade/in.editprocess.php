@@ -375,6 +375,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
               PUB.after=PCE.after,
               PUB.tags=PCE.tags,
               PUB.links=PCE.links,
+              PUB.feat_img=PCE.feat_img,
+              PUB.feat_aud=PCE.feat_aud,
+              PUB.feat_vid=PCE.feat_vid,
+              PUB.feat_doc=PCE.feat_doc,
               PUB.date_live=PCE.date_live,
               PUB.date_updated=PCE.date_updated
           WHERE PUB.piece_id=:piece_id AND PCE.id=:id");

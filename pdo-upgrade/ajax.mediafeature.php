@@ -9,7 +9,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 && (!empty($_POST['u_id']))
 && (filter_var($_POST['u_id'], FILTER_VALIDATE_INT))
 && (!empty($_POST['feature_type']))
-&& (($_POST['feature_type'] == 'IMAGE') || ($_POST['feature_type'] == 'AUDIO') || ($_POST['feature_type'] == 'VIDEO') || ($_POST['feature_type'] == 'DOCUMENT'))
+&& (($_POST['feature_type'] == 'IMAGE')
+   || ($_POST['feature_type'] == 'AUDIO')
+   || ($_POST['feature_type'] == 'VIDEO')
+   || ($_POST['feature_type'] == 'DOCUMENT'))
 && (isset($_SESSION['user_id']))
 && ($_SESSION['user_id'] == $_POST['u_id']) ) {
 
@@ -86,18 +89,20 @@ $m_basic_type = $_POST['feature_type'];
       // Start our row
       echo '<tr class="'.$table_row_color.'" onmouseover="showActions('.$m_id.')" onmouseout="showActions('.$m_id.')">';
 
-      // setToFeature button
-      $basepath = 'media/';
+      // Paths, also used in setToFeature()
+      $media_library_folder = '/media/';
+      $basepath = $blog_web_base.$media_library_folder;
       $m_filename_full_path = $basepath.$m_location.'/'.$m_filename;
 
       // $file_thumb variable
-
       if ($m_basic_type == 'IMAGE') {
         $file_thumb = ($m_file_extension == 'svg') ? $basepath.$m_location.'/'.$m_file_base.'_thumb_svg.png' : $basepath.$m_location.'/'.$m_file_base.'_thumb'.'.'."$m_file_extension";
       } else {
         $file_thumb = 0;
       }
-      $set_button = '<button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\');">&larr; '.$m_filename.'</button>&nbsp;('.human_file_size(filesize($m_filename_full_path)).')<br>';
+
+      // Clickable text to set featured media
+      $set_button = '<button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\'); onNavWarn();">&larr; '.$m_filename.'</button>&nbsp;('.human_file_size(filesize($m_filename_full_path)).')<br>';
 
       // Fill-in the row per media type
       switch ($m_basic_type) {

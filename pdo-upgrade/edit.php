@@ -194,23 +194,23 @@ include ('./in.featuredmedia.php');
   // Featured image
   echo '<form id="image-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="IMAGE"></form>';
   echo '<p id="featured_image">'.pieceInput('p_feat_img', $feat_img_id);
-  echo 'Image: <code id="feat_img_file" style="cursor:pointer;">'.$feat_img_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\')">remove</small>';
-  echo '<img id="feat_img_thumb" style="display:'.$feat_img_thumb_showhide.';" max-width="50px" max-height="50px" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
+  echo 'Image: <code id="feat_img_file">'.$feat_img_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\')">remove</small>';
+  echo '<img id="feat_img_thumb" style="display:'.$feat_img_thumb_showhide.';" max-width="'.$img_thum_max.'" max-height="'.$img_thum_max.'" title="'.$feat_img_file_title.'" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
   echo '</p>';
   // Featured audio
   echo '<form id="audio-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="AUDIO"></form>';
   echo '<p id="featured_audio">'.pieceInput('p_feat_aud', $feat_aud_id);
-  echo 'Audio: <code id="feat_aud_file" style="cursor:pointer;">'.$feat_aud_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\')">remove</small>';
+  echo 'Audio: <code id="feat_aud_file">'.$feat_aud_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\')">remove</small>';
   echo '</p>';
   // Featured video
   echo '<form id="video-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="VIDEO"></form>';
   echo '<p id="featured_video">'.pieceInput('p_feat_vid', $feat_vid_id);
-  echo 'Video: <code id="feat_vid_file" style="cursor:pointer;">'.$feat_vid_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\')">remove</small>';
+  echo 'Video: <code id="feat_vid_file">'.$feat_vid_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\')">remove</small>';
   echo '</p>';
   // Featured document
   echo '<form id="document-insert-form"><input type="hidden" name="u_id" value="'.$user_id.'"><input type="hidden" name="feature_type" value="DOCUMENT"></form>';
   echo '<p id="featured_document">'.pieceInput('p_feat_doc', $feat_doc_id);
-  echo 'Document: <code id="feat_doc_file" style="cursor:pointer;">'.$feat_doc_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\')">remove</small>';
+  echo 'Document: <code id="feat_doc_file">'.$feat_doc_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\')">remove</small>';
   echo '</p>';
 
   ?>
@@ -375,7 +375,7 @@ include ('./in.featuredmedia.php');
   };
   // End Dropzone settings
 
-  // Open the media insert, populate via AJAX
+  // Open the featured media insert, populate via AJAX
   function mediaFeatureInsert(thisMedia) { // These arguments can be anything, same as used in this function
 
     if (thisMedia == 'IMAGE') {
@@ -406,11 +406,12 @@ include ('./in.featuredmedia.php');
     AJAX.send(FD); // Data sent is from the form
 
   } // mediaFeatureInsert() function
-  // Hide feature-insert
+  // Hide mediaFeatureInsert()
   function mediaFeatureHide() {
     document.getElementById("feature-insert-container").style.display = "none";
     document.getElementById("featureuploadresponse").innerHTML = '';
   }
+  // Show mediaFeatureInsert()
   function mediaFeatureShow() {
     document.getElementById("feature-insert-container").style.display = "block";
   }
@@ -596,6 +597,7 @@ include ('./in.featuredmedia.php');
     tinymce.activeEditor.insertContent('<a alt="'+thisTitle+'" title="'+thisTitle+'" href="http://localhost/web/'+thisFile+'">'+thisName+'</a>');
   }
 
+  // When adding from the mediaFeatureInsert() chooser
   function setToFeature(thisID, thisFilePath, thisFile, thisMedia, thisImageThumb) {
     if (thisMedia == 'IMAGE') {
       var inputID = 'feat_img_id';
@@ -622,6 +624,7 @@ include ('./in.featuredmedia.php');
     document.getElementById(removeAct).style.display = "inline";
   }
 
+  // When clicking "remove"
   function clearFeature(thisMedia) {
     if (thisMedia == 'IMAGE') {
       var inputID = 'feat_img_id';
