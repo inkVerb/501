@@ -30,7 +30,7 @@ echo '<div id="featured-media" style="display:block">';
 
   // Image
   if ($feat_img_showhide != 'none') {
-    echo '<div id="featured-image"><img max-width="'.$img_blog_max.'" max-height="'.$img_blog_max.'" title="'.$feat_img_file_title.'" alt="'.$feat_img_file_alt.'" src="'.$feat_img_url_blog.'"></div>';
+    echo '<div id="featured-image"><img style="max-width:'.$img_blog_max.'; max-height:'.$img_blog_max.';" title="'.$feat_img_file_title.'" alt="'.$feat_img_file_alt.'" src="'.$feat_img_url_blog.'"></div>';
   }
 
 echo '</div>';

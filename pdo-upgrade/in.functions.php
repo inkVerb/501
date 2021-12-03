@@ -124,7 +124,7 @@ function checkPost($name, $value) {
 
   } elseif ($name == 'blog_crawler_index') {
     $result = (($value == 'index') || ($value == 'noindex'))
-    ? preg_replace("/[^noindex]/","", $value) : '';
+    ? $value : '';
     if ($result == '') {
       $check_err[$name] = 'Not a valid SEO indexing option! Something is wrong.';
     }

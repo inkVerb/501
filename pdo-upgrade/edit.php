@@ -13,6 +13,7 @@ $edit_page_yn = true; // Include JavaScript for TinyMCE?
 $nologin_allowed = false; // Login required?
 include ('./in.logincheck.php');
 include ('./in.head.php');
+include ('./in.editseriesdiv.php'); // Series editor
 
 // Include our POST processor
 include ('./in.editprocess.php');
@@ -28,7 +29,7 @@ include ('./in.featuredmedia.php');
 <!-- Div for media insert -->
 <div id="media-insert-container" style="display:none;">
   <!-- Close button -->
-  <div id="media-insert-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
+  <div id="media-insert-closer" onclick="mediaInsertHide(); mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
   <!-- Dropzone -->
   <div id="media-upload">
 
@@ -164,13 +165,12 @@ include ('./in.featuredmedia.php');
   $infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';
   echo 'Series:'.infoPop('series_info', $infomsg).'<br><br>';
 
-    // Set necessary values
-    // Set a default Series, probably from settings table
-    $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
-
     // Accept any set value
-    $p_series = (isset($p_series)) ? $p_series : $de_series;
+    $p_series = (isset($p_series)) ? $p_series : $blog_default_series;
     include ('./in.series.php');
+
+    // Edit series button
+    include ('./in.editseriesbutton.php');
 
   // Schedule
   // Clickable <label for="CHECKBOX_ID"> doesn't work well with two "onClick" JavaScript functions, so we need extra JavaScript
@@ -305,7 +305,7 @@ include ('./in.featuredmedia.php');
   // Disable "Enter" key on forms
   window.addEventListener('keydown',function(e){if(e.keyIdentifier=='U+000A'||e.keyIdentifier=='Enter'||e.keyCode==13){if(e.target.nodeName=='INPUT'&&e.target.type=='text'){e.preventDefault();return false;}}},true);
 
-  // Show/hide the media-edit div
+  // Show/hide the media-insert-container div
   function mediaInsertShowHide() {
     var x = document.getElementById("media-insert-container");
     if (x.style.display === "block") {
@@ -335,7 +335,7 @@ include ('./in.featuredmedia.php');
     AJAX.send(FD); // Data sent is from the form
 
   } // mediaInsert() function
-  // Hide media-insert
+  // Hide media-insert-container
   function mediaInsertHide() {
     document.getElementById("media-insert-container").style.display = "none";
     document.getElementById("uploadresponse").innerHTML = '';
@@ -858,6 +858,9 @@ if (isset($piece_id)) {
   <?php
 
 }
+
+// Series edit JavaScript
+include ('./in.editseries.php');
 
 // Footer
 include ('./in.footer.php');

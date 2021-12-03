@@ -47,7 +47,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
 
     // Add the new Series
     if ((isset($new_series_trim)) && (isset($new_s_slug_trim))) {
-      $row = $pdo->insert('series', 'name, slug', "'$new_series_trim', '$new_s_slug_trim'");
+      $query = $database->prepare("INSERT INTO series (name, slug) VALUES (:name, :slug)");
+      $query->bindParam(':name', $new_series_trim);
+      $query->bindParam(':slug', $new_s_slug_trim);
+
+      $pdo->exec_($query);
       if ($pdo->ok) {
         // Get the most recent ID of the last INSERT statement
         $p_series = $pdo->lastid;

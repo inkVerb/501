@@ -29,9 +29,9 @@ class DB {
   public $ok;
   public $numrows;
   // Usage $pdo = new DB;
-  // $val = ($pdo->change) ? true : false; // insert() delete() update()
+  // $val = ($pdo->change) ? true : false; // delete() update()
   // $val = ($pdo->ok) ? true : false; // all
-  // $val = $pdo->lastid; // insert()
+  // $val = $pdo->lastid; // Any exec_() query with INSERT
   // $val = $pdo->numrows; // select()
 
   // trimspace method (not sufficient to prevent SQL injection, nor escape all SQL data)
@@ -45,7 +45,7 @@ class DB {
 
   // PDO error handler
   protected function pdo_error($query, $error_message) {
-    echo "SQL error from <pre>$query</pre><br>$error_message";
+    echo "SQL error from <pre></pre><br>$error_message";
     exit ();
   } // pdo_error()
 
@@ -80,8 +80,9 @@ class DB {
   // SELECT method
   public function select($table, $wcol, $vcol, $cols='*') {
     // Usage $pdo = new DB;
-    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
-    // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
+    // $rows = $pdo->select($table, $where_col, $where_value, $columns='*');
+    // foreach ($rows as $row) ...
+    // Then, column names are objects: $fruit = $row->fruit; $rock = $row->rock;
 
     global $database;
 
@@ -244,9 +245,9 @@ class DB {
     // Usage $pdo = new DB;
     // $query = $database->prepare($sql_statement);
     // $query->bindParam(...);
-    // $rows = DB::exec_($query);
-    // if ($query->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
-    // if (DB::$numrows > 0) {do something}
+    // $rows = $pdo->exec_($query);
+    // if ($pdo->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
+    // if ($pdo->$numrows > 0) {do something}
 
     global $database;
 
@@ -286,4 +287,13 @@ foreach ($rows as $row) {
   $blog_piece_items = "$row->piece_items";
   $blog_feed_items = "$row->feed_items";
   $blog_crawler_index = "$row->crawler_index";
+}
+
+// Set a default Series from the blog_settings table
+$query = $database->prepare("SELECT default_series FROM blog_settings");
+$rows = $pdo->exec_($query);
+if ($pdo->numrows == 1) {
+  foreach ($rows as $row) {
+    $blog_default_series = $row->default_series;
+  }
 }

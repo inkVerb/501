@@ -83,7 +83,7 @@ if ($pdo->numrows == 1) {
 
   // Settings form
   echo '
-  <form action="account.php" method="post">';
+  <form action="account.php" method="post" id="settings-form" enctype="multipart/form-data">';
 
   echo 'Name: '.formInput('fullname', $fullname, $check_err).'<br><br>';
   echo 'Username: '.formInput('username', $username, $check_err).'<br><br>';
@@ -93,9 +93,13 @@ if ($pdo->numrows == 1) {
   echo 'Confirm password: '.formInput('password2', $password2, $check_err).'<br><br>';
 
   echo '
-    <input type="submit" value="Save changes">
-  </form>
+    <input type="submit" value="Save changes" form="settings-form">
+
   ';
+
+  // Form end
+  echo '</form>';
+
 
 } else {
   echo '<p class="errors">No account detected!</p>';

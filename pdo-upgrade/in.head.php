@@ -13,16 +13,17 @@
   <!-- SEO -->
   <?php
   if ($seo_inf == true) {
-    $blog_image = (file_exists("blog_image.jpg")) ? "blog_image.jpg" : "default_image.jpg" ;
-    $favicon = (file_exists("blog_favicon.png")) ? "blog_favicon.png" : "default_favicon.png" ;
+    $media_base = "$blog_web_base/media/pro/";
+    $seo_image = (file_exists("$media_base/pro-seo.jpg")) ? "pro-seo.jpg" : "" ;
+    $favicon = (file_exists("$media_base/pro-favicon.png")) ? "pro-favicon.png" : "" ;
     echo <<<EOF
     <link href="$blog_web_base/" rel="canonical" />
-    <link rel="shortcut icon" type="image/png" href="$blog_web_base/$favicon" />
+    <link rel="shortcut icon" type="image/png" href="$media_base/$favicon" />
     <meta name="robots" content="$blog_crawler_index, nofollow" />
     <meta name="description" content="$blog_description" />
     <meta property="og:url" content="$blog_web_base/" />
     <meta property="og:title" content="$blog_title" />
-    <meta property="og:image" content="$blog_web_base/$blog_image" />
+    <meta property="og:image" content="$media_base/$seo_image" />
     <meta property="og:type" content="website" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />

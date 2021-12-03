@@ -94,16 +94,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   }
 
   // Series
-  // Set a default Series, probably from settings table
-  $de_series = (isset($_SESSION['de_series'])) ? $_SESSION['de_series'] : 1;
   if (filter_var($_POST['p_series'], FILTER_VALIDATE_INT)) {
     $p_series = $_POST['p_series'];
     $query = $pdo->select('series', 'id', $p_series, 'id');
     if ($pdo->numrows != 1) {
-      $p_series = $de_series;
+      $p_series = $blog_default_series;
     }
   } else {
-    $p_series = $de_series;
+    $p_series = $blog_default_series;
   }
 
   // All other fields

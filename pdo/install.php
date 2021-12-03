@@ -277,9 +277,10 @@ EOF;
       `tagline` VARCHAR(120) DEFAULT 'Where code stacks',
       `description` LONGTEXT DEFAULT 'Long, poetic explanations of blog contents are useful in search engines, podcasts, and other places on the interwebs.',
       `keywords` LONGTEXT DEFAULT NULL,
-      `summary_words`  INT UNSIGNED DEFAULT 50,
-      `piece_items`  INT UNSIGNED DEFAULT 10,
-      `feed_items`  INT UNSIGNED DEFAULT 20,
+      `summary_words` INT UNSIGNED DEFAULT 50,
+      `piece_items` INT UNSIGNED DEFAULT 10,
+      `feed_items` INT UNSIGNED DEFAULT 20,
+      `default_series` INT UNSIGNED DEFAULT 1,
       `crawler_index` ENUM('index', 'noindex') DEFAULT 'index'
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);

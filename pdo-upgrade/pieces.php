@@ -8,6 +8,7 @@ $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.logincheck.php');
 include ('./in.head.php');
+include ('./in.editseriesdiv.php'); // Series editor
 
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
@@ -210,6 +211,9 @@ function toggle(source) {
 </script>
 <?php
 
+// Edit series button
+include ('./in.editseriesbutton.php');
+
 // Trash link
 echo '<a class="red" href="'.$blog_web_base.'/trash.php">View trash</a>';
 
@@ -369,6 +373,9 @@ echo "
 
 // Simple line
 echo '<br><hr><br>';
+
+// Series edit JavaScript
+include ('./in.editseries.php');
 
 // Footer
 include ('./in.footer.php');

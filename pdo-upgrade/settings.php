@@ -11,6 +11,23 @@ $head_title = "Blog Settings"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.logincheck.php');
 include ('./in.head.php');
+include ('./in.editseriesdiv.php'); // Series editor
+
+// Pro images filenames
+$upload_subdir = 'media/pro/';
+$file_size_limit = 1000000; // 1MB
+$podcast_size_limit = 10000000; // 10MB
+$pro_path = $upload_subdir;
+$pro_favicon_name = 'pro-favicon.png';
+$pro_favicon_path = $pro_path.$pro_favicon_name;
+$pro_logo_name = 'pro-logo.png';
+$pro_logo_path = $pro_path.$pro_logo_name;
+$pro_seo_name = 'pro-seo.jpg';
+$pro_seo_path = $pro_path.$pro_seo_name;
+$pro_rss_name = 'pro-rss.jpg';
+$pro_rss_path = $pro_path.$pro_rss_name;
+$pro_podcast_name = 'pro-podcast.jpg';
+$pro_podcast_path = $pro_path.$pro_podcast_name;
 
 // POSTed form?
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -66,6 +83,172 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<p class="error">Errors, try again.</p>';
   }
 
+  // Pro image uploads
+  // Favicon
+  $favicon_info = ($_FILES["pro-favicon"]["tmp_name"]) ? getimagesize($_FILES["pro-favicon"]["tmp_name"]) : false;
+  if ($favicon_info) {
+    $tmp_file = $_FILES["pro-favicon"]['tmp_name'];
+    $image_width = $favicon_info[0];
+    $image_height = $favicon_info[1];
+    $upload_ext = strtolower(pathinfo(basename($_FILES["pro-favicon"]["name"]),PATHINFO_EXTENSION));
+    if ($_FILES['pro-favicon']['size'] <= $file_size_limit) {
+      if ($favicon_info["mime"] == "image/png") {
+        if (($image_width == $image_height)
+        &&  ($image_width >= 128)
+        &&  ($image_width <= 512)
+        &&  ($image_height >= 128)
+        &&  ($image_height <= 512)) {
+
+          if (move_uploaded_file($tmp_file, $pro_favicon_path)) {
+            echo '<p class="green">Favicon updated! Cache may need to be refreshed to see changes.</p>';
+          } else {
+            echo '<p class="red">path:'.$pro_favicon_path.' Favicon upload unknown failure.</p>';
+          }
+
+        } else {
+          echo '<p class="red">Favicon is wrong size. Must be square and 128-512 pixels.</p>';
+        }
+
+      } else {
+        echo '<p class="red">Favicon is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+      }
+
+    } else {
+      echo '<p class="red">Favicon file size is too big. Limit is 1MB.</p>';
+    }
+  }
+
+  // Logo
+  $logo_info = ($_FILES["pro-logo"]["tmp_name"]) ? getimagesize($_FILES["pro-logo"]["tmp_name"]) : false;
+  if ($logo_info) {
+    $tmp_file = $_FILES["pro-logo"]['tmp_name'];
+    $image_width = $logo_info[0];
+    $image_height = $logo_info[1];
+    $upload_ext = strtolower(pathinfo(basename($_FILES["pro-logo"]["name"]),PATHINFO_EXTENSION));
+    if ($_FILES['pro-logo']['size'] <= $file_size_limit) {
+      if ($logo_info["mime"] == "image/png") {
+        if (($image_width == $image_height)
+        &&  ($image_width >= 128)
+        &&  ($image_width <= 512)
+        &&  ($image_height >= 128)
+        &&  ($image_height <= 512)) {
+
+          if (move_uploaded_file($tmp_file, $pro_logo_path)) {
+            echo '<p class="green">Logo updated! Cache may need to be refreshed to see changes.</p>';
+          } else {
+            echo '<p class="red">path:'.$pro_logo_path.' Logo upload unknown failure.</p>';
+          }
+
+        } else {
+          echo '<p class="red">Logo is wrong size. Must be square and 128-512 pixels.</p>';
+        }
+
+      } else {
+        echo '<p class="red">Logo is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+      }
+
+    } else {
+      echo '<p class="red">Logo file size is too big. Limit is 1MB.</p>';
+    }
+  }
+
+  // SEO image
+  $seo_info = ($_FILES["pro-seo"]["tmp_name"]) ? getimagesize($_FILES["pro-seo"]["tmp_name"]) : false;
+  if ($seo_info) {
+    $tmp_file = $_FILES["pro-seo"]['tmp_name'];
+    $image_width = $seo_info[0];
+    $image_height = $seo_info[1];
+    $upload_ext = strtolower(pathinfo(basename($_FILES["pro-seo"]["name"]),PATHINFO_EXTENSION));
+    if ($_FILES['pro-seo']['size'] <= $file_size_limit) {
+      if ($seo_info["mime"] == "image/jpeg") {
+        if (($image_width != $image_height)
+        &&  ($image_width == 1200)
+        &&  ($image_height == 630)) {
+
+          if (move_uploaded_file($tmp_file, $pro_seo_path)) {
+            echo '<p class="green">SEO image updated! Cache may need to be refreshed to see changes.</p>';
+          } else {
+            echo '<p class="red">path:'.$pro_seo_path.' SEO image upload unknown failure.</p>';
+          }
+
+        } else {
+          echo '<p class="red">SEO image is wrong size. Must be exactly 1200 pixels wide and 630 pixels high.</p>';
+        }
+
+      } else {
+        echo '<p class="red">SEO image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+      }
+
+    } else {
+      echo '<p class="red">SEO image file size is too big. Limit is 1MB.</p>';
+    }
+  }
+
+  // RSS feed
+  $rss_info = ($_FILES["pro-rss"]["tmp_name"]) ? getimagesize($_FILES["pro-rss"]["tmp_name"]) : false;
+  if ($rss_info) {
+    $tmp_file = $_FILES["pro-rss"]['tmp_name'];
+    $image_width = $rss_info[0];
+    $image_height = $rss_info[1];
+    $upload_ext = strtolower(pathinfo(basename($_FILES["pro-rss"]["name"]),PATHINFO_EXTENSION));
+    if ($_FILES['pro-rss']['size'] <= $file_size_limit) {
+      if ($rss_info["mime"] == "image/jpeg") {
+        if (($image_width == $image_height)
+        &&  ($image_width == 144)
+        &&  ($image_height == 144)) {
+
+          if (move_uploaded_file($tmp_file, $pro_rss_path)) {
+            echo '<p class="green">RSS image updated! Cache may need to be refreshed to see changes.</p>';
+          } else {
+            echo '<p class="red">path:'.$pro_rss_path.' RSS image upload unknown failure.</p>';
+          }
+
+        } else {
+          echo '<p class="red">Logo is wrong size. Must be square and 144 pixels wide and high.</p>';
+        }
+
+      } else {
+        echo '<p class="red">RSS image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+      }
+
+    } else {
+      echo '<p class="red">RSS image file size is too big. Limit is 1MB.</p>';
+    }
+  }
+
+  // iTunes Podcast
+  $podcast_info = ($_FILES["pro-podcast"]["tmp_name"]) ? getimagesize($_FILES["pro-podcast"]["tmp_name"]) : false;
+  if ($podcast_info) {
+    $tmp_file = $_FILES["pro-podcast"]['tmp_name'];
+    $image_width = $podcast_info[0];
+    $image_height = $podcast_info[1];
+    $upload_ext = strtolower(pathinfo(basename($_FILES["pro-podcast"]["name"]),PATHINFO_EXTENSION));
+    if ($_FILES['pro-podcast']['size'] <= $file_size_limit) {
+      if ($podcast_info["mime"] == "image/jpeg") {
+        if (($image_width == $image_height)
+        &&  ($image_width == 3000)
+        &&  ($image_height == 3000)) {
+
+          if (move_uploaded_file($tmp_file, $pro_podcast_path)) {
+            echo '<p class="green">Podcast image updated! Cache may need to be refreshed to see changes.</p>';
+          } else {
+            echo '<p class="red">path:'.$pro_podcast_path.' Podcast image upload unknown failure.</p>';
+          }
+
+        } else {
+          echo '<p class="red">Podcast image is wrong size. Must be square and 3000 pixels wide and high.</p>';
+        }
+
+      } else {
+        echo '<p class="red">Podcast image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+      }
+
+    } else {
+      echo '<p class="red">Podcast image file size is too big. Limit is 1MB.</p>';
+    }
+  }
+  // End pro image uploads
+
 } else { // Set our values from site defaults if not POST
 
   $new_blog_public = $blog_public;
@@ -94,7 +277,7 @@ if ($pdo->numrows == 1) {
 
   // Settings form
   echo '
-  <form action="settings.php" method="post" id="blog_settings">';
+  <form action="settings.php" method="post" id="blog_settings" enctype="multipart/form-data">';
 
   echo 'Title: '.formInput('blog_title', $new_blog_title, $check_err).'<br><br>';
   echo 'Tagline: '.formInput('blog_tagline', $new_blog_tagline, $check_err).' (1-100 security question)<br><br>';
@@ -107,13 +290,85 @@ if ($pdo->numrows == 1) {
   echo 'Search engines: '.formInput('blog_crawler_index', $new_blog_crawler_index, $check_err).'<br><br>';
 
   echo '
-    <input type="submit" value="Save changes">
-  </form>
+    <input type="submit" value="Save changes" form="blog_settings">
   ';
+
+  echo '</form>';
+
+  // Series
+  echo '<h2>Series</h2>';
+  $rows = $pdo->select('series', 'id', $blog_default_series, 'name, slug');
+  foreach ($rows as $row) {
+    $de_series_name = $row->name;
+    $de_series_slug = $row->slug;
+  }
+  echo '<p class="settings-pro-image" id="pro-favicon-upload"><b>Default Series<br><br></b>'.$de_series_name.' <code><i>('.$de_series_slug.')</i></code>';
+  echo '<br><br>';
+
+  // Edit series button
+  include ('./in.editseriesbutton.php');
+
+  echo '</p>';
+
+  // Site pro images
+  echo '<h2>Site Images</h2>';
+
+  // Favicon
+  echo '<p class="settings-pro-image" id="pro-favicon-upload"><b>Favicon</b> <small>(PNG 128x128 - 512x512)</small> <input type="file" name="pro-favicon" id="pro-favicon" form="blog_settings">';
+  if (file_exists($pro_favicon_path)) {
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_favicon_path.'">';
+  } else {
+    echo '<br><br><code class="gray"><i>no image</i></code>';
+  }
+
+  echo '</p>';
+
+  // Logo
+  echo '<p class="settings-pro-image" id="pro-logo-upload"><b>Site logo</b> <small>(PNG 128x128 - 512x512)</small> <input type="file" name="pro-logo" id="pro-logo" form="blog_settings">';
+  if (file_exists($pro_logo_path)) {
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_logo_path.'">';
+  } else {
+    echo '<br><br><code class="gray"><i>no image</i></code>';
+  }
+
+  echo '</p>';
+
+  // SEO image
+  echo '<p class="settings-pro-image" id="pro-seo-upload"><b>SEO results</b> <small>(JPEG 1200x630)</small> <input type="file" name="pro-seo" id="pro-seo" form="blog_settings">';
+  if (file_exists($pro_seo_path)) {
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_seo_path.'">';
+  } else {
+    echo '<br><br><code class="gray"><i>no image</i></code>';
+  }
+
+  echo '</p>';
+
+  // RSS feed
+  echo '<p class="settings-pro-image" id="pro-rss-upload"><b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="blog_settings">';
+  if (file_exists($pro_rss_path)) {
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_rss_path.'">';
+  } else {
+    echo '<br><br><code class="gray"><i>no image</i></code>';
+  }
+
+  echo '</p>';
+
+  // iTunes Podcast
+  echo '<p class="settings-pro-image" id="pro-podcast-upload"><b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="blog_settings">';
+  if (file_exists($pro_podcast_path)) {
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_podcast_path.'">';
+  } else {
+    echo '<br><br><code class="gray"><i>no image</i></code>';
+  }
+
+  echo '</p>';
 
 } else {
   echo '<p class="errors">No settings detected. Something is seriously wrong!</p>';
 }
+
+// Series edit JavaScript
+include ('./in.editseries.php');
 
 // Footer
 include ('./in.footer.php');

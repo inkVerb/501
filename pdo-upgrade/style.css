@@ -275,6 +275,7 @@ div#media-editor-closer {
 	font-size: 2em;
 }
 
+div#edit-series-closer,
 div#media-insert-closer {
 	text-align: right;
 	cursor: pointer;
@@ -327,6 +328,21 @@ div#feature-insert-container {
 	margin: 0 1em 0.5em 1em;
 	width: 22em;
 	height: 100%;
+	z-index: 99 !important; /* So it appears above everything */
+}
+
+/* Series editor */
+div#edit-series-container {
+	background-color: #fff;
+	border-style: solid;
+	border-width: medium;
+	border-color: #ddd;
+  position: sticky;
+	padding: 0.5em;
+  top: 5em;
+	margin: 0 1em 0.5em 1em;
+	width: 95vw;
+	height: 75vh;
 	z-index: 99 !important; /* So it appears above everything */
 }
 
@@ -387,7 +403,8 @@ div#media-insert-editor {
 }
 
 /* Pieces table */
-table#pieces-table {
+table#pieces-table,
+table#series-table {
 	min-width: 850px;
 }
 
