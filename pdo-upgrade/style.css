@@ -283,6 +283,16 @@ div#media-insert-closer {
 	font-size: 2em;
 	clear: both;
 }
+div#edit-series-closer {
+  position:sticky;
+  right:0.4em;
+  top:0.25em;
+}
+div#media-insert-closer {
+  position:absolute;
+  right:0.5em;
+  top:0.2em;
+}
 h1#media-editor-content {
 	display: inline;
   vertical-align: top;
@@ -337,12 +347,13 @@ div#edit-series-container {
 	border-style: solid;
 	border-width: medium;
 	border-color: #ddd;
-  position: sticky;
+  position: absolute;
 	padding: 0.5em;
   top: 5em;
 	margin: 0 1em 0.5em 1em;
 	width: 95vw;
 	height: 75vh;
+  overflow: auto;
 	z-index: 99 !important; /* So it appears above everything */
 }
 

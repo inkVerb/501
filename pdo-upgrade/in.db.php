@@ -72,8 +72,8 @@ class DB {
     }
 
     // Success statement
-    $this->change = ($statement->rowCount() >= 1) ? true : false;
-    $this->ok = ($statement) ? true : false;
+    $this->change = ($query->rowCount() >= 1) ? true : false;
+    $this->ok = ($query) ? true : false;
 
   } // delete()
 

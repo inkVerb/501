@@ -33,11 +33,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Pro images
     // RSS feed
     $rss_info = ($_FILES["pro-rss"]["tmp_name"]) ? getimagesize($_FILES["pro-rss"]["tmp_name"]) : false;
+    $pro_rss_path = $pro_path.$s_id.'-'.$pro_rss_name;
     if ($rss_info) {
       $tmp_file = $_FILES["pro-rss"]['tmp_name'];
       $image_width = $rss_info[0];
       $image_height = $rss_info[1];
-      $pro_rss_path = $pro_path.$s_id.'-'.$pro_rss_name;
       $upload_ext = strtolower(pathinfo(basename($_FILES["pro-rss"]["name"]),PATHINFO_EXTENSION));
       if ($_FILES['pro-rss']['size'] <= $file_size_limit) {
         if ($rss_info["mime"] == "image/jpeg") {
@@ -50,6 +50,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               $upload_rss_success = true;
             } else {
               $ajax_response['message'] = '<p class="red">path:'.$pro_rss_path.' RSS image upload unknown failure.</p>';
+              $ajax_response['change'] = 'nochange';
+              $ajax_response['upload'] = 'failed';
+              $ajax_response['new_podcast'] = 'notnew';
+              $ajax_response['new_rss'] = 'notnew';
               // We're done here
               $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
               echo $json_response;
@@ -58,6 +62,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
           } else {
             $ajax_response['message'] = '<p class="red">Logo is wrong size. Must be square and 144 pixels wide and high.</p>';
+            $ajax_response['change'] = 'nochange';
+            $ajax_response['upload'] = 'failed';
+            $ajax_response['new_podcast'] = 'notnew';
+            $ajax_response['new_rss'] = 'notnew';
             // We're done here
             $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
             echo $json_response;
@@ -79,15 +87,17 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         echo $json_response;
         exit ();
       }
+    } elseif ((isset($_POST['pro-delete'])) && ($_POST['pro-delete'] == 'delete')) {
+      $delete_rss_image = true;
     }
 
     // iTunes Podcast
     $podcast_info = ($_FILES["pro-podcast"]["tmp_name"]) ? getimagesize($_FILES["pro-podcast"]["tmp_name"]) : false;
+    $pro_podcast_path = $pro_path.$s_id.'-'.$pro_podcast_name;
     if ($podcast_info) {
       $tmp_file = $_FILES["pro-podcast"]['tmp_name'];
       $image_width = $podcast_info[0];
       $image_height = $podcast_info[1];
-      $pro_podcast_path = $pro_path.$s_id.'-'.$pro_podcast_name;
       $upload_ext = strtolower(pathinfo(basename($_FILES["pro-podcast"]["name"]),PATHINFO_EXTENSION));
       if ($_FILES['pro-podcast']['size'] <= $file_size_limit) {
         if ($podcast_info["mime"] == "image/jpeg") {
@@ -100,6 +110,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               $upload_podcast_success = true;
             } else {
               $ajax_response['message'] =  '<p class="red">path:'.$pro_podcast_path.' Podcast image upload unknown failure.</p>';
+              $ajax_response['change'] = 'nochange';
+              $ajax_response['upload'] = 'failed';
+              $ajax_response['new_podcast'] = 'notnew';
+              $ajax_response['new_rss'] = 'notnew';
               // We're done here
               $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
               echo $json_response;
@@ -108,6 +122,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
           } else {
             $ajax_response['message'] =  '<p class="red">Podcast image is wrong size. Must be square and 3000 pixels wide and high.</p>';
+            $ajax_response['change'] = 'nochange';
+            $ajax_response['upload'] = 'failed';
+            $ajax_response['new_podcast'] = 'notnew';
+            $ajax_response['new_rss'] = 'notnew';
             // We're done here
             $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
             echo $json_response;
@@ -116,6 +134,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
         } else {
           $ajax_response['message'] =  '<p class="red">Podcast image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+          $ajax_response['change'] = 'nochange';
+          $ajax_response['upload'] = 'failed';
+          $ajax_response['new_podcast'] = 'notnew';
+          $ajax_response['new_rss'] = 'notnew';
           // We're done here
           $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
           echo $json_response;
@@ -124,15 +146,21 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
       } else {
         $ajax_response['message'] =  '<p class="red">Podcast image file size is too big. Limit is 1MB.</p>';
+        $ajax_response['change'] = 'nochange';
+        $ajax_response['upload'] = 'failed';
+        $ajax_response['new_podcast'] = 'notnew';
+        $ajax_response['new_rss'] = 'notnew';
         // We're done here
         $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
         echo $json_response;
         exit ();
       }
+    } elseif ((isset($_POST['pro-delete'])) && ($_POST['pro-delete'] == 'delete')) {
+      $delete_podcast_image = true;
     }
     // End pro image uploads
 
-    // Checks
+    // No uploads
     // Series slug
     if (preg_replace('/\s+/', '', $_POST['series_slug']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-]/";
@@ -196,43 +224,98 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $query->bindParam(':slug', $clean_slug_trim);
     $query->bindParam(':id', $s_id);
     $pdo->exec_($query);
-    if ($pdo->change) {
-      $ajax_response['message'] = '<span class="green notehide">Saved</span>';
+    if ($pdo->change) { // Successful change
+      $ajax_response['message'] = '<span class="green notehide">Saved, refresh to see changes in Series lists</span>';
       $ajax_response['name'] = $series_name_trim;
       $ajax_response['slug'] = $clean_slug_trim;
       $ajax_response['change'] = 'change';
-
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-    } else {
+    } else { // No changes
+      // Images?
       if ($upload_img_success == true) {
-        $ajax_response['message'] = '<span class="green notehide">Images uploaded, changes may not take effect until cache reloads.</span>';
+        $ajax_response['message'] = '<span class="green notehide">Image uploaded. Changes may not take effect until cache reloads.</span>';
         $ajax_response['name'] = $series_name_trim;
         $ajax_response['slug'] = $clean_slug_trim;
         $ajax_response['change'] = 'change';
         $ajax_response['upload'] = 'uploaded';
         $ajax_response['new_podcast'] = ($upload_podcast_success) ? 'newpodcast' : 'notnew';
         $ajax_response['new_rss'] = ($upload_rss_success) ? 'newrss' : 'notnew';
+      // Deleting something?
       } else {
-        $ajax_response['message'] = '<span class="orange notehide">No changes</span>';
-        $ajax_response['name'] = $series_name_trim;
-        $ajax_response['slug'] = $clean_slug_trim;
-        $ajax_response['change'] = 'nochange';
-        $ajax_response['upload'] = 'failed';
-        $ajax_response['new_podcast'] = 'notnew';
-        $ajax_response['new_rss'] = 'notnew';
+        // Delete the images?
+        if (($delete_rss_image == true) && ($delete_podcast_image == true)) {
+           unlink($pro_rss_path);
+           unlink($pro_podcast_path);
+           $ajax_response['message'] = '<span class="red notehide">Images deleted.</span>';
+           $ajax_response['name'] = $series_name_trim;
+           $ajax_response['slug'] = $clean_slug_trim;
+           $ajax_response['change'] = 'nochange';
+           $ajax_response['upload'] = 'delete';
+           $ajax_response['new_podcast'] = 'notnew';
+           $ajax_response['new_rss'] = 'notnew';
+        // Delete series?
+        } elseif ((isset($_POST['series-delete'])) && ($_POST['series-delete'] == 'delete')) {
+          $queryp = $database->prepare("UPDATE pieces SET series=:newseries WHERE series=:oldseries");
+          $queryp->bindParam(':newseries', $blog_default_series);
+          $queryp->bindParam(':oldseries', $s_id);
+          $pdo->exec_($queryp);
+          $delokp = ($pdo->ok) ? true : false;
+          $queryb = $database->prepare("UPDATE publications SET series=:newseries WHERE series=:oldseries");
+          $queryb->bindParam(':newseries', $blog_default_series);
+          $queryb->bindParam(':oldseries', $s_id);
+          $pdo->exec_($queryb);
+          $delokb = ($pdo->ok) ? true : false;
+          $queryh = $database->prepare("UPDATE publication_history SET series=:newseries WHERE series=:oldseries");
+          $queryh->bindParam(':newseries', $blog_default_series);
+          $queryh->bindParam(':oldseries', $s_id);
+          $pdo->exec_($queryh);
+          $delokh = ($pdo->ok) ? true : false;
+          if ($delokp && $delokb && $delokh) {
+            $pdo->delete('series', 'id', $s_id);
+            if ($pdo->ok) { // Series deleted
+              $ajax_response['message'] = '<span class="red">Series deleted!</span>';
+              $ajax_response['name'] = $series_name_trim;
+              $ajax_response['slug'] = $clean_slug_trim;
+              $ajax_response['change'] = 'delete';
+              $ajax_response['upload'] = 'none';
+              $ajax_response['new_podcast'] = 'notnew';
+              $ajax_response['new_rss'] = 'notnew';
+            } else { // Impossible fail to delete series
+              $ajax_response['message'] = '<span class="error">Strange database trouble deleting series!</span>';
+              $ajax_response['name'] = $series_name_trim;
+              $ajax_response['slug'] = $clean_slug_trim;
+              $ajax_response['change'] = 'nochange';
+              $ajax_response['upload'] = 'none';
+              $ajax_response['new_podcast'] = 'notnew';
+              $ajax_response['new_rss'] = 'notnew';
+            }
+          } else { // Impossible fail to change affected pices to default series
+            $ajax_response['message'] = '<span class="error">Strange database trouble preparing to delete series!</span>';
+            $ajax_response['name'] = $series_name_trim;
+            $ajax_response['slug'] = $clean_slug_trim;
+            $ajax_response['change'] = 'nochange';
+            $ajax_response['upload'] = 'none';
+            $ajax_response['new_podcast'] = 'notnew';
+            $ajax_response['new_rss'] = 'notnew';
+          }
+        } else { // Truly no changes at all
+          $ajax_response['message'] = '<span class="orange notehide">No changes.</span>';
+          $ajax_response['name'] = $series_name_trim;
+          $ajax_response['slug'] = $clean_slug_trim;
+          $ajax_response['change'] = 'nochange';
+          $ajax_response['upload'] = 'none';
+          $ajax_response['new_podcast'] = 'notnew';
+          $ajax_response['new_rss'] = 'notnew';
+        } // No changes
+      } // Delete check
+    } // Changes check
 
-      }
-
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-    }
+    // We're done here
+    $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+    echo $json_response;
 
   // Just getting the <form> from seriesEditor AJAX loader
   } else {
-
+    echo '<div id="series-editor-container">';
     echo '<h2>Series Editor</h2>';
 
     $query = $database->prepare("SELECT * FROM series");
@@ -260,13 +343,27 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
 
         // View items row (default shown)
+        // File paths
+        $pro_rss_path = $pro_path.$series_id.'-'.$pro_rss_name;
+        $pro_podcast_path = $pro_path.$series_id.'-'.$pro_podcast_name;
+        // Contents
         echo '<tr class="pieces '."$table_row_color".'" id="v_row_'.$series_id.'" onmouseover="showChangeButton('.$series_id.');" onmouseout="showChangeButton('.$series_id.');">';
         echo '<td id="sne-'.$series_id.'">
         <form id="series-edit-'.$series_id.'"enctype="multipart/form-data">
         <input type="hidden" name="u_id" value="'.$user_id.'">
         <input type="hidden" name="s_id" value="'.$series_id.'">
         </form>
-        <input type="text" form="series-edit-'.$series_id.'" id="input-name-'.$series_id.'" name="series_name" value="'.$series_name.'"></td>';
+        <input type="text" form="series-edit-'.$series_id.'" id="input-name-'.$series_id.'" name="series_name" value="'.$series_name.'">
+        <br><br>';
+        if ($series_id != $blog_default_series) {
+          echo '
+          <div id="delete-checkbox-'.$series_id.'" style="display:none;">
+            <label for="series-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="series-delete-'.$series_id.'" name="series-delete" value="delete"> <i><small>Permanently delete series</small></i></label>
+          </div>';
+        } else {
+          echo '<i><small>Default</small></i>';
+        }
+        echo '</td>';
         echo '<td id="sse-'.$series_id.'">
         <input type="text" form="series-edit-'.$series_id.'" id="input-slug-'.$series_id.'" name="series_slug" value="'.$series_slug.'"></td>';
         echo '<td id="scv-'.$series_id.'">
@@ -282,21 +379,26 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
                   <td>
                     <div id="e_buttons_'.$series_id.'" style="display:none;">
                       <button type="button" onclick="seriesSave('.$series_id.');">Save</button>&nbsp;
-                      <button type="button" onclick="showHideEdit('.$series_id.');">Cancel</button>
+                      <button type="button" onclick="showHideEdit('.$series_id.');">Cancel</button>';
+                      if ((file_exists($pro_rss_path)) || (file_exists($pro_podcast_path))) {
+                        echo '<br><br><label for="pro-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="pro-delete-'.$series_id.'" name="pro-delete" value="delete"> <i>Delete image(s)</i></label>';
+                      }
+                      echo '
                     </div>
-                    <div id="edit-series-'.$series_id.'"></div>
+                    <div id="edit-message-'.$series_id.'"></div>
                   </td>
                 </tr>
               </table>
               </td>';
         echo '<td id="sav-'.$series_id.'">';
           // RSS feed
-          $pro_rss_path = $pro_path.$series_id.'-'.$pro_rss_name;
           echo '<p class="settings-pro-image" id="pro-rss-upload"><b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="series-edit-'.$series_id.'"><br><br>';
           if (file_exists($pro_rss_path)) {
-            echo '<img id="rss-image-'.$series_id.'" style="max-width:50px; max-height:50px;" src="'.$pro_rss_path.'">';
+            echo '<img id="rss-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" src="'.$pro_rss_path.'">';
+            echo '<code id="rss-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" class="gray"><i>no image</i></code>';
           } else {
-            echo '<code id="rss-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;"class="gray"><i>no image</i></code>';
+            echo '<img id="rss-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" src="'.$pro_rss_path.'">';
+            echo '<code id="rss-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" class="gray"><i>no image</i></code>';
 
           }
         echo '</p>';
@@ -304,11 +406,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         </td>';
         echo '<td id="smv-'.$series_id.'">';
           // iTunes Podcast
-          $pro_podcast_path = $pro_path.$series_id.'-'.$pro_podcast_name;
           echo '<p class="settings-pro-image" id="pro-podcast-upload"><b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="series-edit-'.$series_id.'"><br><br>';
           if (file_exists($pro_podcast_path)) {
             echo '<img id="podcast-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" src="'.$pro_podcast_path.'">';
+            echo '<code id="podcast-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" class="gray"><i>no image</i></code>';
           } else {
+            echo '<img id="podcast-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" src="'.$pro_podcast_path.'">';
             echo '<code id="podcast-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" class="gray"><i>no image</i></code>';
           }
         echo '</td>';
@@ -319,6 +422,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
       }
       echo '</tbody></table>';
+
+      echo '</div>';
 
     } else { // If no entries in the series table
       echo "<p>That's strange. Nothing here.</p>";

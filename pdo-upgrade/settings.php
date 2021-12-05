@@ -35,6 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Include our POST checks
   include ('./in.checks.php');
 
+  // Default Series
+  $p_series = (filter_var($_POST['p_series'], FILTER_VALIDATE_INT)) ? filter_var($_POST['p_series'], FILTER_VALIDATE_INT) : false;
+
   // No errors, all ready
   if ($no_form_errors == true) {
 
@@ -52,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $blog_crawler_index_trim = DB::trimspace($new_blog_crawler_index);
 
     // Prepare the query
-    $query = $database->prepare("UPDATE blog_settings SET public=:public, title=:title, tagline=:tagline, description=:description, keywords=:keywords, summary_words=:summary_words, piece_items=:piece_items, feed_items=:feed_items, crawler_index=:crawler_index");
+    $query = $database->prepare("UPDATE blog_settings SET public=:public, title=:title, tagline=:tagline, description=:description, keywords=:keywords, summary_words=:summary_words, piece_items=:piece_items, feed_items=:feed_items, default_series=:default_series, crawler_index=:crawler_index");
     $query->bindParam(':public', $blog_public_trim);
     $query->bindParam(':title', $blog_title_trim);
     $query->bindParam(':tagline', $blog_tagline_trim);
@@ -61,23 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query->bindParam(':summary_words', $blog_summary_words_trim);
     $query->bindParam(':piece_items', $blog_piece_items_trim);
     $query->bindParam(':feed_items', $blog_feed_items_trim);
+    $query->bindParam(':default_series', $p_series);
     $query->bindParam(':crawler_index', $blog_crawler_index_trim);
-
-
-    // Run the query
-    $pdo->exec_($query);
-    // Test the query
-    if ($pdo->ok) {
-      // Change
-      if ($pdo->change) {
-        echo '<p class="green">Updated! Some changes may take a moment.</p>';
-      // No change
-      } elseif (!$pdo->change) {
-        echo '<p class="orange">No change.</p>';
-      }
-    } else {
-      echo '<p class="error">Serious error.</p>';
-    }
 
   } else {
     echo '<p class="error">Errors, try again.</p>';
@@ -101,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           if (move_uploaded_file($tmp_file, $pro_favicon_path)) {
             echo '<p class="green">Favicon updated! Cache may need to be refreshed to see changes.</p>';
+            $image_uploaded = true;
           } else {
             echo '<p class="red">path:'.$pro_favicon_path.' Favicon upload unknown failure.</p>';
           }
@@ -116,6 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       echo '<p class="red">Favicon file size is too big. Limit is 1MB.</p>';
     }
+  } elseif ((isset($_POST['pro-favicon-delete'])) && ($_POST['pro-favicon-delete'] == 'delete') && (isset($_POST['pro-confirm-delete'])) && ($_POST['pro-confirm-delete'] == 'delete')) {
+    unlink($pro_favicon_path);
+    $deleted_image = true;
   }
 
   // Logo
@@ -135,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           if (move_uploaded_file($tmp_file, $pro_logo_path)) {
             echo '<p class="green">Logo updated! Cache may need to be refreshed to see changes.</p>';
+            $image_uploaded = true;
           } else {
             echo '<p class="red">path:'.$pro_logo_path.' Logo upload unknown failure.</p>';
           }
@@ -150,6 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       echo '<p class="red">Logo file size is too big. Limit is 1MB.</p>';
     }
+  } elseif ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && (isset($_POST['pro-confirm-delete'])) && ($_POST['pro-confirm-delete'] == 'delete')) {
+    unlink($pro_logo_path);
+    $deleted_image = true;
   }
 
   // SEO image
@@ -167,6 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           if (move_uploaded_file($tmp_file, $pro_seo_path)) {
             echo '<p class="green">SEO image updated! Cache may need to be refreshed to see changes.</p>';
+            $image_uploaded = true;
           } else {
             echo '<p class="red">path:'.$pro_seo_path.' SEO image upload unknown failure.</p>';
           }
@@ -182,6 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       echo '<p class="red">SEO image file size is too big. Limit is 1MB.</p>';
     }
+  } elseif ((isset($_POST['pro-seo-delete'])) && ($_POST['pro-seo-delete'] == 'delete') && (isset($_POST['pro-confirm-delete'])) && ($_POST['pro-confirm-delete'] == 'delete')) {
+    unlink($pro_seo_path);
+    $deleted_image = true;
   }
 
   // RSS feed
@@ -199,6 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           if (move_uploaded_file($tmp_file, $pro_rss_path)) {
             echo '<p class="green">RSS image updated! Cache may need to be refreshed to see changes.</p>';
+            $image_uploaded = true;
           } else {
             echo '<p class="red">path:'.$pro_rss_path.' RSS image upload unknown failure.</p>';
           }
@@ -214,6 +215,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       echo '<p class="red">RSS image file size is too big. Limit is 1MB.</p>';
     }
+  } elseif ((isset($_POST['pro-rss-delete'])) && ($_POST['pro-rss-delete'] == 'delete') && (isset($_POST['pro-confirm-delete'])) && ($_POST['pro-confirm-delete'] == 'delete')) {
+    unlink($pro_rss_path);
+    $deleted_image = true;
   }
 
   // iTunes Podcast
@@ -231,6 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           if (move_uploaded_file($tmp_file, $pro_podcast_path)) {
             echo '<p class="green">Podcast image updated! Cache may need to be refreshed to see changes.</p>';
+            $image_uploaded = true;
           } else {
             echo '<p class="red">path:'.$pro_podcast_path.' Podcast image upload unknown failure.</p>';
           }
@@ -246,8 +251,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       echo '<p class="red">Podcast image file size is too big. Limit is 1MB.</p>';
     }
+  } elseif ((isset($_POST['pro-podcast-delete'])) && ($_POST['pro-podcast-delete'] == 'delete') && (isset($_POST['pro-confirm-delete'])) && ($_POST['pro-confirm-delete'] == 'delete')) {
+    unlink($pro_podcast_path);
+    $deleted_image = true;
   }
   // End pro image uploads
+
+  // Execute the database query & display any messages
+  $pdo->exec_($query);
+  // Test the query
+  if ($pdo->ok) {
+    // Change
+    if ($pdo->change) {
+      echo '<p class="green">Updated! Some changes may take a moment.</p>';
+      // We need to update our default series
+      $blog_default_series = $p_series;
+    // No change
+    } elseif (!$pdo->change) {
+
+      if ($deleted_image == true) {
+        echo '<p class="red">Image(s) deleted.</p>';
+      } elseif ($image_uploaded != true) {
+        echo '<p class="orange">No change.</p>';
+      }
+    }
+  } else {
+    echo '<p class="error">Serious error.</p>';
+  }
 
 } else { // Set our values from site defaults if not POST
 
@@ -290,20 +320,20 @@ if ($pdo->numrows == 1) {
   echo 'Search engines: '.formInput('blog_crawler_index', $new_blog_crawler_index, $check_err).'<br><br>';
 
   echo '
-    <input type="submit" value="Save changes" form="blog_settings">
+    <input type="submit" value="Save changes" form="blog_settings"><br><br>
+    <label for="pro-confirm-delete"><input type="checkbox" form="blog_settings" id="pro-confirm-delete" name="pro-confirm-delete" value="delete"> <i><small>Confirm image delete</small></i></label>
   ';
 
   echo '</form>';
 
   // Series
   echo '<h2>Series</h2>';
-  $rows = $pdo->select('series', 'id', $blog_default_series, 'name, slug');
-  foreach ($rows as $row) {
-    $de_series_name = $row->name;
-    $de_series_slug = $row->slug;
-  }
-  echo '<p class="settings-pro-image" id="pro-favicon-upload"><b>Default Series<br><br></b>'.$de_series_name.' <code><i>('.$de_series_slug.')</i></code>';
-  echo '<br><br>';
+  echo '<p><b>Default Series</b>';
+
+  // Set the values
+  $p_series = (isset($p_series)) ? $p_series : $blog_default_series;
+  $series_form = 'blog_settings'; // 'edit_piece' or 'blog_settings'
+  include ('./in.series.php');
 
   // Edit series button
   include ('./in.editseriesbutton.php');
@@ -316,7 +346,7 @@ if ($pdo->numrows == 1) {
   // Favicon
   echo '<p class="settings-pro-image" id="pro-favicon-upload"><b>Favicon</b> <small>(PNG 128x128 - 512x512)</small> <input type="file" name="pro-favicon" id="pro-favicon" form="blog_settings">';
   if (file_exists($pro_favicon_path)) {
-    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_favicon_path.'">';
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_favicon_path.'"><label for="pro-favicon-delete"><input type="checkbox" form="blog_settings" id="pro-favicon-delete" name="pro-favicon-delete" value="delete"> <i><small>Delete image</small></i></label>';
   } else {
     echo '<br><br><code class="gray"><i>no image</i></code>';
   }
@@ -326,7 +356,7 @@ if ($pdo->numrows == 1) {
   // Logo
   echo '<p class="settings-pro-image" id="pro-logo-upload"><b>Site logo</b> <small>(PNG 128x128 - 512x512)</small> <input type="file" name="pro-logo" id="pro-logo" form="blog_settings">';
   if (file_exists($pro_logo_path)) {
-    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_logo_path.'">';
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_logo_path.'"><label for="pro-logo-delete"><input type="checkbox" form="blog_settings" id="pro-logo-delete" name="pro-logo-delete" value="delete"> <i><small>Delete image</small></i></label>';
   } else {
     echo '<br><br><code class="gray"><i>no image</i></code>';
   }
@@ -336,7 +366,7 @@ if ($pdo->numrows == 1) {
   // SEO image
   echo '<p class="settings-pro-image" id="pro-seo-upload"><b>SEO results</b> <small>(JPEG 1200x630)</small> <input type="file" name="pro-seo" id="pro-seo" form="blog_settings">';
   if (file_exists($pro_seo_path)) {
-    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_seo_path.'">';
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_seo_path.'"><label for="pro-seo-delete"><input type="checkbox" form="blog_settings" id="pro-seo-delete" name="pro-seo-delete" value="delete"> <i><small>Delete image</small></i></label>';
   } else {
     echo '<br><br><code class="gray"><i>no image</i></code>';
   }
@@ -346,7 +376,7 @@ if ($pdo->numrows == 1) {
   // RSS feed
   echo '<p class="settings-pro-image" id="pro-rss-upload"><b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="blog_settings">';
   if (file_exists($pro_rss_path)) {
-    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_rss_path.'">';
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_rss_path.'"><label for="pro-rss-delete"><input type="checkbox" form="blog_settings" id="pro-rss-delete" name="pro-rss-delete" value="delete"> <i><small>Delete image</small></i></label>';
   } else {
     echo '<br><br><code class="gray"><i>no image</i></code>';
   }
@@ -356,7 +386,7 @@ if ($pdo->numrows == 1) {
   // iTunes Podcast
   echo '<p class="settings-pro-image" id="pro-podcast-upload"><b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="blog_settings">';
   if (file_exists($pro_podcast_path)) {
-    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_podcast_path.'">';
+    echo '<br><br><img style="max-width:50px; max-height:50px;" src="'.$pro_podcast_path.'"><label for="pro-podcast-delete"><input type="checkbox" form="blog_settings" id="pro-podcast-delete" name="pro-podcast-delete" value="delete"> <i><small>Delete image</small></i></label>';
   } else {
     echo '<br><br><code class="gray"><i>no image</i></code>';
   }

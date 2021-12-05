@@ -165,8 +165,9 @@ include ('./in.featuredmedia.php');
   $infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';
   echo 'Series:'.infoPop('series_info', $infomsg).'<br><br>';
 
-    // Accept any set value
+    // Set the values
     $p_series = (isset($p_series)) ? $p_series : $blog_default_series;
+    $series_form = 'edit_piece'; // 'edit_piece' or 'blog_settings'
     include ('./in.series.php');
 
     // Edit series button

@@ -60,6 +60,12 @@ function seriesEditor() { // These arguments can be anything, same as used in th
       document.getElementById("change-cancel-"+s_id).innerHTML = 'Cancel';
       y.style.display = "inline";
     }
+    var x = document.getElementById("delete-checkbox-"+s_id);
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
   }
 
   // The editor content
@@ -72,12 +78,27 @@ function seriesEditor() { // These arguments can be anything, same as used in th
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
-        document.getElementById("edit-series-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
-        if (jsonSeriesEditResponse["change"] == 'change') {
+        if (jsonSeriesEditResponse["change"] == 'change') { // Name and/or slug change
           showHideEdit(sID);// Hide the Save/Cancel buttons
           document.getElementById("input-name-"+sID).value = jsonSeriesEditResponse["name"]; // Update Name
           document.getElementById("input-slug-"+sID).value = jsonSeriesEditResponse["slug"]; // Update Slug
-
+        } else if ((jsonSeriesEditResponse["change"] == 'nochange') && (jsonSeriesEditResponse["upload"] == 'delete')) { // Deleting images
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+          document.getElementById("rss-none-"+sID).innerHTML = "<i>no image</i>";
+          document.getElementById("rss-none-"+sID).style.display = "inline";
+          document.getElementById("rss-image-"+sID).style.display = "none";
+          document.getElementById("podcast-none-"+sID).innerHTML = "<i>no image</i>";
+          document.getElementById("podcast-none-"+sID).style.display = "inline";
+          document.getElementById("podcast-image-"+sID).style.display = "none";
+          document.getElementById("pro-delete-"+sID).checked = false;
+        } else if ((jsonSeriesEditResponse["change"] == 'nochange') && (jsonSeriesEditResponse["upload"] == 'failed')) { // Upload failed
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+        } else if (jsonSeriesEditResponse["change"] == 'delete') { // Deleting series
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+          document.getElementById("v_row_"+sID).innerHTML = '<td></td><td></td><td><div id="edit-message-'+sID+'"></div></td><td></td><td></td>';
+          document.getElementById("v_row_"+sID).classList.remove("shady");
+          document.getElementById("v_row_"+sID).classList.remove("blues");
+          document.getElementById("v_row_"+sID).classList.add("deleting");
         }
         if (jsonSeriesEditResponse["new_rss"] == 'newrss') { // Hide the Save/Cancel buttons
            document.getElementById("rss-none-"+sID).innerHTML = "<i>refresh to see image</i>";
@@ -85,6 +106,8 @@ function seriesEditor() { // These arguments can be anything, same as used in th
         if (jsonSeriesEditResponse["new_podcast"] == 'newpodcast') { // Hide the Save/Cancel buttons
           document.getElementById("podcast-none-"+sID).innerHTML = "<i>refresh to see image</i>";
         }
+        // Every scenario is considered, not update <div id="edit-message-ID"> with our AJAX response message
+        document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
