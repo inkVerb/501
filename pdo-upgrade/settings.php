@@ -279,6 +279,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<p class="error">Serious error.</p>';
   }
 
+  // Check if deleting an image without checking to "Confirm"
+  if (((isset($_POST['pro-favicon-delete'])) && ($_POST['pro-favicon-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
+  || ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
+  || ((isset($_POST['pro-seo-delete'])) && ($_POST['pro-seo-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
+  || ((isset($_POST['pro-rss-delete'])) && ($_POST['pro-rss-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
+  || ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))) {
+    echo '<p class="red">To delete images, you must check to confirm under the "Save changes" button.</p>';
+  }
+
 } else { // Set our values from site defaults if not POST
 
   $new_blog_public = $blog_public;
