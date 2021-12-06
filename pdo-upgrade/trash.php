@@ -12,6 +12,35 @@ include ('./in.head.php');
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
 
+// Pagination
+// Valid the Pagination
+if ((isset($_GET['r'])) && (filter_var($_GET['r'], FILTER_VALIDATE_INT, array('min_range' => 1)))) {
+ $paged = preg_replace("/[^0-9]/","", $_GET['r']);
+} else {
+ $paged = 1;
+}
+// Set pagination variables:
+$pageitems = 100;
+$itemskip = $pageitems * ($paged - 1);
+// We add this to the end of the $query, after DESC
+// LIMIT $itemskip,$pageitems
+
+// Pagination navigation: How many items total?
+$query = $database->prepare("SELECT id FROM pieces WHERE status='dead' ORDER BY CASE WHEN pub_yn=false THEN 0 ELSE 1 END, date_live DESC");
+$rows = $pdo->exec_($query);
+$totalrows = $pdo->numrows;
+
+$totalpages = floor($totalrows / $pageitems);
+$remainder = $totalrows % $pageitems;
+if ($remainder > 0) {
+$totalpages = $totalpages + 1;
+}
+if ($paged > $totalpages) {
+$totalpages = 1;
+}
+$nextpaged = $paged + 1;
+$prevpaged = $paged - 1;
+
 // JavaScript
 ?>
 <script>
@@ -88,7 +117,43 @@ function clearPurged(p_id) {
 </script>
 <?php
 
-// Trash link
+// Pagination nav row
+if ($totalpages > 1) {
+	echo "
+	<div class=\"paginate_nav_container\">
+		<div class=\"paginate_nav\">
+			<table>
+				<tr>
+					<td>
+						<a class=\"paginate";
+						if ($paged == 1) {echo " disabled";}
+						echo "\" title=\"Page 1\" href=\"$blog_web_base/trash.php?r=1\">&laquo;</a>
+					</td>
+					<td>
+						<a class=\"paginate";
+            if ($paged == 1) {echo " disabled";}
+           echo "\" title=\"Previous\" href=\"$blog_web_base/trash.php?r=$prevpaged\">&lsaquo;&nbsp;</a>
+					</td>
+					<td>
+						<a class=\"paginate current\" title=\"Next\" href=\"$blog_web_base/trash.php?r=$paged\">Page $paged ($totalpages)</a>
+					</td>
+					<td>
+						<a class=\"paginate";
+            if ($paged == $totalpages) {echo " disabled";}
+           echo "\" title=\"Next\" href=\"$blog_web_base/trash.php?r=$nextpaged\">&nbsp;&rsaquo;</a>
+					</td>
+					 <td>
+						 <a class=\"paginate";
+						 if ($paged == $totalpages) {echo " disabled";}
+	 					echo "\" title=\"Last Page\" href=\"$blog_web_base/trash.php?r=$totalpages\">&raquo;</a>
+					 </td>
+		 		</tr>
+			</table>
+		</div>
+	</div>";
+}
+
+// Pieces link
 echo '<a class="blue" href="'.$blog_web_base.'/pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="'.$blog_web_base.'/purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
 
 
@@ -122,7 +187,8 @@ echo '
 ';
 
 // Get and display each piece
-$rows = $pdo->select('pieces', 'status', 'dead', 'id, type, title, date_live, date_created');
+$query = $database->prepare("SELECT id, type, title, date_live, date_created FROM pieces WHERE status='dead' ORDER BY CASE WHEN pub_yn=false THEN 0 ELSE 1 END, date_live DESC LIMIT $itemskip,$pageitems");
+$rows = $pdo->exec_($query);
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each
@@ -194,6 +260,42 @@ echo "
 
 // Simple line
 echo '<br><hr><br>';
+
+// Pagination nav row
+if ($totalpages > 1) {
+	echo "
+	<div class=\"paginate_nav_container\">
+		<div class=\"paginate_nav\">
+			<table>
+				<tr>
+					<td>
+						<a class=\"paginate";
+						if ($paged == 1) {echo " disabled";}
+						echo "\" title=\"Page 1\" href=\"$blog_web_base/trash.php?r=1\">&laquo;</a>
+					</td>
+					<td>
+						<a class=\"paginate";
+            if ($paged == 1) {echo " disabled";}
+           echo "\" title=\"Previous\" href=\"$blog_web_base/trash.php?r=$prevpaged\">&lsaquo;&nbsp;</a>
+					</td>
+					<td>
+						<a class=\"paginate current\" title=\"Next\" href=\"$blog_web_base/trash.php?r=$paged\">Page $paged ($totalpages)</a>
+					</td>
+					<td>
+						<a class=\"paginate";
+            if ($paged == $totalpages) {echo " disabled";}
+           echo "\" title=\"Next\" href=\"$blog_web_base/trash.php?r=$nextpaged\">&nbsp;&rsaquo;</a>
+					</td>
+					 <td>
+						 <a class=\"paginate";
+						 if ($paged == $totalpages) {echo " disabled";}
+	 					echo "\" title=\"Last Page\" href=\"$blog_web_base/trash.php?r=$totalpages\">&raquo;</a>
+					 </td>
+		 		</tr>
+			</table>
+		</div>
+	</div>";
+}
 
 // Footer
 include ('./in.footer.php');

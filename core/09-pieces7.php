@@ -112,7 +112,7 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live'";
+$query = "SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live' ORDER BY date_live DESC";
 $call = mysqli_query($database, $query);
 // Start our row colors
 $table_row_color = 'blues';

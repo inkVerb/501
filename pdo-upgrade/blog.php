@@ -55,7 +55,7 @@ $itemskip = $pageitems * ($paged - 1);
 // We add this to the end of the $query, after DESC
 // LIMIT $itemskip,$pageitems
 
-// Pagination navigation: ow many items total?
+// Pagination navigation: How many items total?
 $query = $database->prepare("SELECT id FROM publications WHERE type='post' AND status='live' AND pubstatus='published'");
 $rows = $pdo->exec_($query);
 $totalrows = $pdo->numrows;
@@ -72,7 +72,7 @@ $nextpaged = $paged + 1;
 $prevpaged = $paged - 1;
 
 // Check the database for published pieces
-$query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+$query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
 $rows = $pdo->exec_($query);
 // Start our show_div counter
 $show_div_count = 1;

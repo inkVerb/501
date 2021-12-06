@@ -88,7 +88,7 @@ function clearPurged(p_id) {
 </script>
 <?php
 
-// Trash link
+// Pieces link
 echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
 
 
@@ -122,7 +122,8 @@ echo '
 ';
 
 // Get and display each piece
-$rows = $pdo->select('pieces', 'status', 'dead', 'id, type, title, date_live, date_created');
+$query = $database->prepare("SELECT id, type, title, date_live, date_created FROM pieces WHERE status='dead' ORDER BY date_live DESC");
+$rows = $pdo->exec_($query);
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each

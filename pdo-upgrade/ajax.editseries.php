@@ -318,7 +318,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     echo '<div id="series-editor-container">';
     echo '<h2>Series Editor</h2>';
 
-    $query = $database->prepare("SELECT * FROM series");
+    $query = $database->prepare("SELECT * FROM series ORDER BY name");
     $rows = $pdo->exec_($query);
     if ($pdo->numrows > 0) {
 

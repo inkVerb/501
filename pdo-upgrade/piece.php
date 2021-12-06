@@ -28,7 +28,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase, all non-alnum to hyphen
   $p_slug = substr($result, 0, 90); // Limit to 90 characters
-  $query = $database->prepare("SELECT title, piece_id, content, after, series, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND slug=:slug");
+  $query = $database->prepare("SELECT title, piece_id, content, after, series, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE status='live' AND pubstatus='published' AND date_live<=NOW() AND slug=:slug");
   $query->bindParam(':slug', $p_slug);
 
 } else {
@@ -37,6 +37,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
 // Check the database for published pieces
 $rows = $pdo->exec_($query);
+if ($pdo->numrows == 1) {
   foreach ($rows as $row) {
     // Assign the values based on results from if statement just above
     $p_title = "$row->title";
@@ -60,6 +61,8 @@ $rows = $pdo->exec_($query);
     $rows = $pdo->select('series', 'id', $p_series_id, 'name, slug');
     foreach ($rows as $row) { $p_series = $row->name; $p_series_slug = $row->slug; }
   }
+
+
 
   // Header
   $head_title = $blog_title;
@@ -128,6 +131,11 @@ $rows = $pdo->exec_($query);
   if (isset($user_id)) {
     echo '<p><a href="'.$blog_web_base.'/edit.php?p='.$p_id.'">Edit</a></p>';
   }
+  
+} else {
+  echo '<h1>Nothing here!</h1>';
+  exit();
+}
 
 // Footer
 include ('./in.footer.php');

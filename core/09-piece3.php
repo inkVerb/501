@@ -37,6 +37,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 // Check the database for published pieces
 $call = mysqli_query($database, $query);
 $row = mysqli_fetch_array($call, MYSQLI_NUM);
+if (mysqli_num_rows($call) == 1) {
   // Assign the values based on results from if statement just above
   $p_title = "$row[0]";
   if (isset($p_id)) {
@@ -104,6 +105,11 @@ $row = mysqli_fetch_array($call, MYSQLI_NUM);
   if (isset($user_id)) {
     echo '<p><a href="edit.php?p='.$p_id.'">Edit</a></p>';
   }
+  
+} else {
+  echo '<h1>Nothing here!</h1>';
+  exit();
+}
 
 // Footer
 include ('./in.footer.php');

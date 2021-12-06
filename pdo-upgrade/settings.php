@@ -305,6 +305,8 @@ if ($pdo->numrows == 1) {
   }
   // Our actual settings page
 
+  echo '<h2>Main</h2>';
+
   // Settings form
   echo '
   <form action="settings.php" method="post" id="blog_settings" enctype="multipart/form-data">';
@@ -319,12 +321,7 @@ if ($pdo->numrows == 1) {
   echo 'Blog visibility:<br>'.formInput('blog_public', $new_blog_public, $check_err).'<br><br>';
   echo 'Search engines: '.formInput('blog_crawler_index', $new_blog_crawler_index, $check_err).'<br><br>';
 
-  echo '
-    <input type="submit" value="Save changes" form="blog_settings"><br><br>
-    <label for="pro-confirm-delete"><input type="checkbox" form="blog_settings" id="pro-confirm-delete" name="pro-confirm-delete" value="delete"> <i><small>Confirm image delete</small></i></label>
-  ';
-
-  echo '</form>';
+  echo '</form>'; // Finish the function-created part of our <form>, more inputs added later
 
   // Series
   echo '<h2>Series</h2>';
@@ -337,8 +334,14 @@ if ($pdo->numrows == 1) {
 
   // Edit series button
   include ('./in.editseriesbutton.php');
-
   echo '</p>';
+
+  // Show the "Save changes" button prominently
+  echo '<h2>Save all changes</h2>';
+  echo '
+    <input type="submit" value="Save changes" form="blog_settings"><br><br>
+    <label for="pro-confirm-delete"><input type="checkbox" form="blog_settings" id="pro-confirm-delete" name="pro-confirm-delete" value="delete"> <i><small>Confirm image delete</small></i></label>
+  ';
 
   // Site pro images
   echo '<h2>Site Images</h2>';
@@ -396,6 +399,8 @@ if ($pdo->numrows == 1) {
 } else {
   echo '<p class="errors">No settings detected. Something is seriously wrong!</p>';
 }
+
+echo '<hr>';
 
 // Series edit JavaScript
 include ('./in.editseries.php');

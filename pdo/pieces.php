@@ -246,7 +246,8 @@ echo '
 ';
 
 // Get and display each piece
-$rows = $pdo->select('pieces', 'status', 'live', 'id, type, status, pub_yn, title, date_live, date_created');
+$query = $database->prepare("SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live' ORDER BY date_live DESC");
+$rows = $pdo->exec_($query);
 // Start our row colors
 $table_row_color = 'blues';
 // We have many entries, this will iterate one post per each

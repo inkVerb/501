@@ -12,7 +12,7 @@ include ('./in.head.php');
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
 
-// Trash link
+// Pieces link
 echo '<a class="blue" href="pieces.php">Back to Pieces</a> | <a class="red" href="purge_all_trash.php">Purge all trash</a>';
 
 // Simple line
@@ -30,7 +30,7 @@ echo "
 ";
 
 // Get and display each piece
-$query = "SELECT id, type, title, date_live, date_created FROM pieces WHERE status='dead'";
+$query = "SELECT id, type, title, date_live, date_created FROM pieces WHERE status='dead' ORDER BY date_live DESC";
 $call = mysqli_query($database, $query);
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {

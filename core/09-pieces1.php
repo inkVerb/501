@@ -29,7 +29,7 @@ echo '
 ';
 
 // Get and display each piece
-$query = "SELECT id, type, status, title, date_created FROM pieces";
+$query = "SELECT id, type, status, title, date_created FROM pieces ORDER BY date_live DESC";
 $call = mysqli_query($database, $query);
 // We have many entries, this will iterate one post per each
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {

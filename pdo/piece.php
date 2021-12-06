@@ -37,6 +37,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
 // Check the database for published pieces
 $rows = $pdo->exec_($query);
+if ($pdo->numrows == 1) {
   foreach ($rows as $row) {
     // Assign the values based on results from if statement just above
     $p_title = "$row->title";
@@ -52,6 +53,7 @@ $rows = $pdo->exec_($query);
     $p_live = "$row->date_live";
     $p_update = "$row->date_updated";
   }
+
   // Linked title (we will create piece.php with a RewriteMod in a later lesson)
   echo '<h2><a href="piece.php?s='.$p_slug.'">'.$p_title.'</a></h2>';
 
@@ -105,6 +107,11 @@ $rows = $pdo->exec_($query);
   if (isset($user_id)) {
     echo '<p><a href="edit.php?p='.$p_id.'">Edit</a></p>';
   }
+
+} else {
+  echo '<h1>Nothing here!</h1>';
+  exit();
+}
 
 // Footer
 include ('./in.footer.php');
