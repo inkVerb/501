@@ -400,8 +400,6 @@ if ($pdo->numrows == 1) {
   echo '<p class="errors">No settings detected. Something is seriously wrong!</p>';
 }
 
-echo '<hr>';
-
 // Series edit JavaScript
 include ('./in.editseries.php');
 
