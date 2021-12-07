@@ -112,6 +112,9 @@ if ( (isset($user_id)) && (isset($fullname)) ) {
   echo '<div id="page_head"><b>'.$blog_title.'</b> Hi, '.$fullname.'! | <a href="'.$blog_web_base.'/">View blog</a> | <a href="'.$blog_web_base.'/edit.php"><b>+</b> Ink new</a> | <a href="'.$blog_web_base.'/pieces.php">Pieces</a> | <a href="'.$blog_web_base.'/medialibrary.php">Media</a> | <a href="'.$blog_web_base.'/settings.php">Settings</a> | <a href="'.$blog_web_base.'/account.php">Account</a> | <a href="'.$blog_web_base.'/logout.php">Logout</a></div>';
 }
 
+// Series editor?
+if ($series_editor_yn) {include ('./in.editseriesdiv.php');}
+
 // Title the page only if there is a $heading argument
 $heading = (isset($heading)) ? $heading : $head_title;
 echo ( (isset($heading)) && ($heading != '') ) ? '<h1>'.$heading.'</h1>' : false;

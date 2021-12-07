@@ -6,9 +6,9 @@ include ('./in.db.php');
 // Include our login cluster
 $head_title = "Pieces"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
+$series_editor_yn = true; // Series editor
 include ('./in.logincheck.php');
 include ('./in.head.php');
-include ('./in.editseriesdiv.php'); // Series editor
 
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');

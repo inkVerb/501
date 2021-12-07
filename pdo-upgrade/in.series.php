@@ -62,6 +62,3 @@ echo '<br><br>
 </form>
 </div>
 ';
-
-// Space
-echo '<br>';

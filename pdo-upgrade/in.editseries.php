@@ -19,12 +19,10 @@ function seriesEditorHide() {
 }
 
 // The editor content
-function seriesEditor() { // These arguments can be anything, same as used in this function
+function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, same as used in this function
 
     // Bind a new event listener every time the <form> is changed:
-    const FORM = document.getElementById("edit-series-form");
     const AJAX = new XMLHttpRequest(); // AJAX handler
-    const FD = new FormData(FORM); // Bind to-send data to form element
 
     AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
       document.getElementById("edit-series").innerHTML = event.target.responseText;
@@ -35,8 +33,8 @@ function seriesEditor() { // These arguments can be anything, same as used in th
     } );
 
     AJAX.open("POST", "ajax.editseries.php");
-
-    AJAX.send(FD); // Data sent is from the form
+    AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    AJAX.send("u_id="+uID+"&r="+pageNum); // Data as could be sent in a <form>
 
   } // seriesEditor() function
 
@@ -51,6 +49,8 @@ function seriesEditor() { // These arguments can be anything, same as used in th
   }
 
   // show/hide action link
+  // For the Default series, the "Permanently delete series" checkbox and <div> do not exist, so running a JavaScript action for it would break the above line also
+  // So, we must check to see if the checkbox <div> even exists, only then we run the script action to change it
   function showHideEdit(s_id) {
     var y = document.getElementById("e_buttons_"+s_id);
     if (y.style.display === "inline") {
@@ -60,11 +60,13 @@ function seriesEditor() { // These arguments can be anything, same as used in th
       document.getElementById("change-cancel-"+s_id).innerHTML = 'Cancel';
       y.style.display = "inline";
     }
-    var x = document.getElementById("delete-checkbox-"+s_id);
-    if (x.style.display === "inline") {
-      x.style.display = "none";
-    } else {
-      x.style.display = "inline";
+    if (elementExists = document.getElementById("delete-checkbox-"+s_id)) {
+      var x = document.getElementById("delete-checkbox-"+s_id);
+      if (x.style.display === "inline") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "inline";
+      }
     }
   }
 

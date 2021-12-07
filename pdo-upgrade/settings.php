@@ -9,9 +9,9 @@ include ('./in.functions.php');
 // Include our login cluster
 $head_title = "Blog Settings"; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
+$series_editor_yn = true; // Series editor
 include ('./in.logincheck.php');
 include ('./in.head.php');
-include ('./in.editseriesdiv.php'); // Series editor
 
 // Pro images filenames
 $upload_subdir = 'media/pro/';
@@ -341,9 +341,10 @@ if ($pdo->numrows == 1) {
   $series_form = 'blog_settings'; // 'edit_piece' or 'blog_settings'
   include ('./in.series.php');
 
+  echo '</p>';
+
   // Edit series button
   include ('./in.editseriesbutton.php');
-  echo '</p>';
 
   // Show the "Save changes" button prominently
   echo '<h2>Save all changes</h2>';

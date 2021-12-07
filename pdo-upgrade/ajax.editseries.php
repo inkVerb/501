@@ -318,7 +318,73 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     echo '<div id="series-editor-container">';
     echo '<h2>Series Editor</h2>';
 
-    $query = $database->prepare("SELECT * FROM series ORDER BY name");
+    // Pagination
+    // Valid the Pagination
+    if ((isset($_POST['r'])) && (filter_var($_POST['r'], FILTER_VALIDATE_INT, array('min_range' => 1)))) {
+     $paged = preg_replace("/[^0-9]/","", $_POST['r']);
+    } else {
+     $paged = 1;
+    }
+    // Set pagination variables:
+    $pageitems = 100;
+    $itemskip = $pageitems * ($paged - 1);
+    // We add this to the end of the $query, after DESC
+    // LIMIT $itemskip,$pageitems
+
+    // Pagination navigation: How many items total?
+    $query = $database->prepare("SELECT id FROM series ORDER BY name");
+    $rows = $pdo->exec_($query);
+    $totalrows = $pdo->numrows;
+
+    $totalpages = floor($totalrows / $pageitems);
+    $remainder = $totalrows % $pageitems;
+    if ($remainder > 0) {
+    $totalpages = $totalpages + 1;
+    }
+    if ($paged > $totalpages) {
+    $totalpages = 1;
+    }
+    $nextpaged = $paged + 1;
+    $prevpaged = $paged - 1;
+
+    // Pagination nav row
+    if ($totalpages > 1) {
+    	echo "
+    	<div class=\"paginate_nav_container\">
+    		<div class=\"paginate_nav\">
+    			<table>
+    				<tr>
+    					<td>
+    						<a class=\"paginate";
+    						if ($paged == 1) {echo " disabled";}
+    						echo "\" title=\"Page 1\" href=\"#\" onclick=\"seriesEditor($user_id, 1);\">&laquo;</a>
+    					</td>
+    					<td>
+    						<a class=\"paginate";
+                if ($paged == 1) {echo " disabled";}
+               echo "\" title=\"Previous\" href=\"#\" onclick=\"seriesEditor($user_id, $prevpaged);\">&lsaquo;&nbsp;</a>
+    					</td>
+    					<td>
+    						<a class=\"paginate current\" title=\"Next\" href=\"#\" onclick=\"seriesEditor($user_id, $paged);\">Page $paged ($totalpages)</a>
+    					</td>
+    					<td>
+    						<a class=\"paginate";
+                if ($paged == $totalpages) {echo " disabled";}
+               echo "\" title=\"Next\" href=\"#\" onclick=\"seriesEditor($user_id, $nextpaged);\">&nbsp;&rsaquo;</a>
+    					</td>
+    					 <td>
+    						 <a class=\"paginate";
+    						 if ($paged == $totalpages) {echo " disabled";}
+    	 					echo "\" title=\"Last Page\" href=\"#\" onclick=\"seriesEditor($user_id, $totalpages);\">&raquo;</a>
+    					 </td>
+    		 		</tr>
+    			</table>
+    		</div>
+    	</div>";
+    }
+
+    // Iterate the rows
+    $query = $database->prepare("SELECT * FROM series ORDER BY name LIMIT $itemskip,$pageitems");
     $rows = $pdo->exec_($query);
     if ($pdo->numrows > 0) {
 
@@ -381,7 +447,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
                       <button type="button" onclick="seriesSave('.$series_id.');">Save</button>&nbsp;
                       <button type="button" onclick="showHideEdit('.$series_id.');">Cancel</button>';
                       if ((file_exists($pro_rss_path)) || (file_exists($pro_podcast_path))) {
-                        echo '<br><br><label for="pro-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="pro-delete-'.$series_id.'" name="pro-delete" value="delete"> <i>Delete image(s)</i></label>';
+                        echo '<br><br><label for="pro-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="pro-delete-'.$series_id.'" name="pro-delete" value="delete"> <i>Delete images</i></label>';
                       }
                       echo '
                     </div>
@@ -424,6 +490,44 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo '</tbody></table>';
 
       echo '</div>';
+
+      echo '<br><br>';
+
+      // Pagination nav row
+      if ($totalpages > 1) {
+      	echo "
+      	<div class=\"paginate_nav_container\">
+      		<div class=\"paginate_nav\">
+      			<table>
+      				<tr>
+      					<td>
+      						<a class=\"paginate";
+      						if ($paged == 1) {echo " disabled";}
+      						echo "\" title=\"Page 1\" href=\"#\" onclick=\"seriesEditor($user_id, 1);\">&laquo;</a>
+      					</td>
+      					<td>
+      						<a class=\"paginate";
+                  if ($paged == 1) {echo " disabled";}
+                 echo "\" title=\"Previous\" href=\"#\" onclick=\"seriesEditor($user_id, $prevpaged);\">&lsaquo;&nbsp;</a>
+      					</td>
+      					<td>
+      						<a class=\"paginate current\" title=\"Next\" href=\"#\" onclick=\"seriesEditor($user_id, $paged);\">Page $paged ($totalpages)</a>
+      					</td>
+      					<td>
+      						<a class=\"paginate";
+                  if ($paged == $totalpages) {echo " disabled";}
+                 echo "\" title=\"Next\" href=\"#\" onclick=\"seriesEditor($user_id, $nextpaged);\">&nbsp;&rsaquo;</a>
+      					</td>
+      					 <td>
+      						 <a class=\"paginate";
+      						 if ($paged == $totalpages) {echo " disabled";}
+      	 					echo "\" title=\"Last Page\" href=\"#\" onclick=\"seriesEditor($user_id, $totalpages);\">&raquo;</a>
+      					 </td>
+      		 		</tr>
+      			</table>
+      		</div>
+      	</div>";
+      }
 
     } else { // If no entries in the series table
       echo "<p>That's strange. Nothing here.</p>";

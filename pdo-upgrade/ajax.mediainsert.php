@@ -8,15 +8,8 @@ include ('./in.logincheck.php');
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 && (!empty($_POST['u_id']))
 && (filter_var($_POST['u_id'], FILTER_VALIDATE_INT))
-&& (!empty($_POST['feature_type']))
-&& (($_POST['feature_type'] == 'IMAGE')
-   || ($_POST['feature_type'] == 'AUDIO')
-   || ($_POST['feature_type'] == 'VIDEO')
-   || ($_POST['feature_type'] == 'DOCUMENT'))
 && (isset($_SESSION['user_id']))
 && ($_SESSION['user_id'] == $_POST['u_id']) ) {
-
-$m_basic_type = $_POST['feature_type'];
 
 ?>
 
@@ -43,8 +36,7 @@ $m_basic_type = $_POST['feature_type'];
   // LIMIT $itemskip,$pageitems
 
   // Pagination navigation: How many items total?
-  $query = $database->prepare("SELECT id FROM media_library WHERE basic_type=:basic_type ORDER BY id DESC");
-  $query->bindParam(':basic_type', $m_basic_type);
+  $query = $database->prepare("SELECT id FROM media_library ORDER BY id DESC");
   $rows = $pdo->exec_($query);
   $totalrows = $pdo->numrows;
 
@@ -69,25 +61,25 @@ $m_basic_type = $_POST['feature_type'];
             <td>
               <a class=\"paginate";
               if ($paged == 1) {echo " disabled";}
-              echo "\" title=\"Page 1\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, 1);\">&laquo;</a>
+              echo "\" title=\"Page 1\" href=\"#\" onclick=\"mediaInsert($user_id, 1);\">&laquo;</a>
             </td>
             <td>
               <a class=\"paginate";
               if ($paged == 1) {echo " disabled";}
-             echo "\" title=\"Previous\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $prevpaged);\">&lsaquo;&nbsp;</a>
+             echo "\" title=\"Previous\" href=\"#\" onclick=\"mediaInsert($user_id, $prevpaged);\">&lsaquo;&nbsp;</a>
             </td>
             <td>
-              <a class=\"paginate current\" title=\"Next\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $paged);\">Page $paged ($totalpages)</a>
+              <a class=\"paginate current\" title=\"Next\" href=\"#\" onclick=\"mediaInsert($user_id, $paged);\">Page $paged ($totalpages)</a>
             </td>
             <td>
               <a class=\"paginate";
               if ($paged == $totalpages) {echo " disabled";}
-             echo "\" title=\"Next\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $nextpaged);\">&nbsp;&rsaquo;</a>
+             echo "\" title=\"Next\" href=\"#\" onclick=\"mediaInsert($user_id, $nextpaged);\">&nbsp;&rsaquo;</a>
             </td>
              <td>
                <a class=\"paginate";
                if ($paged == $totalpages) {echo " disabled";}
-              echo "\" title=\"Last Page\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $totalpages);\">&raquo;</a>
+              echo "\" title=\"Last Page\" href=\"#\" onclick=\"mediaInsert($user_id, $totalpages);\">&raquo;</a>
              </td>
           </tr>
         </table>
@@ -107,8 +99,7 @@ $m_basic_type = $_POST['feature_type'];
   }
 
   // Get and display each item
-  $query = $database->prepare("SELECT id, file_base, file_extension, location, size, alt_text FROM media_library WHERE basic_type=:basic_type ORDER BY id DESC LIMIT $itemskip,$pageitems");
-  $query->bindParam(':basic_type', $m_basic_type);
+  $query = $database->prepare("SELECT id, file_base, file_extension, basic_type, location, size, alt_text FROM media_library ORDER BY id DESC LIMIT $itemskip,$pageitems");
   $rows = $pdo->exec_($query);
 
   // Is anything there?
@@ -123,7 +114,7 @@ $m_basic_type = $_POST['feature_type'];
 
     // Start our HTML table
     echo '
-    <div id="featured-insert-table-container">
+    <div id="media-insert-table-container">
     <table class="contentlib" id="media-insert-table">
       <!-- Set our column widths without creating a row -->
       <colgroup>
@@ -142,6 +133,7 @@ $m_basic_type = $_POST['feature_type'];
       $m_id = "$row->id";
       $m_file_base = "$row->file_base";
       $m_file_extension = "$row->file_extension";
+      $m_basic_type = "$row->basic_type";
       $m_location = "$row->location";
       $m_size = "$row->size";
       $m_alt = "$row->alt_text";
@@ -155,22 +147,17 @@ $m_basic_type = $_POST['feature_type'];
       // Start our row
       echo '<tr class="'.$table_row_color.'" onmouseover="showActions('.$m_id.')" onmouseout="showActions('.$m_id.')">';
 
-      // Paths, also used in setToFeature()
-      $media_library_folder = '/media/';
-      $basepath = $blog_web_base.$media_library_folder;
-      $m_filename_full_path = $basepath.$m_location.'/'.$m_filename;
-
-      // $file_thumb variable
-      if ($m_basic_type == 'IMAGE') {
-        $file_thumb = ($m_file_extension == 'svg') ? $basepath.$m_location.'/'.$m_file_base.'_thumb_svg.png' : $basepath.$m_location.'/'.$m_file_base.'_thumb'.'.'."$m_file_extension";
-      } else {
-        $file_thumb = 0;
-      }
-
-      // Clickable text to set featured media
-      $set_button = '<button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\'); onNavWarn();">&larr; '.$m_filename.'</button>&nbsp;('.human_file_size(filesize($m_filename_full_path)).')<br>';
+      // AJAX mediaEdit button
+      $ajax_edit = '<form id="mediaEdit_'.$m_id.'">
+          <input type="hidden" value="'.$m_id.'" name="m_id">
+          <div id="showaction'.$m_id.'" style="display: none;">
+            <button type="button" class="postform link-button inline orange" onclick="mediaEdit(\'mediaEdit_'.$m_id.'\', \'ajax.mediainfoinsert.php\', \'media-insert-editor\');"><small>edit / insert</small></button>
+          </div>
+        </form>';
 
       // Fill-in the row per media type
+      $basepath = 'media/';
+      $origpath = 'media/original/';
       switch ($m_basic_type) {
         case 'IMAGE':
           if ($m_file_extension == 'svg') {
@@ -182,7 +169,7 @@ $m_basic_type = $_POST['feature_type'];
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           } else {
 
@@ -192,7 +179,7 @@ $m_basic_type = $_POST['feature_type'];
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           }
         break;
@@ -204,7 +191,7 @@ $m_basic_type = $_POST['feature_type'];
           echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
           // Filename
-          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
+          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
         break;
         case 'AUDIO':
@@ -215,7 +202,7 @@ $m_basic_type = $_POST['feature_type'];
           echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
           // Filename
-          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
+          echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
         break;
         case 'DOCUMENT':
@@ -228,7 +215,7 @@ $m_basic_type = $_POST['feature_type'];
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           } else {
 
@@ -236,7 +223,7 @@ $m_basic_type = $_POST['feature_type'];
             echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
 
             // Filename
-            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
+            echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$ajax_edit;
 
           }
         break;
@@ -271,25 +258,25 @@ $m_basic_type = $_POST['feature_type'];
               <td>
                 <a class=\"paginate";
                 if ($paged == 1) {echo " disabled";}
-                echo "\" title=\"Page 1\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, 1);\">&laquo;</a>
+                echo "\" title=\"Page 1\" href=\"#\" onclick=\"mediaInsert($user_id, 1);\">&laquo;</a>
               </td>
               <td>
                 <a class=\"paginate";
                 if ($paged == 1) {echo " disabled";}
-               echo "\" title=\"Previous\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $prevpaged);\">&lsaquo;&nbsp;</a>
+               echo "\" title=\"Previous\" href=\"#\" onclick=\"mediaInsert($user_id, $prevpaged);\">&lsaquo;&nbsp;</a>
               </td>
               <td>
-                <a class=\"paginate current\" title=\"Next\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $paged);\">Page $paged ($totalpages)</a>
+                <a class=\"paginate current\" title=\"Next\" href=\"#\" onclick=\"mediaInsert($user_id, $paged);\">Page $paged ($totalpages)</a>
               </td>
               <td>
                 <a class=\"paginate";
                 if ($paged == $totalpages) {echo " disabled";}
-               echo "\" title=\"Next\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $nextpaged);\">&nbsp;&rsaquo;</a>
+               echo "\" title=\"Next\" href=\"#\" onclick=\"mediaInsert($user_id, $nextpaged);\">&nbsp;&rsaquo;</a>
               </td>
                <td>
                  <a class=\"paginate";
                  if ($paged == $totalpages) {echo " disabled";}
-                echo "\" title=\"Last Page\" href=\"#\" onclick=\"mediaFeatureInsert('$m_basic_type', $user_id, $totalpages);\">&raquo;</a>
+                echo "\" title=\"Last Page\" href=\"#\" onclick=\"mediaInsert($user_id, $totalpages);\">&raquo;</a>
                </td>
             </tr>
           </table>
