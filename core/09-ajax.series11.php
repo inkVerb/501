@@ -13,7 +13,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
-    $result = substr($result, 0, 90); // Limit to 90 characters
+    $result = substr($result, 0, 60); // Limit to 60 characters
     $new_series = $result;
     $new_series_sqlesc = escape_sql($new_series);
 

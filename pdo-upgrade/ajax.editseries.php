@@ -415,20 +415,22 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         // Contents
         echo '<tr class="pieces '."$table_row_color".'" id="v_row_'.$series_id.'" onmouseover="showChangeButton('.$series_id.');" onmouseout="showChangeButton('.$series_id.');">';
         echo '<td id="sne-'.$series_id.'">
-        <form id="series-edit-'.$series_id.'"enctype="multipart/form-data">
+        <form id="series-edit-'.$series_id.'" enctype="multipart/form-data">
         <input type="hidden" name="u_id" value="'.$user_id.'">
         <input type="hidden" name="s_id" value="'.$series_id.'">
         </form>
         <input type="text" form="series-edit-'.$series_id.'" id="input-name-'.$series_id.'" name="series_name" value="'.$series_name.'">
-        <br><br>';
+        <div id="delete-checkbox-'.$series_id.'" style="display:none;">
+        <br><br>
+        <button id="edit-details-'.$series_id.'"type="button" class="postform link-button inline blue" onclick="detailsEditor('.$user_id.', '.$series_id.');">Edit more details</button>';
         if ($series_id != $blog_default_series) {
-          echo '
-          <div id="delete-checkbox-'.$series_id.'" style="display:none;">
-            <label for="series-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="series-delete-'.$series_id.'" name="series-delete" value="delete"> <i><small>Permanently delete series</small></i></label>
+          echo '<br><br><label for="series-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="series-delete-'.$series_id.'" name="series-delete" value="delete"> <i><small>Permanently delete series</small></i></label>
           </div>';
         } else {
-          echo '<i><small>Default</small></i>';
+          echo '</div>
+          <br><br><i><small>Default</small></i>';
         }
+
         echo '</td>';
         echo '<td id="sse-'.$series_id.'">
         <input type="text" form="series-edit-'.$series_id.'" id="input-slug-'.$series_id.'" name="series_slug" value="'.$series_slug.'"></td>';

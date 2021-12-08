@@ -21,7 +21,7 @@ function seriesEditorHide() {
 // The editor content
 function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, same as used in this function
 
-    // Bind a new event listener every time the <form> is changed:
+    // Bind a new event listener:
     const AJAX = new XMLHttpRequest(); // AJAX handler
 
     AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
@@ -70,7 +70,7 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
     }
   }
 
-  // The editor content
+  // The editor save
   function seriesSave(sID) { // These arguments can be anything, same as used in this function
 
       // Bind a new event listener every time the <form> is changed:
@@ -120,7 +120,85 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
 
       AJAX.send(FD); // Data sent is from the form
 
+    } // seriesSave() function
+
+  // Hide details-series
+  function detailsEditorHide() {
+    document.getElementById("edit-series-container").style.display = "none";
+    document.getElementById("uploadresponse").innerHTML = '';
+  }
+
+  // The details content
+  function detailsEditor(uID, sID) { // These arguments can be anything, same as used in this function
+
+      // Bind a new event listener:
+      const AJAX = new XMLHttpRequest(); // AJAX handler
+
+      AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+        document.getElementById("edit-series").innerHTML = event.target.responseText;
+      } );
+
+      AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+        document.getElementById("edit-series").innerHTML =  'Oops! Something went wrong.';
+      } );
+
+      AJAX.open("POST", "ajax.editseriesdetails.php");
+      AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      AJAX.send("u_id="+uID+"&s_id="+sID); // Data as could be sent in a <form>
+
     } // seriesEditor() function
+
+  // The details save
+  function detailsSave(sID) { // These arguments can be anything, same as used in this function
+
+      // Bind a new event listener every time the <form> is changed:
+      const FORM = document.getElementById("series-details-"+sID);
+      const AJAX = new XMLHttpRequest(); // AJAX handler
+      const FD = new FormData(FORM); // Bind to-send data to form element
+
+      AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+        var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
+        if (jsonSeriesEditResponse["change"] == 'change') { // Name and/or slug change
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+          document.getElementById("input-name-"+sID).value = jsonSeriesEditResponse["name"]; // Update Name
+          document.getElementById("input-slug-"+sID).value = jsonSeriesEditResponse["slug"]; // Update Slug
+        } else if ((jsonSeriesEditResponse["change"] == 'nochange') && (jsonSeriesEditResponse["upload"] == 'delete')) { // Deleting images
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+          document.getElementById("rss-none-"+sID).innerHTML = "<i>no image</i>";
+          document.getElementById("rss-none-"+sID).style.display = "inline";
+          document.getElementById("rss-image-"+sID).style.display = "none";
+          document.getElementById("podcast-none-"+sID).innerHTML = "<i>no image</i>";
+          document.getElementById("podcast-none-"+sID).style.display = "inline";
+          document.getElementById("podcast-image-"+sID).style.display = "none";
+          document.getElementById("pro-delete-"+sID).checked = false;
+        } else if ((jsonSeriesEditResponse["change"] == 'nochange') && (jsonSeriesEditResponse["upload"] == 'failed')) { // Upload failed
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+        } else if (jsonSeriesEditResponse["change"] == 'delete') { // Deleting series
+          showHideEdit(sID);// Hide the Save/Cancel buttons
+          document.getElementById("v_row_"+sID).innerHTML = '<td></td><td></td><td><div id="edit-message-'+sID+'"></div></td><td></td><td></td>';
+          document.getElementById("v_row_"+sID).classList.remove("shady");
+          document.getElementById("v_row_"+sID).classList.remove("blues");
+          document.getElementById("v_row_"+sID).classList.add("deleting");
+        }
+        if (jsonSeriesEditResponse["new_rss"] == 'newrss') { // Hide the Save/Cancel buttons
+           document.getElementById("rss-none-"+sID).innerHTML = "<i>refresh to see image</i>";
+        }
+        if (jsonSeriesEditResponse["new_podcast"] == 'newpodcast') { // Hide the Save/Cancel buttons
+          document.getElementById("podcast-none-"+sID).innerHTML = "<i>refresh to see image</i>";
+        }
+        // Every scenario is considered, not update <div id="edit-message-ID"> with our AJAX response message
+        document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
+      } );
+
+      AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
+        document.getElementById("edit-series-"+sID).innerHTML =  'Oops! Something went wrong.';
+      } );
+
+      AJAX.open("POST", "ajax.editseries.php");
+
+      AJAX.send(FD); // Data sent is from the form
+
+    } // detailsSave() function
 
  </script>
 <?php
