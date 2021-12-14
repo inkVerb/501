@@ -1006,72 +1006,68 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             echo '<img id="podcast-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" src="'.$pro_podcast_path.'">';
             echo '<code id="podcast-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" class="gray"><i>no image</i></code>';
           }
-        echo '</td></tr><tr>';
+        echo '</td></tr></tbody></table>';
 
+        // Three-column table
+        echo '<table class="contentlib"><tbody>';
         echo '
-        <td>
-          <label for="input-lang">Language: </label><br><br>
-          <select id="input-lang" name="series_lang">
-            <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
-            <option value="sq"'; echo ($series_lang == "sq") ? ' selected' : ''; echo '>Albanian</option>
-            <option value="ar"'; echo ($series_lang == "ar") ? ' selected' : ''; echo '>Arabic</option>
-            <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
-            <option value="bn"'; echo ($series_lang == "bn") ? ' selected' : ''; echo '>Bengali</option>
-            <option value="cs"'; echo ($series_lang == "cs") ? ' selected' : ''; echo '>Czech</option>
-            <option value="zh"'; echo ($series_lang == "zh") ? ' selected' : ''; echo '>Chinese</option>
-            <option value="nl"'; echo ($series_lang == "nl") ? ' selected' : ''; echo '>Dutch</option>
-            <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
-            <option value="fr"'; echo ($series_lang == "fr") ? ' selected' : ''; echo '>French</option>
-            <option value="ka"'; echo ($series_lang == "ka") ? ' selected' : ''; echo '>Georgian</option>
-            <option value="de"'; echo ($series_lang == "de") ? ' selected' : ''; echo '>German</option>
-            <option value="el"'; echo ($series_lang == "el") ? ' selected' : ''; echo '>Greek</option>
-            <option value="gu"'; echo ($series_lang == "gu") ? ' selected' : ''; echo '>Gujarati</option>
-            <option value="ha"'; echo ($series_lang == "ha") ? ' selected' : ''; echo '>Hausa</option>
-            <option value="he"'; echo ($series_lang == "he") ? ' selected' : ''; echo '>Hebrew</option>
-            <option value="hi"'; echo ($series_lang == "hi") ? ' selected' : ''; echo '>Hindi</option>
-            <option value="ga"'; echo ($series_lang == "ga") ? ' selected' : ''; echo '>Irish</option>
-            <option value="id"'; echo ($series_lang == "id") ? ' selected' : ''; echo '>Indonesian</option>
-            <option value="it"'; echo ($series_lang == "it") ? ' selected' : ''; echo '>Italian</option>
-            <option value="ja"'; echo ($series_lang == "ja") ? ' selected' : ''; echo '>Japanese</option>
-            <option value="jv"'; echo ($series_lang == "jv") ? ' selected' : ''; echo '>Javanese</option>
-            <option value="ko"'; echo ($series_lang == "ko") ? ' selected' : ''; echo '>Korean</option>
-            <option value="ml"'; echo ($series_lang == "ml") ? ' selected' : ''; echo '>Malay</option>
-            <option value="mr"'; echo ($series_lang == "mr") ? ' selected' : ''; echo '>Marathi</option>
-            <option value="nn"'; echo ($series_lang == "nn") ? ' selected' : ''; echo '>Norwegian</option>
-            <option value="fa"'; echo ($series_lang == "fa") ? ' selected' : ''; echo '>Persian</option>
-            <option value="pl"'; echo ($series_lang == "pl") ? ' selected' : ''; echo '>Polish</option>
-            <option value="pt"'; echo ($series_lang == "pt") ? ' selected' : ''; echo '>Portuguese</option>
-            <option value="pa"'; echo ($series_lang == "pa") ? ' selected' : ''; echo '>Punjabi</option>
-            <option value="ro"'; echo ($series_lang == "ro") ? ' selected' : ''; echo '>Romanian</option>
-            <option value="ru"'; echo ($series_lang == "ru") ? ' selected' : ''; echo '>Russian</option>
-            <option value="sm"'; echo ($series_lang == "sm") ? ' selected' : ''; echo '>Samoan</option>
-            <option value="sd"'; echo ($series_lang == "sd") ? ' selected' : ''; echo '>Sindhi</option>
-            <option value="es"'; echo ($series_lang == "es") ? ' selected' : ''; echo '>Spanish</option>
-            <option value="su"'; echo ($series_lang == "su") ? ' selected' : ''; echo '>Sundanese</option>
-            <option value="sw"'; echo ($series_lang == "sw") ? ' selected' : ''; echo '>Swahili</option>
-            <option value="ty"'; echo ($series_lang == "ty") ? ' selected' : ''; echo '>Tahitian</option>
-            <option value="ta"'; echo ($series_lang == "ta") ? ' selected' : ''; echo '>Tamil</option>
-            <option value="te"'; echo ($series_lang == "te") ? ' selected' : ''; echo '>Telugu</option>
-            <option value="bo"'; echo ($series_lang == "bo") ? ' selected' : ''; echo '>Tibetan</option>
-            <option value="th"'; echo ($series_lang == "th") ? ' selected' : ''; echo '>Thai</option>
-            <option value="sk"'; echo ($series_lang == "sk") ? ' selected' : ''; echo '>Slovak</option>
-            <option value="sv"'; echo ($series_lang == "sv") ? ' selected' : ''; echo '>Swedish</option>
-            <option value="uk"'; echo ($series_lang == "uk") ? ' selected' : ''; echo '>Ukrainian</option>
-            <option value="ur"'; echo ($series_lang == "ur") ? ' selected' : ''; echo '>Urdu</option>
-            <option value="ug"'; echo ($series_lang == "ug") ? ' selected' : ''; echo '>Uyghur</option>
-            <option value="vi"'; echo ($series_lang == "vi") ? ' selected' : ''; echo '>Vietnamese</option>
-            <option value="yo"'; echo ($series_lang == "yo") ? ' selected' : ''; echo '>Yoruba</option>
-            <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
-          </select>
-        </td>
-        <td>
+        <td colspan="2">
           <label for="input-name">Keywords: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-keywords" name="series_keywords" value="'.$series_keywords.'">
         </td>
         <td>
-          <label for="input-name">Email: </label><br><br><input type="email" form="series-details-'.$series_id.'" id="input-email" name="series_email" value="'.$series_email.'">
-        </td>
-        <td>
-          <label for="input-name">URL Link: </label><br><br><input type="url" form="series-details-'.$series_id.'" id="input-link" name="series_link" value="'.$series_link.'">
+        <label for="input-lang">Language: </label><br><br>
+        <select id="input-lang" name="series_lang">
+          <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
+          <option value="sq"'; echo ($series_lang == "sq") ? ' selected' : ''; echo '>Albanian</option>
+          <option value="ar"'; echo ($series_lang == "ar") ? ' selected' : ''; echo '>Arabic</option>
+          <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
+          <option value="bn"'; echo ($series_lang == "bn") ? ' selected' : ''; echo '>Bengali</option>
+          <option value="cs"'; echo ($series_lang == "cs") ? ' selected' : ''; echo '>Czech</option>
+          <option value="zh"'; echo ($series_lang == "zh") ? ' selected' : ''; echo '>Chinese</option>
+          <option value="nl"'; echo ($series_lang == "nl") ? ' selected' : ''; echo '>Dutch</option>
+          <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
+          <option value="fr"'; echo ($series_lang == "fr") ? ' selected' : ''; echo '>French</option>
+          <option value="ka"'; echo ($series_lang == "ka") ? ' selected' : ''; echo '>Georgian</option>
+          <option value="de"'; echo ($series_lang == "de") ? ' selected' : ''; echo '>German</option>
+          <option value="el"'; echo ($series_lang == "el") ? ' selected' : ''; echo '>Greek</option>
+          <option value="gu"'; echo ($series_lang == "gu") ? ' selected' : ''; echo '>Gujarati</option>
+          <option value="ha"'; echo ($series_lang == "ha") ? ' selected' : ''; echo '>Hausa</option>
+          <option value="he"'; echo ($series_lang == "he") ? ' selected' : ''; echo '>Hebrew</option>
+          <option value="hi"'; echo ($series_lang == "hi") ? ' selected' : ''; echo '>Hindi</option>
+          <option value="ga"'; echo ($series_lang == "ga") ? ' selected' : ''; echo '>Irish</option>
+          <option value="id"'; echo ($series_lang == "id") ? ' selected' : ''; echo '>Indonesian</option>
+          <option value="it"'; echo ($series_lang == "it") ? ' selected' : ''; echo '>Italian</option>
+          <option value="ja"'; echo ($series_lang == "ja") ? ' selected' : ''; echo '>Japanese</option>
+          <option value="jv"'; echo ($series_lang == "jv") ? ' selected' : ''; echo '>Javanese</option>
+          <option value="ko"'; echo ($series_lang == "ko") ? ' selected' : ''; echo '>Korean</option>
+          <option value="ml"'; echo ($series_lang == "ml") ? ' selected' : ''; echo '>Malay</option>
+          <option value="mr"'; echo ($series_lang == "mr") ? ' selected' : ''; echo '>Marathi</option>
+          <option value="nn"'; echo ($series_lang == "nn") ? ' selected' : ''; echo '>Norwegian</option>
+          <option value="fa"'; echo ($series_lang == "fa") ? ' selected' : ''; echo '>Persian</option>
+          <option value="pl"'; echo ($series_lang == "pl") ? ' selected' : ''; echo '>Polish</option>
+          <option value="pt"'; echo ($series_lang == "pt") ? ' selected' : ''; echo '>Portuguese</option>
+          <option value="pa"'; echo ($series_lang == "pa") ? ' selected' : ''; echo '>Punjabi</option>
+          <option value="ro"'; echo ($series_lang == "ro") ? ' selected' : ''; echo '>Romanian</option>
+          <option value="ru"'; echo ($series_lang == "ru") ? ' selected' : ''; echo '>Russian</option>
+          <option value="sm"'; echo ($series_lang == "sm") ? ' selected' : ''; echo '>Samoan</option>
+          <option value="sd"'; echo ($series_lang == "sd") ? ' selected' : ''; echo '>Sindhi</option>
+          <option value="es"'; echo ($series_lang == "es") ? ' selected' : ''; echo '>Spanish</option>
+          <option value="su"'; echo ($series_lang == "su") ? ' selected' : ''; echo '>Sundanese</option>
+          <option value="sw"'; echo ($series_lang == "sw") ? ' selected' : ''; echo '>Swahili</option>
+          <option value="ty"'; echo ($series_lang == "ty") ? ' selected' : ''; echo '>Tahitian</option>
+          <option value="ta"'; echo ($series_lang == "ta") ? ' selected' : ''; echo '>Tamil</option>
+          <option value="te"'; echo ($series_lang == "te") ? ' selected' : ''; echo '>Telugu</option>
+          <option value="bo"'; echo ($series_lang == "bo") ? ' selected' : ''; echo '>Tibetan</option>
+          <option value="th"'; echo ($series_lang == "th") ? ' selected' : ''; echo '>Thai</option>
+          <option value="sk"'; echo ($series_lang == "sk") ? ' selected' : ''; echo '>Slovak</option>
+          <option value="sv"'; echo ($series_lang == "sv") ? ' selected' : ''; echo '>Swedish</option>
+          <option value="uk"'; echo ($series_lang == "uk") ? ' selected' : ''; echo '>Ukrainian</option>
+          <option value="ur"'; echo ($series_lang == "ur") ? ' selected' : ''; echo '>Urdu</option>
+          <option value="ug"'; echo ($series_lang == "ug") ? ' selected' : ''; echo '>Uyghur</option>
+          <option value="vi"'; echo ($series_lang == "vi") ? ' selected' : ''; echo '>Vietnamese</option>
+          <option value="yo"'; echo ($series_lang == "yo") ? ' selected' : ''; echo '>Yoruba</option>
+          <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
+        </select>
         </td>
         </tr>';
 
@@ -1108,22 +1104,22 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         <br><br>
           <label for="input-name">Owner: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-owner" name="series_owner" value="'.$series_owner.'">
         <br><br>
-          <label for="input-name">Credit: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-credit" name="series_credit" value="'.$series_credit.'">
+          <label for="input-name">Email: </label><br><br><input type="email" form="series-details-'.$series_id.'" id="input-email" name="series_email" value="'.$series_email.'">
+        <br><br>
+          <label for="input-name">URL Link: </label><br><br><input type="url" form="series-details-'.$series_id.'" id="input-link" name="series_link" value="'.$series_link.'">
         <br><br>
           <label for="input-name">Copyright line: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-copy" name="series_copy" value="'.$series_copy.'">
-        <br><br>
+          <br><br>
         </td>';
 
-        // Description & Summary
+        // Subtitle & Summary
         echo
         '<td>
-          <label for="input-descr">Description: </label><br><br>
+          <label for="input-descr">Subtitle/Description: </label><br><br>
           <textarea id="input-descr" name="series_descr" rows="4" cols="50">'.$series_descr.'</textarea>
-        </td>
-        <td>
+        <br><br>
           <label for="input-summary">Summary: </label><br><br>
           <textarea id="input-summary" name="series_summary" rows="4" cols="50">'.$series_summary.'</textarea>
-
         </td>
         </tr>';
 
