@@ -1010,49 +1010,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
         echo '
         <td>
-          <label for="input-name">Author: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-author" name="series_author" value="'.$series_author.'">
-        </td>
-        <td>
-          <label for="input-name">Owner: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-owner" name="series_owner" value="'.$series_owner.'">
-        </td>
-        <td>
-          <label for="input-name">Email: </label><br><br><input type="email" form="series-details-'.$series_id.'" id="input-email" name="series_email" value="'.$series_email.'">
-        </td>
-        <td>
-          <label for="input-name">URL Link: </label><br><br><input type="url" form="series-details-'.$series_id.'" id="input-link" name="series_link" value="'.$series_link.'">
-        </td>
-        </tr>';
-
-        echo '
-        <tr>
-        <td>';
-
-        // Categories
-        echo '<label for="input-cat-1">Category 1: </label><br><br>
-        <select id="input-cat-1" name="series_cat1" form="series-details-'.$series_id.'">';
-        iTunesCat($series_cat1);
-        echo '</select><br><br>';
-        echo '<label for="input-cat-2">Category 2: </label><br><br>
-        <select id="input-cat-2" name="series_cat2" form="series-details-'.$series_id.'">';
-        iTunesCat($series_cat2);
-        echo '</select><br><br>';
-        echo '<label for="input-cat-3">Category 3: </label><br><br>
-        <select id="input-cat-3" name="series_cat3" form="series-details-'.$series_id.'">';
-        iTunesCat($series_cat3);
-        echo '</select><br><br>';
-        echo '<label for="input-cat-4">Category 4: </label><br><br>
-        <select id="input-cat-4" name="series_cat4" form="series-details-'.$series_id.'">';
-        iTunesCat($series_cat4);
-        echo '</select><br><br>';
-        echo '<label for="input-cat-5">Category 5: </label><br><br>
-        <select id="input-cat-5" name="series_cat5" form="series-details-'.$series_id.'">';
-        iTunesCat($series_cat5);
-        echo '</select>
-        </td>';
-
-        // Language
-        echo '
-        <td>
           <label for="input-lang">Language: </label><br><br>
           <select id="input-lang" name="series_lang">
             <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
@@ -1106,12 +1063,54 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             <option value="yo"'; echo ($series_lang == "yo") ? ' selected' : ''; echo '>Yoruba</option>
             <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
           </select>
-        <br><br>
+        </td>
+        <td>
           <label for="input-name">Keywords: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-keywords" name="series_keywords" value="'.$series_keywords.'">
+        </td>
+        <td>
+          <label for="input-name">Email: </label><br><br><input type="email" form="series-details-'.$series_id.'" id="input-email" name="series_email" value="'.$series_email.'">
+        </td>
+        <td>
+          <label for="input-name">URL Link: </label><br><br><input type="url" form="series-details-'.$series_id.'" id="input-link" name="series_link" value="'.$series_link.'">
+        </td>
+        </tr>';
+
+        echo '
+        <tr>
+        <td>';
+
+        // Categories
+        echo '<label for="input-cat-1">Category 1: </label><br><br>
+        <select id="input-cat-1" name="series_cat1" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat1);
+        echo '</select><br><br>';
+        echo '<label for="input-cat-2">Category 2: </label><br><br>
+        <select id="input-cat-2" name="series_cat2" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat2);
+        echo '</select><br><br>';
+        echo '<label for="input-cat-3">Category 3: </label><br><br>
+        <select id="input-cat-3" name="series_cat3" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat3);
+        echo '</select><br><br>';
+        echo '<label for="input-cat-4">Category 4: </label><br><br>
+        <select id="input-cat-4" name="series_cat4" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat4);
+        echo '</select><br><br>';
+        echo '<label for="input-cat-5">Category 5: </label><br><br>
+        <select id="input-cat-5" name="series_cat5" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat5);
+        echo '</select>
+        </td>';
+
+        echo '
+        <td>
+          <label for="input-name">Author: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-author" name="series_author" value="'.$series_author.'">
         <br><br>
-          <label for="input-name">Copyright line: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-copy" name="series_copy" value="'.$series_copy.'">
+          <label for="input-name">Owner: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-owner" name="series_owner" value="'.$series_owner.'">
         <br><br>
           <label for="input-name">Credit: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-credit" name="series_credit" value="'.$series_credit.'">
+        <br><br>
+          <label for="input-name">Copyright line: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-copy" name="series_copy" value="'.$series_copy.'">
         <br><br>
         </td>';
 
