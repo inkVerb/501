@@ -931,7 +931,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $s_id = preg_replace("/[^0-9]/"," ", $_POST['s_id']);
 
     echo '<div id="series-details-container">';
-    echo '<h2>Series Details</h2>';
+    echo '<h2>Series Podcast Details</h2>';
 
     // Fetch the information for this series
     $query = $database->prepare("SELECT * FROM series WHERE id=:id");
