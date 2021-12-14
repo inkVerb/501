@@ -186,8 +186,6 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
         if (jsonSeriesEditResponse["new_podcast"] == 'newpodcast') { // Hide the Save/Cancel buttons
           document.getElementById("podcast-none-"+sID).innerHTML = "<i>refresh to see image</i>";
         }
-        // Every scenario is considered, not update <div id="edit-message-ID"> with our AJAX response message
-        document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails

@@ -422,7 +422,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         <input type="text" form="series-edit-'.$series_id.'" id="input-name-'.$series_id.'" name="series_name" value="'.$series_name.'">
         <div id="delete-checkbox-'.$series_id.'" style="display:none;">
         <br><br>
-        <button id="edit-details-'.$series_id.'"type="button" class="postform link-button inline blue" onclick="detailsEditor('.$user_id.', '.$series_id.');">Edit more details</button>';
+        <button id="edit-details-'.$series_id.'"type="button" class="postform link-button inline blue" onclick="detailsEditor('.$user_id.', '.$series_id.');">Edit podcast details</button>';
         if ($series_id != $blog_default_series) {
           echo '<br><br><label for="series-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="series-delete-'.$series_id.'" name="series-delete" value="delete"> <i><small>Permanently delete series</small></i></label>
           </div>';
@@ -460,7 +460,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               </td>';
         echo '<td id="sav-'.$series_id.'">';
           // RSS feed
-          echo '<p class="settings-pro-image" id="pro-rss-upload"><b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="series-edit-'.$series_id.'"><br><br>';
+          echo '<p class="settings-pro-image" id="pro-rss-upload-'.$series_id.'"><b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="series-edit-'.$series_id.'"><br><br>';
           if (file_exists($pro_rss_path)) {
             echo '<img id="rss-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" src="'.$pro_rss_path.'">';
             echo '<code id="rss-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" class="gray"><i>no image</i></code>';
@@ -474,7 +474,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         </td>';
         echo '<td id="smv-'.$series_id.'">';
           // iTunes Podcast
-          echo '<p class="settings-pro-image" id="pro-podcast-upload"><b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="series-edit-'.$series_id.'"><br><br>';
+          echo '<p class="settings-pro-image" id="pro-podcast-upload-'.$series_id.'"><b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="series-edit-'.$series_id.'"><br><br>';
           if (file_exists($pro_podcast_path)) {
             echo '<img id="podcast-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" src="'.$pro_podcast_path.'">';
             echo '<code id="podcast-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" class="gray"><i>no image</i></code>';
