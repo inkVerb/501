@@ -13,7 +13,7 @@ $pro_rss_path = $pro_path.$pro_rss_name;
 $pro_podcast_name = 'series-podcast.jpg';
 
 // Function for iTunes categories
-function iTunescat($series_cat)        {
+function iTunesCat($series_cat) {
   $cat = 'None'; $val = ''; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
   $cat = 'Arts'; $val = 'Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
   $cat = '- Books'; $val = 'Arts::Books'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
@@ -976,7 +976,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         <input type="hidden" name="u_id" value="'.$user_id.'">
         <input type="hidden" name="s_id" value="'.$series_id.'">
         <button type="button" onclick="detailsSave('.$series_id.');">Save</button>&nbsp;
-        <button type="button" onclick="seriesEditor('.$series_id.');">Cancel</button>
+        <button type="button" onclick="seriesEditor('.$u_id.');">Cancel</button>
         </form>
         <br><br>
         <table class="contentlib"><tbody>
@@ -1029,24 +1029,24 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
         // Categories
         echo '<label for="input-cat-1">Category 1: </label><br><br>
-        <select id="input-cat-1" name="series_cat1" form="series-details-'.$series_id.'>';
-        iTunescat('series_cat1');
+        <select id="input-cat-1" name="series_cat1" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat1);
         echo '</select><br><br>';
         echo '<label for="input-cat-2">Category 2: </label><br><br>
-        <select id="input-cat-2" name="series_cat2" form="series-details-'.$series_id.'>';
-        iTunescat('series_cat2');
+        <select id="input-cat-2" name="series_cat2" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat2);
         echo '</select><br><br>';
         echo '<label for="input-cat-3">Category 3: </label><br><br>
-        <select id="input-cat-3" name="series_cat3" form="series-details-'.$series_id.'>';
-        iTunescat('series_cat3');
+        <select id="input-cat-3" name="series_cat3" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat3);
         echo '</select><br><br>';
         echo '<label for="input-cat-4">Category 4: </label><br><br>
-        <select id="input-cat-4" name="series_cat4" form="series-details-'.$series_id.'>';
-        iTunescat('series_cat4');
+        <select id="input-cat-4" name="series_cat4" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat4);
         echo '</select><br><br>';
         echo '<label for="input-cat-5">Category 5: </label><br><br>
-        <select id="input-cat-5" name="series_cat5" form="series-details-'.$series_id.'>';
-        iTunescat('series_cat5');
+        <select id="input-cat-5" name="series_cat5" form="series-details-'.$series_id.'">';
+        iTunesCat($series_cat5);
         echo '</select>
         </td>';
 
