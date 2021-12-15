@@ -193,10 +193,10 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-        document.getElementById("edit-series-"+sID).innerHTML =  'Oops! Something went wrong.';
+        document.getElementById("series-details-"+sID).innerHTML =  'Oops! Something went wrong.';
       } );
 
-      AJAX.open("POST", "ajax.editseries.php");
+      AJAX.open("POST", "ajax.editseriesdetails.php");
 
       AJAX.send(FD); // Data sent is from the form
 

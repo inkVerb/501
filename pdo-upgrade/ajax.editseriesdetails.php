@@ -153,8 +153,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
   && (isset($_POST['series_cat3']))
   && (isset($_POST['series_cat4']))
   && (isset($_POST['series_cat5']))
-  && (isset($_POST['series_copy']))
-  && (isset($_POST['series_credit'])) ) {
+  && (isset($_POST['series_copy'])) ) {
 
     // Assign the media ID and sanitize as the same time
     $s_id = preg_replace("/[^0-9]/"," ", $_POST['s_id']);
@@ -219,8 +218,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         echo $json_response;
         exit ();
       }
-    } elseif ((isset($_POST['pro-delete'])) && ($_POST['pro-delete'] == 'delete')) {
-      $delete_rss_image = true;
     }
 
     // iTunes Podcast
@@ -287,8 +284,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         echo $json_response;
         exit ();
       }
-    } elseif ((isset($_POST['pro-delete'])) && ($_POST['pro-delete'] == 'delete')) {
-      $delete_podcast_image = true;
     }
     // End pro image uploads
 
@@ -349,28 +344,161 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo $json_response;
       exit ();
     }
-    // Series XXXX
+    // Series language
+    if (preg_replace('/\s+/', '', $_POST['series_lang']) != '') {
+      $regex_replace = "/[^a-zA-Z0-9-]/";
+      $result = filter_var($_POST['series_lang'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strtolower(preg_replace($regex_replace,"-", $result)); // Lowercase, remove non-accepted characters
+      $result = substr($result, 0, 90); // Limit to 90 characters
+      $series_lang = $result;
+      $series_lang = DB::trimspace($series_lang);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series language!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series link
+    if (filter_var($_POST['series_link'], FILTER_VALIDATE_URL)) {
+      $result = filter_var($_POST['series_link'], FILTER_VALIDATE_URL); // Real URL
+      $series_link = $result;
+      $series_link = DB::trimspace($series_link);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series URL link!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series author
+    if (preg_replace('/\s+/', '', $_POST['series_author']) != '') {
+      $result = filter_var($_POST['series_author'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_author = $result;
+      $series_author = DB::trimspace($series_author);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series author!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series description
+    if (preg_replace('/\s+/', '', $_POST['series_descr']) != '') {
+      $result = filter_var($_POST['series_descr'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_descr = $result;
+      $series_descr = DB::trimspace($series_descr);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series description!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series summary
+    if (preg_replace('/\s+/', '', $_POST['series_summary']) != '') {
+      $result = filter_var($_POST['series_summary'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_summary = $result;
+      $series_summary = DB::trimspace($series_summary);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series summary!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series owner
+    if (preg_replace('/\s+/', '', $_POST['series_owner']) != '') {
+      $result = filter_var($_POST['series_owner'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_owner = $result;
+      $series_owner = DB::trimspace($series_owner);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series owner!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series email
+    if (filter_var($_POST['series_email'], FILTER_VALIDATE_EMAIL)) {
+      $result = filter_var($_POST['series_email'], FILTER_VALIDATE_EMAIL); // Real email
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_email = $result;
+      $series_email = DB::trimspace($series_email);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series email!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series keywords
+    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
+      $regex_replace = "/[^a-zA-Z0-9-, ]/";
+      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_name = $result;
+      $series_name = DB::trimspace($series_name);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter at least one series keyword!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series explicit
+    if ((preg_replace('/\s+/', '', $_POST['series_name']) != '')
+    && ($_POST['series_name'] == 'true')
+    || ($_POST['series_name'] == 'false')) {
+      $regex_replace = "/[^truefals]/";
+      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 5); // Limit to 5 characters
+      $series_name = $result;
+      $series_name = DB::trimspace($series_name);
+
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series explicit language option!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series copyright
     if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
       $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
       $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
+      $series_name = DB::trimspace($series_name);
 
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
+    } else {
+      $ajax_response['message'] = '<span class="error notehide">Must enter a series copyright statement!</span>';
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
+      exit ();
+    }
+    // Series category 1
+    if (isset($_POST['series_cat1'])) {
+      $regex_replace = "/[^a-zA-Z-&;: ]/";
+      $result = filter_var($_POST['series_cat1'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_cat1 = $result;
+      $series_cat1 = DB::trimspace($series_cat1);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
@@ -379,28 +507,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo $json_response;
       exit ();
     }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
+    // Series category 2
+    if (isset($_POST['series_cat2'])) {
+      $regex_replace = "/[^a-zA-Z-&;: ]/";
+      $result = filter_var($_POST['series_cat2'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_cat2 = $result;
+      $series_cat2 = DB::trimspace($series_cat2);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
@@ -409,28 +523,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo $json_response;
       exit ();
     }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
+    // Series category 3
+    if (isset($_POST['series_cat3'])) {
+      $regex_replace = "/[^a-zA-Z-&;: ]/";
+      $result = filter_var($_POST['series_cat3'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_cat3 = $result;
+      $series_cat3 = DB::trimspace($series_cat3);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
@@ -439,28 +539,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo $json_response;
       exit ();
     }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
+    // Series category 4
+    if (isset($_POST['series_cat4'])) {
+      $regex_replace = "/[^a-zA-Z-&;: ]/";
+      $result = filter_var($_POST['series_cat4'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_cat4 = $result;
+      $series_cat4 = DB::trimspace($series_cat4);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
@@ -469,358 +555,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo $json_response;
       exit ();
     }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
-
-    } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
-    }
-    // Series XXXX
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
-      $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-      $result = str_replace(' -- ',' – ',$result); // to en-dash
-      $result = str_replace('---','—',$result); // to em-dash
-      $result = str_replace('--','—',$result); // to em-dash
-      $result = substr($result, 0, 90); // Limit to 90 characters
-      $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
-
-      $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
-      $query->bindParam(':id', $s_id);
-      $rows = $pdo->exec_($query);
-      if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
-      }
+    // Series category 5
+    if (isset($_POST['series_cat5'])) {
+      $regex_replace = "/[^a-zA-Z-&;: ]/";
+      $result = filter_var($_POST['series_cat5'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
+      $result = substr($result, 0, 255); // Limit to 255 characters
+      $series_cat5 = $result;
+      $series_cat5 = DB::trimspace($series_cat5);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
@@ -831,93 +573,70 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
 
     // SQL
-    $query = $database->prepare("UPDATE series SET name=:name, slug=:slug WHERE id=:id");
-    $query->bindParam(':name', $series_name_trim);
-    $query->bindParam(':slug', $clean_slug_trim);
+    $query = $database->prepare("UPDATE series SET
+      name=:name,
+      slug=:slug,
+      series_lang=:series_lang,
+      series_link=:series_link,
+      series_author=:series_author,
+      series_descr=:series_descr,
+      series_summary=:series_summary,
+      series_owner=:series_owner,
+      series_email=:series_email,
+      series_copy=:series_copy,
+      series_keywords=:series_keywords,
+      series_explicit=:series_explicit,
+      series_cat1=:series_cat1,
+      series_cat2=:series_cat2,
+      series_cat3=:series_cat3,
+      series_cat4=:series_cat4,
+      series_cat5=:series_cat5,
+      series_copy=:series_copy
+      WHERE id=:id");
+    $query->bindParam(':name', $series_name);
+    $query->bindParam(':slug', $clean_slug);
+    $query->bindParam(':series_lang', $series_lang);
+    $query->bindParam(':series_link', $series_link);
+    $query->bindParam(':series_author', $series_author);
+    $query->bindParam(':series_descr', $series_descr);
+    $query->bindParam(':series_summary', $series_summary);
+    $query->bindParam(':series_owner', $series_owner);
+    $query->bindParam(':series_email', $series_email);
+    $query->bindParam(':series_copy', $series_copy);
+    $query->bindParam(':series_keywords', $series_keywords);
+    $query->bindParam(':series_explicit', $series_explicit);
+    $query->bindParam(':series_cat1', $series_cat1);
+    $query->bindParam(':series_cat2', $series_cat2);
+    $query->bindParam(':series_cat3', $series_cat3);
+    $query->bindParam(':series_cat4', $series_cat4);
+    $query->bindParam(':series_cat5', $series_cat5);
     $query->bindParam(':id', $s_id);
     $pdo->exec_($query);
     if ($pdo->change) { // Successful change
-      $ajax_response['message'] = '<span class="green notehide">Saved, refresh to see changes in Series lists</span>';
-      $ajax_response['name'] = $series_name_trim;
-      $ajax_response['slug'] = $clean_slug_trim;
+      $ajax_response['message'] = '<span class="green notehide">Changes saved.</span>';
+      $ajax_response['name'] = $series_name;
+      $ajax_response['slug'] = $clean_slug;
       $ajax_response['change'] = 'change';
     } else { // No changes
       // Images?
       if ($upload_img_success == true) {
-        $ajax_response['message'] = '<span class="green notehide">Image uploaded. Changes may not take effect until cache reloads.</span>';
-        $ajax_response['name'] = $series_name_trim;
-        $ajax_response['slug'] = $clean_slug_trim;
+        $ajax_response['message'] = '<span class="green notehide">Image uploaded. Changes saved.</span>';
+        $ajax_response['name'] = $series_name;
+        $ajax_response['slug'] = $clean_slug;
         $ajax_response['change'] = 'change';
         $ajax_response['upload'] = 'uploaded';
         $ajax_response['new_podcast'] = ($upload_podcast_success) ? 'newpodcast' : 'notnew';
         $ajax_response['new_rss'] = ($upload_rss_success) ? 'newrss' : 'notnew';
-      // Deleting something?
+      // Truly no changes at all
       } else {
-        // Delete the images?
-        if (($delete_rss_image == true) && ($delete_podcast_image == true)) {
-           unlink($pro_rss_path);
-           unlink($pro_podcast_path);
-           $ajax_response['message'] = '<span class="red notehide">Images deleted.</span>';
-           $ajax_response['name'] = $series_name_trim;
-           $ajax_response['slug'] = $clean_slug_trim;
-           $ajax_response['change'] = 'nochange';
-           $ajax_response['upload'] = 'delete';
-           $ajax_response['new_podcast'] = 'notnew';
-           $ajax_response['new_rss'] = 'notnew';
-        // Delete series?
-        } elseif ((isset($_POST['series-delete'])) && ($_POST['series-delete'] == 'delete')) {
-          $queryp = $database->prepare("UPDATE pieces SET series=:newseries WHERE series=:oldseries");
-          $queryp->bindParam(':newseries', $blog_default_series);
-          $queryp->bindParam(':oldseries', $s_id);
-          $pdo->exec_($queryp);
-          $delokp = ($pdo->ok) ? true : false;
-          $queryb = $database->prepare("UPDATE publications SET series=:newseries WHERE series=:oldseries");
-          $queryb->bindParam(':newseries', $blog_default_series);
-          $queryb->bindParam(':oldseries', $s_id);
-          $pdo->exec_($queryb);
-          $delokb = ($pdo->ok) ? true : false;
-          $queryh = $database->prepare("UPDATE publication_history SET series=:newseries WHERE series=:oldseries");
-          $queryh->bindParam(':newseries', $blog_default_series);
-          $queryh->bindParam(':oldseries', $s_id);
-          $pdo->exec_($queryh);
-          $delokh = ($pdo->ok) ? true : false;
-          if ($delokp && $delokb && $delokh) {
-            $pdo->delete('series', 'id', $s_id);
-            if ($pdo->ok) { // Series deleted
-              $ajax_response['message'] = '<span class="red">Series deleted!</span>';
-              $ajax_response['name'] = $series_name_trim;
-              $ajax_response['slug'] = $clean_slug_trim;
-              $ajax_response['change'] = 'delete';
-              $ajax_response['upload'] = 'none';
-              $ajax_response['new_podcast'] = 'notnew';
-              $ajax_response['new_rss'] = 'notnew';
-            } else { // Impossible fail to delete series
-              $ajax_response['message'] = '<span class="error">Strange database trouble deleting series!</span>';
-              $ajax_response['name'] = $series_name_trim;
-              $ajax_response['slug'] = $clean_slug_trim;
-              $ajax_response['change'] = 'nochange';
-              $ajax_response['upload'] = 'none';
-              $ajax_response['new_podcast'] = 'notnew';
-              $ajax_response['new_rss'] = 'notnew';
-            }
-          } else { // Impossible fail to change affected pices to default series
-            $ajax_response['message'] = '<span class="error">Strange database trouble preparing to delete series!</span>';
-            $ajax_response['name'] = $series_name_trim;
-            $ajax_response['slug'] = $clean_slug_trim;
-            $ajax_response['change'] = 'nochange';
-            $ajax_response['upload'] = 'none';
-            $ajax_response['new_podcast'] = 'notnew';
-            $ajax_response['new_rss'] = 'notnew';
-          }
-        } else { // Truly no changes at all
-          $ajax_response['message'] = '<span class="orange notehide">No changes.</span>';
-          $ajax_response['name'] = $series_name_trim;
-          $ajax_response['slug'] = $clean_slug_trim;
-          $ajax_response['change'] = 'nochange';
-          $ajax_response['upload'] = 'none';
-          $ajax_response['new_podcast'] = 'notnew';
-          $ajax_response['new_rss'] = 'notnew';
-        } // No changes
+        $ajax_response['message'] = '<span class="orange notehide">No changes.</span>';
+        $ajax_response['name'] = $series_name;
+        $ajax_response['slug'] = $clean_slug;
+        $ajax_response['change'] = 'nochange';
+        $ajax_response['upload'] = 'none';
+        $ajax_response['new_podcast'] = 'notnew';
+        $ajax_response['new_rss'] = 'notnew';
+
       } // Delete check
     } // Changes check
 
@@ -931,7 +650,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $s_id = preg_replace("/[^0-9]/"," ", $_POST['s_id']);
 
     echo '<div id="series-details-container">';
-    echo '<h2>Series Podcast Details</h2>';
+    echo '<h2 class="editor-title">Series Podcast Details</h2>';
 
     // Fetch the information for this series
     $query = $database->prepare("SELECT * FROM series WHERE id=:id");
@@ -958,7 +677,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         $series_cat4 = $row->series_cat4;
         $series_cat5 = $row->series_cat5;
         $series_copy = $row->series_copy;
-        $series_credit = $row->series_credit;
         //XXXX Left off here
         //Assign values
         //Finish <form id="series-details-'.$series_id.'"
@@ -971,15 +689,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         $pro_rss_path = $pro_path.$series_id.'-'.$pro_rss_name;
         $pro_podcast_path = $pro_path.$series_id.'-'.$pro_podcast_name;
         // Contents
-        echo '
+        echo '<table class="contentlib"><tbody>
+        <tr><td colspan="4">
         <form id="series-details-'.$series_id.'" enctype="multipart/form-data">
         <input type="hidden" name="u_id" value="'.$user_id.'">
         <input type="hidden" name="s_id" value="'.$series_id.'">
         <button type="button" onclick="detailsSave('.$series_id.');">Save</button>&nbsp;
         <button type="button" onclick="seriesEditor('.$u_id.');">Cancel</button>
-        </form>
-        <br><br>
-        <table class="contentlib"><tbody>
+        </form></td></tr>
         <tr><td>
           <label for="input-name">Name: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-name" name="series_name" value="'.$series_name.'">
         </td><td>
@@ -1009,70 +726,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         echo '</td></tr></tbody></table>';
 
         // Three-column table
-        echo '<table class="contentlib"><tbody>';
-        echo '
-        <td colspan="2">
-          <label for="input-name">Keywords: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-keywords" name="series_keywords" value="'.$series_keywords.'">
-        </td>
-        <td>
-        <label for="input-lang">Language: </label><br><br>
-        <select id="input-lang" name="series_lang">
-          <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
-          <option value="sq"'; echo ($series_lang == "sq") ? ' selected' : ''; echo '>Albanian</option>
-          <option value="ar"'; echo ($series_lang == "ar") ? ' selected' : ''; echo '>Arabic</option>
-          <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
-          <option value="bn"'; echo ($series_lang == "bn") ? ' selected' : ''; echo '>Bengali</option>
-          <option value="cs"'; echo ($series_lang == "cs") ? ' selected' : ''; echo '>Czech</option>
-          <option value="zh"'; echo ($series_lang == "zh") ? ' selected' : ''; echo '>Chinese</option>
-          <option value="nl"'; echo ($series_lang == "nl") ? ' selected' : ''; echo '>Dutch</option>
-          <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
-          <option value="fr"'; echo ($series_lang == "fr") ? ' selected' : ''; echo '>French</option>
-          <option value="ka"'; echo ($series_lang == "ka") ? ' selected' : ''; echo '>Georgian</option>
-          <option value="de"'; echo ($series_lang == "de") ? ' selected' : ''; echo '>German</option>
-          <option value="el"'; echo ($series_lang == "el") ? ' selected' : ''; echo '>Greek</option>
-          <option value="gu"'; echo ($series_lang == "gu") ? ' selected' : ''; echo '>Gujarati</option>
-          <option value="ha"'; echo ($series_lang == "ha") ? ' selected' : ''; echo '>Hausa</option>
-          <option value="he"'; echo ($series_lang == "he") ? ' selected' : ''; echo '>Hebrew</option>
-          <option value="hi"'; echo ($series_lang == "hi") ? ' selected' : ''; echo '>Hindi</option>
-          <option value="ga"'; echo ($series_lang == "ga") ? ' selected' : ''; echo '>Irish</option>
-          <option value="id"'; echo ($series_lang == "id") ? ' selected' : ''; echo '>Indonesian</option>
-          <option value="it"'; echo ($series_lang == "it") ? ' selected' : ''; echo '>Italian</option>
-          <option value="ja"'; echo ($series_lang == "ja") ? ' selected' : ''; echo '>Japanese</option>
-          <option value="jv"'; echo ($series_lang == "jv") ? ' selected' : ''; echo '>Javanese</option>
-          <option value="ko"'; echo ($series_lang == "ko") ? ' selected' : ''; echo '>Korean</option>
-          <option value="ml"'; echo ($series_lang == "ml") ? ' selected' : ''; echo '>Malay</option>
-          <option value="mr"'; echo ($series_lang == "mr") ? ' selected' : ''; echo '>Marathi</option>
-          <option value="nn"'; echo ($series_lang == "nn") ? ' selected' : ''; echo '>Norwegian</option>
-          <option value="fa"'; echo ($series_lang == "fa") ? ' selected' : ''; echo '>Persian</option>
-          <option value="pl"'; echo ($series_lang == "pl") ? ' selected' : ''; echo '>Polish</option>
-          <option value="pt"'; echo ($series_lang == "pt") ? ' selected' : ''; echo '>Portuguese</option>
-          <option value="pa"'; echo ($series_lang == "pa") ? ' selected' : ''; echo '>Punjabi</option>
-          <option value="ro"'; echo ($series_lang == "ro") ? ' selected' : ''; echo '>Romanian</option>
-          <option value="ru"'; echo ($series_lang == "ru") ? ' selected' : ''; echo '>Russian</option>
-          <option value="sm"'; echo ($series_lang == "sm") ? ' selected' : ''; echo '>Samoan</option>
-          <option value="sd"'; echo ($series_lang == "sd") ? ' selected' : ''; echo '>Sindhi</option>
-          <option value="es"'; echo ($series_lang == "es") ? ' selected' : ''; echo '>Spanish</option>
-          <option value="su"'; echo ($series_lang == "su") ? ' selected' : ''; echo '>Sundanese</option>
-          <option value="sw"'; echo ($series_lang == "sw") ? ' selected' : ''; echo '>Swahili</option>
-          <option value="ty"'; echo ($series_lang == "ty") ? ' selected' : ''; echo '>Tahitian</option>
-          <option value="ta"'; echo ($series_lang == "ta") ? ' selected' : ''; echo '>Tamil</option>
-          <option value="te"'; echo ($series_lang == "te") ? ' selected' : ''; echo '>Telugu</option>
-          <option value="bo"'; echo ($series_lang == "bo") ? ' selected' : ''; echo '>Tibetan</option>
-          <option value="th"'; echo ($series_lang == "th") ? ' selected' : ''; echo '>Thai</option>
-          <option value="sk"'; echo ($series_lang == "sk") ? ' selected' : ''; echo '>Slovak</option>
-          <option value="sv"'; echo ($series_lang == "sv") ? ' selected' : ''; echo '>Swedish</option>
-          <option value="uk"'; echo ($series_lang == "uk") ? ' selected' : ''; echo '>Ukrainian</option>
-          <option value="ur"'; echo ($series_lang == "ur") ? ' selected' : ''; echo '>Urdu</option>
-          <option value="ug"'; echo ($series_lang == "ug") ? ' selected' : ''; echo '>Uyghur</option>
-          <option value="vi"'; echo ($series_lang == "vi") ? ' selected' : ''; echo '>Vietnamese</option>
-          <option value="yo"'; echo ($series_lang == "yo") ? ' selected' : ''; echo '>Yoruba</option>
-          <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
-        </select>
-        </td>
-        </tr>';
-
-        echo '
-        <tr>
+        echo '<table class="contentlib"><tbody><tr>
         <td>';
 
         // Categories
@@ -1120,15 +774,72 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         <br><br>
           <label for="input-summary">Summary: </label><br><br>
           <textarea id="input-summary" name="series_summary" rows="4" cols="50">'.$series_summary.'</textarea>
-        </td>
-        </tr>';
+        <br><br>';
 
+        // Keywords & Language
         echo '
-        </td>
+            <label for="input-name">Keywords: (comma-separated list) </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-keywords" name="series_keywords" value="'.$series_keywords.'">
+          <br><br>
+            <label for="input-lang">Language: </label>
+            <select id="input-lang" name="series_lang" form="series-details-'.$series_id.'">
+              <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
+              <option value="sq"'; echo ($series_lang == "sq") ? ' selected' : ''; echo '>Albanian</option>
+              <option value="ar"'; echo ($series_lang == "ar") ? ' selected' : ''; echo '>Arabic</option>
+              <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
+              <option value="bn"'; echo ($series_lang == "bn") ? ' selected' : ''; echo '>Bengali</option>
+              <option value="cs"'; echo ($series_lang == "cs") ? ' selected' : ''; echo '>Czech</option>
+              <option value="zh"'; echo ($series_lang == "zh") ? ' selected' : ''; echo '>Chinese</option>
+              <option value="nl"'; echo ($series_lang == "nl") ? ' selected' : ''; echo '>Dutch</option>
+              <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
+              <option value="fr"'; echo ($series_lang == "fr") ? ' selected' : ''; echo '>French</option>
+              <option value="ka"'; echo ($series_lang == "ka") ? ' selected' : ''; echo '>Georgian</option>
+              <option value="de"'; echo ($series_lang == "de") ? ' selected' : ''; echo '>German</option>
+              <option value="el"'; echo ($series_lang == "el") ? ' selected' : ''; echo '>Greek</option>
+              <option value="gu"'; echo ($series_lang == "gu") ? ' selected' : ''; echo '>Gujarati</option>
+              <option value="ha"'; echo ($series_lang == "ha") ? ' selected' : ''; echo '>Hausa</option>
+              <option value="he"'; echo ($series_lang == "he") ? ' selected' : ''; echo '>Hebrew</option>
+              <option value="hi"'; echo ($series_lang == "hi") ? ' selected' : ''; echo '>Hindi</option>
+              <option value="ga"'; echo ($series_lang == "ga") ? ' selected' : ''; echo '>Irish</option>
+              <option value="id"'; echo ($series_lang == "id") ? ' selected' : ''; echo '>Indonesian</option>
+              <option value="it"'; echo ($series_lang == "it") ? ' selected' : ''; echo '>Italian</option>
+              <option value="ja"'; echo ($series_lang == "ja") ? ' selected' : ''; echo '>Japanese</option>
+              <option value="jv"'; echo ($series_lang == "jv") ? ' selected' : ''; echo '>Javanese</option>
+              <option value="ko"'; echo ($series_lang == "ko") ? ' selected' : ''; echo '>Korean</option>
+              <option value="ml"'; echo ($series_lang == "ml") ? ' selected' : ''; echo '>Malay</option>
+              <option value="mr"'; echo ($series_lang == "mr") ? ' selected' : ''; echo '>Marathi</option>
+              <option value="nn"'; echo ($series_lang == "nn") ? ' selected' : ''; echo '>Norwegian</option>
+              <option value="fa"'; echo ($series_lang == "fa") ? ' selected' : ''; echo '>Persian</option>
+              <option value="pl"'; echo ($series_lang == "pl") ? ' selected' : ''; echo '>Polish</option>
+              <option value="pt"'; echo ($series_lang == "pt") ? ' selected' : ''; echo '>Portuguese</option>
+              <option value="pa"'; echo ($series_lang == "pa") ? ' selected' : ''; echo '>Punjabi</option>
+              <option value="ro"'; echo ($series_lang == "ro") ? ' selected' : ''; echo '>Romanian</option>
+              <option value="ru"'; echo ($series_lang == "ru") ? ' selected' : ''; echo '>Russian</option>
+              <option value="sm"'; echo ($series_lang == "sm") ? ' selected' : ''; echo '>Samoan</option>
+              <option value="sd"'; echo ($series_lang == "sd") ? ' selected' : ''; echo '>Sindhi</option>
+              <option value="es"'; echo ($series_lang == "es") ? ' selected' : ''; echo '>Spanish</option>
+              <option value="su"'; echo ($series_lang == "su") ? ' selected' : ''; echo '>Sundanese</option>
+              <option value="sw"'; echo ($series_lang == "sw") ? ' selected' : ''; echo '>Swahili</option>
+              <option value="ty"'; echo ($series_lang == "ty") ? ' selected' : ''; echo '>Tahitian</option>
+              <option value="ta"'; echo ($series_lang == "ta") ? ' selected' : ''; echo '>Tamil</option>
+              <option value="te"'; echo ($series_lang == "te") ? ' selected' : ''; echo '>Telugu</option>
+              <option value="bo"'; echo ($series_lang == "bo") ? ' selected' : ''; echo '>Tibetan</option>
+              <option value="th"'; echo ($series_lang == "th") ? ' selected' : ''; echo '>Thai</option>
+              <option value="sk"'; echo ($series_lang == "sk") ? ' selected' : ''; echo '>Slovak</option>
+              <option value="sv"'; echo ($series_lang == "sv") ? ' selected' : ''; echo '>Swedish</option>
+              <option value="uk"'; echo ($series_lang == "uk") ? ' selected' : ''; echo '>Ukrainian</option>
+              <option value="ur"'; echo ($series_lang == "ur") ? ' selected' : ''; echo '>Urdu</option>
+              <option value="ug"'; echo ($series_lang == "ug") ? ' selected' : ''; echo '>Uyghur</option>
+              <option value="vi"'; echo ($series_lang == "vi") ? ' selected' : ''; echo '>Vietnamese</option>
+              <option value="yo"'; echo ($series_lang == "yo") ? ' selected' : ''; echo '>Yoruba</option>
+              <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
+            </select>
+            &nbsp;
+            <label for="explicit-true"><input type="radio" id="explicit-true" name="explicit" value="true" form="series-details-'.$series_id.'"'; echo ($series_explicit == "true") ? ' checked' : ''; echo '> explicit</label>
+            <label for="explicit-false"><input type="radio" id="explicit-false" name="explicit" value="false" form="series-details-'.$series_id.'"'; echo ($series_explicit == "false") ? ' checked' : ''; echo '> clean</label>
+          ';
 
-        </tr>
-        ';
-        echo '</tbody></table>';
+        // Finish table
+        echo '</td></tr></tbody></table>';
 
       }
 

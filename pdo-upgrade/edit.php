@@ -29,7 +29,7 @@ include ('./in.featuredmedia.php');
 <!-- Div for media insert -->
 <div id="media-insert-container" style="display:none;">
   <!-- Close button -->
-  <div id="media-insert-closer" onclick="mediaInsertHide(); mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
+  <div id="media-insert-closer"><b id="media-insert-closer-x" onclick="mediaInsertHide(); mediaFeatureHide();" title="close">&#xd7;</b></div>
   <!-- Dropzone -->
   <div id="media-upload">
 
@@ -115,7 +115,7 @@ include ('./in.featuredmedia.php');
 
   // AJAX save changes message
   if (isset($piece_id)) {
-    echo '<br><br><div id="ajax_save_draft_response" style="display: inline;"></div><br>';
+    echo '<br><div id="ajax_save_draft_response" style="display: inline;"></div>';
   }
 
   // Recovered Autosave?
@@ -144,9 +144,10 @@ include ('./in.featuredmedia.php');
     echo '<div id="edit_changes_notice"></div>';
     // Our edit form
     echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
-    echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'"><br>';
+    echo '<input form="edit_piece" type="hidden" name="piece_id" value="'.$piece_id.'">';
   } else { // New piece
-    echo '<form action="edit.php" method="post" name="edit_piece" id="edit_piece" id="edit_piece">';
+    echo '<form action="edit.php" method="post" name="edit_piece" id="edit_piece" id="edit_piece">
+    <br>';
   }
   // Finish the form
   echo '</form>';
@@ -155,11 +156,11 @@ include ('./in.featuredmedia.php');
   $infomsg = '
   <b>Page</b>: hides meta (After, Tags, Links), works in menues, appears as prominent link in "Series lists"<br><br>
   <b>Post</b>: appears in blog lists';
-  echo 'Type:'.infoPop('type_info', $infomsg).'<br>'.pieceInput('p_type', $p_type).'<br><br>';
+  echo 'Type:'.infoPop('type_info', $infomsg).'<br><br>'.pieceInput('p_type', $p_type).'<br><br>';
 
   // Tags
   $infomsg = 'Tags: comma-separated list;<br>only first three tags show in excerpts & blog pages';
-  echo 'Tags:'.infoPop('tags_info', $infomsg).'<br>'.pieceInput('p_tags', $p_tags).'<br><br>';
+  echo 'Tags:'.infoPop('tags_info', $infomsg).'<br><br>'.pieceInput('p_tags', $p_tags).'<br><br>';
 
   // Series
   $infomsg = 'Exclusive "category" -like label, Pieces of a Series may appear together in some areas';

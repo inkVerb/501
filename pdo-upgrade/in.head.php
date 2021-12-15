@@ -113,7 +113,9 @@ if ( (isset($user_id)) && (isset($fullname)) ) {
 }
 
 // Series editor?
-if ($series_editor_yn) {include ('./in.editseriesdiv.php');}
+if ($series_editor_yn) {
+  include ('./in.editseriesdiv.php');
+}
 
 // Title the page only if there is a $heading argument
 $heading = (isset($heading)) ? $heading : $head_title;

@@ -316,7 +316,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
   // Just getting the <form> from seriesEditor AJAX loader
   } else {
     echo '<div id="series-editor-container">';
-    echo '<h2>Series Editor</h2>';
+    echo '<h2 class="editor-title">Series Editor</h2>';
 
     // Pagination
     // Valid the Pagination

@@ -218,14 +218,14 @@ EOF;
       `series_summary` VARCHAR(255) DEFAULT NULL,
       `series_owner` VARCHAR(255) DEFAULT NULL,
       `series_email` VARCHAR(255) DEFAULT NULL,
+      `series_copy` VARCHAR(90) DEFAULT NULL,
       `series_keywords` TEXT DEFAULT NULL,
-      `series_explicit` BOOLEAN NOT NULL DEFAULT false,
+      `series_explicit` VARCHAR(5) NOT NULL DEFAULT 'false',
       `series_cat1` VARCHAR(255) DEFAULT NULL,
       `series_cat2` VARCHAR(255) DEFAULT NULL,
       `series_cat3` VARCHAR(255) DEFAULT NULL,
       `series_cat4` VARCHAR(255) DEFAULT NULL,
-      `series_cat5` VARCHAR(255) DEFAULT NULL,
-      `series_copy` VARCHAR(90) DEFAULT NULL
+      `series_cat5` VARCHAR(255) DEFAULT NULL
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);
