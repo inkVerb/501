@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
       } else {
-        echo '<p class="red">Favicon is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+        echo '<p class="red">Favicon is wrong format. Allowed: JPEG, PNG, GIF</p>';
       }
 
     } else {
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
       } else {
-        echo '<p class="red">Logo is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+        echo '<p class="red">Logo is wrong format. Allowed: JPEG, PNG, GIF</p>';
       }
 
     } else {
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
       } else {
-        echo '<p class="red">SEO image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+        echo '<p class="red">SEO image is wrong format. Allowed: JPEG, PNG, GIF</p>';
       }
 
     } else {
@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
       } else {
-        echo '<p class="red">RSS image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+        echo '<p class="red">RSS image is wrong format. Allowed: JPEG, PNG, GIF</p>';
       }
 
     } else {
@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
       } else {
-        echo '<p class="red">Podcast image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+        echo '<p class="red">Podcast image is wrong format. Allowed: JPEG, PNG, GIF</p>';
       }
 
     } else {

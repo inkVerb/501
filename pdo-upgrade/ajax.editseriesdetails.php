@@ -1,4 +1,9 @@
 <?php
+if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['series_author']))) {
+  print_r($_POST);
+
+}
+
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.db.php');
 include ('./in.logincheck.php');
@@ -142,18 +147,18 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
   && (isset($_POST['series_lang']))
   && (isset($_POST['series_link']))
   && (isset($_POST['series_author']))
-  && (isset($_POST['series_descrpt']))
+  && (isset($_POST['series_descr']))
   && (isset($_POST['series_summary']))
   && (isset($_POST['series_owner']))
   && (isset($_POST['series_email']))
+  && (isset($_POST['series_copy']))
   && (isset($_POST['series_keywords']))
   && (isset($_POST['series_explicit']))
   && (isset($_POST['series_cat1']))
   && (isset($_POST['series_cat2']))
   && (isset($_POST['series_cat3']))
   && (isset($_POST['series_cat4']))
-  && (isset($_POST['series_cat5']))
-  && (isset($_POST['series_copy'])) ) {
+  && (isset($_POST['series_cat5'])) ) {
 
     // Assign the media ID and sanitize as the same time
     $s_id = preg_replace("/[^0-9]/"," ", $_POST['s_id']);
@@ -204,7 +209,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           }
 
         } else {
-          $ajax_response['message'] = '<p class="red">RSS image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+          $ajax_response['message'] = '<p class="red">RSS image is wrong format. Allowed: JPEG, PNG, GIF</p>';
           // We're done here
           $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
           echo $json_response;
@@ -262,7 +267,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           }
 
         } else {
-          $ajax_response['message'] =  '<p class="red">Podcast image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+          $ajax_response['message'] =  '<p class="red">Podcast image is wrong format. Allowed: JPEG, PNG, GIF</p>';
           $ajax_response['change'] = 'nochange';
           $ajax_response['upload'] = 'failed';
           $ajax_response['new_podcast'] = 'notnew';
@@ -295,9 +300,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $result = strtolower(preg_replace($regex_replace,"-", $result)); // Lowercase, all non-alnum to hyphen
       $result = substr($result, 0, 90); // Limit to 90 characters
       $clean_slug = $result;
-      $clean_slug_trim = DB::trimspace($clean_slug);
+      $clean_slug = DB::trimspace($clean_slug);
       $query = $database->prepare("SELECT id FROM series WHERE slug=:slug AND NOT id=:id");
-      $query->bindParam(':slug', $clean_slug_trim);
+      $query->bindParam(':slug', $clean_slug);
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
@@ -323,10 +328,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $result = str_replace('--','—',$result); // to em-dash
       $result = substr($result, 0, 90); // Limit to 90 characters
       $series_name = $result;
-      $series_name_trim = DB::trimspace($series_name);
+      $series_name = DB::trimspace($series_name);
 
       $query = $database->prepare("SELECT id FROM series WHERE name=:name AND NOT id=:id");
-      $query->bindParam(':name', $series_name_trim);
+      $query->bindParam(':name', $series_name);
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
@@ -444,13 +449,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       exit ();
     }
     // Series keywords
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
+    if (preg_replace('/\s+/', '', $_POST['series_keywords']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-, ]/";
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = filter_var($_POST['series_keywords'], FILTER_SANITIZE_STRING); // Remove any HTML tags
       $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
-      $series_name = $result;
-      $series_name = DB::trimspace($series_name);
+      $series_keywords = $result;
+      $series_keywords = DB::trimspace($series_keywords);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter at least one series keyword!</span>';
@@ -460,15 +465,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       exit ();
     }
     // Series explicit
-    if ((preg_replace('/\s+/', '', $_POST['series_name']) != '')
-    && ($_POST['series_name'] == 'true')
-    || ($_POST['series_name'] == 'false')) {
+    if ((preg_replace('/\s+/', '', $_POST['series_explicit']) != '')
+    && ($_POST['series_explicit'] == 'true')
+    || ($_POST['series_explicit'] == 'false')) {
       $regex_replace = "/[^truefals]/";
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = filter_var($_POST['series_explicit'], FILTER_SANITIZE_STRING); // Remove any HTML tags
       $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
       $result = substr($result, 0, 5); // Limit to 5 characters
-      $series_name = $result;
-      $series_name = DB::trimspace($series_name);
+      $series_explicit = $result;
+      $series_explicit = DB::trimspace($series_explicit);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series explicit language option!</span>';
@@ -478,11 +483,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       exit ();
     }
     // Series copyright
-    if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+    if (preg_replace('/\s+/', '', $_POST['series_copy']) != '') {
+      $result = filter_var($_POST['series_copy'], FILTER_SANITIZE_STRING); // Remove any HTML tags
       $result = substr($result, 0, 255); // Limit to 255 characters
-      $series_name = $result;
-      $series_name = DB::trimspace($series_name);
+      $series_copy = $result;
+      $series_copy = DB::trimspace($series_copy);
 
     } else {
       $ajax_response['message'] = '<span class="error notehide">Must enter a series copyright statement!</span>';
@@ -677,33 +682,28 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         $series_cat4 = $row->series_cat4;
         $series_cat5 = $row->series_cat5;
         $series_copy = $row->series_copy;
-        //XXXX Left off here
-        //Assign values
-        //Finish <form id="series-details-'.$series_id.'"
-        //id= for form is correct
-        //probably remove <table> elements
-        //add more fields
-        //check each field with "Series XXXX" above
 
         // File paths
         $pro_rss_path = $pro_path.$series_id.'-'.$pro_rss_name;
         $pro_podcast_path = $pro_path.$series_id.'-'.$pro_podcast_name;
+        // Form
+        echo '<form id="series-details" enctype="multipart/form-data">
+        <input type="hidden" name="u_id" value="'.$user_id.'">
+        <input type="hidden" name="s_id" value="'.$series_id.'">
+        </form>';
         // Contents
         echo '<table class="contentlib"><tbody>
         <tr><td colspan="4">
-        <form id="series-details-'.$series_id.'" enctype="multipart/form-data">
-        <input type="hidden" name="u_id" value="'.$user_id.'">
-        <input type="hidden" name="s_id" value="'.$series_id.'">
-        <button type="button" onclick="detailsSave('.$series_id.');">Save</button>&nbsp;
+        <button type="button" onclick="detailsSave('.$series_id.', '.$u_id.');">Save</button>&nbsp;
         <button type="button" onclick="seriesEditor('.$u_id.');">Cancel</button>
-        </form></td></tr>
+        </td></tr>
         <tr><td>
-          <label for="input-name">Name: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-name" name="series_name" value="'.$series_name.'">
+          <label for="input-name">Name: </label><br><br><input type="text" form="series-details" id="input-name" name="series_name" value="'.$series_name.'">
         </td><td>
-          <label for="input-slug">Slug: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-slug" name="series_slug" value="'.$series_slug.'">
+          <label for="input-slug">Slug: </label><br><br><input type="text" form="series-details" id="input-slug" name="series_slug" value="'.$series_slug.'">
         </td><td class="settings-pro-image" id="pro-rss-upload">';
           // RSS feed
-          echo '<b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="series-edit-'.$series_id.'"><br><br>';
+          echo '<b>RSS</b> <small>(JPEG 144x144)</small> <input type="file" name="pro-rss" id="pro-rss" form="series-details"><br><br>';
           if (file_exists($pro_rss_path)) {
             echo '<img id="rss-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" src="'.$pro_rss_path.'">';
             echo '<code id="rss-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" class="gray"><i>no image</i></code>';
@@ -715,7 +715,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         echo '</td>';
         echo '<td class="settings-pro-image" id="pro-podcast-upload">';
           // iTunes Podcast
-          echo '<b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="series-edit-'.$series_id.'"><br><br>';
+          echo '<b>Podcast</b> <small>(JPEG 3000x3000)</small> <input type="file" name="pro-podcast" id="pro-podcast" form="series-details"><br><br>';
           if (file_exists($pro_podcast_path)) {
             echo '<img id="podcast-image-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" src="'.$pro_podcast_path.'">';
             echo '<code id="podcast-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:none;" class="gray"><i>no image</i></code>';
@@ -731,38 +731,38 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
         // Categories
         echo '<label for="input-cat-1">Category 1: </label><br><br>
-        <select id="input-cat-1" name="series_cat1" form="series-details-'.$series_id.'">';
+        <select id="input-cat-1" name="series_cat1" form="series-details">';
         iTunesCat($series_cat1);
         echo '</select><br><br>';
         echo '<label for="input-cat-2">Category 2: </label><br><br>
-        <select id="input-cat-2" name="series_cat2" form="series-details-'.$series_id.'">';
+        <select id="input-cat-2" name="series_cat2" form="series-details">';
         iTunesCat($series_cat2);
         echo '</select><br><br>';
         echo '<label for="input-cat-3">Category 3: </label><br><br>
-        <select id="input-cat-3" name="series_cat3" form="series-details-'.$series_id.'">';
+        <select id="input-cat-3" name="series_cat3" form="series-details">';
         iTunesCat($series_cat3);
         echo '</select><br><br>';
         echo '<label for="input-cat-4">Category 4: </label><br><br>
-        <select id="input-cat-4" name="series_cat4" form="series-details-'.$series_id.'">';
+        <select id="input-cat-4" name="series_cat4" form="series-details">';
         iTunesCat($series_cat4);
         echo '</select><br><br>';
         echo '<label for="input-cat-5">Category 5: </label><br><br>
-        <select id="input-cat-5" name="series_cat5" form="series-details-'.$series_id.'">';
+        <select id="input-cat-5" name="series_cat5" form="series-details">';
         iTunesCat($series_cat5);
         echo '</select>
         </td>';
 
         echo '
         <td>
-          <label for="input-name">Author: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-author" name="series_author" value="'.$series_author.'">
+          <label for="input-author">Author: </label><br><br><input type="text" form="series-details" id="input-author" name="series_author" value="'.$series_author.'">
         <br><br>
-          <label for="input-name">Owner: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-owner" name="series_owner" value="'.$series_owner.'">
+          <label for="input-owner">Owner: </label><br><br><input type="text" form="series-details" id="input-owner" name="series_owner" value="'.$series_owner.'">
         <br><br>
-          <label for="input-name">Email: </label><br><br><input type="email" form="series-details-'.$series_id.'" id="input-email" name="series_email" value="'.$series_email.'">
+          <label for="input-email">Email: </label><br><br><input type="email" form="series-details" id="input-email" name="series_email" value="'.$series_email.'">
         <br><br>
-          <label for="input-name">URL Link: </label><br><br><input type="url" form="series-details-'.$series_id.'" id="input-link" name="series_link" value="'.$series_link.'">
+          <label for="input-link">URL Link: </label><br><br><input type="url" form="series-details" id="input-link" name="series_link" value="'.$series_link.'">
         <br><br>
-          <label for="input-name">Copyright line: </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-copy" name="series_copy" value="'.$series_copy.'">
+          <label for="input-copy">Copyright line: </label><br><br><input type="text" form="series-details" id="input-copy" name="series_copy" value="'.$series_copy.'">
           <br><br>
         </td>';
 
@@ -778,10 +778,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
         // Keywords & Language
         echo '
-            <label for="input-name">Keywords: (comma-separated list) </label><br><br><input type="text" form="series-details-'.$series_id.'" id="input-keywords" name="series_keywords" value="'.$series_keywords.'">
+            <label for="input-keywords">Keywords: (comma-separated list) </label><br><br><input type="text" form="series-details" id="input-keywords" name="series_keywords" value="'.$series_keywords.'">
           <br><br>
             <label for="input-lang">Language: </label>
-            <select id="input-lang" name="series_lang" form="series-details-'.$series_id.'">
+            <select id="input-lang" name="series_lang" form="series-details">
               <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
               <option value="sq"'; echo ($series_lang == "sq") ? ' selected' : ''; echo '>Albanian</option>
               <option value="ar"'; echo ($series_lang == "ar") ? ' selected' : ''; echo '>Arabic</option>
@@ -834,8 +834,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
             </select>
             &nbsp;
-            <label for="explicit-true"><input type="radio" id="explicit-true" name="explicit" value="true" form="series-details-'.$series_id.'"'; echo ($series_explicit == "true") ? ' checked' : ''; echo '> explicit</label>
-            <label for="explicit-false"><input type="radio" id="explicit-false" name="explicit" value="false" form="series-details-'.$series_id.'"'; echo ($series_explicit == "false") ? ' checked' : ''; echo '> clean</label>
+            <label for="explicit-true"><input type="radio" id="explicit-true" name="explicit" value="true" form="series-details"'; echo ($series_explicit == "true") ? ' checked' : ''; echo '> explicit</label>
+            <label for="explicit-false"><input type="radio" id="explicit-false" name="explicit" value="false" form="series-details"'; echo ($series_explicit == "false") ? ' checked' : ''; echo '> clean</label>
           ';
 
         // Finish table

@@ -73,7 +73,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           }
 
         } else {
-          $ajax_response['message'] = '<p class="red">RSS image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+          $ajax_response['message'] = '<p class="red">RSS image is wrong format. Allowed: JPEG, PNG, GIF</p>';
           // We're done here
           $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
           echo $json_response;
@@ -133,7 +133,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           }
 
         } else {
-          $ajax_response['message'] =  '<p class="red">Podcast image is wrong formatt. Allowed: JPEG, PNG, GIF</p>';
+          $ajax_response['message'] =  '<p class="red">Podcast image is wrong format. Allowed: JPEG, PNG, GIF</p>';
           $ajax_response['change'] = 'nochange';
           $ajax_response['upload'] = 'failed';
           $ajax_response['new_podcast'] = 'notnew';
