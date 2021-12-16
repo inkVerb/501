@@ -26,11 +26,13 @@ if ($pdo->numrows == 1) {
     $feat_img_file_title = "$row->title_text";
     $feat_img_file_alt = "$row->alt_text";
     $feat_img_file_location = "$row->location";
+    $feat_img_file_relpath = $media_library_folder.$feat_img_file_location.'/'.$feat_img_file;
     $feat_img_url = $feat_file_basepath.$feat_img_file_location.'/'.$feat_img_file;
     $feat_img_url_blog = ($feat_img_ext == 'svg') ? $feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb : $feat_img_url; // SVG files don't scale with <img> size attributes
     $feat_img_file_link = '<a href="'.$feat_img_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_img_file</b>".'</a>';
     $feat_img_showhide = 'inline';
     $feat_img_thumb_showhide = 'block';
+    $feat_img_file_size = filesize($feat_img_file_relpath);
   }
 } else {
   $feat_img_id = 0;
@@ -53,9 +55,11 @@ if ($pdo->numrows == 1) {
     $feat_aud_mime = "$row->mime_type";
     $feat_aud_file = "$row->file_base".".".$feat_aud_ext;
     $feat_aud_file_location = "$row->location";
+    $feat_aud_file_relpath = $media_library_folder.$feat_aud_file_location.'/'.$feat_aud_file;
     $feat_aud_url = $feat_file_basepath.$feat_aud_file_location.'/'.$feat_aud_file;
     $feat_aud_file_link = '<a href="'.$feat_aud_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_aud_file</b>".'</a>';
     $feat_aud_showhide = 'inline';
+    $feat_aud_file_size = filesize($feat_aud_file_relpath);
   }
 } else {
   $feat_aud_id = 0;
@@ -77,9 +81,11 @@ if ($pdo->numrows == 1) {
     $feat_vid_mime = "$row->mime_type";
     $feat_vid_file = "$row->file_base".".".$feat_vid_ext;
     $feat_vid_file_location = "$row->location";
+    $feat_vid_file_relpath = $media_library_folder.$feat_vid_file_location.'/'.$feat_vid_file;
     $feat_vid_url = $feat_file_basepath.$feat_vid_file_location.'/'.$feat_vid_file;
     $feat_vid_file_link = '<a href="'.$feat_vid_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_vid_file</b>".'</a>';
     $feat_vid_showhide = 'inline';
+    $feat_vid_file_size = filesize($feat_vid_file_relpath);
   }
 } else {
   $feat_vid_id = 0;
@@ -101,9 +107,11 @@ if ($pdo->numrows == 1) {
     $feat_doc_mime = "$row->mime_type";
     $feat_doc_file = "$row->file_base".".".$feat_doc_ext;
     $feat_doc_file_location = "$row->location";
+    $feat_doc_file_relpath = $media_library_folder.$feat_doc_file_location.'/'.$feat_doc_file;
     $feat_doc_url = $feat_file_basepath.$feat_doc_file_location.'/'.$feat_doc_file;
     $feat_doc_file_link = '<a href="'.$feat_doc_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_doc_file</b>".'</a>';
     $feat_doc_showhide = 'inline';
+    $feat_doc_file_size = filesize($feat_doc_file_relpath);
   }
 } else {
   $feat_doc_id = 0;

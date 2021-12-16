@@ -54,7 +54,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $query->bindParam(':slug', $p_slug_test_trim);
   }
   $pdo->exec_($query);
-  if ($pdo->numrows > 0) {
+  if (($pdo->numrows > 0) || ($p_slug_test_trim == 'feed')) {
     $add_num = 0;
     $dup = true;
     // If there were no changes

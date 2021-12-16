@@ -296,7 +296,22 @@ EOF;
       `piece_items` INT UNSIGNED DEFAULT 10,
       `feed_items` INT UNSIGNED DEFAULT 20,
       `default_series` INT UNSIGNED DEFAULT 1,
-      `crawler_index` ENUM('index', 'noindex') DEFAULT 'index'
+      `crawler_index` ENUM('index', 'noindex') DEFAULT 'index',
+      `blog_lang` VARCHAR(8) NOT NULL DEFAULT 'en',
+      `blog_link` TEXT DEFAULT NULL,
+      `blog_author` VARCHAR(90) DEFAULT NULL,
+      `blog_descr` VARCHAR(255) DEFAULT NULL,
+      `blog_summary` VARCHAR(255) DEFAULT NULL,
+      `blog_owner` VARCHAR(255) DEFAULT NULL,
+      `blog_email` VARCHAR(255) DEFAULT NULL,
+      `blog_copy` VARCHAR(90) DEFAULT NULL,
+      `blog_keywords` TEXT DEFAULT NULL,
+      `blog_explicit` VARCHAR(5) NOT NULL DEFAULT 'false',
+      `blog_cat1` VARCHAR(255) DEFAULT NULL,
+      `blog_cat2` VARCHAR(255) DEFAULT NULL,
+      `blog_cat3` VARCHAR(255) DEFAULT NULL,
+      `blog_cat4` VARCHAR(255) DEFAULT NULL,
+      `blog_cat5` VARCHAR(255) DEFAULT NULL
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);
     if ($statement) {

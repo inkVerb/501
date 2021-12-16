@@ -70,6 +70,11 @@ a.gray,
 a.gray:visited {
 	color: #777;
 }
+.black,
+a.black,
+a.black:visited {
+	color: #000;
+}
 
 section.tags {
 	font-family: monospace;

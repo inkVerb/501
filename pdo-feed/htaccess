@@ -13,6 +13,10 @@ Options All -Indexes
 # Root to our blog
 DirectoryIndex blog.php
 
+# Feeds
+RewriteRule ^feed$ feed.php?s=0 [L]
+RewriteRule ^series/?([a-zA-Z0-9-]+)/feed$ feed.php?s=$1 [L]
+
 # Slugs to piece.php
 RewriteRule ^/?([a-zA-Z0-9_-]+)$ piece.php?s=$1 [L]
 

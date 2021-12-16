@@ -9,7 +9,6 @@ $file_size_limit = 1000000; // 1MB
 $podcast_size_limit = 10000000; // 10MB
 $pro_path = $upload_subdir;
 $pro_rss_name = 'series-rss.jpg';
-$pro_rss_path = $pro_path.$pro_rss_name;
 $pro_podcast_name = 'series-podcast.jpg';
 
 // Check & validate for what we need
@@ -443,7 +442,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
                 <tr>
                   <td id="mcv-'.$series_id.'">
                     <div id="make-edits-'.$series_id.'" style="display:none;">
-                      <button id="change-cancel-'.$series_id.'"type="button" class="postform link-button inline blue" onclick="showHideEdit('.$series_id.');">Change</button>
+                      <button id="change-cancel-'.$series_id.'" type="button" class="postform link-button inline blue" onclick="showHideEdit('.$series_id.');">change</button>
+                      &nbsp;
+                      <a id="view-series-'.$series_id.'" class="green" target="_blank" href="'.$blog_web_base.'/series/'.$series_slug.'">view</a>
                     </div>
                   </td>
                 </tr>

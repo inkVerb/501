@@ -77,12 +77,14 @@ if ($pdo->numrows == 1) {
   // Linked title (we will create piece.php with a RewriteMod in a later lesson)
   echo '<h2><a href="'.$blog_web_base.'/'.$p_slug.'">'.$p_title.'</a></h2>';
 
-  // Date published & series
+  // Date published
   echo '<p class="gray"><small><i>'.$p_live.'</i>';
   // If updated is different, show that too
   if ($p_live != $p_update) {
     echo '<br><i>(Updated '.$p_update.')</i>';
   }
+
+  // Series
   echo ' :: <a href="'.$blog_web_base.'/series/'.$p_series_slug.'">'.$p_series.'</a>'; // series
   echo '</small></p>';
 
@@ -131,7 +133,7 @@ if ($pdo->numrows == 1) {
   if (isset($user_id)) {
     echo '<p><a href="'.$blog_web_base.'/edit.php?p='.$p_id.'">Edit</a></p>';
   }
-  
+
 } else {
   echo '<h1>Nothing here!</h1>';
   exit();

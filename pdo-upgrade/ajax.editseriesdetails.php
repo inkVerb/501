@@ -10,7 +10,6 @@ $file_size_limit = 1000000; // 1MB
 $podcast_size_limit = 10000000; // 10MB
 $pro_path = $upload_subdir;
 $pro_rss_name = 'series-rss.jpg';
-$pro_rss_path = $pro_path.$pro_rss_name;
 $pro_podcast_name = 'series-podcast.jpg';
 
 // Function for iTunes categories

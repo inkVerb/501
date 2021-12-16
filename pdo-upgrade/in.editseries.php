@@ -54,10 +54,10 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
   function showHideEdit(s_id) {
     var y = document.getElementById("e_buttons_"+s_id);
     if (y.style.display === "inline") {
-      document.getElementById("change-cancel-"+s_id).innerHTML = 'Change';
+      document.getElementById("change-cancel-"+s_id).innerHTML = 'change';
       y.style.display = "none";
     } else {
-      document.getElementById("change-cancel-"+s_id).innerHTML = 'Cancel';
+      document.getElementById("change-cancel-"+s_id).innerHTML = 'cancel';
       y.style.display = "inline";
     }
     if (elementExists = document.getElementById("delete-checkbox-"+s_id)) {

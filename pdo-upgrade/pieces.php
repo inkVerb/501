@@ -315,7 +315,7 @@ echo '
 ';
 
 // Get and display each piece
-$query = $database->prepare("SELECT id, type, status, pub_yn, title, date_live, date_created FROM pieces WHERE status='live' ORDER BY CASE WHEN pub_yn=false THEN 0 ELSE 1 END, date_live DESC LIMIT $itemskip,$pageitems");
+$query = $database->prepare("SELECT id, type, status, pub_yn, title, series, date_live, date_created FROM pieces WHERE status='live' ORDER BY CASE WHEN pub_yn=false THEN 0 ELSE 1 END, date_live DESC LIMIT $itemskip,$pageitems");
 $rows = $pdo->exec_($query);
 // Start our row colors
 $table_row_color = 'blues';
@@ -327,8 +327,13 @@ foreach ($rows as $row) {
   $p_status = "$row->status";
   $p_pub_yn = $row->pub_yn; // This is boolean (true/false), we want to avoid "quotes" as that implies a string
   $p_title = "$row->title";
+  $p_series_id = "$row->series"; // We added this in our upgrade
   $p_date_live = "$row->date_live";
   $p_date_created = "$row->date_created";
+
+  // Series slug & name
+  $rows = $pdo->select('series', 'id', $p_series_id, 'name, slug');
+  foreach ($rows as $row) { $p_series_name = $row->name; $p_series_slug = $row->slug; }
 
   // Unpublished changes to draft?
   $query_uc = $database->prepare("SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=:piece_id ORDER BY U.id DESC LIMIT 1");
@@ -395,7 +400,7 @@ foreach ($rows as $row) {
 
   // Status
   echo '<td onmouseover="showActions('.$p_id.')" onmouseout="showActions('.$p_id.')">
-  <span id="pstatus'.$p_id.'">'.$show_status.'</span><i id="pdeleting'.$p_id.'" style="display: none;">&#10008; trashed</i> <code onclick="clearChanged('.$p_id.')" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br>
+  <span id="pstatus'.$p_id.'">'.$show_status.'</span><span id="pseries'.$p_id.'"> :: <a class="black" href="'.$blog_web_base.'/series/'.$p_series_slug.'" target="_blank">'.$p_series_name.'</a></span><i id="pdeleting'.$p_id.'" style="display: none;">&#10008; trashed</i> <code onclick="clearChanged('.$p_id.')" title="dismiss" style="float: right; cursor: pointer; display: none;" id="changed_'.$p_id.'">&nbsp;changed&nbsp;</code><br>
   <div id="showaction'.$p_id.'" style="display: none;">';
   // We want this because we will AJAX changes in the future to allow class="pieces_dead" to show before a page reload, we want this as a logical placeholder, but this actually does nothing
   if ($p_status == 'published') {
