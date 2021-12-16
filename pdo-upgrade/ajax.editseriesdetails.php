@@ -181,19 +181,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             if (move_uploaded_file($tmp_file, $pro_rss_path)) {
               $upload_img_success = true;
             } else {
-              $ajax_response['message'] .= " <span class='red'>RSS image upload unknown failure.</span>";
+              $ajax_response['message'] .= " <span class='red'>Image unknown failure.</span>";
             }
 
           } else {
-            $ajax_response['message'] .= " <span class='red'>RSS image is wrong size.</span>";
+            $ajax_response['message'] .= " <span class='red'>Wrong image size.</span>";
           }
 
         } else {
-          $ajax_response['message'] .= " <span class='red'>RSS image is wrong format.</span>";
+          $ajax_response['message'] .= " <span class='red'>Wrong image format.</span>";
         }
 
       } else {
-        $ajax_response['message'] .= " <span class='red'>RSS image failed. Image size limit is 1MB.</span>";
+        $ajax_response['message'] .= " <span class='red'>Image size limit is 1MB.</span>";
       }
     }
 
@@ -214,19 +214,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             if (move_uploaded_file($tmp_file, $pro_podcast_path)) {
               $upload_img_success = true;
             } else {
-              $ajax_response['message'] .= " <span class='red'>Podcast image upload unknown failure.</span>";
+              $ajax_response['message'] .= " <span class='red'>Image unknown failure.</span>";
             }
 
           } else {
-            $ajax_response['message'] .= " <span class='red'>Podcast image is wrong size.</span>";
+            $ajax_response['message'] .= " <span class='red'>Wrong image size.</span>";
           }
 
         } else {
-          $ajax_response['message'] .= " <span class='red'>Podcast image is wrong format.</span>";
+          $ajax_response['message'] .= " <span class='red'>Wrong image format.</span>";
         }
 
       } else {
-        $ajax_response['message'] .= " <span class='red'>Podcast image failed. Image size limit is 1MB.</span>";
+        $ajax_response['message'] .= " <span class='red'>Image size limit is 1MB.</span>";
       }
     }
     // End pro image uploads
@@ -485,14 +485,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $query->bindParam(':id', $s_id);
     $pdo->exec_($query);
     if ($pdo->change) { // Successful change
-      $ajax_response['message'] .= '<small>'.$series_name.': '.$ajax_empty_field_warning." <span class='green notehide'>Changes saved.</span></small>";
+      $ajax_response['message'] .= "<small class='notehide'>".$series_name.': '.$ajax_empty_field_warning." <span class='green'>Changes saved.</span></small>";
     } else { // No changes
       // Images?
       if ($upload_img_success == true) {
-        $ajax_response['message'] .= '<small>'.$series_name.': '.$ajax_empty_field_warning." <span class='green notehide'>Image uploaded. Changes saved.</span></small>";
+        $ajax_response['message'] .= "<small class='notehide'>".$series_name.': '.$ajax_empty_field_warning." <span class='green'>Image uploaded. Changes saved.</span></small>";
       // Truly no changes at all
       } else {
-        $ajax_response['message'] .= '<small>'.$series_name.': '.$ajax_empty_field_warning." <span class='orange notehide'>No changes.</span></small>";
+        $ajax_response['message'] .= "<small class='notehide'>".$series_name.': '.$ajax_empty_field_warning." <span class='orange'>No changes.</span></small>";
 
       } // Delete check
     } // Changes check
