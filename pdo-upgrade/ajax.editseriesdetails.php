@@ -161,6 +161,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
     // Set our reponse ID
     $ajax_response['s_id'] = $s_id;
+    $ajax_response['message'] = '';
 
     // Pro images
     // RSS feed
@@ -180,35 +181,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             if (move_uploaded_file($tmp_file, $pro_rss_path)) {
               $upload_img_success = true;
             } else {
-              $ajax_response['message'] = "<span class='red'>RSS image upload unknown failure.</span>";
-              // We're done here
-              $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-              echo $json_response;
-              exit ();
+              $ajax_response['message'] .= " <span class='red'>RSS image upload unknown failure.</span>";
             }
 
           } else {
-            $ajax_response['message'] = "<span class='red'>RSS image is wrong size.</span>";
-            // We're done here
-            $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-            echo $json_response;
-            exit ();
+            $ajax_response['message'] .= " <span class='red'>RSS image is wrong size.</span>";
           }
 
         } else {
-          $ajax_response['message'] = "<span class='red'>RSS image is wrong format.</span>";
-          // We're done here
-          $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-          echo $json_response;
-          exit ();
+          $ajax_response['message'] .= " <span class='red'>RSS image is wrong format.</span>";
         }
 
       } else {
-        $ajax_response['message'] = "<span class='red'>RSS image failed. Image size limit is 1MB.</span>";
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
+        $ajax_response['message'] .= " <span class='red'>RSS image failed. Image size limit is 1MB.</span>";
       }
     }
 
@@ -229,35 +214,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             if (move_uploaded_file($tmp_file, $pro_podcast_path)) {
               $upload_img_success = true;
             } else {
-              $ajax_response['message'] = "<span class='red'>Podcast image upload unknown failure.</span>";
-              // We're done here
-              $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-              echo $json_response;
-              exit ();
+              $ajax_response['message'] .= " <span class='red'>Podcast image upload unknown failure.</span>";
             }
 
           } else {
-            $ajax_response['message'] = "<span class='red'>Podcast image is wrong size.</span>";
-            // We're done here
-            $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-            echo $json_response;
-            exit ();
+            $ajax_response['message'] .= " <span class='red'>Podcast image is wrong size.</span>";
           }
 
         } else {
-          $ajax_response['message'] = "<span class='red'>Podcast image is wrong format.</span>";
-          // We're done here
-          $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-          echo $json_response;
-          exit ();
+          $ajax_response['message'] .= " <span class='red'>Podcast image is wrong format.</span>";
         }
 
       } else {
-        $ajax_response['message'] = "<span class='red'>Podcast image failed. Image size limit is 1MB.</span>";
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
+        $ajax_response['message'] .= " <span class='red'>Podcast image failed. Image size limit is 1MB.</span>";
       }
     }
     // End pro image uploads
@@ -276,14 +245,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
-        $ajax_response['message'] = "<span class='red'>Slug already in use!</span>";
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
+        $ajax_response['message'] .= " <span class='red'>Slug already in use!</span>";
       }
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series slug!</span>";
+      $ajax_empty_field_warning = true;
       // We're done here
       $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
       echo $json_response;
@@ -305,19 +270,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
-        $ajax_response['message'] = "<span class='red'>Series name already in use!</span>";
-        // We're done here
-        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-        echo $json_response;
-        exit ();
+        $ajax_response['message'] .= " <span class='red'>Series name already in use!</span>";
       }
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series name!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series language
     if (preg_replace('/\s+/', '', $_POST['series_lang']) != '') {
@@ -329,11 +286,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_lang = DB::trimspace($series_lang);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series language!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series link
     if (filter_var($_POST['series_link'], FILTER_VALIDATE_URL)) {
@@ -342,11 +295,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_link = DB::trimspace($series_link);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series URL link!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series author
     if (preg_replace('/\s+/', '', $_POST['series_author']) != '') {
@@ -356,11 +305,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_author = DB::trimspace($series_author);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series author!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series description
     if (preg_replace('/\s+/', '', $_POST['series_descr']) != '') {
@@ -370,11 +315,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_descr = DB::trimspace($series_descr);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series description!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series summary
     if (preg_replace('/\s+/', '', $_POST['series_summary']) != '') {
@@ -384,11 +325,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_summary = DB::trimspace($series_summary);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series summary!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series owner
     if (preg_replace('/\s+/', '', $_POST['series_owner']) != '') {
@@ -398,11 +335,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_owner = DB::trimspace($series_owner);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series owner!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series email
     if (filter_var($_POST['series_email'], FILTER_VALIDATE_EMAIL)) {
@@ -412,11 +345,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_email = DB::trimspace($series_email);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series email!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series keywords
     if (preg_replace('/\s+/', '', $_POST['series_keywords']) != '') {
@@ -428,11 +357,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_keywords = DB::trimspace($series_keywords);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter at least one series keyword!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series explicit
     if ((preg_replace('/\s+/', '', $_POST['series_explicit']) != '')
@@ -446,11 +371,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_explicit = DB::trimspace($series_explicit);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series explicit language option!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series copyright
     if (preg_replace('/\s+/', '', $_POST['series_copy']) != '') {
@@ -460,11 +381,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_copy = DB::trimspace($series_copy);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series copyright statement!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series category 1
     if (isset($_POST['series_cat1'])) {
@@ -476,11 +393,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_cat1 = DB::trimspace($series_cat1);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series name!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series category 2
     if (isset($_POST['series_cat2'])) {
@@ -492,11 +405,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_cat2 = DB::trimspace($series_cat2);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series name!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series category 3
     if (isset($_POST['series_cat3'])) {
@@ -508,11 +417,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_cat3 = DB::trimspace($series_cat3);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series name!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series category 4
     if (isset($_POST['series_cat4'])) {
@@ -524,11 +429,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_cat4 = DB::trimspace($series_cat4);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series name!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
     // Series category 5
     if (isset($_POST['series_cat5'])) {
@@ -540,12 +441,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $series_cat5 = DB::trimspace($series_cat5);
 
     } else {
-      $ajax_response['message'] = "<span class='red'>Must enter a series name!</span>";
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_empty_field_warning = true;
     }
+    $ajax_empty_field_warning = (isset($ajax_empty_field_warning)) ? " <span class='red'>Empty field(s)!</span>" : '';
 
     // SQL
     $query = $database->prepare("UPDATE series SET
@@ -587,14 +485,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $query->bindParam(':id', $s_id);
     $pdo->exec_($query);
     if ($pdo->change) { // Successful change
-      $ajax_response['message'] = "<span class='green notehide'>Changes saved.</span>";
+      $ajax_response['message'] .= '<small>'.$series_name.': '.$ajax_empty_field_warning." <span class='green notehide'>Changes saved.</span></small>";
     } else { // No changes
       // Images?
       if ($upload_img_success == true) {
-        $ajax_response['message'] = "<span class='green notehide'>Image uploaded. Changes saved.</span>";
+        $ajax_response['message'] .= '<small>'.$series_name.': '.$ajax_empty_field_warning." <span class='green notehide'>Image uploaded. Changes saved.</span></small>";
       // Truly no changes at all
       } else {
-        $ajax_response['message'] = "<span class='orange notehide'>No changes.</span>";
+        $ajax_response['message'] .= '<small>'.$series_name.': '.$ajax_empty_field_warning." <span class='orange notehide'>No changes.</span></small>";
 
       } // Delete check
     } // Changes check
