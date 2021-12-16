@@ -507,11 +507,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $query->bindParam(':id', $s_id);
     $pdo->exec_($query);
     if ($pdo->change) { // Successful change
-      $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='green'>Changes saved.</span></small>";
+      $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='green'>Podcast details saved.</span></small>";
     } else { // No changes
       // Images?
       if ($upload_img_success == true) {
-        $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='green'>Image uploaded. Changes saved.</span></small>";
+        $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='green'>Image uploaded. Podcast details saved.</span></small>";
       // Truly no changes at all
       } else {
         $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='orange'>No changes.</span></small>";
