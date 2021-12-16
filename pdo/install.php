@@ -130,7 +130,7 @@ EOF;
     }
     $query = "CREATE TABLE IF NOT EXISTS `pieces` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-      `type` ENUM('post', 'page') NOT NULL,
+      `type` ENUM('post', 'page', 'template') NOT NULL,
       `status` ENUM('live', 'dead') NOT NULL,
       `pub_yn` BOOLEAN NOT NULL DEFAULT false,
       `title` VARCHAR(60) NOT NULL,
