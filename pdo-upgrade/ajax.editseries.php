@@ -49,7 +49,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               $upload_img_success = true;
               $upload_rss_success = true;
             } else {
-              $ajax_response['message'] = '<p class="red">path:'.$pro_rss_path.' RSS image upload unknown failure.</p>';
+              $ajax_response['message'] = '<p class="red">RSS image upload unknown failure.</p>';
               $ajax_response['change'] = 'nochange';
               $ajax_response['upload'] = 'failed';
               $ajax_response['new_podcast'] = 'notnew';
@@ -61,7 +61,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             }
 
           } else {
-            $ajax_response['message'] = '<p class="red">Logo is wrong size. Must be square and 144 pixels wide and high.</p>';
+            $ajax_response['message'] = '<p class="red">RSS image is wrong size. Must be square and 144 pixels wide and high.</p>';
             $ajax_response['change'] = 'nochange';
             $ajax_response['upload'] = 'failed';
             $ajax_response['new_podcast'] = 'notnew';
@@ -109,7 +109,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               $upload_img_success = true;
               $upload_podcast_success = true;
             } else {
-              $ajax_response['message'] =  '<p class="red">path:'.$pro_podcast_path.' Podcast image upload unknown failure.</p>';
+              $ajax_response['message'] = '<p class="red">Podcast image upload unknown failure.</p>';
               $ajax_response['change'] = 'nochange';
               $ajax_response['upload'] = 'failed';
               $ajax_response['new_podcast'] = 'notnew';
@@ -121,7 +121,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             }
 
           } else {
-            $ajax_response['message'] =  '<p class="red">Podcast image is wrong size. Must be square and 3000 pixels wide and high.</p>';
+            $ajax_response['message'] = '<p class="red">Podcast image is wrong size. Must be square and 3000 pixels wide and high.</p>';
             $ajax_response['change'] = 'nochange';
             $ajax_response['upload'] = 'failed';
             $ajax_response['new_podcast'] = 'notnew';
@@ -133,7 +133,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           }
 
         } else {
-          $ajax_response['message'] =  '<p class="red">Podcast image is wrong format. Allowed: JPEG, PNG, GIF</p>';
+          $ajax_response['message'] = '<p class="red">Podcast image is wrong format. Allowed: JPEG, PNG, GIF</p>';
           $ajax_response['change'] = 'nochange';
           $ajax_response['upload'] = 'failed';
           $ajax_response['new_podcast'] = 'notnew';
@@ -145,7 +145,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         }
 
       } else {
-        $ajax_response['message'] =  '<p class="red">Podcast image file size is too big. Limit is 1MB.</p>';
+        $ajax_response['message'] = '<p class="red">Podcast image file size is too big. Limit is 1MB.</p>';
         $ajax_response['change'] = 'nochange';
         $ajax_response['upload'] = 'failed';
         $ajax_response['new_podcast'] = 'notnew';
@@ -174,14 +174,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Slug already in use!</span>';
+        $ajax_response['message'] = '<span class="red notehide">Slug already in use!</span>';
         // We're done here
         $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
         echo $json_response;
         exit ();
       }
     } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series slug!</span>';
+      $ajax_response['message'] = '<span class="red notehide">Must enter a series slug!</span>';
       // We're done here
       $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
       echo $json_response;
@@ -203,7 +203,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
-        $ajax_response['message'] = '<span class="error notehide">Series name already in use!</span>';
+        $ajax_response['message'] = '<span class="red notehide">Series name already in use!</span>';
         // We're done here
         $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
         echo $json_response;
@@ -211,7 +211,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       }
 
     } else {
-      $ajax_response['message'] = '<span class="error notehide">Must enter a series name!</span>';
+      $ajax_response['message'] = '<span class="red notehide">Must enter a series name!</span>';
       // We're done here
       $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
       echo $json_response;
@@ -280,7 +280,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               $ajax_response['new_podcast'] = 'notnew';
               $ajax_response['new_rss'] = 'notnew';
             } else { // Impossible fail to delete series
-              $ajax_response['message'] = '<span class="error">Strange database trouble deleting series!</span>';
+              $ajax_response['message'] = '<span class="red">Strange database trouble deleting series!</span>';
               $ajax_response['name'] = $series_name_trim;
               $ajax_response['slug'] = $clean_slug_trim;
               $ajax_response['change'] = 'nochange';
@@ -289,7 +289,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               $ajax_response['new_rss'] = 'notnew';
             }
           } else { // Impossible fail to change affected pices to default series
-            $ajax_response['message'] = '<span class="error">Strange database trouble preparing to delete series!</span>';
+            $ajax_response['message'] = '<span class="red">Strange database trouble preparing to delete series!</span>';
             $ajax_response['name'] = $series_name_trim;
             $ajax_response['slug'] = $clean_slug_trim;
             $ajax_response['change'] = 'nochange';
@@ -317,6 +317,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
   } else {
     echo '<div id="series-editor-container">';
     echo '<h2 class="editor-title">Series Editor</h2>';
+
+    // Series Details Message?
+    $detail_message = (isset($_POST['m'])) ? $_POST['m'] : '';
 
     // Pagination
     // Valid the Pagination
@@ -397,8 +400,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           <th width="15%">Name</th>
           <th width="15%">Slug</th>
           <th width="14%"></th>
-          <th width="23%"></th>
-          <th width="23%"></th>
+          <th width="46%" colspan="2">
+          <div id="series-details-message">'.$detail_message.'</div>
+          </th>
           </tr>
       ';
 

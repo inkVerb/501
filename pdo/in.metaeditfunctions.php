@@ -194,7 +194,7 @@ function piecesaction($action, $p_id) {
   // Choose the action
   switch ($action) {
     case 'unpublish':
-      $query = $database->prepare("UPDATE publications SET pubstatus='redrafting', date_updated=NOW() WHERE id=:id");
+      $query = $database->prepare("UPDATE publications SET pubstatus='redrafting' WHERE id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $call = $pdo->ok;
@@ -208,7 +208,7 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'republish':
-      $query = $database->prepare("UPDATE publications SET pubstatus='published', date_updated=NOW() WHERE id=:id");
+      $query = $database->prepare("UPDATE publications SET pubstatus='published' WHERE id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $call = $pdo->ok;
@@ -223,11 +223,11 @@ function piecesaction($action, $p_id) {
       break;
     case 'delete':
     case 'redelete':
-      $query = $database->prepare("UPDATE pieces SET status='dead', date_updated=NOW() WHERE id=:id");
+      $query = $database->prepare("UPDATE pieces SET status='dead' WHERE id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $calld = $pdo->ok;
-      $query = $database->prepare("UPDATE publications SET status='dead', date_updated=NOW() WHERE piece_id=:piece_id");
+      $query = $database->prepare("UPDATE publications SET status='dead' WHERE piece_id=:piece_id");
       $query->bindParam(':piece_id', $p_id);
       $pdo->exec_($query);
       $callr = $pdo->ok;
@@ -242,11 +242,11 @@ function piecesaction($action, $p_id) {
       break;
     case 'restore':
     case 'undelete':
-      $query = $database->prepare("UPDATE pieces SET status='live', date_updated=NOW() WHERE id=:id");
+      $query = $database->prepare("UPDATE pieces SET status='live' WHERE id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $calld = $pdo->ok;
-      $query = $database->prepare("UPDATE publications SET status='live', date_updated=NOW() WHERE piece_id=:piece_id");
+      $query = $database->prepare("UPDATE publications SET status='live' WHERE piece_id=:piece_id");
       $query->bindParam(':piece_id', $p_id);
       $pdo->exec_($query);
       $callr = $pdo->ok;
@@ -286,11 +286,11 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'make post':
-      $query = $database->prepare("UPDATE publications SET type='post', date_updated=NOW() WHERE piece_id=:piece_id");
+      $query = $database->prepare("UPDATE publications SET type='post' WHERE piece_id=:piece_id");
       $query->bindParam(':piece_id', $p_id);
       $pdo->exec_($query);
       $call1 = $pdo->ok;
-      $query = $database->prepare("UPDATE pieces SET type='post', date_updated=NOW() WHERE id=:id");
+      $query = $database->prepare("UPDATE pieces SET type='post' WHERE id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $call2 = $pdo->ok;
@@ -304,11 +304,11 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'make page':
-      $query = $database->prepare("UPDATE publications SET type='page', date_updated=NOW() WHERE piece_id=:piece_id");
+      $query = $database->prepare("UPDATE publications SET type='page' WHERE piece_id=:piece_id");
       $query->bindParam(':piece_id', $p_id);
       $pdo->exec_($query);
       $call1 = $pdo->ok;
-      $query = $database->prepare("UPDATE pieces SET type='page', date_updated=NOW() WHERE id=:id");
+      $query = $database->prepare("UPDATE pieces SET type='page' WHERE id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $call2 = $pdo->ok;

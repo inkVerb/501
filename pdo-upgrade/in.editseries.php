@@ -19,7 +19,7 @@ function seriesEditorHide() {
 }
 
 // The editor content
-function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, same as used in this function
+function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments can be anything, same as used in this function
 
     // Bind a new event listener:
     const AJAX = new XMLHttpRequest(); // AJAX handler
@@ -34,7 +34,7 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
 
     AJAX.open("POST", "ajax.editseries.php");
     AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    AJAX.send("u_id="+uID+"&r="+pageNum); // Data as could be sent in a <form>
+    AJAX.send("u_id="+uID+"&r="+pageNum+"&m="+detailMessage); // Data as could be sent in a <form>
 
   } // seriesEditor() function
 
@@ -157,27 +157,11 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
       const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
+        document.getElementById("edit-series").innerHTML = event.target.responseText;
+        // DEV All comments are to see the response for dev purposes
         var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
-        if (jsonSeriesEditResponse["change"] == 'change') { // Name and/or slug change
-          seriesEditor(uID); // Reload the Series Editor
-          document.getElementById("input-name-"+sID).value = jsonSeriesEditResponse["name"]; // Update Name
-          document.getElementById("input-slug-"+sID).value = jsonSeriesEditResponse["slug"]; // Update Slug
-        } else if ((jsonSeriesEditResponse["change"] == 'nochange') && (jsonSeriesEditResponse["upload"] == 'failed')) {  // Upload failed
-          seriesEditor(uID); // Reload the Series Editor
-          document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
-        } else { // Some failure
-          seriesEditor(uID); // Reload the Series Editor
-          document.getElementById("edit-series").innerHTML = event.target.responseText; // Message
-        }
-        if (jsonSeriesEditResponse["new_rss"] == 'newrss') { // Hide the Save/Cancel buttons
-           document.getElementById("rss-none-"+sID).innerHTML = "<i>refresh to see image</i>";
-        }
-        if (jsonSeriesEditResponse["new_podcast"] == 'newpodcast') { // Hide the Save/Cancel buttons
-          document.getElementById("podcast-none-"+sID).innerHTML = "<i>refresh to see image</i>";
-        }
-
-          // Every scenario is considered, not update <div id="edit-message-ID"> with our AJAX response message
-          document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
+        var detailMessage = jsonSeriesEditResponse["message"];
+        seriesEditor(uID, 0, detailMessage); // Reload the Series Editor
 
       } );
 
@@ -186,7 +170,7 @@ function seriesEditor(uID, pageNum = 0) { // These arguments can be anything, sa
       } );
 
       AJAX.open("POST", "ajax.editseriesdetails.php");
-      AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
       AJAX.send(FD); // Data sent is from the form
 
     } // detailsSave() function

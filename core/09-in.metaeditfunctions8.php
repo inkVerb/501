@@ -101,7 +101,7 @@ function piecesaction($action, $p_id) {
   // Choose the action
   switch ($action) {
     case 'unpublish':
-      $query = "UPDATE publications SET pubstatus='redrafting', date_updated=NOW() WHERE id='$p_id'";
+      $query = "UPDATE publications SET pubstatus='redrafting' WHERE id='$p_id'";
       $call = mysqli_query($database, $query);
       if ($call) {
         $piecesactionsuccess = true;
@@ -113,7 +113,7 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'republish':
-      $query = "UPDATE publications SET pubstatus='published', date_updated=NOW() WHERE id='$p_id'";
+      $query = "UPDATE publications SET pubstatus='published' WHERE id='$p_id'";
       $call = mysqli_query($database, $query);
       if ($call) {
         $piecesactionsuccess = true;
@@ -125,9 +125,9 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'delete':
-      $queryd = "UPDATE pieces SET status='dead', date_updated=NOW() WHERE id='$p_id'";
+      $queryd = "UPDATE pieces SET status='dead' WHERE id='$p_id'";
       $calld = mysqli_query($database, $queryd);
-      $queryr = "UPDATE publications SET status='dead', date_updated=NOW() WHERE piece_id='$p_id'";
+      $queryr = "UPDATE publications SET status='dead' WHERE piece_id='$p_id'";
       $callr = mysqli_query($database, $queryr);
       if (($calld) && ($callr)) {
         $piecesactionsuccess = true;
@@ -140,9 +140,9 @@ function piecesaction($action, $p_id) {
       break;
     case 'restore':
     case 'undelete':
-      $queryd = "UPDATE pieces SET status='live', date_updated=NOW() WHERE id='$p_id'";
+      $queryd = "UPDATE pieces SET status='live' WHERE id='$p_id'";
       $calld = mysqli_query($database, $queryd);
-      $queryr = "UPDATE publications SET status='live', date_updated=NOW() WHERE piece_id='$p_id'";
+      $queryr = "UPDATE publications SET status='live' WHERE piece_id='$p_id'";
       $callr = mysqli_query($database, $queryr);
       if (($calld) && ($callr)) {
         $piecesactionsuccess = true;
@@ -174,9 +174,9 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'make post':
-      $query1 = "UPDATE publications SET type='post', date_updated=NOW() WHERE piece_id='$p_id'";
+      $query1 = "UPDATE publications SET type='post' WHERE piece_id='$p_id'";
       $call1 = mysqli_query($database, $query1);
-      $query2 = "UPDATE pieces SET type='post', date_updated=NOW() WHERE id='$p_id'";
+      $query2 = "UPDATE pieces SET type='post' WHERE id='$p_id'";
       $call2 = mysqli_query($database, $query2);
       if (($call1) && ($call2)) {
         $piecesactionsuccess = true;
@@ -188,9 +188,9 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'make page':
-      $query1 = "UPDATE publications SET type='page', date_updated=NOW() WHERE piece_id='$p_id'";
+      $query1 = "UPDATE publications SET type='page' WHERE piece_id='$p_id'";
       $call1 = mysqli_query($database, $query1);
-      $query2 = "UPDATE pieces SET type='page', date_updated=NOW() WHERE id='$p_id'";
+      $query2 = "UPDATE pieces SET type='page' WHERE id='$p_id'";
       $call2 = mysqli_query($database, $query2);
       if (($call1) && ($call2)) {
         $piecesactionsuccess = true;
