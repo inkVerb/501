@@ -161,7 +161,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
 
     // Set our reponse ID
     $ajax_response['s_id'] = $s_id;
-    $ajax_response['message'] = '';
+    $ajax_nameslug_warning = '';
 
     // Pro images
     // RSS feed
@@ -181,19 +181,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             if (move_uploaded_file($tmp_file, $pro_rss_path)) {
               $upload_img_success = true;
             } else {
-              $ajax_response['message'] .= " <span class='red'>Image unknown failure.</span>";
+              $ajax_nameslug_warning .= " <span class='red'>Image unknown failure.</span>";
             }
 
           } else {
-            $ajax_response['message'] .= " <span class='red'>Wrong image size.</span>";
+            $ajax_nameslug_warning .= " <span class='red'>Wrong image size.</span>";
           }
 
         } else {
-          $ajax_response['message'] .= " <span class='red'>Wrong image format.</span>";
+          $ajax_nameslug_warning .= " <span class='red'>Wrong image format.</span>";
         }
 
       } else {
-        $ajax_response['message'] .= " <span class='red'>Image size limit is 1MB.</span>";
+        $ajax_nameslug_warning .= " <span class='red'>Image size limit is 1MB.</span>";
       }
     }
 
@@ -214,19 +214,19 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             if (move_uploaded_file($tmp_file, $pro_podcast_path)) {
               $upload_img_success = true;
             } else {
-              $ajax_response['message'] .= " <span class='red'>Image unknown failure.</span>";
+              $ajax_nameslug_warning .= " <span class='red'>Image unknown failure.</span>";
             }
 
           } else {
-            $ajax_response['message'] .= " <span class='red'>Wrong image size.</span>";
+            $ajax_nameslug_warning .= " <span class='red'>Wrong image size.</span>";
           }
 
         } else {
-          $ajax_response['message'] .= " <span class='red'>Wrong image format.</span>";
+          $ajax_nameslug_warning .= " <span class='red'>Wrong image format.</span>";
         }
 
       } else {
-        $ajax_response['message'] .= " <span class='red'>Image size limit is 1MB.</span>";
+        $ajax_nameslug_warning .= " <span class='red'>Image size limit is 1MB.</span>";
       }
     }
     // End pro image uploads
@@ -245,15 +245,24 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
-        $ajax_response['message'] .= " <span class='red'>Slug already in use!</span>";
+        $ajax_nameslug_warning .= " <span class='red'>Slug '$clean_slug' already in use!</span>";
+        $slug_nochange = true;
       }
     } else {
-      $ajax_empty_field_warning = true;
-      // We're done here
-      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
-      echo $json_response;
-      exit ();
+      $ajax_nameslug_warning .= " <span class='red'>Slug can't be empty!</span>";
+      $slug_nochange = true;
     }
+      // Won't change slug, keep old slug
+      if ($slug_nochange) {
+        $query = $database->prepare("SELECT slug FROM series WHERE id=:id");
+        $query->bindParam(':id', $s_id);
+        $rows = $pdo->exec_($query);
+        if ($pdo->numrows > 0) {
+          foreach ($rows as $row) {
+            $clean_slug = $row->slug;
+          }
+        }
+      }
     // Series name
     if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
       $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
@@ -270,12 +279,25 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       $query->bindParam(':id', $s_id);
       $rows = $pdo->exec_($query);
       if ($pdo->numrows > 0) {
-        $ajax_response['message'] .= " <span class='red'>Series name already in use!</span>";
+        $ajax_nameslug_warning .= " <span class='red'>Series name '$series_name' already in use!</span>";
+        $series_nochange = true;
       }
 
     } else {
-      $ajax_empty_field_warning = true;
+      $ajax_nameslug_warning .= " <span class='red'>Series name can't be empty!</span>";
+      $series_nochange = true;
     }
+      // Won't change series name, keep old series name
+      if ($series_nochange) {
+        $query = $database->prepare("SELECT name FROM series WHERE id=:id");
+        $query->bindParam(':id', $s_id);
+        $rows = $pdo->exec_($query);
+        if ($pdo->numrows > 0) {
+          foreach ($rows as $row) {
+            $series_name = $row->name;
+          }
+        }
+      }
     // Series language
     if (preg_replace('/\s+/', '', $_POST['series_lang']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-]/";
@@ -443,7 +465,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     } else {
       $ajax_empty_field_warning = true;
     }
-    $ajax_empty_field_warning = (isset($ajax_empty_field_warning)) ? " <span class='red'>Empty field(s)!</span>" : '';
+    $ajax_empty_field_warning = (isset($ajax_empty_field_warning)) ? " <span class='red'>Empty podcast field(s)!</span>" : '';
 
     // SQL
     $query = $database->prepare("UPDATE series SET
@@ -485,14 +507,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     $query->bindParam(':id', $s_id);
     $pdo->exec_($query);
     if ($pdo->change) { // Successful change
-      $ajax_response['message'] .= "<small class='notehide'>".$series_name.': '.$ajax_empty_field_warning." <span class='green'>Changes saved.</span></small>";
+      $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='green'>Changes saved.</span></small>";
     } else { // No changes
       // Images?
       if ($upload_img_success == true) {
-        $ajax_response['message'] .= "<small class='notehide'>".$series_name.': '.$ajax_empty_field_warning." <span class='green'>Image uploaded. Changes saved.</span></small>";
+        $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='green'>Image uploaded. Changes saved.</span></small>";
       // Truly no changes at all
       } else {
-        $ajax_response['message'] .= "<small class='notehide'>".$series_name.': '.$ajax_empty_field_warning." <span class='orange'>No changes.</span></small>";
+        $ajax_response['message'] .= "<small>".$series_name.':'.$ajax_nameslug_warning.$ajax_empty_field_warning." <span class='orange'>No changes.</span></small>";
 
       } // Delete check
     } // Changes check
