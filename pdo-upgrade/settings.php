@@ -309,7 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <form action="settings.php" method="post" id="blog_settings" enctype="multipart/form-data">';
 
   echo 'Title: '.formInput('blog_title', $new_blog_title, $check_err).'<br><br>';
-  echo 'Tagline: '.formInput('blog_tagline', $new_blog_tagline, $check_err).' (1-100 security question)<br><br>';
+  echo 'Tagline: '.formInput('blog_tagline', $new_blog_tagline, $check_err).'<br><br>';
   echo 'Description:<br>'.formInput('blog_description', $new_blog_description, $check_err).'<br><br>';
   echo 'Summary length: '.formInput('blog_summary_words', $new_blog_summary_words, $check_err).'<br><br>';
   echo 'Key words: '.formInput('blog_keywords', $new_blog_keywords, $check_err).'<br><br>';
