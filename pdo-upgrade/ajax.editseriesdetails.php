@@ -230,7 +230,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // End pro image uploads
 
-    // No uploads
+    // Non-upload
     // Series slug
     if (preg_replace('/\s+/', '', $_POST['series_slug']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-]/";

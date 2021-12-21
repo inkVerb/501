@@ -41,8 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // No errors, all ready
   if ($no_form_errors == true) {
 
-    // Update the user
-
     // Prepare our database values for entry
     $blog_public_trim = DB::trimspace($new_blog_public);
     $blog_title_trim = DB::trimspace($new_blog_title);
@@ -280,11 +278,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   // Check if deleting an image without checking to "Confirm"
-  if (((isset($_POST['pro-favicon-delete'])) && ($_POST['pro-favicon-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
-  || ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
-  || ((isset($_POST['pro-seo-delete'])) && ($_POST['pro-seo-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
-  || ((isset($_POST['pro-rss-delete'])) && ($_POST['pro-rss-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))
-  || ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && (!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete'))) {
+  if (((isset($_POST['pro-favicon-delete'])) && ($_POST['pro-favicon-delete'] == 'delete') && ((!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete')))
+  || ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && ((!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete')))
+  || ((isset($_POST['pro-seo-delete'])) && ($_POST['pro-seo-delete'] == 'delete') && ((!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete')))
+  || ((isset($_POST['pro-rss-delete'])) && ($_POST['pro-rss-delete'] == 'delete') && ((!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete')))
+  || ((isset($_POST['pro-logo-delete'])) && ($_POST['pro-logo-delete'] == 'delete') && ((!isset($_POST['pro-confirm-delete'])) || ($_POST['pro-confirm-delete'] != 'delete')))) {
     echo '<p class="red">To delete images, you must check to confirm under the "Save changes" button.</p>';
   }
 
@@ -302,16 +300,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 } // Finish POST if
 
-// Retrieve the user info from the database
-$rows = $pdo->select('users', 'id', $user_id, 'fullname, username, email, favnumber');
-// Test the query
-if ($pdo->numrows == 1) {
-  foreach ($rows as $row) {
-  	$fullname = "$row->fullname";
-  	$username = "$row->username";
-    $email = "$row->email";
-    $favnumber = "$row->favnumber";
-  }
   // Our actual settings page
 
   echo '<h2>Main</h2>';
@@ -405,10 +393,6 @@ if ($pdo->numrows == 1) {
   }
 
   echo '</p>';
-
-} else {
-  echo '<p class="errors">No settings detected. Something is seriously wrong!</p>';
-}
 
 // Series edit JavaScript
 include ('./in.editseries.php');

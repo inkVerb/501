@@ -33,6 +33,7 @@ if ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
 
 $series_get = (isset($series_slug)) ? "series/$series_slug/" : "?"; // Set series GET string for pagination
 $head_title = (isset($series_name)) ? $blog_title . ' :: ' . $series_name : $blog_title; // Set a <title> name used next
+$feed_path = (isset($series_slug)) ? "/series/$series_slug/feed" : "/feed";
 include ('./in.head.php');
 
 // Pagination
