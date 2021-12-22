@@ -447,22 +447,24 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $revert_id = preg_replace("/[^0-9]/"," ", $_GET['h']);
 
     // Retrieve existing piece from history
-    $rowsc = $pdo->select('publication_history', 'id', $piece_id_trim, 'piece_id, type, series, title, slug, content, after, tags, links, date_live');
+    $rowsc = $pdo->select('publication_history', 'id', $revert_id, 'piece_id, type, series, title, slug, content, after, tags, links, date_live');
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
-      // Assign the values
-      $piece_id = "$row->piece_id";
-      $p_type = "$row->type";
-      $p_series = "$row->series";
-      $p_title = "$row->title";
-      $p_slug = "$row->slug";
-      $p_content = "$row->content";
-      $p_after = "$row->after";
-      $p_tags_json = "$row->tags";
-      $p_links_json = "$row->links";
-      $p_live = "$row->date_live";
-      $editing_published_piece = true;
-
+      foreach ($rowsc as $row) {
+        // Assign the values
+        $piece_id = "$row->piece_id";
+        $p_type = "$row->type";
+        $p_series = "$row->series";
+        $p_title = "$row->title";
+        $p_slug = "$row->slug";
+        $p_content = "$row->content";
+        $p_after = "$row->after";
+        $p_tags_json = "$row->tags";
+        $p_links_json = "$row->links";
+        $p_live = "$row->date_live";
+        $editing_published_piece = true;
+      }
+      
       // Indicate a historical edit
       echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
 

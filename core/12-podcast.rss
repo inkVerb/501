@@ -43,9 +43,11 @@
 
 	<itunes:image href="http://pdt.news/bickle/bickle2.jpg"/>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
-        <itunes:category text="Christianity"/>
+        <itunes:category text="Religion &amp; Spirituality"/>
+
+				<itunes:category text="Christianity"/>
 
 	<pubDate>17 Nov 2013 14:09:52 GMT</pubDate>
 
@@ -69,7 +71,7 @@
 
 	<itunes:summary>Matt 22, has the greatest impact, from Deut 6, greatly overlooked in history, the WHY behind WHAT God did in Creation and Redemption, circle of loving God then love ourselves then to love others, not first commandment ministry vs second commandment ministry but all are called to have first first, neither First nor Second Great Command is more important than the other, loving God is not defined by the Hippie culturefirst not more than second but in sequence, ministry hyperactivity a distraction, Jesus prayed for this, the right to copy, love God on His terms, deeply rooted in obedience, ministry is about people loving God as our FIRST purpose not only numerical growth</itunes:summary>
 
-        <enclosure url="http://pdt.news/bickle/First_Commandment-2008-08-22.mp3" length="20506910" type="audio/mpeg" />
+  <enclosure url="http://pdt.news/bickle/First_Commandment-2008-08-22.mp3" length="20506910" type="audio/mpeg" />
 
 	<link>http://pdt.news/bickle/First_Commandment-2008-08-22.mp3</link>
 
@@ -79,10 +81,9 @@
 
 	<itunes:duration>56:48</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
-
 
 		<item>
 
@@ -108,11 +109,11 @@
 
 	<itunes:author>Mike Bickle</itunes:author>
 
-	<itunes:keywords>passion,24/7,prayer,IHOPKC</itunes:keywords>
+	<itunes:keywords>passion,24-7,prayer,IHOPKC</itunes:keywords>
 
 	<itunes:duration>46:42</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -145,7 +146,7 @@
 
 	<itunes:duration>29:03</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -178,7 +179,7 @@
 
 	<itunes:duration>1:13:47</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -211,7 +212,7 @@
 
 	<itunes:duration>42:26</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -244,7 +245,7 @@
 
 	<itunes:duration>1:06:24</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -277,7 +278,7 @@
 
 	<itunes:duration>48:29</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -310,7 +311,7 @@
 
 	<itunes:duration>52:59</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -343,7 +344,7 @@
 
 	<itunes:duration>47:35</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -376,7 +377,7 @@
 
 	<itunes:duration>19:59</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -409,7 +410,7 @@
 
 	<itunes:duration>1:01:47</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -442,7 +443,7 @@
 
 	<itunes:duration>1:00:31</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -475,7 +476,7 @@
 
 	<itunes:duration>1:00:06</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -508,7 +509,7 @@
 
 	<itunes:duration>1:02:49</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -541,7 +542,7 @@
 
 	<itunes:duration>1:12:16</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -574,7 +575,7 @@
 
 	<itunes:duration>1:03:39</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 
@@ -607,7 +608,7 @@
 
 	<itunes:duration>1:05:14</itunes:duration>
 
-	<itunes:explicit>no</itunes:explicit>
+	<itunes:explicit>false</itunes:explicit>
 
 	</item>
 

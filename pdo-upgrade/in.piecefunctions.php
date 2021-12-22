@@ -28,6 +28,14 @@ function checkPiece($name, $value) {
     $result = str_replace('--','—',$result); // to em-dash
     $result = substr($result, 0, 90); // Limit to 90 characters
 
+  } elseif ($name == 'p_subtitle') {
+    $result = filter_var($value, FILTER_SANITIZE_STRING); // Remove any HTML tags
+    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
+    $result = str_replace(' -- ',' – ',$result); // to en-dash
+    $result = str_replace('---','—',$result); // to em-dash
+    $result = str_replace('--','—',$result); // to em-dash
+    $result = substr($result, 0, 90); // Limit to 90 characters
+
   } elseif ($name == 'p_slug') {
     $regex_replace = "/[^a-zA-Z0-9-]/";
     $result = strtolower(preg_replace($regex_replace,"-", $value)); // Lowercase, all non-alnum to hyphen
@@ -55,6 +63,16 @@ function checkPiece($name, $value) {
 
   // Meta
   } elseif ($name == 'p_after') {
+    $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
+    $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
+    $result = str_replace(' -- ',' – ',$result); // to en-dash
+    $result = str_replace(' --','—',$result); // to em-dash
+    $result = str_replace('-- ','—',$result); // to em-dash
+    $result = str_replace('---','—',$result); // to em-dash
+    $result = str_replace('--','—',$result); // to em-dash
+    $result = filter_var($result, FILTER_SANITIZE_STRING); // Remove any HTML tags
+
+  } elseif ($name == 'p_excerpt') {
     $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
@@ -169,6 +187,9 @@ function pieceInput($name, $value) {
   if ($name == 'p_title') {
     $result = '<input form="edit_piece" type="text" class="piece" id="p_title" name="p_title" placeholder="Title..." maxlength="90" value="'.$value.'" required onchange="onNavWarn();" onkeyup="onNavWarn();">';
 
+  } elseif ($name == 'p_subtitle') {
+    $result = '<input form="edit_piece" type="text" class="piece" id="p_subtitle" name="p_subtitle" placeholder="Subtitle..." maxlength="90" value="'.$value.'" required onchange="onNavWarn();" onkeyup="onNavWarn();">';
+
   } elseif ($name == 'p_title_me') {
     $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="metaedit" id="p_title_'.$edit_piece_id.'" name="p_title" maxlength="90" value="'.$value.'" required>';
 
@@ -222,6 +243,9 @@ function pieceInput($name, $value) {
   // Meta
   } elseif ($name == 'p_after') {
     $result = '<textarea form="edit_piece" class="meta piece" id="p_after" name="p_after" onchange="onNavWarn();" onkeyup="onNavWarn();">'.$value.'</textarea>';
+
+  } elseif ($name == 'p_excerpt') {
+    $result = '<textarea form="edit_piece" class="meta piece" id="p_excerpt" name="p_excerpt" onchange="onNavWarn();" onkeyup="onNavWarn();">'.$value.'</textarea>';
 
   } elseif ($name == 'p_after_me') {
     $result = '<textarea form="'.$form_id.$edit_piece_id.'" class="metaedit" id="p_after_'.$edit_piece_id.'" name="p_after">'.$value.'</textarea>';

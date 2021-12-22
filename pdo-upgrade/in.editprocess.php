@@ -10,6 +10,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $p_title = checkPiece('p_title',$_POST['p_title']);
   }
 
+  // Subtitle after title
+  if ( (isset($_POST['p_subtitle'])) && ($_POST['p_subtitle'] != '') ) {
+    $p_subtitle = checkPiece('p_subtitle',$_POST['p_subtitle']);
+  }
+
   // Apply Title to Slug if empty
   if (empty($_POST['p_slug'])) {
     $p_slug = checkPiece('p_slug',$p_title);
@@ -108,6 +113,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_type = checkPiece('p_type',$_POST['p_type']);
   $p_content = checkPiece('p_content',$_POST['p_content']);
   $p_after = checkPiece('p_after',$_POST['p_after']);
+  $p_excerpt = checkPiece('p_excerpt',$_POST['p_excerpt']);
   $p_tags_json = checkPiece('p_tags',$_POST['p_tags']);
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
   $p_feat_img = checkPiece('p_feat_img',$_POST['p_feat_img']);
@@ -120,9 +126,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_type_trim = DB::trimspace($p_type);
   $p_series_trim = DB::trimspace($p_series);
   $p_title_trim = DB::trimspace($p_title);
+  $p_subtitle_trim = DB::trimspace($p_subtitle);
   $p_slug_trim = DB::trimspace($p_slug);
   $p_content_trim = DB::trimspace($p_content);
   $p_after_trim = DB::trimspace($p_after);
+  $p_excerpt_trim = DB::trimspace($p_excerpt);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
@@ -151,14 +159,16 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ( ($p_status == 'draft') && ($p_live_schedule != true) ) { // No empty live date for publishing pieces
       $p_live = NULL;
       $p_live_trim = DB::trimspace($p_live); // Needs to be set
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=NULL, date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, subtitle=:subtitle, slug=:slug, content=:content, after=:after, excerpt=:excerpt, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=NULL, date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
       $queryu->bindParam(':title', $p_title_trim);
+      $queryu->bindParam(':subtitle', $p_subtitle_trim);
       $queryu->bindParam(':slug', $p_slug_trim);
       $queryu->bindParam(':content', $p_content_trim);
       $queryu->bindParam(':after', $p_after_trim);
+      $queryu->bindParam(':excerpt', $p_excerpt_trim);
       $queryu->bindParam(':tags', $p_tags_sqljson);
       $queryu->bindParam(':links', $p_links_sqljson);
       $queryu->bindParam(':feat_img', $p_feat_img);
@@ -168,14 +178,16 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     } elseif ( (($p_status == 'publish') || ($p_status == 'update') || ($p_status == 'draft')) && ($p_live_schedule == true) ) { // Unscheduled publish goes live now
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=:date_live, date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, subtitle=:subtitle, slug=:slug, content=:content, after=:after, excerpt=:excerpt, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=:date_live, date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
       $queryu->bindParam(':title', $p_title_trim);
+      $queryu->bindParam(':subtitle', $p_subtitle_trim);
       $queryu->bindParam(':slug', $p_slug_trim);
       $queryu->bindParam(':content', $p_content_trim);
       $queryu->bindParam(':after', $p_after_trim);
+      $queryu->bindParam(':excerpt', $p_excerpt_trim);
       $queryu->bindParam(':tags', $p_tags_sqljson);
       $queryu->bindParam(':links', $p_links_sqljson);
       $queryu->bindParam(':feat_img', $p_feat_img);
@@ -186,14 +198,16 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
     } elseif ($p_live_schedule != true) { // Not scheduled, but not a draft save either, so will be scheduled for now with this query
       $p_live_schedule = 'waiting'; // Set this for later
-      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, slug=:slug, content=:content, after=:after, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=NOW(), date_updated=NOW() WHERE id=:id");
+      $queryu = $database->prepare("UPDATE pieces SET type=:type, series=:series, title=:title, subtitle=:subtitle, slug=:slug, content=:content, after=:after, excerpt=:excerpt, tags=:tags, links=:links, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=NOW(), date_updated=NOW() WHERE id=:id");
       $queryu->bindParam(':id', $piece_id_trim);
       $queryu->bindParam(':type', $p_type_trim);
       $queryu->bindParam(':series', $p_series_trim);
       $queryu->bindParam(':title', $p_title_trim);
+      $queryu->bindParam(':subtitle', $p_subtitle_trim);
       $queryu->bindParam(':slug', $p_slug_trim);
       $queryu->bindParam(':content', $p_content_trim);
       $queryu->bindParam(':after', $p_after_trim);
+      $queryu->bindParam(':excerpt', $p_excerpt_trim);
       $queryu->bindParam(':tags', $p_tags_sqljson);
       $queryu->bindParam(':links', $p_links_sqljson);
       $queryu->bindParam(':feat_img', $p_feat_img);
@@ -207,9 +221,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     AND BINARY type=:type
     AND BINARY series=:series
     AND BINARY title=:title
+    AND BINARY subtitle=:subtitle
     AND BINARY slug=:slug
     AND BINARY content=:content
     AND BINARY after=:after
+    AND BINARY excerpt=:excerpt
     AND BINARY date_live=:date_live
     AND tags=:tags
     AND links=:links
@@ -221,9 +237,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $query->bindParam(':type', $p_type_trim);
     $query->bindParam(':series', $p_series_trim);
     $query->bindParam(':title', $p_title_trim);
+    $query->bindParam(':subtitle', $p_subtitle_trim);
     $query->bindParam(':slug', $p_slug_trim);
     $query->bindParam(':content', $p_content_trim);
     $query->bindParam(':after', $p_after_trim);
+    $query->bindParam(':excerpt', $p_excerpt_trim);
     $query->bindParam(':date_live', $p_live_trim);
     $query->bindParam(':tags', $p_tags_sqljson);
     $query->bindParam(':links', $p_links_sqljson);
@@ -320,9 +338,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       AND BINARY type=:type
       AND BINARY series=:series
       AND BINARY title=:title
+      AND BINARY subtitle=:subtitle
       AND BINARY slug=:slug
       AND BINARY content=:content
       AND BINARY after=:after
+      AND BINARY excerpt=:excerpt
       AND BINARY date_live=:date_live
       AND tags=:tags
       AND links=:links
@@ -334,9 +354,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       $query->bindParam(':type', $p_type_trim);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);
+      $query->bindParam(':subtitle', $p_subtitle_trim);
       $query->bindParam(':slug', $p_slug_trim);
       $query->bindParam(':content', $p_content_trim);
       $query->bindParam(':after', $p_after_trim);
+      $query->bindParam(':excerpt', $p_excerpt_trim);
       $query->bindParam(':date_live', $p_live_trim);
       $query->bindParam(':tags', $p_tags_sqljson);
       $query->bindParam(':links', $p_links_sqljson);
@@ -349,11 +371,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       if ($pdo->numrows == 0) {
         // Update or first publish?
         if ( ($p_status == 'publish') && ($pubstatus == 'none') ) {
-          $query = $database->prepare("INSERT INTO publications (piece_id, type, series, title, slug, content, after, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM pieces WHERE id=:id");
+          $query = $database->prepare("INSERT INTO publications (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
+          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callh = $pdo->ok;
@@ -368,9 +390,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
               PUB.pubstatus='published',
               PUB.series=PCE.series,
               PUB.title=PCE.title,
+              PUB.subtitle=PCE.subtitle,
               PUB.slug=PCE.slug,
               PUB.content=PCE.content,
               PUB.after=PCE.after,
+              PUB.excerpt=PCE.excerpt,
               PUB.tags=PCE.tags,
               PUB.links=PCE.links,
               PUB.feat_img=PCE.feat_img,
@@ -384,7 +408,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, slug, content, after, tags, links, date_live, date_updated) SELECT id, type, series, title, slug, content, after, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
+          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callh = $pdo->ok;
@@ -412,13 +436,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_doc, NULL)");
+      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_doc, NULL)");
       $query->bindParam(':type', $p_type_trim);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);
+      $query->bindParam(':subtitle', $p_subtitle_trim);
       $query->bindParam(':slug', $p_slug_trim);
       $query->bindParam(':content', $p_content_trim);
       $query->bindParam(':after', $p_after_trim);
+      $query->bindParam(':excerpt', $p_excerpt_trim);
       $query->bindParam(':tags', $p_tags_sqljson);
       $query->bindParam(':links', $p_links_sqljson);
       $query->bindParam(':feat_img', $p_feat_img);
@@ -428,13 +454,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, slug, content, after, tags, feat_img, feat_aud, feat_vid, links, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_vid, :date_live)");
+      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, subtitle, slug, content, after, excerpt, tags, feat_img, feat_aud, feat_vid, links, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_vid, :date_live)");
       $query->bindParam(':type', $p_type_trim);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);
+      $query->bindParam(':subtitle', $p_subtitle_trim);
       $query->bindParam(':slug', $p_slug_trim);
       $query->bindParam(':content', $p_content_trim);
       $query->bindParam(':after', $p_after_trim);
+      $query->bindParam(':excerpt', $p_excerpt_trim);
       $query->bindParam(':tags', $p_tags_sqljson);
       $query->bindParam(':links', $p_links_sqljson);
       $query->bindParam(':feat_img', $p_feat_img);
@@ -489,21 +517,23 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $revert_id = preg_replace("/[^0-9]/"," ", $_GET['h']);
 
     // Retrieve existing piece from history
-    $rowsc = $pdo->select('publication_history', 'id', $piece_id_trim, 'piece_id, type, series, title, slug, content, after, tags, links, date_live');
+    $rowsc = $pdo->select('publication_history', 'id', $revert_id, 'piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live');
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
-      // Assign the values
-      $piece_id = "$row->piece_id";
-      $p_type = "$row->type";
-      $p_series = "$row->series";
-      $p_title = "$row->title";
-      $p_slug = "$row->slug";
-      $p_content = "$row->content";
-      $p_after = "$row->after";
-      $p_tags_json = "$row->tags";
-      $p_links_json = "$row->links";
-      $p_live = "$row->date_live";
-      $editing_published_piece = true;
+      foreach ($rowsc as $row) {
+        // Assign the values
+        $piece_id = "$row->piece_id";
+        $p_type = "$row->type";
+        $p_series = "$row->series";
+        $p_title = "$row->title";
+        $p_slug = "$row->slug";
+        $p_content = "$row->content";
+        $p_after = "$row->after";
+        $p_tags_json = "$row->tags";
+        $p_links_json = "$row->links";
+        $p_live = "$row->date_live";
+        $editing_published_piece = true;
+      }
 
       // Indicate a historical edit
       echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
@@ -562,7 +592,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     }
 
     // Retrieve existing piece
-    $query = $database->prepare("SELECT type, status, series, title, slug, content, after, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live FROM pieces WHERE id=:id");
+    $query = $database->prepare("SELECT type, status, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live FROM pieces WHERE id=:id");
     $query->bindParam(':id', $piece_id_trim);
     $rows = $pdo->exec_($query);
 
@@ -574,9 +604,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $p_status = "$row->status";
           $p_series = "$row->series";
           $p_title = "$row->title";
+          $p_subtitle = "$row->subtitle";
           $p_slug = "$row->slug";
           $p_content = "$row->content";
           $p_after = "$row->after";
+          $p_excerpt = "$row->excerpt";
           $p_tags_json = "$row->tags";
           $p_links_json = "$row->links";
           $p_feat_img = "$row->feat_img";

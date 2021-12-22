@@ -141,6 +141,7 @@ include ('./in.featuredmedia.php');
     }
     // Preview & change notices
     echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview</a></pre>';
+    echo '<pre><a href="'.$blog_web_base.'/hist.php?p='.$p_id.'">history</a></pre>';
     echo '<div id="edit_changes_notice"></div>';
     // Our edit form
     echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
@@ -272,6 +273,13 @@ include ('./in.featuredmedia.php');
   ";
   echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_links).'<br><br>';
 
+  // Excerpt
+  $infomsg = 'Excerpt: to replace main content in feeds and blog series lists; unstyled text, HTML not allowed';
+  echo 'Excerpt:'.infoPop('excerpt_info', $infomsg).'<br>'.pieceInput('p_excerpt', $p_excerpt).'<br><br>';
+
+  // Subtitle & Podcast Description
+  $infomsg = 'Subtitle / Description: optional description to appear in Podcasts and some feeds';
+  echo 'Subtitle / Description:'.infoPop('subtitle_info', $infomsg).'<br>'.pieceInput('p_subtitle', $p_subtitle).'<br><br>';
 
   ?>
 

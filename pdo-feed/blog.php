@@ -73,10 +73,10 @@ $prevpaged = $paged - 1;
 
 // Check the database for published pieces
 if ((isset($_GET['s'])) && (isset($series_id))) {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
   $query->bindParam(':series', $series_id);
 } else {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
 }
 $rows = $pdo->exec_($query);
 // Start our show_div counter
@@ -88,6 +88,7 @@ foreach ($rows as $row) {
   $p_title = "$row->title";
   $p_slug = "$row->slug";
   $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+  $p_excerpt = "$row->excerpt";
   $p_series_id = "$row->series";
   $p_tags_sqljson = "$row->tags";
   $p_feat_img = $row->feat_img;
@@ -122,8 +123,15 @@ foreach ($rows as $row) {
   include ('./in.featuredmediadisplay.php');
 
   // Content
+    $preview_text_limit = 200;
+    // Is there an excerpt?
+    if ($p_excerpt != '') {
+      // Change the content to the excerpt for our remaining purposes
+      $p_content = $p_excerpt;
+    }
     // Shorten
-    $p_content = preview_text($p_content, 200, $p_id);
+    $p_content = preview_text($p_content, $preview_text_limit, $p_id);
+
     // Display
     echo '<br><div class="piece-content">'.$p_content.'</div>';
 

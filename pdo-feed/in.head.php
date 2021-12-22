@@ -93,7 +93,7 @@ EOF;
       toolbar_location: 'bottom',
       menubar: false,
       paste_as_text: true,
-      content_css: <?php echo $blog_web_base;?>'/style.css',
+      content_css: 'style.css',
 
     });
     </script>
