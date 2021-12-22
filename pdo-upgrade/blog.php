@@ -123,7 +123,7 @@ foreach ($rows as $row) {
   // Content
     $preview_text_limit = 200;
     // Is there an excerpt?
-    if ($p_excerpt != '') {
+    if (($p_excerpt != '') && ($p_excerpt != NULL)) {
       // Change the content to the excerpt for our remaining purposes
       $p_content = $p_excerpt;
     }

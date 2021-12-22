@@ -150,14 +150,14 @@ if (str_contains($feed_cat5, '::')) {
 }
 // Iterate each feed item entry
 if ((isset($_GET['s'])) && (isset($series_id))) {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $blog_feed_items");
+  $query = $database->prepare("SELECT piece_id, title, subtitle, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $blog_feed_items");
   $query->bindParam(':series', $series_id);
   $queryPub = $database->prepare("SELECT date_live FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live LIMIT 1");
   $queryPub->bindParam(':series', $series_id);
   $queryBuild = $database->prepare("SELECT date_live FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT 1");
   $queryBuild->bindParam(':series', $series_id);
 } else {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $blog_feed_items");
+  $query = $database->prepare("SELECT piece_id, title, subtitle, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $blog_feed_items");
   $queryPub = $database->prepare("SELECT date_live FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live LIMIT 1");
   $queryBuild = $database->prepare("SELECT date_live FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT 1");
 }
@@ -181,8 +181,10 @@ foreach ($rows as $row) {
   // Assign the values
   $p_id = "$row->piece_id";
   $p_title = "$row->title";
+  $p_subtitle = "$row->subtitle";
   $p_slug = "$row->slug";
   $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+  $p_excerpt = "$row->excerpt";
   $p_series_id = "$row->series";
   $p_tags_sqljson = "$row->tags";
   $p_feat_img = $row->feat_img;
@@ -191,6 +193,12 @@ foreach ($rows as $row) {
   $p_feat_doc = $row->feat_doc;
   $p_live = "$row->date_live";
   $p_update = "$row->date_updated";
+
+  // Excerpt?
+  if (($p_excerpt != '') && ($p_excerpt != NULL)) {
+    // Change the content to the excerpt for our remaining purposes
+    $p_content = $p_excerpt;
+  }
 
   // Featured Media
   include ('./in.featuredmedia.php');
@@ -223,14 +231,13 @@ echo <<<EOF
   <author>$feed_author</author>
   <dc:creator><![CDATA[$feed_author]]></dc:creator>
   <category><![CDATA[$p_series]]></category>
-  <description></description>
+  <description>$p_subtitle</description>
   <content:encoded><![CDATA[$p_content]]></content:encoded>
-  <itunes:subtitle></itunes:subtitle>
-  <itunes:summary></itunes:summary>
+  <itunes:subtitle>$p_subtitle</itunes:subtitle>
+  <itunes:summary>$p_excerpt</itunes:summary>
   <itunes:author>$feed_author</itunes:author>
   <itunes:keywords>$p_tags</itunes:keywords>
   <itunes:explicit>$feed_explicit</itunes:explicit>
-</item>
 EOF;
 
     // Featured Media
@@ -246,8 +253,8 @@ EOF;
     if ($feat_aud_id != 0) {
 
 echo <<<EOF
-      <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="audio/mpeg" />
-      <itunes:duration>56:48</itunes:duration>
+  <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="audio/mpeg" />
+  <itunes:duration>56:48</itunes:duration>
 EOF;
     }
 

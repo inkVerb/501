@@ -274,8 +274,8 @@ include ('./in.featuredmedia.php');
   echo 'Links:'.infoPop('links_info', $infomsg).'<br>'.pieceInput('p_links', $p_links).'<br><br>';
 
   // Excerpt
-  $infomsg = 'Excerpt: to replace main content in feeds and blog series lists; unstyled text, HTML not allowed';
-  echo 'Excerpt:'.infoPop('excerpt_info', $infomsg).'<br>'.pieceInput('p_excerpt', $p_excerpt).'<br><br>';
+  $infomsg = 'Excerpt / Summary: replaces main content in feeds and blog series lists, optional Podcast summary; unstyled text, HTML not allowed';
+  echo 'Excerpt / Summary:'.infoPop('excerpt_info', $infomsg).'<br>'.pieceInput('p_excerpt', $p_excerpt).'<br><br>';
 
   // Subtitle & Podcast Description
   $infomsg = 'Subtitle / Description: optional description to appear in Podcasts and some feeds';
