@@ -526,12 +526,18 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $p_type = "$row->type";
         $p_series = "$row->series";
         $p_title = "$row->title";
+        $p_subtitle = "$row->subtitle";
         $p_slug = "$row->slug";
         $p_content = "$row->content";
         $p_after = "$row->after";
+        $p_excerpt = "$row->excerpt";
         $p_tags_json = "$row->tags";
         $p_links_json = "$row->links";
         $p_live = "$row->date_live";
+        $p_feat_img = "$row->feat_img";
+        $p_feat_aud = "$row->feat_aud";
+        $p_feat_vid = "$row->feat_vid";
+        $p_feat_doc = "$row->feat_doc";
         $editing_published_piece = true;
       }
 
