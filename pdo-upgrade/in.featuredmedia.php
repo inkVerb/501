@@ -43,7 +43,7 @@ if ($pdo->numrows == 1) {
 }
 
 // Featured audio filename
-$query = $database->prepare("SELECT file_base, file_extension, mime_type, location FROM media_library WHERE id=:id AND basic_type='AUDIO'");
+$query = $database->prepare("SELECT file_base, file_extension, mime_type, location, duration FROM media_library WHERE id=:id AND basic_type='AUDIO'");
 $query->bindParam(':id', $p_feat_aud);
 $rows = $pdo->exec_($query);
 // Shoule be 1 row
@@ -60,6 +60,7 @@ if ($pdo->numrows == 1) {
     $feat_aud_file_link = '<a href="'.$feat_aud_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_aud_file</b>".'</a>';
     $feat_aud_showhide = 'inline';
     $feat_aud_file_size = filesize($feat_aud_file_relpath);
+    $feat_aud_duration = "$row->duration";
   }
 } else {
   $feat_aud_id = 0;
@@ -69,7 +70,7 @@ if ($pdo->numrows == 1) {
 }
 
 // Featured video filename
-$query = $database->prepare("SELECT file_base, file_extension, mime_type, location FROM media_library WHERE id=:id AND basic_type='VIDEO'");
+$query = $database->prepare("SELECT file_base, file_extension, mime_type, location, duration FROM media_library WHERE id=:id AND basic_type='VIDEO'");
 $query->bindParam(':id', $p_feat_vid);
 $rows = $pdo->exec_($query);
 // Shoule be 1 row
@@ -86,6 +87,7 @@ if ($pdo->numrows == 1) {
     $feat_vid_file_link = '<a href="'.$feat_vid_url.'" target="_blank" style="text-decoration:none;">'."<b>$feat_vid_file</b>".'</a>';
     $feat_vid_showhide = 'inline';
     $feat_vid_file_size = filesize($feat_vid_file_relpath);
+    $feat_vid_duration = "$row->duration";
   }
 } else {
   $feat_vid_id = 0;

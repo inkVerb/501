@@ -254,15 +254,16 @@ EOF;
 
 echo <<<EOF
   <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="audio/mpeg" />
-  <itunes:duration>56:48</itunes:duration>
+  <itunes:duration>$feat_aud_duration</itunes:duration>
 EOF;
     }
 
     if ($feat_vid_id != 0) {
 
-      echo $feat_vid_url;
-      echo $feat_vid_file_size;
-
+echo <<<EOF
+  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="audio/mpeg" />
+  <itunes:duration>$feat_vid_duration</itunes:duration>
+EOF;
     }
 
     if ($feat_doc_id != 0) {

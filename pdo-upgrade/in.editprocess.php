@@ -375,7 +375,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
+          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callh = $pdo->ok;
@@ -408,7 +408,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callp = $pdo->ok;
-          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live, date_updated FROM pieces WHERE id=:id");
+          $query = $database->prepare("INSERT INTO publication_history (piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated) SELECT id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM pieces WHERE id=:id");
           $query->bindParam(':id', $piece_id_trim);
           $pdo->exec_($query);
           $callh = $pdo->ok;
@@ -517,7 +517,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     $revert_id = preg_replace("/[^0-9]/"," ", $_GET['h']);
 
     // Retrieve existing piece from history
-    $rowsc = $pdo->select('publication_history', 'id', $revert_id, 'piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, date_live');
+    $rowsc = $pdo->select('publication_history', 'id', $revert_id, 'piece_id, type, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live');
     // Shoule be 1 row
     if ($pdo->numrows == 1) {
       foreach ($rowsc as $row) {

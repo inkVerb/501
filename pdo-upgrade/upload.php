@@ -198,41 +198,51 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
         switch ($upload_type) {
           case 'img':
             shell_exec('./bash.imageprocess.sh '.$file_basename.' '.$file_extension.' '.$img_orientation.' '.$img_xs.' '.$img_sm.' '.$img_md.' '.$img_lg.' '.$img_xl);
+            // Correct non-accepted conversions
+            $file_mime = ($file_extension == 'bmp') ? 'image/png' : $file_mime;
+            $file_extension = ($file_extension == 'bmp') ? 'png' : $file_extension;
+            // Duration
+            $file_duration = '';
 
           break;
           case 'svg':
             shell_exec('./bash.imageprocess.sh '.$file_basename.' '.$file_extension.' svg');
+            // Duration
+            $file_duration = '';
 
           break;
           case 'vid':
             shell_exec('./bash.videoprocess.sh '.$file_basename.' '.$file_extension);
+            // Correct non-accepted conversions
+            $file_mime = ($file_extension == 'flv') ? 'video/mp4' : $file_mime;
+            $file_extension = ($file_extension == 'flv') ? 'mp4' : $file_extension;
+            $file_mime = ($file_extension == 'avi') ? 'video/mp4' : $file_mime;
+            $file_extension = ($file_extension == 'avi') ? 'mp4' : $file_extension;
+            $file_mime = ($file_extension == 'mkv') ? 'video/mp4' : $file_mime;
+            $file_extension = ($file_extension == 'mkv') ? 'mp4' : $file_extension;
+            $file_mime = ($file_extension == 'mov') ? 'video/mp4' : $file_mime;
+            $file_extension = ($file_extension == 'mov') ? 'mp4' : $file_extension;
+            // Duration
+            $file_duration = shell_exec('./bash.duration.sh '.$file_basename.' '.$file_extension);
 
           break;
           case 'aud':
             shell_exec('./bash.audioprocess.sh '.$file_basename.' '.$file_extension);
+            // Duration
+            $file_duration = shell_exec('./bash.duration.sh '.$file_basename.' '.$file_extension);
 
           break;
           case 'doc':
             shell_exec('./bash.documprocess.sh '.$file_basename.' '.$file_extension.' pdf');
+            // Duration
+            $file_duration = '';
 
           break;
         }
 
-        // Correct non-accepted conversions
-        $file_mime = ($file_extension == 'bmp') ? 'image/png' : $file_mime;
-        $file_extension = ($file_extension == 'bmp') ? 'png' : $file_extension;
-        $file_mime = ($file_extension == 'flv') ? 'video/mp4' : $file_mime;
-        $file_extension = ($file_extension == 'flv') ? 'mp4' : $file_extension;
-        $file_mime = ($file_extension == 'avi') ? 'video/mp4' : $file_mime;
-        $file_extension = ($file_extension == 'avi') ? 'mp4' : $file_extension;
-        $file_mime = ($file_extension == 'mkv') ? 'video/mp4' : $file_mime;
-        $file_extension = ($file_extension == 'mkv') ? 'mp4' : $file_extension;
-        $file_mime = ($file_extension == 'mov') ? 'video/mp4' : $file_mime;
-        $file_extension = ($file_extension == 'mov') ? 'mp4' : $file_extension;
-
         // SQL entry
-        $cols = 'size, mime_type, basic_type, location, file_base, file_extension';
-        $vals = "'$file_size', '$file_mime', '$basic_type', '$upload_location', '$file_basename', '$file_extension'";
+        $cols = 'size, mime_type, basic_type, location, file_base, file_extension, duration';
+        $vals = "'$file_size', '$file_mime', '$basic_type', '$upload_location', '$file_basename', '$file_extension', '$file_duration'";
         $pdo->insert('media_library', $cols, $vals);
         if (!$pdo->ok) {
           $errors .= '<span class="error">SQL error</span><br><br>';

@@ -297,7 +297,7 @@ $prevpaged = $paged - 1;
     <?php
 
     // Get and display each item
-    $query = $database->prepare("SELECT id, file_base, file_extension, basic_type, location, size, alt_text FROM media_library ORDER BY id DESC LIMIT $itemskip,$pageitems");
+    $query = $database->prepare("SELECT id, file_base, file_extension, basic_type, location, size, alt_text, duration FROM media_library ORDER BY id DESC LIMIT $itemskip,$pageitems");
     $rows = $pdo->exec_($query);
 
     // Is anything there?
@@ -392,6 +392,7 @@ $prevpaged = $paged - 1;
         $m_location = "$row->location";
         $m_size = "$row->size";
         $m_alt = "$row->alt_text";
+        $m_duration = "$row->duration";
 
         // Proper filename
         $m_filename = $m_file_base.'.'.$m_file_extension;
@@ -429,9 +430,8 @@ $prevpaged = $paged - 1;
               // Info
               echo '<td class="media-lib-info">';
 
-              $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
               // Set links
+              $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
               $img_svg_link = (file_exists($img_svg)) ? '<a href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
 
               // File links
@@ -498,10 +498,12 @@ $prevpaged = $paged - 1;
             // Info
             echo '<td class="media-lib-info">';
 
-            $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-            $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            // Duration
+            echo '<pre id="duration_'.$m_id.'"><small>'.$m_duration.'</small></pre>';
 
             // Set links
+            $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
             $vid_web_link = (file_exists($vid_web)) ? '<a href="http://localhost/web/'.$vid_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
             $vid_ori_link = (file_exists($vid_ori)) ? '<a href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
 
@@ -522,10 +524,12 @@ $prevpaged = $paged - 1;
             // Info
             echo '<td class="media-lib-info">';
 
-            $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
-            $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            // Duration
+            echo '<pre id="duration_'.$m_id.'"><small>'.$m_duration.'</small></pre>';
 
             // Set links
+            $aud_web = $basepath.$m_location.'/'.$m_file_base.'.mp3';
+            $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
             $aud_web_link = (file_exists($aud_web)) ? '<a href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
             $aud_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
 
@@ -547,9 +551,8 @@ $prevpaged = $paged - 1;
               // Info
               echo '<td class="media-lib-info">';
 
-              $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
               // Set links
+              $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
               $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
 
               // File links
@@ -566,10 +569,9 @@ $prevpaged = $paged - 1;
               // Info
               echo '<td class="media-lib-info">';
 
+              // Set links
               $doc_web = $basepath.$m_location.'/'.$m_file_base.'.pdf';
               $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-
-              // Set links
               $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
               $doc_ori_link = (file_exists($doc_ori)) ? '<a href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
 
