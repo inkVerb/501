@@ -84,7 +84,11 @@ $pro_podcast_path = (file_exists($pro_podcast_path)) ? $pro_podcast_path : '';
 // Header of feed
 echo <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+<rss version="2.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+  >
 <channel>
 	<title>$feed_title</title>
 	<link>$feed_link</link>
@@ -228,7 +232,7 @@ echo <<<EOF
   <link>$blog_web_base/$p_slug</link>
   <guid>$p_id-$p_slug</guid>
   <pubDate>$p_date $feed_timezone</pubDate>
-  <author>$feed_author</author>
+  <author><![CDATA[$feed_author]]></author>
   <dc:creator><![CDATA[$feed_author]]></dc:creator>
   <category><![CDATA[$p_series]]></category>
   <description>$p_subtitle</description>

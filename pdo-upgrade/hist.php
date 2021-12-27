@@ -66,10 +66,16 @@ if (isset($_POST['as_json'])) {
       }
     }
 
+  $p_subtitle = checkPiece('p_subtitle',$as_diff_array["p_subtitle"]);
   $p_content = checkPiece('p_content',$as_diff_array["p_content"]);
   $p_after = checkPiece('p_after',$as_diff_array["p_after"]);
+  $p_excerpt = checkPiece('p_excerpt',$as_diff_array["p_excerpt"]);
   $p_tags_json = checkPiece('p_tags',$as_diff_array["p_tags"]);
   $p_links_json = checkPiece('p_links',$as_diff_array["p_links"]);
+  $p_feat_img = checkPiece('p_feat_img',$as_diff_array["p_feat_img"]);
+  $p_feat_aud = checkPiece('p_feat_aud',$as_diff_array["p_feat_aud"]);
+  $p_feat_vid = checkPiece('p_feat_vid',$as_diff_array["p_feat_vid"]);
+  $p_feat_doc = checkPiece('p_feat_doc',$as_diff_array["p_feat_doc"]);
   $p_update = date("Y-m-d H:i:s", substr($as_diff_array["as_time"], 0, 10));
 
   // Prepare our database values for entry
@@ -104,9 +110,9 @@ if (isset($_POST['as_json'])) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['p']);
   $diffing = "latest draft v current publication";
-  $query_p = $database->prepare("SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
+  $query_p = $database->prepare("SELECT title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
   $query_p->bindParam(':id', $piece_id);
-  $query_o = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
+  $query_o = $database->prepare("SELECT id, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
   $query_o->bindParam(':piece_id', $piece_id);
   $diff_type = 'p';
   // Values
@@ -115,11 +121,17 @@ if (isset($_POST['as_json'])) {
       // Assign the values
       $p_id = "draft_"; // Make sure this can't be a slug, underscore is not allowed for slugs
       $p_title = "$row_p->title";
+      $p_subtitle = "$row_p->subtitle";
       $p_slug = "$row_p->slug";
       $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $p_after = "$row_p->after";
+      $p_excerpt = "$row_p->excerpt";
       $p_tags_json = "$row_p->tags";
       $p_links_json = "$row_p->links";
+      $p_feat_img = "$row_p->feat_img";
+      $p_feat_aud = "$row_p->feat_aud";
+      $p_feat_vid = "$row_p->feat_vid";
+      $p_feat_doc = "$row_p->feat_doc";
       $p_update = "$row_p->date_updated";
     }
   $rows_o = $pdo->exec_($query_o);
@@ -127,11 +139,17 @@ if (isset($_POST['as_json'])) {
       // Assign the values
       $o_id = "$row_o->id";
       $o_title = "$row_o->title";
+      $o_subtitle = "$row_o->subtitle";
       $o_slug = "$row_o->slug";
       $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $o_after = "$row_o->after";
+      $o_excerpt = "$row_o->excerpt";
       $o_tags_sqljson = "$row_o->tags";
       $o_links_sqljson = "$row_o->links";
+      $o_feat_img = "$row_o->feat_img";
+      $o_feat_aud = "$row_o->feat_aud";
+      $o_feat_vid = "$row_o->feat_vid";
+      $o_feat_doc = "$row_o->feat_doc";
       $o_update = "$row_o->date_updated";
     }
 // Recovered autosave
@@ -149,7 +167,7 @@ if (isset($_POST['as_json'])) {
 
   $piece_id_o = preg_replace("/[^0-9]/"," ", $_GET['o']);
   $diffing = "recovered autosave (unsaved changes from current browser, not available in any history)";
-  $query_o = $database->prepare("SELECT title, slug, content, after, tags, links, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
+  $query_o = $database->prepare("SELECT title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM pieces WHERE id=:id ORDER BY id DESC LIMIT 1");
   $query_o->bindParam(':id', $piece_id_o);
   $row_p = true; // So we don't fail tests since all other scenarios use two calls
   $diff_type = 'as';
@@ -158,22 +176,34 @@ if (isset($_POST['as_json'])) {
     foreach ($rows_o as $row_o) {
       // Assign the values
       $o_title = "$row_o->title";
+      $o_subtitle = "$row_o->subtitle";
       $o_slug = "$row_o->slug";
       $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $o_after = "$row_o->after";
+      $o_excerpt = "$row_o->excerpt";
       $o_tags_sqljson = "$row_o->tags";
       $o_links_sqljson = "$row_o->links";
+      $o_feat_img = "$row_o->feat_img";
+      $o_feat_aud = "$row_o->feat_aud";
+      $o_feat_vid = "$row_o->feat_vid";
+      $o_feat_doc = "$row_o->feat_doc";
       $o_update = "$row_o->date_updated";
       $o_id = $piece_id_o;
     }
     // Assign the values
     $piece_id_p = $as_diff_array["piece_id"];
     $p_title = $as_diff_array["p_title"];
+    $p_subtitle = $as_diff_array["subtitle"];
     $p_slug = $as_diff_array["p_slug"];
     $p_content = $as_diff_array["p_content"];
     $p_after = $as_diff_array["p_after"];
+    $p_excerpt = $as_diff_array["excerpt"];
     $p_tags_json = $as_diff_array["p_tags"];
     $p_links_json = $as_diff_array["p_links"];
+    $p_feat_img = $as_diff_array["feat_img"];
+    $p_feat_aud = $as_diff_array["feat_aud"];
+    $p_feat_vid = $as_diff_array["feat_vid"];
+    $p_feat_doc = $as_diff_array["feat_doc"];
     $p_update = date("Y-m-d H:i:s", substr($as_diff_array["as_time"], 0, 10));
 
     // Make sure both history IDs match the same piece ID
@@ -198,9 +228,9 @@ if (isset($_POST['as_json'])) {
   $piece_id_c = preg_replace("/[^0-9]/"," ", $_GET['c']);
   $piece_id_h = preg_replace("/[^0-9]/"," ", $_GET['h']);
   $diffing = "older publications (not current publication)";
-  $query_p = $database->prepare("SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id=:id");
+  $query_p = $database->prepare("SELECT piece_id, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM publication_history WHERE id=:id");
   $query_p->bindParam(':id', $piece_id_c);
-  $query_o = $database->prepare("SELECT piece_id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE id=:id");
+  $query_o = $database->prepare("SELECT piece_id, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM publication_history WHERE id=:id");
   $query_o->bindParam(':id', $piece_id_h);
   $diff_type = 'ch';
   // Values
@@ -209,11 +239,17 @@ if (isset($_POST['as_json'])) {
       // Assign the values
       $piece_id_p = "$row_p->piece_id";
       $p_title = "$row_p->title";
+      $p_subtitle = "$row_p->subtitle";
       $p_slug = "$row_p->slug";
       $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $p_after = "$row_p->after";
+      $p_excerpt = "$row_p->excerpt";
       $p_tags_json = "$row_p->tags";
       $p_links_json = "$row_p->links";
+      $p_feat_img = "$row_p->feat_img";
+      $p_feat_aud = "$row_p->feat_aud";
+      $p_feat_vid = "$row_p->feat_vid";
+      $p_feat_doc = "$row_p->feat_doc";
       $p_update = "$row_p->date_updated";
       $p_id = $piece_id_c;
     }
@@ -222,11 +258,17 @@ if (isset($_POST['as_json'])) {
       // Assign the values
       $piece_id_o = "$row_o->piece_id";
       $o_title = "$row_o->title";
+      $o_subtitle = "$row_o->subtitle";
       $o_slug = "$row_o->slug";
       $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $o_after = "$row_o->after";
+      $o_excerpt = "$row_o->excerpt";
       $o_tags_sqljson = "$row_o->tags";
       $o_links_sqljson = "$row_o->links";
+      $o_feat_img = "$row_o->feat_img";
+      $o_feat_aud = "$row_o->feat_aud";
+      $o_feat_vid = "$row_o->feat_vid";
+      $o_feat_doc = "$row_o->feat_doc";
       $o_update = "$row_o->date_updated";
       $o_id = $piece_id_h;
     }
@@ -244,9 +286,9 @@ if (isset($_POST['as_json'])) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_GET['r']);
   $diffing = "latest publication (not current draft)";
-  $query_p = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
+  $query_p = $database->prepare("SELECT id, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1");
   $query_p->bindParam(':piece_id', $piece_id);
-  $query_o = $database->prepare("SELECT id, title, slug, content, after, tags, links, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1,1");
+  $query_o = $database->prepare("SELECT id, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_updated FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1,1");
   $query_o->bindParam(':piece_id', $piece_id);
   $diff_type = 'r';
   // Values
@@ -255,11 +297,17 @@ if (isset($_POST['as_json'])) {
       // Assign the values
       $p_id = "$row_p->id";
       $p_title = "$row_p->title";
+      $p_subtitle = "$row_p->subtitle";
       $p_slug = "$row_p->slug";
       $p_content = htmlspecialchars_decode("$row_p->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $p_after = "$row_p->after";
+      $p_excerpt = "$row_p->excerpt";
       $p_tags_json = "$row_p->tags";
       $p_links_json = "$row_p->links";
+      $p_feat_img = "$row_p->feat_img";
+      $p_feat_aud = "$row_p->feat_aud";
+      $p_feat_vid = "$row_p->feat_vid";
+      $p_feat_doc = "$row_p->feat_doc";
       $p_update = "$row_p->date_updated";
     }
   $rows_o = $pdo->exec_($query_o);
@@ -267,11 +315,17 @@ if (isset($_POST['as_json'])) {
       // Assign the values
       $o_id = "$row_o->id";
       $o_title = "$row_o->title";
+      $o_subtitle = "$row_o->subtitle";
       $o_slug = "$row_o->slug";
       $o_content = htmlspecialchars_decode("$row_o->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
       $o_after = "$row_o->after";
+      $o_excerpt = "$row_o->excerpt";
       $o_tags_sqljson = "$row_o->tags";
       $o_links_sqljson = "$row_o->links";
+      $o_feat_img = "$row_o->feat_img";
+      $o_feat_aud = "$row_o->feat_aud";
+      $o_feat_vid = "$row_o->feat_vid";
+      $o_feat_doc = "$row_o->feat_doc";
       $o_update = "$row_o->date_updated";
     }
 } else {
@@ -338,6 +392,14 @@ if (!empty($links_array)) {
   <br>
   $p_after
   <br><br>
+  <code>Excerpt / Summary:</code><br>
+  <br>
+  $p_excerpt
+  <br><br>
+  <code>Subtitle / Description:</code><br>
+  <br>
+  $p_subtitle
+  <br><br>
   <code>Links:</code><br>
   <br>
   $p_links
@@ -345,6 +407,16 @@ if (!empty($links_array)) {
   <code>Tags:</code><br>
   <br>
   $p_tags
+  <br><br>
+  <code>Featured Media:</code><br>
+  <br><br>
+  Image: $p_feat_img
+  <br>
+  Audio: $p_feat_aud
+  <br>
+  Video: $o_feat_vid
+  <br>
+  Document: $p_feat_doc
 EOP;
 // No spaces or comments before or after the ending delimeter of a heredoc!
 
@@ -361,6 +433,14 @@ EOP;
   <br>
   $o_after
   <br><br>
+  <code>Excerpt / Summary:</code><br>
+  <br>
+  $o_excerpt
+  <br><br>
+  <code>Subtitle / Description:</code><br>
+  <br>
+  $o_subtitle
+  <br><br>
   <code>Links:</code><br>
   <br>
   $o_links
@@ -368,6 +448,16 @@ EOP;
   <code>Tags:</code><br>
   <br>
   $o_tags
+  <br><br>
+  <code>Featured Media:</code><br>
+  <br><br>
+  Image: $o_feat_img
+  <br>
+  Audio: $o_feat_aud
+  <br>
+  Video: $o_feat_vid
+  <br>
+  Document: $o_feat_doc
 EOP;
 // No spaces or comments before or after the ending delimeter of a heredoc!
 

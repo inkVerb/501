@@ -126,22 +126,31 @@ include ('./in.featuredmedia.php');
 
   // New or update?
   if (isset($piece_id)) { // Updating piece
-    // Unpublished changes to draft?
-    $query = $database->prepare("SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=:piece_id ORDER BY U.id DESC LIMIT 1");
+    // Published or first draft?
+    $query = $database->prepare("SELECT id FROM publication_history WHERE piece_id=:piece_id ORDER BY id DESC LIMIT 1,1");
     $query->bindParam(':piece_id', $piece_id);
-    $pdo->exec_($query);
-    $draft_diff = ($pdo->numrows == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> for unpublished changes</pre>' : '';
-    echo $draft_diff;
+    // Values
+    $rows = $pdo->exec_($query);
+    if ($pdo->numrows > 0) {
 
-    // Other notices and relevant links
-    if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
-      echo '<pre><a href="'.$p_slug.'" target="_blank">view on blog</a></pre>';
-    } else {
-      echo '<pre>(unpublished draft)</pre>';
+      // Unpublished changes to draft?
+      $query = $database->prepare("SELECT P.date_updated FROM pieces AS P LEFT JOIN publications AS U ON P.id=U.piece_id AND P.date_updated=U.date_updated WHERE U.piece_id=:piece_id ORDER BY U.id DESC LIMIT 1");
+      $query->bindParam(':piece_id', $piece_id);
+      $pdo->exec_($query);
+      $draft_diff = ($pdo->numrows == 0) ? '<pre class="orange"><a href="hist.php?p='.$piece_id.'">view diff</a> for unpublished changes</pre>' : '<pre><a href="'.$blog_web_base.'/hist.php?p='.$piece_id.'">history</a></pre>';
+      echo $draft_diff;
+
+      // Other notices and relevant links
+      if ( (isset($editing_published_piece)) && ($editing_published_piece == true) ) {
+        echo '<pre><a href="'.$p_slug.'" target="_blank">view on blog</a></pre>';
+      } else {
+        echo '<pre>(unpublished draft)</pre>';
+      }
     }
+
     // Preview & change notices
     echo '<pre><a href="piece.php?p='.$piece_id.'&preview" target="_blank">preview</a></pre>';
-    echo '<pre><a href="'.$blog_web_base.'/hist.php?p='.$p_id.'">history</a></pre>';
+
     echo '<div id="edit_changes_notice"></div>';
     // Our edit form
     echo '<form action="edit.php?p='.$piece_id.'" method="post" name="edit_piece" id="edit_piece">';
@@ -654,11 +663,17 @@ if (isset($piece_id)) {
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)
           as_json["piece_id"] = edit_piece_json["piece_id"];
           as_json["p_title"] = edit_piece_json["p_title"];
+          as_json["p_subtitle"] = edit_piece_json["p_subtitle"];
           as_json["p_slug"] = edit_piece_json["p_slug"];
           as_json["p_content"] = edit_piece_json["p_content"];
           as_json["p_after"] = edit_piece_json["p_after"];
+          as_json["p_excerpt"] = edit_piece_json["p_excerpt"];
           as_json["p_tags"] = edit_piece_json["p_tags"];
           as_json["p_links"] = edit_piece_json["p_links"];
+          as_json["p_feat_img"] = edit_piece_json["p_feat_img"];
+          as_json["p_feat_aud"] = edit_piece_json["p_feat_aud"];
+          as_json["p_feat_vid"] = edit_piece_json["p_feat_vid"];
+          as_json["p_feat_doc"] = edit_piece_json["p_feat_doc"];
           as_json["as_time"] = new Date().getTime(); // "Epoch" time in miliseconds from Jan 1, 1970
         // Set our local storage ID
         as_id = 'as_'+as_json["piece_id"];
@@ -729,11 +744,17 @@ if (isset($piece_id)) {
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)
           curr_json["piece_id"] = edit_piece_json["piece_id"];
           curr_json["p_title"] = edit_piece_json["p_title"];
+          curr_json["p_subtitle"] = edit_piece_json["p_subtitle"];
           curr_json["p_slug"] = edit_piece_json["p_slug"];
           curr_json["p_content"] = edit_piece_json["p_content"];
           curr_json["p_after"] = edit_piece_json["p_after"];
+          curr_json["p_excerpt"] = edit_piece_json["p_excerpt"];
           curr_json["p_tags"] = edit_piece_json["p_tags"];
           curr_json["p_links"] = edit_piece_json["p_links"];
+          curr_json["p_feat_img"] = edit_piece_json["p_feat_img"];
+          curr_json["p_feat_aud"] = edit_piece_json["p_feat_aud"];
+          curr_json["p_feat_vid"] = edit_piece_json["p_feat_vid"];
+          curr_json["p_feat_doc"] = edit_piece_json["p_feat_doc"];
           var curr = JSON.stringify(curr_json);
           var pID = edit_piece_json["piece_id"];
         if (localStorage.getItem(as_id) === null) { // If there is no autosave
