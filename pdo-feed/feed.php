@@ -15,23 +15,23 @@ if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s']))) { // Validate
   // Series Info
   $rows = $pdo->select('series', 'slug', $series_slug, 'id, name, series_lang, series_link, series_author, series_descr, series_summary, series_owner, series_email, series_copy, series_keywords, series_explicit, series_cat1, series_cat2, series_cat3, series_cat4, series_cat5');
   foreach ($rows as $row) {
-    $series_id = $row->id;
-    $series_name = $row->name;
-    $feed_lang = $row->series_lang;
-    $feed_link = $row->series_link;
-    $feed_author = $row->series_author;
-    $feed_descr = $row->series_descr;
-    $feed_summary = $row->series_summary;
-    $feed_owner = $row->series_owner;
-    $feed_email = $row->series_email;
-    $feed_copy = $row->series_copy;
-    $feed_keywords = $row->series_keywords;
-    $feed_explicit = $row->series_explicit;
-    $feed_cat1 = $row->series_cat1;
-    $feed_cat2 = $row->series_cat2;
-    $feed_cat3 = $row->series_cat3;
-    $feed_cat4 = $row->series_cat4;
-    $feed_cat5 = $row->series_cat5;
+    $series_id = "$row->id";
+    $series_name = "$row->name";
+    $feed_lang = "$row->series_lang";
+    $feed_link = "$row->series_link";
+    $feed_author = "$row->series_author";
+    $feed_descr = "$row->series_descr";
+    $feed_summary = "$row->series_summary";
+    $feed_owner = "$row->series_owner";
+    $feed_email = "$row->series_email";
+    $feed_copy = "$row->series_copy";
+    $feed_keywords = "$row->series_keywords";
+    $feed_explicit = "$row->series_explicit";
+    $feed_cat1 = "$row->series_cat1";
+    $feed_cat2 = "$row->series_cat2";
+    $feed_cat3 = "$row->series_cat3";
+    $feed_cat4 = "$row->series_cat4";
+    $feed_cat5 = "$row->series_cat5";
   }
   $feed_title = $blog_title.' :: '.$series_name;
   $feed_link = $blog_web_base.'/series/'.$p_series_slug;
@@ -46,24 +46,25 @@ if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s']))) { // Validate
 
 } else {
   // Blog Info
+  //$rows = $pdo->select('blog_settings', 'public', '1', 'blog_lang, blog_link, blog_author, blog_descr, blog_summary, blog_owner, blog_email, blog_copy, blog_keywords, blog_explicit, blog_cat1, blog_cat2, blog_cat3, blog_cat4, blog_cat5');
   $query = $database->prepare("SELECT blog_lang, blog_link, blog_author, blog_descr, blog_summary, blog_owner, blog_email, blog_copy, blog_keywords, blog_explicit, blog_cat1, blog_cat2, blog_cat3, blog_cat4, blog_cat5 FROM blog_settings");
   $rows = $pdo->exec_($query);
   foreach ($rows as $row) {
-    $feed_lang = $row->blog_lang;
-    $feed_link = $row->blog_link;
-    $feed_author = $row->blog_author;
-    $feed_descr = $row->blog_descr;
-    $feed_summary = $row->blog_summary;
-    $feed_owner = $row->blog_owner;
-    $feed_email = $row->blog_email;
-    $feed_copy = $row->blog_copy;
-    $feed_keywords = $row->blog_keywords;
-    $feed_explicit = $row->blog_explicit;
-    $feed_cat1 = $row->blog_cat1;
-    $feed_cat2 = $row->blog_cat2;
-    $feed_cat3 = $row->blog_cat3;
-    $feed_cat4 = $row->blog_cat4;
-    $feed_cat5 = $row->blog_cat5;
+    $feed_lang = "$row->blog_lang";
+    $feed_link = "$row->blog_link";
+    $feed_author = "$row->blog_author";
+    $feed_descr = "$row->blog_descr";
+    $feed_summary = "$row->blog_summary";
+    $feed_owner = "$row->blog_owner";
+    $feed_email = "$row->blog_email";
+    $feed_copy = "$row->blog_copy";
+    $feed_keywords = "$row->blog_keywords";
+    $feed_explicit = "$row->blog_explicit";
+    $feed_cat1 = "$row->blog_cat1";
+    $feed_cat2 = "$row->blog_cat2";
+    $feed_cat3 = "$row->blog_cat3";
+    $feed_cat4 = "$row->blog_cat4";
+    $feed_cat5 = "$row->blog_cat5";
   }
   $feed_title = $blog_title;
   $feed_link = $blog_web_base;
@@ -244,13 +245,11 @@ echo <<<EOF
   <itunes:explicit>$feed_explicit</itunes:explicit>
 EOF;
 
-    // Featured Media
-    include ('./in.featuredmediadisplay.php');
-
     if ($feat_img_id != 0) {
 
-      echo $feat_img_url;
-      echo $feat_img_file_size;
+echo <<<EOF
+  <enclosure url="$feat_img_url" length="$feat_img_file_size" type="audio/mpeg" />
+EOF;
 
     }
 
@@ -272,8 +271,10 @@ EOF;
 
     if ($feat_doc_id != 0) {
 
-      echo $feat_vid_url;
-      echo $feat_vid_file_size;
+echo <<<EOF
+  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="video/mpeg" />
+  <itunes:duration>$feat_vid_duration</itunes:duration>
+EOF;
 
     }
 

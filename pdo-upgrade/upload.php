@@ -240,10 +240,29 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
           break;
         }
 
+        // Correct non-accepted conversions
+        $file_mime = ($file_extension == 'bmp') ? 'image/png' : $file_mime;
+        $file_extension = ($file_extension == 'bmp') ? 'png' : $file_extension;
+        $file_mime = ($file_extension == 'flv') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'flv') ? 'mp4' : $file_extension;
+        $file_mime = ($file_extension == 'avi') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'avi') ? 'mp4' : $file_extension;
+        $file_mime = ($file_extension == 'mkv') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'mkv') ? 'mp4' : $file_extension;
+        $file_mime = ($file_extension == 'mov') ? 'video/mp4' : $file_mime;
+        $file_extension = ($file_extension == 'mov') ? 'mp4' : $file_extension;
+
         // SQL entry
-        $cols = 'size, mime_type, basic_type, location, file_base, file_extension, duration';
-        $vals = "'$file_size', '$file_mime', '$basic_type', '$upload_location', '$file_basename', '$file_extension', '$file_duration'";
-        $pdo->insert('media_library', $cols, $vals);
+        $query = $database->prepare("INSERT INTO media_library (size, mime_type, basic_type, location, file_base, file_extension, duration)
+                VALUES (:size, :mime_type, :basic_type, :location, :file_base, :file_extension, :duration)");
+        $query->bindParam(':size', $file_size);
+        $query->bindParam(':mime_type', $file_mime);
+        $query->bindParam(':basic_type', $basic_type);
+        $query->bindParam(':location', $upload_location);
+        $query->bindParam(':file_base', $file_basename);
+        $query->bindParam(':file_extension', $file_extension);
+        $query->bindParam(':duration', $file_duration);
+        $pdo->exec_($query);
         if (!$pdo->ok) {
           $errors .= '<span class="error">SQL error</span><br><br>';
           // Show our $errors
@@ -254,9 +273,18 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
           // Add images to the imgaes table
           if ($upload_type == 'img') {
-            $cols = 'm_id, orientation, width, height, xs, sm, md, lg, xl';
-            $vals = "'$m_id', '$img_orientation', '$img_w', '$img_h', '$img_xs', '$img_sm', '$img_md', '$img_lg', '$img_xl'";
-            $pdo->insert('media_images', $cols, $vals);
+            $query = $database->prepare("INSERT INTO media_library (m_id, orientation, width, height, xs, sm, md, lg, xl)
+                    VALUES (:m_id, :orientation, :width, :height, :xs, :sm, :md, :lg, :xl)");
+            $query->bindParam(':m_id', $m_id);
+            $query->bindParam(':orientation', $img_orientation);
+            $query->bindParam(':width', $img_w);
+            $query->bindParam(':height', $img_h);
+            $query->bindParam(':xs', $img_xs);
+            $query->bindParam(':sm', $img_sm);
+            $query->bindParam(':md', $img_md);
+            $query->bindParam(':lg', $img_lg);
+            $query->bindParam(':xl', $img_xl);
+            $pdo->exec_($query);
             if (!$pdo->ok) {
               $errors .= '<span class="error">SQL image error</span><br><br>';
               // Show our $errors

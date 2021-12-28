@@ -14,9 +14,13 @@ name="$1"
 ext="$2"
 
 # Test for accepted types, redundant and secure
-if [ "$ext" != "mp3" ] && [ "$ext" != "ogg" ] && [ "$ext" != "wav" ] && [ "$ext" != "flac" ][ "$ext" != "webm" ] && [ "$ext" != "mp4" ] && [ "$ext" != "flv" ] && [ "$ext" != "avi" ] && [ "$ext" != "mkv" ] && [ "$ext" != "mov" ]; then
+if [ "$ext" == "mp3" ] || [ "$ext" == "ogg" ] || [ "$ext" == "wav" ] || [ "$ext" == "flac" ]; then
+  media_type="audio"
+elif  [ "$ext" == "webm" ] || [ "$ext" == "mp4" ] || [ "$ext" == "flv" ] || [ "$ext" == "avi" ] || [ "$ext" == "mkv" ] || [ "$ext" == "mov" ]; then
+  media_type="video"
+else
   exit 0; # Quiet exit, no need for STDERR
 fi
-# Run the probe
-ffprobe -i "${basepath}audio/${name}.mp3" -show_entries format=duration -v quiet -of csv="p=0" -sexagesimal | cut -f1 -d '.'
 
+# Run the probe
+ffprobe -i "${basepath}${media_type}/${name}.mp3" -show_entries format=duration -v quiet -of csv="p=0" -sexagesimal | cut -f1 -d '.'

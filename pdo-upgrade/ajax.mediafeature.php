@@ -107,7 +107,7 @@ $m_basic_type = $_POST['feature_type'];
   }
 
   // Get and display each item
-  $query = $database->prepare("SELECT id, file_base, file_extension, location, size, alt_text FROM media_library WHERE basic_type=:basic_type ORDER BY id DESC LIMIT $itemskip,$pageitems");
+  $query = $database->prepare("SELECT id, file_base, file_extension, location, size, alt_text, duration FROM media_library WHERE basic_type=:basic_type ORDER BY id DESC LIMIT $itemskip,$pageitems");
   $query->bindParam(':basic_type', $m_basic_type);
   $rows = $pdo->exec_($query);
 
@@ -145,6 +145,7 @@ $m_basic_type = $_POST['feature_type'];
       $m_location = "$row->location";
       $m_size = "$row->size";
       $m_alt = "$row->alt_text";
+      $m_duration = "$row->duration";
 
       // Proper filename
       $m_filename = $m_file_base.'.'.$m_file_extension;
@@ -168,7 +169,7 @@ $m_basic_type = $_POST['feature_type'];
       }
 
       // Clickable text to set featured media
-      $set_button = '<button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\'); onNavWarn();">&larr; '.$m_filename.'</button>&nbsp;('.human_file_size(filesize($m_filename_full_path)).')<br>';
+      $set_button = '<button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\'); onNavWarn(); mediaInsertHide(); mediaFeatureHide();">&larr; '.$m_filename.'</button>&nbsp;('.human_file_size(filesize($m_filename_full_path)).')<br>';
 
       // Fill-in the row per media type
       switch ($m_basic_type) {
@@ -201,7 +202,7 @@ $m_basic_type = $_POST['feature_type'];
           $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="thumb-vid.png">';
 
           // Thumbnail
-          echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
+          echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div><br><pre id="duration_'.$m_id.'"><small>'.$m_duration.'</small></pre></td>';
 
           // Filename
           echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
@@ -212,7 +213,7 @@ $m_basic_type = $_POST['feature_type'];
           $thumb = '<img max-width="50px" max-height="50px" alt="'.$m_alt.'" src="thumb-aud.png">';
 
           // Thumbnail
-          echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div></td>';
+          echo '<td class="media-lib-thumb"><div class="media-lib-thumb" id="mediatype_'.$m_id.'">'.$thumb.'</div><br><pre id="duration_'.$m_id.'"><small>'.$m_duration.'</small></pre></td>';
 
           // Filename
           echo '<td><pre><small id="filename_'.$m_id.'">'.$m_filename.'</small></pre>'.$set_button;
