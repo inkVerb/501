@@ -7,7 +7,7 @@ include ('./in.db.php');
 
 // Parse GET & assign feed-wide values
 $regex_match = "/[a-zA-Z0-9-]/";
-if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s']))) { // Validate
+if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s'])) && ($_GET['s'] != 0)) { // Validate
   $regex_replace = "/[^a-zA-Z0-9-]/";
   $series_slug = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase & sanitize
   $series_slug = substr($series_slug, 0, 90); // Limit to 90 characters, as also in database
@@ -15,23 +15,23 @@ if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s']))) { // Validate
   // Series Info
   $rows = $pdo->select('series', 'slug', $series_slug, 'id, name, series_lang, series_link, series_author, series_descr, series_summary, series_owner, series_email, series_copy, series_keywords, series_explicit, series_cat1, series_cat2, series_cat3, series_cat4, series_cat5');
   foreach ($rows as $row) {
-    $series_id = "$row->id";
-    $series_name = "$row->name";
-    $feed_lang = "$row->series_lang";
-    $feed_link = "$row->series_link";
-    $feed_author = "$row->series_author";
-    $feed_descr = "$row->series_descr";
-    $feed_summary = "$row->series_summary";
-    $feed_owner = "$row->series_owner";
-    $feed_email = "$row->series_email";
-    $feed_copy = "$row->series_copy";
-    $feed_keywords = "$row->series_keywords";
-    $feed_explicit = "$row->series_explicit";
-    $feed_cat1 = "$row->series_cat1";
-    $feed_cat2 = "$row->series_cat2";
-    $feed_cat3 = "$row->series_cat3";
-    $feed_cat4 = "$row->series_cat4";
-    $feed_cat5 = "$row->series_cat5";
+    $series_id = htmlspecialchars("$row->id");
+    $series_name = htmlspecialchars("$row->name");
+    $feed_lang = htmlspecialchars("$row->series_lang");
+    $feed_link = htmlspecialchars("$row->series_link");
+    $feed_author = htmlspecialchars("$row->series_author");
+    $feed_descr = htmlspecialchars("$row->series_descr");
+    $feed_summary = htmlspecialchars("$row->series_summary");
+    $feed_owner = htmlspecialchars("$row->series_owner");
+    $feed_email = htmlspecialchars("$row->series_email");
+    $feed_copy = htmlspecialchars("$row->series_copy");
+    $feed_keywords = htmlspecialchars("$row->series_keywords");
+    $feed_explicit = htmlspecialchars("$row->series_explicit");
+    $feed_cat1 = htmlspecialchars("$row->series_cat1");
+    $feed_cat2 = htmlspecialchars("$row->series_cat2");
+    $feed_cat3 = htmlspecialchars("$row->series_cat3");
+    $feed_cat4 = htmlspecialchars("$row->series_cat4");
+    $feed_cat5 = htmlspecialchars("$row->series_cat5");
   }
   $feed_title = $blog_title.' :: '.$series_name;
   $feed_link = $blog_web_base.'/series/'.$p_series_slug;
@@ -44,27 +44,27 @@ if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s']))) { // Validate
   $pro_rss_path = $pro_path.$series_id.'-'.$pro_rss_name;
   $pro_podcast_path = $pro_path.$series_id.'-'.$pro_podcast_name;
 
-} else {
+} elseif ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s'])) && ($_GET['s'] == 0)) {
   // Blog Info
   //$rows = $pdo->select('blog_settings', 'public', '1', 'blog_lang, blog_link, blog_author, blog_descr, blog_summary, blog_owner, blog_email, blog_copy, blog_keywords, blog_explicit, blog_cat1, blog_cat2, blog_cat3, blog_cat4, blog_cat5');
   $query = $database->prepare("SELECT blog_lang, blog_link, blog_author, blog_descr, blog_summary, blog_owner, blog_email, blog_copy, blog_keywords, blog_explicit, blog_cat1, blog_cat2, blog_cat3, blog_cat4, blog_cat5 FROM blog_settings");
   $rows = $pdo->exec_($query);
   foreach ($rows as $row) {
-    $feed_lang = "$row->blog_lang";
-    $feed_link = "$row->blog_link";
-    $feed_author = "$row->blog_author";
-    $feed_descr = "$row->blog_descr";
-    $feed_summary = "$row->blog_summary";
-    $feed_owner = "$row->blog_owner";
-    $feed_email = "$row->blog_email";
-    $feed_copy = "$row->blog_copy";
-    $feed_keywords = "$row->blog_keywords";
-    $feed_explicit = "$row->blog_explicit";
-    $feed_cat1 = "$row->blog_cat1";
-    $feed_cat2 = "$row->blog_cat2";
-    $feed_cat3 = "$row->blog_cat3";
-    $feed_cat4 = "$row->blog_cat4";
-    $feed_cat5 = "$row->blog_cat5";
+    $feed_lang = htmlspecialchars("$row->blog_lang");
+    $feed_link = htmlspecialchars("$row->blog_link");
+    $feed_author = htmlspecialchars("$row->blog_author");
+    $feed_descr = htmlspecialchars("$row->blog_descr");
+    $feed_summary = htmlspecialchars("$row->blog_summary");
+    $feed_owner = htmlspecialchars("$row->blog_owner");
+    $feed_email = htmlspecialchars("$row->blog_email");
+    $feed_copy = htmlspecialchars("$row->blog_copy");
+    $feed_keywords = htmlspecialchars("$row->blog_keywords");
+    $feed_explicit = htmlspecialchars("$row->blog_explicit");
+    $feed_cat1 = htmlspecialchars("$row->blog_cat1");
+    $feed_cat2 = htmlspecialchars("$row->blog_cat2");
+    $feed_cat3 = htmlspecialchars("$row->blog_cat3");
+    $feed_cat4 = htmlspecialchars("$row->blog_cat4");
+    $feed_cat5 = htmlspecialchars("$row->blog_cat5");
   }
   $feed_title = $blog_title;
   $feed_link = $blog_web_base;
