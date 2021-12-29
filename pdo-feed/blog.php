@@ -28,6 +28,8 @@ if ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase & sanitize
   $series_slug = substr($result, 0, 90); // Limit to 90 characters as also in database
   $rows = $pdo->select('series', 'slug', $series_slug, 'id, name');
+  // No such series found?
+  if ($pdo->numrows == 0) { header("Location: $blog_web_base");}
   foreach ($rows as $row) { $series_name = $row->name; $series_id = $row->id; }
 }
 

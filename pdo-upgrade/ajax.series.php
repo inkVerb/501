@@ -13,7 +13,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
-    $result = substr($result, 0, 60); // Limit to 60 characters
+    $result = substr($result, 0, 90); // Limit to 90 characters
     $new_series = $result;
     $new_series_trim = DB::trimspace($new_series);
 
@@ -21,7 +21,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
       // Generate the slug
       $regex_replace = "/[^a-zA-Z0-9-]/";
       $result = strtolower(preg_replace($regex_replace,"-", $new_series)); // Lowercase, all non-alnum to hyphen
-      $s_slug = substr($result, 0, 90); // Limit to 90 characters
+      $s_slug = substr($result, 0, 95); // Limit to 95 characters
 
       // Check that the slug isn't already used
       $s_slug_test_trim = DB::trimspace($s_slug);

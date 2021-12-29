@@ -66,6 +66,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     while ($dup = true) {
       $add_num = $add_num + 1;
       $new_p_slug = $p_slug.'-'.$add_num;
+      // In case this gets longer than allowed characters
+      $new_p_slug = ($add_num == 1) ? substr($new_p_slug, 0, 93) : $new_p_slug;
+      $new_p_slug = ($add_num == 10) ? substr($new_p_slug, 0, 92) : $new_p_slug;
+      $new_p_slug = ($add_num == 100) ? substr($new_p_slug, 0, 91) : $new_p_slug;
+      $new_p_slug = ($add_num == 1000) ? substr($new_p_slug, 0, 90) : $new_p_slug;
+      $new_p_slug = ($add_num == 10000) ? substr($new_p_slug, 0, 89) : $new_p_slug;
+      $new_p_slug = ($add_num == 100000) ? substr($new_p_slug, 0, 88) : $new_p_slug;
       $new_p_slug_test_trim = DB::trimspace($new_p_slug);
 
       // Check again

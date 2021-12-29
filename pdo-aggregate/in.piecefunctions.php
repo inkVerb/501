@@ -39,7 +39,7 @@ function checkPiece($name, $value) {
   } elseif ($name == 'p_slug') {
     $regex_replace = "/[^a-zA-Z0-9-]/";
     $result = strtolower(preg_replace($regex_replace,"-", $value)); // Lowercase, all non-alnum to hyphen
-    $result = substr($result, 0, 95); // Limit to 95 characters
+    $result = substr($result, 0, 90); // Limit to 90 characters
 
     // Make sure the slug is not empty
     $result = ($result == '') ? 'piece' : $result;
@@ -105,16 +105,16 @@ function checkPiece($name, $value) {
     $result = $p_links_json_in;
 
   } elseif ($name == 'p_feat_img') {
-    $result = (filter_var($value, FILTER_VALIDATE_INT)) ? $value : 0;
+    $result = ((filter_var($value, FILTER_VALIDATE_INT)) || (filter_var($value, FILTER_VALIDATE_URL))) ? $value : 0;
 
   } elseif ($name == 'p_feat_aud') {
-    $result = (filter_var($value, FILTER_VALIDATE_INT)) ? $value : 0;
+    $result = ((filter_var($value, FILTER_VALIDATE_INT)) || (filter_var($value, FILTER_VALIDATE_URL))) ? $value : 0;
 
   } elseif ($name == 'p_feat_vid') {
-    $result = (filter_var($value, FILTER_VALIDATE_INT)) ? $value : 0;
+    $result = ((filter_var($value, FILTER_VALIDATE_INT)) || (filter_var($value, FILTER_VALIDATE_URL))) ? $value : 0;
 
   } elseif ($name == 'p_feat_doc') {
-    $result = (filter_var($value, FILTER_VALIDATE_INT)) ? $value : 0;
+    $result = ((filter_var($value, FILTER_VALIDATE_INT)) || (filter_var($value, FILTER_VALIDATE_URL))) ? $value : 0;
 
   // Date-time Live
   } elseif ($name == 'p_live_schedule') {
@@ -198,7 +198,7 @@ function pieceInput($name, $value) {
     $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="metaedit" id="p_title_'.$edit_piece_id.'" name="p_title" maxlength="90" value="'.$value.'" required>';
 
   } elseif ($name == 'p_slug') {
-    $result = '<input form="edit_piece" type="text" class="slug" id="p_slug" name="p_slug" maxlength="95" value="'.$value.'" onchange="onNavWarn();" onkeyup="onNavWarn();">';
+    $result = '<input form="edit_piece" type="text" class="slug" id="p_slug" name="p_slug" maxlength="90" value="'.$value.'" onchange="onNavWarn();" onkeyup="onNavWarn();">';
 
   } elseif ($name == 'p_slug_me') {
     $result = '<input form="'.$form_id.$edit_piece_id.'" type="text" class="metaedit" id="p_slug_'.$edit_piece_id.'" name="p_slug" maxlength="90" value="'.$value.'">';

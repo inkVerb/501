@@ -133,15 +133,15 @@ EOF;
       `type` ENUM('post', 'page', 'template') NOT NULL,
       `status` ENUM('live', 'dead') NOT NULL,
       `pub_yn` BOOLEAN NOT NULL DEFAULT false,
-      `title` VARCHAR(60) NOT NULL,
-      `subtitle` VARCHAR(60) DEFAULT NULL,
-      `slug` VARCHAR(90) NOT NULL,
+      `title` VARCHAR(90) NOT NULL,
+      `subtitle` VARCHAR(90) DEFAULT NULL,
+      `slug` VARCHAR(100) NOT NULL,
       `content` LONGTEXT DEFAULT NULL,
-      `after` TINYTEXT DEFAULT NULL,
-      `excerpt` TINYTEXT DEFAULT NULL,
+      `after` TEXT DEFAULT NULL,
+      `excerpt` TEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
-      `tags` LONGTEXT DEFAULT NULL,
-      `links` LONGTEXT DEFAULT NULL,
+      `tags` TEXT DEFAULT NULL,
+      `links` TEXT DEFAULT NULL,
       `feat_img` INT UNSIGNED NOT NULL DEFAULT 0,
       `feat_aud` INT UNSIGNED NOT NULL DEFAULT 0,
       `feat_vid` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -165,18 +165,19 @@ EOF;
       `status` ENUM('live', 'dead') NOT NULL,
       `pubstatus` ENUM('published', 'redrafting') NOT NULL,
       `title` VARCHAR(90) NOT NULL,
-      `subtitle` VARCHAR(60) DEFAULT NULL,
-      `slug` VARCHAR(90) NOT NULL,
+      `subtitle` VARCHAR(90) DEFAULT NULL,
+      `slug` VARCHAR(100) NOT NULL,
       `content` LONGTEXT DEFAULT NULL,
-      `after` TINYTEXT DEFAULT NULL,
-      `excerpt` TINYTEXT DEFAULT NULL,
+      `after` TEXT DEFAULT NULL,
+      `excerpt` TEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
-      `tags` LONGTEXT DEFAULT NULL,
-      `links` LONGTEXT DEFAULT NULL,
-      `feat_img` INT UNSIGNED NOT NULL DEFAULT 0,
-      `feat_aud` INT UNSIGNED NOT NULL DEFAULT 0,
-      `feat_vid` INT UNSIGNED NOT NULL DEFAULT 0,
-      `feat_doc` INT UNSIGNED NOT NULL DEFAULT 0,
+      `aggregated` INT UNSIGNED DEFAULT 0,
+      `tags` TEXT DEFAULT NULL,
+      `links` TEXT DEFAULT NULL,
+      `feat_img` TEXT NOT NULL DEFAULT 0,
+      `feat_aud` TEXT NOT NULL DEFAULT 0,
+      `feat_vid` TEXT NOT NULL DEFAULT 0,
+      `feat_doc` TEXT NOT NULL DEFAULT 0,
       `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
@@ -193,18 +194,18 @@ EOF;
       `piece_id` INT UNSIGNED NOT NULL,
       `type` ENUM('page', 'post') NOT NULL,
       `title` VARCHAR(90) NOT NULL,
-      `subtitle` VARCHAR(60) DEFAULT NULL,
-      `slug` VARCHAR(90) NOT NULL,
+      `subtitle` VARCHAR(90) DEFAULT NULL,
+      `slug` VARCHAR(100) NOT NULL,
       `content` LONGTEXT DEFAULT NULL,
-      `after` TINYTEXT DEFAULT NULL,
-      `excerpt` TINYTEXT DEFAULT NULL,
+      `after` TEXT DEFAULT NULL,
+      `excerpt` TEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
-      `tags` LONGTEXT DEFAULT NULL,
-      `links` LONGTEXT DEFAULT NULL,
-      `feat_img` INT UNSIGNED NOT NULL DEFAULT 0,
-      `feat_aud` INT UNSIGNED NOT NULL DEFAULT 0,
-      `feat_vid` INT UNSIGNED NOT NULL DEFAULT 0,
-      `feat_doc` INT UNSIGNED NOT NULL DEFAULT 0,
+      `tags` TEXT DEFAULT NULL,
+      `links` TEXT DEFAULT NULL,
+      `feat_img` TEXT NOT NULL DEFAULT 0,
+      `feat_aud` TEXT NOT NULL DEFAULT 0,
+      `feat_vid` TEXT NOT NULL DEFAULT 0,
+      `feat_doc` TEXT NOT NULL DEFAULT 0,
       `date_live` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
@@ -219,7 +220,7 @@ EOF;
     $query = "CREATE TABLE IF NOT EXISTS `series` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` VARCHAR(90) NOT NULL,
-      `slug` VARCHAR(90) NOT NULL,
+      `slug` VARCHAR(100) NOT NULL,
       `template` INT UNSIGNED DEFAULT NULL,
       `series_lang` VARCHAR(8) NOT NULL DEFAULT 'en',
       `series_link` TEXT DEFAULT NULL,
@@ -251,6 +252,24 @@ EOF;
       $installrun = true;
     } else {
       echo '<p>Could not create the series database table, quitting.</p>';
+      exit ();
+    }
+    $query = "CREATE TABLE IF NOT EXISTS `aggregations` (
+      `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+      `series` INT UNSIGNED DEFAULT 1,
+      `source` TEXT DEFAULT NULL,
+      `name` VARCHAR(90) NOT NULL,
+      `description` TINYTEXT DEFAULT NULL,
+      `status` ENUM('active', 'dormant') NOT NULL,
+      `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `date_added` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (`id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
+    $statement = $database->query($query);
+    if ($statement) {
+      $installrun = true;
+    } else {
+      echo '<p>Could not create the publications database table, quitting.</p>';
       exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `media_library` (

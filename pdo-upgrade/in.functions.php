@@ -66,12 +66,12 @@ function checkPost($name, $value) {
     }
 
   } elseif ($name == 'blog_title') {
-    $regex_match = '/[0-9a-zA-Z_ !@&#$%.,+-=\/|]{1,60}$/';
+    $regex_match = '/[0-9a-zA-Z_ !@&#$%.,+-=\/|]{1,90}$/';
     $regex_replace = "/[^0-9a-zA-Z_ !@&#$%.,+-=\/|]/";
     $result = (preg_match($regex_match, $value))
     ? preg_replace($regex_replace,"", $value) : '';
     if ($result == '') {
-      $check_err[$name] = 'Not a valid title! (1-60 characters, special characters allowed: ! @ & # $ % - _ . , + - = / | )';
+      $check_err[$name] = 'Not a valid title! (1-90 characters, special characters allowed: ! @ & # $ % - _ . , + - = / | )';
     }
 
   } elseif ($name == 'blog_tagline') {
