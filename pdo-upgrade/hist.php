@@ -309,6 +309,7 @@ if (isset($_POST['as_json'])) {
       $p_feat_vid = "$row_p->feat_vid";
       $p_feat_doc = "$row_p->feat_doc";
       $p_update = "$row_p->date_updated";
+
     }
   $rows_o = $pdo->exec_($query_o);
     foreach ($rows_o as $row_o) {
@@ -327,6 +328,7 @@ if (isset($_POST['as_json'])) {
       $o_feat_vid = "$row_o->feat_vid";
       $o_feat_doc = "$row_o->feat_doc";
       $o_update = "$row_o->date_updated";
+
     }
 } else {
   exit (header("Location: $blog_web_base/"));
@@ -347,6 +349,8 @@ if (!empty($tags_array)) {
   foreach ($tags_array as $tag_item) {
     $o_tags .= $tag_item.'<br>';
   }
+} else {
+  $o_tags = '';
 }
 if ($p_tags_json != '[""]') {$tags_array = json_decode($p_tags_json);}
 if (!empty($tags_array)) {
@@ -355,6 +359,8 @@ if (!empty($tags_array)) {
   foreach ($tags_array as $tag_item) {
     $p_tags .= $tag_item.'<br>';
   }
+} else {
+  $p_tags = '';
 }
 
 // Links
@@ -367,6 +373,8 @@ if (!empty($links_array)) {
   }
   // Set our final value
   $o_links = $links;
+} else {
+  $o_links = '';
 }
 if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
 if (!empty($links_array)) {
@@ -377,7 +385,82 @@ if (!empty($links_array)) {
   }
   // Set our final value
   $p_links = $links;
+} else {
+  $p_links = '';
 }
+
+  // Featured Media file names
+  if ($p_feat_img != "0") {
+    $rows = $pdo->select('media_library', 'id', $p_feat_img, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $p_feat_img_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $p_feat_img_file = "NONE";
+  }
+
+  if ($p_feat_aud != "0") {
+    $rows = $pdo->select('media_library', 'id', $p_feat_aud, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $p_feat_aud_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $p_feat_aud_file = "NONE";
+  }
+
+  if ($p_feat_vid != "0") {
+    $rows = $pdo->select('media_library', 'id', $p_feat_vid, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $p_feat_vid_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $p_feat_vid_file = "NONE";
+  }
+
+  if ($p_feat_doc != "0") {
+    $rows = $pdo->select('media_library', 'id', $p_feat_doc, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $p_feat_doc_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $p_feat_doc_file = "NONE";
+  }
+
+  if ($o_feat_img != "0") {
+    $rows = $pdo->select('media_library', 'id', $o_feat_img, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $o_feat_img_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $o_feat_img_file = "NONE";
+  }
+
+  if ($o_feat_aud != "0") {
+    $rows = $pdo->select('media_library', 'id', $o_feat_aud, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $o_feat_aud_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $o_feat_aud_file = "NONE";
+  }
+
+  if ($o_feat_vid != "0") {
+    $rows = $pdo->select('media_library', 'id', $o_feat_vid, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $o_feat_vid_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $o_feat_vid_file = "NONE";
+  }
+
+  if ($o_feat_doc != "0") {
+    $rows = $pdo->select('media_library', 'id', $o_feat_doc, 'file_base, file_extension');
+    foreach ($rows as $row) {
+      $o_feat_doc_file = "$row->file_base.$row->file_extension";
+    }
+  } else {
+    $o_feat_doc_file = "NONE";
+  }
 
   // Create the text to compare via heredoc
   $p_body = <<<EOP
@@ -408,15 +491,11 @@ if (!empty($links_array)) {
   <br>
   $p_tags
   <br><br>
-  <code>Featured Media:</code><br>
-  <br><br>
-  Image: $p_feat_img
-  <br>
-  Audio: $p_feat_aud
-  <br>
-  Video: $o_feat_vid
-  <br>
-  Document: $p_feat_doc
+  <code><b>Featured Media</b></code><br>
+  <code>Image: $p_feat_img_file</code><br>
+  <code>Audio: $p_feat_aud_file</code><br>
+  <code>Video: $p_feat_vid_file</code><br>
+  <code>Document: $p_feat_doc_file</code>
 EOP;
 // No spaces or comments before or after the ending delimeter of a heredoc!
 
@@ -449,15 +528,11 @@ EOP;
   <br>
   $o_tags
   <br><br>
-  <code>Featured Media:</code><br>
-  <br><br>
-  Image: $o_feat_img
-  <br>
-  Audio: $o_feat_aud
-  <br>
-  Video: $o_feat_vid
-  <br>
-  Document: $o_feat_doc
+  <code><b>Featured Media</b></code><br>
+  <code>Image: $o_feat_img_file</code><br>
+  <code>Audio: $o_feat_aud_file</code><br>
+  <code>Video: $o_feat_vid_file</code><br>
+  <code>Document: $o_feat_doc_file</code>
 EOP;
 // No spaces or comments before or after the ending delimeter of a heredoc!
 

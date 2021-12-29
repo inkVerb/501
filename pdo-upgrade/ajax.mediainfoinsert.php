@@ -4,6 +4,17 @@
 include ('./in.db.php');
 include ('./in.logincheck.php');
 
+// This is a handy function to make file sizes in bytes readable by humans
+function human_file_size($size, $unit="") {
+  if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
+    return number_format($size/(1<<30),2)."GB";
+  if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
+    return number_format($size/(1<<20),2)."MB";
+  if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
+    return number_format($size/(1<<10),2)."KB";
+  return number_format($size)." bytes";
+}
+
 // Check & validate for what we need
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (filter_var($_POST['m_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) ) {
 
@@ -104,10 +115,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         break;
         case 'VIDEO':
           // Old name
-          $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+          $vid_web = $basepath.$m_location.'/'.$m_file_base.'.mp4';
           $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
           // New name
-          $vid_web_new = $basepath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
+          $vid_web_new = $basepath.$m_location.'/'.$m_file_base_new.'.mp4';
           $vid_ori_new = $origpath.$m_location.'/'.$m_file_base_new.'.'.$m_file_extension;
 
           // Delete & set variable accordingly, one error and it will read false
@@ -308,17 +319,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         exit ();
     }
 
-    // This is a handy function to make file sizes in bytes readable by humans
-    function human_file_size($size, $unit="") {
-      if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
-        return number_format($size/(1<<30),2)."GB";
-      if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
-        return number_format($size/(1<<20),2)."MB";
-      if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
-        return number_format($size/(1<<10),2)."KB";
-      return number_format($size)." bytes";
-    }
-
     $file_name_pre = '<pre onclick="changeFileName(\''.$m_id.'\', \''.$m_file_base.'\', \''.$m_file_extension.'\');" class="postform blue" title="change file name">'.$m_file_base.'.'.$m_file_extension.'</pre>';
 
     echo '
@@ -394,9 +394,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         echo '<pre id="duration_'.$m_id.'"><small>'.$m_duration.'</small></pre>';
 
         // Set links
-        $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+        $vid_web = $basepath.$m_location.'/'.$m_file_base.'.mp4';
         $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
-        $vid_web_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_web.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_web)).')<br>' : '';
+        $vid_web_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_web.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; blog mp4</button>&nbsp;('.human_file_size(filesize($vid_web)).')<br>' : '';
         $vid_ori_link = (file_exists($vid_ori)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_ori.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_ori)).')<br>' : '';
 
         // File links

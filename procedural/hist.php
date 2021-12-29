@@ -268,6 +268,8 @@ if (!empty($tags_array)) {
   foreach ($tags_array as $tag_item) {
     $o_tags .= $tag_item.'<br>';
   }
+} else {
+  $o_tags = '';
 }
 if ($p_tags_json != '[""]') {$tags_array = json_decode($p_tags_json);}
 if (!empty($tags_array)) {
@@ -276,6 +278,8 @@ if (!empty($tags_array)) {
   foreach ($tags_array as $tag_item) {
     $p_tags .= $tag_item.'<br>';
   }
+} else {
+  $p_tags = '';
 }
 
 // Links
@@ -288,6 +292,8 @@ if (!empty($links_array)) {
   }
   // Set our final value
   $o_links = $links;
+} else {
+  $o_links = '';
 }
 if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
 if (!empty($links_array)) {
@@ -298,6 +304,8 @@ if (!empty($links_array)) {
   }
   // Set our final value
   $p_links = $links;
+} else {
+  $p_links = '';
 }
 
   // Create the text to compare via heredoc

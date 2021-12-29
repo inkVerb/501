@@ -169,7 +169,7 @@ $m_basic_type = $_POST['feature_type'];
       }
 
       // Clickable text to set featured media
-      $set_button = '<button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\'); onNavWarn(); mediaInsertHide(); mediaFeatureHide();">&larr; '.$m_filename.'</button>&nbsp;('.human_file_size(filesize($m_filename_full_path)).')<br>';
+      $set_button = '<pre><button class="postform orange" onclick="setToFeature(\''.$m_id.'\', \''.$m_filename_full_path.'\', \''.$m_filename.'\', \''.$m_basic_type.'\', \''.$file_thumb.'\'); onNavWarn(); mediaInsertHide(); mediaFeatureHide();">&larr; '.$m_filename.'</button>&nbsp;('.$m_size_pretty.')</pre><br>';
 
       // Fill-in the row per media type
       switch ($m_basic_type) {

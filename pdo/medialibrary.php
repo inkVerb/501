@@ -368,7 +368,7 @@ include ('./in.head.php');
               $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
               // Set links
-              $img_svg_link = (file_exists($img_svg)) ? '<a href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
+              $img_svg_link = (file_exists($img_svg)) ? '<a target="_blank" href="http://localhost/web/'.$img_svg.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($img_svg)).')&nbsp;' : '';
 
               // File links
               echo '<pre id="filelink_'.$m_id.'"><small>SVG: '.$img_svg_link.'</small></pre>';
@@ -408,13 +408,13 @@ include ('./in.head.php');
               }
 
               // Set links
-              $img_xs_link = (file_exists($img_xs)) ? '<a href="http://localhost/web/'.$img_xs.'">154</a>&nbsp;('.human_file_size(filesize($img_xs)).')&nbsp;' : '';
-              $img_sm_link = (file_exists($img_sm)) ? '<a href="http://localhost/web/'.$img_sm.'">484</a>&nbsp;('.human_file_size(filesize($img_sm)).')&nbsp;' : '';
-              $img_md_link = (file_exists($img_md)) ? '<a href="http://localhost/web/'.$img_md.'">800</a>&nbsp;('.human_file_size(filesize($img_md)).')&nbsp;' : '';
-              $img_lg_link = (file_exists($img_lg)) ? '<a href="http://localhost/web/'.$img_lg.'">1280</a>&nbsp;('.human_file_size(filesize($img_lg)).')&nbsp;' : '';
-              $img_xl_link = (file_exists($img_xl)) ? '<a href="http://localhost/web/'.$img_xl.'">1920</a>&nbsp;('.human_file_size(filesize($img_xl)).')&nbsp;' : '';
-              $img_fl_link = (file_exists($img_fl)) ? '<a href="http://localhost/web/'.$img_fl.'">blog '.$m_file_extension.'</a>'.'&nbsp;'.$img_fl_w.'x'.$img_fl_h.'&nbsp;('.human_file_size(filesize($img_fl)).')&nbsp;' : '';
-              $img_or_link = (file_exists($img_or)) ? '<a href="http://localhost/web/'.$img_or.'">orig '.$m_file_extension.'</a>'.'&nbsp;'.$img_or_w.'x'.$img_or_h.'&nbsp;('.human_file_size(filesize($img_or)).')&nbsp;' : '';
+              $img_xs_link = (file_exists($img_xs)) ? '<a target="_blank" href="http://localhost/web/'.$img_xs.'">154</a>&nbsp;('.human_file_size(filesize($img_xs)).')&nbsp;' : '';
+              $img_sm_link = (file_exists($img_sm)) ? '<a target="_blank" href="http://localhost/web/'.$img_sm.'">484</a>&nbsp;('.human_file_size(filesize($img_sm)).')&nbsp;' : '';
+              $img_md_link = (file_exists($img_md)) ? '<a target="_blank" href="http://localhost/web/'.$img_md.'">800</a>&nbsp;('.human_file_size(filesize($img_md)).')&nbsp;' : '';
+              $img_lg_link = (file_exists($img_lg)) ? '<a target="_blank" href="http://localhost/web/'.$img_lg.'">1280</a>&nbsp;('.human_file_size(filesize($img_lg)).')&nbsp;' : '';
+              $img_xl_link = (file_exists($img_xl)) ? '<a target="_blank" href="http://localhost/web/'.$img_xl.'">1920</a>&nbsp;('.human_file_size(filesize($img_xl)).')&nbsp;' : '';
+              $img_fl_link = (file_exists($img_fl)) ? '<a target="_blank" href="http://localhost/web/'.$img_fl.'">blog '.$m_file_extension.'</a>'.'&nbsp;'.$img_fl_w.'x'.$img_fl_h.'&nbsp;('.human_file_size(filesize($img_fl)).')&nbsp;' : '';
+              $img_or_link = (file_exists($img_or)) ? '<a target="_blank" href="http://localhost/web/'.$img_or.'">orig '.$m_file_extension.'</a>'.'&nbsp;'.$img_or_w.'x'.$img_or_h.'&nbsp;('.human_file_size(filesize($img_or)).')&nbsp;' : '';
 
               // File links
               echo '<pre id="filelink_'.$m_id.'"><small>IMG: '.$img_fl_link.$img_or_link.'<br><br>'.$img_orientation.'&nbsp;'.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
@@ -434,12 +434,12 @@ include ('./in.head.php');
             // Info
             echo '<td class="media-lib-info">';
 
-            $vid_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
+            $vid_web = $basepath.$m_location.'/'.$m_file_base.'.mp4';
             $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
             // Set links
-            $vid_web_link = (file_exists($vid_web)) ? '<a href="http://localhost/web/'.$vid_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
-            $vid_ori_link = (file_exists($vid_ori)) ? '<a href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
+            $vid_web_link = (file_exists($vid_web)) ? '<a target="_blank" href="http://localhost/web/'.$vid_web.'">blog mp4</a>&nbsp;('.human_file_size(filesize($vid_web)).')&nbsp;' : '';
+            $vid_ori_link = (file_exists($vid_ori)) ? '<a target="_blank" href="http://localhost/web/'.$vid_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($vid_ori)).')&nbsp;' : '';
 
             // File links
             echo '<pre id="filelink_'.$m_id.'"><small>VID: '.$vid_web_link.$vid_ori_link.'</small></pre>';
@@ -462,8 +462,8 @@ include ('./in.head.php');
             $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
             // Set links
-            $aud_web_link = (file_exists($aud_web)) ? '<a href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
-            $aud_ori_link = (file_exists($aud_ori)) ? '<a href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
+            $aud_web_link = (file_exists($aud_web)) ? '<a target="_blank" href="http://localhost/web/'.$aud_web.'">blog mp3</a>&nbsp;('.human_file_size(filesize($aud_web)).')&nbsp;' : '';
+            $aud_ori_link = (file_exists($aud_ori)) ? '<a target="_blank" href="http://localhost/web/'.$aud_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($aud_ori)).')&nbsp;' : '';
 
             // File links
             echo '<pre id="filelink_'.$m_id.'"><small>AUD: '.$aud_web_link.$aud_ori_link.'</small></pre>';
@@ -486,7 +486,7 @@ include ('./in.head.php');
               $doc_web = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
               // Set links
-              $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+              $doc_web_link = (file_exists($doc_web)) ? '<a target="_blank" href="http://localhost/web/'.$doc_web.'">blog '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
 
               // File links
               echo '<pre id="filelink_'.$m_id.'"><small>DOC: '.$doc_web_link.'</small></pre>';
@@ -506,8 +506,8 @@ include ('./in.head.php');
               $doc_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
               // Set links
-              $doc_web_link = (file_exists($doc_web)) ? '<a href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
-              $doc_ori_link = (file_exists($doc_ori)) ? '<a href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
+              $doc_web_link = (file_exists($doc_web)) ? '<a target="_blank" href="http://localhost/web/'.$doc_web.'">blog pdf</a>&nbsp;('.human_file_size(filesize($doc_web)).')&nbsp;' : '';
+              $doc_ori_link = (file_exists($doc_ori)) ? '<a target="_blank" href="http://localhost/web/'.$doc_ori.'">orig '.$m_file_extension.'</a>&nbsp;('.human_file_size(filesize($doc_ori)).')&nbsp;' : '';
 
               // File links
               echo '<pre id="filelink_'.$m_id.'"><small>DOC: '.$doc_web_link.$doc_ori_link.'</small></pre>';

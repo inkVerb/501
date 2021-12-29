@@ -76,6 +76,8 @@ if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s'])) && ($_GET['s']
   $pro_rss_path = $pro_path.$pro_rss_name;
   $pro_podcast_name = 'pro-podcast.jpg';
   $pro_podcast_path = $pro_path.$pro_podcast_name;
+} else {
+  exit();
 }
 
 // Verify that our images exist, otherwise leave empty
@@ -85,9 +87,11 @@ $pro_podcast_path = (file_exists($pro_podcast_path)) ? $pro_podcast_path : '';
 // Header of feed
 echo <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="rss.xsl" ?>
 <rss version="2.0"
   xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
   >
 <channel>
@@ -188,14 +192,14 @@ foreach ($rows as $row) {
   $p_title = "$row->title";
   $p_subtitle = "$row->subtitle";
   $p_slug = "$row->slug";
-  $p_content = htmlspecialchars_decode("$row->content"); // We used htmlspecialchars() to enter the database, now we must reverse it
+  $p_content = strip_tags(htmlspecialchars_decode("$row->content")); // We used htmlspecialchars() to enter the database, now we must reverse it, then remove all tags
   $p_excerpt = "$row->excerpt";
   $p_series_id = "$row->series";
   $p_tags_sqljson = "$row->tags";
-  $p_feat_img = $row->feat_img;
-  $p_feat_aud = $row->feat_aud;
-  $p_feat_vid = $row->feat_vid;
-  $p_feat_doc = $row->feat_doc;
+  $p_feat_img = "$row->feat_img";
+  $p_feat_aud = "$row->feat_aud";
+  $p_feat_vid = "$row->feat_vid";
+  $p_feat_doc = "$row->feat_doc";
   $p_live = "$row->date_live";
   $p_update = "$row->date_updated";
 
@@ -248,7 +252,7 @@ EOF;
     if ($feat_img_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_img_url" length="$feat_img_file_size" type="audio/mpeg" />
+  <enclosure url="$feat_img_url" length="$feat_img_file_size" type="$feat_img_mime" />
 EOF;
 
     }
@@ -256,24 +260,27 @@ EOF;
     if ($feat_aud_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="audio/mpeg" />
-  <itunes:duration>$feat_aud_duration</itunes:duration>
+  <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="$feat_aud_mime" />
 EOF;
+
+      echo ($feat_aud_mime == "audio/mpeg") ? "<itunes:duration>$feat_aud_duration</itunes:duration>" : "";
+
     }
 
     if ($feat_vid_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="audio/mpeg" />
-  <itunes:duration>$feat_vid_duration</itunes:duration>
+  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="$feat_vid_mime" />
 EOF;
+
+      echo ($feat_vid_mime == "video/mp4") ? "<itunes:duration>$feat_vid_duration</itunes:duration>" : "";
+
     }
 
     if ($feat_doc_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="video/mpeg" />
-  <itunes:duration>$feat_vid_duration</itunes:duration>
+  <enclosure url="$feat_doc_url" length="$feat_vid_file_size" type="$feat_doc_mime" />
 EOF;
 
     }

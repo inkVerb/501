@@ -23,4 +23,4 @@ else
 fi
 
 # Run the probe
-ffprobe -i "${basepath}${media_type}/${name}.mp3" -show_entries format=duration -v quiet -of csv="p=0" -sexagesimal | cut -f1 -d '.'
+ffprobe -i "${basepath}${media_type}/${name}.${ext}" -show_entries format=duration -v quiet -of csv="p=0" -sexagesimal | cut -f1 -d '.'

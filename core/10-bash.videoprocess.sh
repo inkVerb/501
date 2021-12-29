@@ -45,16 +45,23 @@ fi
 if [ "$ext" = "flv" ] || [ "$ext" = "avi" ] || [ "$ext" = "mkv" ] || [ "$ext" = "mov" ]; then
 
   toext="mp4"
+  coext="mp4"
+
+elif [ "$ext" = "webm" ] || [ "$ext" = "ogg" ]; then
+
+  toext="$ext"
+  coext="mp4"
 
 else
 
   toext="$ext"
+  coext="$ext"
 
 fi
 
-# Convert & backup large videos
-if [ "$v_height" -gt "960" ] || [ "$v_width" -gt "960" ]; then
-  /usr/bin/ffmpeg -y -i "${basepath}uploads/${name}.${ext}" -filter:v scale=${v_scale} -c:a copy "${basepath}video/${name}.${toext}"
+# Convert & backup large videos & non-mp4
+if [ "$v_height" -gt "960" ] || [ "$v_width" -gt "960" ] || [ "$ext" = "webm" ] || [ "$ext" = "ogg" ]; then
+  /usr/bin/ffmpeg -y -i "${basepath}uploads/${name}.${ext}" -filter:v scale=${v_scale} -c:a copy "${basepath}video/${name}.${coext}"
   wait
 
 # Keep original

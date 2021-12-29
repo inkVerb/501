@@ -4,6 +4,17 @@
 include ('./in.db.php');
 include ('./in.logincheck.php');
 
+// This is a handy function to make file sizes in bytes readable by humans
+function human_file_size($size, $unit="") {
+  if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
+    return number_format($size/(1<<30),2)."GB";
+  if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
+    return number_format($size/(1<<20),2)."MB";
+  if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
+    return number_format($size/(1<<10),2)."KB";
+  return number_format($size)." bytes";
+}
+
 // Check & validate for what we need
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (filter_var($_POST['m_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) ) {
 
@@ -303,17 +314,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         exit ();
     }
 
-    // This is a handy function to make file sizes in bytes readable by humans
-    function human_file_size($size, $unit="") {
-      if ( (!$unit && $size >= 1<<30) || ($unit == "GB") )
-        return number_format($size/(1<<30),2)."GB";
-      if ( (!$unit && $size >= 1<<20) || ($unit == "MB") )
-        return number_format($size/(1<<20),2)."MB";
-      if ( (!$unit && $size >= 1<<10) || ($unit == "KB") )
-        return number_format($size/(1<<10),2)."KB";
-      return number_format($size)." bytes";
-    }
-
     $file_name_pre = '<pre onclick="changeFileName(\''.$m_id.'\', \''.$m_file_base.'\', \''.$m_file_extension.'\');" class="postform blue" title="change file name">'.$m_file_base.'.'.$m_file_extension.'</pre>';
 
     echo '
@@ -342,7 +342,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
           $img_svg = $basepath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
           // Set links
-          $img_svg_link = (file_exists($img_svg)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_svg.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \'50\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_svg)).')' : '';
+          $img_svg_link = (file_exists($img_svg)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_svg.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \'50\'); mediaEditorClose();">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_svg)).')' : '';
 
           // File links
           echo '<pre id="filelink_'.$m_id.'"><small>SVG insert:<br>'.$img_svg_link.'</small></pre>';
@@ -371,13 +371,13 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
           }
 
           // Set links
-          $img_xs_link = (file_exists($img_xs)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_xs.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 154 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_xs)).')<br>' : '';
-          $img_sm_link = (file_exists($img_sm)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_sm.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 484 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_sm)).')<br>' : '';
-          $img_md_link = (file_exists($img_md)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_md.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 800 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_md)).')<br>' : '';
-          $img_lg_link = (file_exists($img_lg)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_lg.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 1280 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_lg)).')<br>' : '';
-          $img_xl_link = (file_exists($img_xl)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_xl.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\');">&larr; 1920 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_xl)).')<br>' : '';
-          $img_fl_link = (file_exists($img_fl)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_fl.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \''.$img_fl_w.'\', \''.$img_fl_h.'\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_fl)).')<br>' : '';
-          $img_or_link = (file_exists($img_or)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_or.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \''.$img_or_w.'\', \''.$img_or_h.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_or)).')<br>' : '';
+          $img_xs_link = (file_exists($img_xs)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_xs.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\'); mediaEditorClose();">&larr; 154 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_xs)).')<br>' : '';
+          $img_sm_link = (file_exists($img_sm)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_sm.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\'); mediaEditorClose();">&larr; 484 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_sm)).')<br>' : '';
+          $img_md_link = (file_exists($img_md)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_md.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\'); mediaEditorClose();">&larr; 800 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_md)).')<br>' : '';
+          $img_lg_link = (file_exists($img_lg)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_lg.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\'); mediaEditorClose();">&larr; 1280 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_lg)).')<br>' : '';
+          $img_xl_link = (file_exists($img_xl)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_xl.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\'); mediaEditorClose();">&larr; 1920 '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_xl)).')<br>' : '';
+          $img_fl_link = (file_exists($img_fl)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_fl.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \''.$img_fl_w.'\', \''.$img_fl_h.'\'); mediaEditorClose();">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_fl)).')<br>' : '';
+          $img_or_link = (file_exists($img_or)) ? '<button class="postform orange" onclick="addImageToTiny(\''.$img_or.'\', \''.$m_alt_text.'\', \''.$m_title_text.'\', \''.$img_or_w.'\', \''.$img_or_h.'\'); mediaEditorClose();">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($img_or)).')<br>' : '';
 
           // File links
           echo '<pre id="filelink_'.$m_id.'"><small>IMG ('.$img_orientation.') insert:<br>'.$img_fl_link.$img_or_link.$img_xs_link.$img_sm_link.$img_md_link.$img_lg_link.$img_xl_link.'</small></pre>';
@@ -390,8 +390,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         $vid_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
         // Set links
-        $vid_web_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_web.'\', \''.$m_mime_type.'\');">&larr; blog '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_web)).')<br>' : '';
-        $vid_ori_link = (file_exists($vid_ori)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_ori.'\', \''.$m_mime_type.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_ori)).')<br>' : '';
+        $vid_web_link = (file_exists($vid_web)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_web.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; blog mp4</button>&nbsp;('.human_file_size(filesize($vid_web)).')<br>' : '';
+        $vid_ori_link = (file_exists($vid_ori)) ? '<button class="postform orange" onclick="addVideoToTiny(\''.$vid_ori.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($vid_ori)).')<br>' : '';
 
         // File links
         echo '<pre id="filelink_'.$m_id.'"><small>VID insert:<br>'.$vid_web_link.$vid_ori_link.'</small></pre>';
@@ -403,8 +403,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         $aud_ori = $origpath.$m_location.'/'.$m_file_base.'.'.$m_file_extension;
 
         // Set links
-        $aud_web_link = (file_exists($aud_web)) ? '<button class="postform orange" onclick="addAudioToTiny(\''.$aud_web.'\', \''.$m_mime_type.'\');">&larr; blog mp3</button>&nbsp;('.human_file_size(filesize($aud_web)).')<br>' : '';
-        $aud_ori_link = (file_exists($aud_ori)) ? '<button class="postform orange" onclick="addAudioToTiny(\''.$aud_ori.'\', \''.$m_mime_type.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($aud_ori)).')<br>' : '';
+        $aud_web_link = (file_exists($aud_web)) ? '<button class="postform orange" onclick="addAudioToTiny(\''.$aud_web.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; blog mp3</button>&nbsp;('.human_file_size(filesize($aud_web)).')<br>' : '';
+        $aud_ori_link = (file_exists($aud_ori)) ? '<button class="postform orange" onclick="addAudioToTiny(\''.$aud_ori.'\', \''.$m_mime_type.'\'); mediaEditorClose();">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($aud_ori)).')<br>' : '';
 
         // File links
         echo '<pre id="filelink_'.$m_id.'"><small>AUD insert:<br>'.$aud_web_link.$aud_ori_link.'</small></pre>';
@@ -419,7 +419,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
           $doc_title = ((isset($m_title_text)) && ($m_title_text != '')) ? 'Document: '.$m_title_text : 'View/download document';
 
           // Set links
-          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; blog</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
+          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\'); mediaEditorClose();">&larr; blog</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
 
           // File links
           echo '<pre id="filelink_'.$m_id.'"><small>DOC insert:<br>'.$doc_web_link.'</small></pre>';
@@ -431,8 +431,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
           $doc_title = ((isset($m_title_text)) && ($m_title_text != '')) ? 'Document: '.$m_title_text : 'View/download document';
 
           // Set links
-          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.pdf\', \''.$doc_title.'\');">&larr; blog pdf</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
-          $doc_ori_link = (file_exists($doc_ori)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_ori.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\');">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($doc_ori)).')<br>' : '';
+          $doc_web_link = (file_exists($doc_web)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_web.'\', \''.$m_file_base.'.pdf\', \''.$doc_title.'\'); mediaEditorClose();">&larr; blog pdf</button>&nbsp;('.human_file_size(filesize($doc_web)).')<br>' : '';
+          $doc_ori_link = (file_exists($doc_ori)) ? '<button class="postform orange" onclick="addDocToTiny(\''.$doc_ori.'\', \''.$m_file_base.'.'.$m_file_extension.'\', \''.$doc_title.'\'); mediaEditorClose();">&larr; orig '.$m_file_extension.'</button>&nbsp;('.human_file_size(filesize($doc_ori)).')<br>' : '';
 
           // File links
           echo '<pre id="filelink_'.$m_id.'"><small>DOC insert:<br>'.$doc_web_link.$doc_ori_link.'</small></pre>';
