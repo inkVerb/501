@@ -172,6 +172,7 @@ EOF;
       `excerpt` TEXT DEFAULT NULL,
       `series` INT UNSIGNED DEFAULT 1,
       `aggregated` INT UNSIGNED DEFAULT 0,
+      `guid` TEXT NOT NULL DEFAULT 0,
       `tags` TEXT DEFAULT NULL,
       `links` TEXT DEFAULT NULL,
       `feat_img` TEXT NOT NULL DEFAULT 0,
@@ -260,8 +261,11 @@ EOF;
       `source` TEXT DEFAULT NULL,
       `name` VARCHAR(90) NOT NULL,
       `description` TINYTEXT DEFAULT NULL,
-      `status` ENUM('active', 'dormant') NOT NULL,
-      `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `import_media` ENUM('link', 'download') NOT NULL,
+      `update_interval` TINYTEXT DEFAULT '15',
+      `status` ENUM('active', 'dormant', 'deleting') NOT NULL,
+      `on_delete` ENUM('erase', 'convert') NOT NULL,
+      `last_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_added` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
@@ -269,7 +273,7 @@ EOF;
     if ($statement) {
       $installrun = true;
     } else {
-      echo '<p>Could not create the publications database table, quitting.</p>';
+      echo '<p>Could not create the aggregations database table, quitting.</p>';
       exit ();
     }
     $query = "CREATE TABLE IF NOT EXISTS `media_library` (
