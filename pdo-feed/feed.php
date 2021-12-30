@@ -235,7 +235,7 @@ echo <<<EOF
 <item>
   <title>$p_title</title>
   <link>$blog_web_base/$p_slug</link>
-  <guid>$p_id-$p_slug</guid>
+  <guid isPermaLink="false">$p_id-$p_slug</guid>
   <pubDate>$p_date $feed_timezone</pubDate>
   <author><![CDATA[$feed_author]]></author>
   <dc:creator><![CDATA[$feed_author]]></dc:creator>
