@@ -13,20 +13,20 @@ include ('./in.head.php');
 include ('./in.functions.php');
 
 // POST new feed?
-if ((isset($_POST['feed_name']))
-&& (isset($_POST['feed_url']))
+if ((isset($_POST['agg_name']))
+&& (isset($_POST['agg_source']))
 && (isset($_POST['p_series']))
-&& (filter_var($_POST['feed_url'], FILTER_VALIDATE_URL))
+&& (filter_var($_POST['agg_source'], FILTER_VALIDATE_URL))
 && (filter_var($_POST['p_series'], FILTER_VALIDATE_INT))) {
-  $new_name = checkPost('feed_name', $_POST['feed_name']);
-  $new_url = checkPost('feed_url', $_POST['feed_url']);
+  $new_name = checkPost('agg_name', $_POST['agg_name']);
+  $new_source = checkPost('agg_source', $_POST['agg_source']);
   $new_series = preg_replace("/[^0-9]/","", $_POST['p_series']);
 
   // No errors, run INSERT
   if (empty($check_err)) {
     $query = $database->prepare("INSERT INTO aggregation (name, source, series) VALUES (:name, :source, :series)");
     $query->bindParam(':name', $new_name);
-    $query->bindParam(':source', $new_url);
+    $query->bindParam(':source', $new_source);
     $query->bindParam(':series', $new_series);
     $pdo->exec_($query);
     if ($pdo->ok) {
@@ -50,6 +50,12 @@ function showChangeButton(f_id) {
     x.style.display = "none";
   } else {
     x.style.display = "inline";
+  }
+  var y = document.getElementById("hide-edits-"+f_id);
+  if (y.style.display === "inline") {
+    y.style.display = "none";
+  } else {
+    y.style.display = "inline";
   }
 }
 
@@ -76,7 +82,7 @@ function showHideEdit(f_id) {
 }
 
 // The editor save
-function feedSave(fID) { // These arguments can be anything, same as used in this function
+function feedSave(fID, blog_web_base) { // These arguments can be anything, same as used in this function
 
     // Bind a new event listener every time the <form> is changed:
     const FORM = document.getElementById("feed-edit-"+fID);
@@ -85,10 +91,17 @@ function feedSave(fID) { // These arguments can be anything, same as used in thi
 
     AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
       var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
-      if (jsonSeriesEditResponse["change"] == 'change') { // Name and/or slug change
+      if (jsonSeriesEditResponse["change"] == 'change') { // Change
         showHideEdit(fID);// Hide the Save/Cancel buttons
-        document.getElementById("input-name-"+fID).value = jsonSeriesEditResponse["name"]; // Update Name
-        document.getElementById("input-source-"+fID).value = jsonSeriesEditResponse["source"]; // Update Slug
+        document.getElementById("input-name-"+fID).value = jsonSeriesEditResponse["name"];
+        document.getElementById("input-source-"+fID).value = jsonSeriesEditResponse["source"];
+        document.getElementById("view-series-"+fID).innerHTML = '<a id="view-series-'+fID+'" class="green" target="_blank" href="'+blog_web_base+'/series/'+jsonSeriesEditResponse["slug"]+'">view</a>';
+      } else if (jsonSeriesEditResponse["change"] == 'delete') { // Delete feed
+        showHideEdit(fID); // Hide the Save/Cancel buttons
+        document.getElementById("v_row_"+fID).innerHTML = '<td></td><td></td><td><div id="edit-message-'+fID+'"></div></td><td></td><td></td>';
+        document.getElementById("v_row_"+fID).classList.remove("shady");
+        document.getElementById("v_row_"+fID).classList.remove("blues");
+        document.getElementById("v_row_"+fID).classList.add("deleting");
       } else if (jsonSeriesEditResponse["change"] == 'nochange') { // No change
         showHideEdit(fID); // Hide the Save/Cancel buttons
       }
@@ -175,7 +188,7 @@ if ($totalpages > 1) {
 }
 
 // Nav links
-echo '<a class="blue" href="'.$blog_web_base.'/pieces.php"><small>Back to Pieces</small></a>';
+echo '<a class="blue" href="'.$blog_web_base.'/pieces.php"><small>Go to Pieces</small></a>';
 echo '<br><br>';
 
 // Simple line
@@ -188,8 +201,8 @@ echo '<form id="new_feed" method="post" action="aggregator.php">
 echo '<table id="new-feed-table"><tbody><tr>';
 echo '<th>Add new feed</th><th colspan="3"></th></tr><tr>';
 echo '<td><br><input type="submit" value="Add feed" form="new_feed"><br><br><br></td>';
-echo '<td><small>Nickname:</small><br>'.formInput('feed_name', '', $check_err).'<br><br><br></td>';
-echo '<td><small>URL:</small><br>'.formInput('feed_url', '', $check_err).'<br><br><br></td>';
+echo '<td><small>Nickname:</small><br>'.formInput('agg_name', '', $check_err).'<br><br><br></td>';
+echo '<td><small>URL:</small><br>'.formInput('agg_source', '', $check_err).'<br><br><br></td>';
 echo '<td><small>Import to series:</small><br>';
 // Set the values
 $p_series = $blog_default_series;
@@ -215,23 +228,21 @@ if ($pdo->numrows > 0) {
       <tr>
       <th width="25%">Feed</th>
       <th width="15%">Series</th>
-      <th width="40%">Options</th>
+      <th width="15%"></th>
+      <th width="25%">Description</th>
       <th width="15%">Since</th>
-      <div id="series-details-message">'.$detail_message.'</div>
-      </th>
       </tr>
   ';
 
   foreach ($rows as $row) {
     $agg_id = "$row->id";
-    $agg_series = "$row->series";
     $agg_source = "$row->source";
+    $agg_series = "$row->series";
     $agg_name = "$row->name";
     $agg_description = "$row->description";
     $agg_import_media = "$row->import_media";
     $agg_update_interval = "$row->update_interval";
     $agg_status = "$row->status";
-    $agg_on_delete = "$row->on_delete";
     $agg_last_updated = "$row->last_updated";
     $agg_date_added = "$row->date_added";
 
@@ -270,7 +281,7 @@ if ($pdo->numrows > 0) {
     echo '<td id="sav-'.$agg_id.'">';
       echo '<select form="feed-edit-'.$agg_id.'" name="agg_series">';
       // Query the Serieses
-      $rows = $pdo->exec_($database->prepare("SELECT id, name FROM series"));
+      $rows = $pdo->exec_($database->prepare("SELECT id, name FROM series ORDER BY name"));
 
       // Iterate each Series
       foreach ($rows as $row) {
@@ -281,10 +292,14 @@ if ($pdo->numrows > 0) {
       }
       echo '</select>';
 
-    // Delete checkbox
-    echo '<div id="delete-checkbox-'.$agg_id.'" style="display:none;">
-    <br><br><label for="feed-delete-'.$agg_id.'"><input type="checkbox" form="feed-edit-'.$agg_id.'" id="feed-delete-'.$agg_id.'" name="feed-delete" value="delete"> <i><small>Permanently delete series</small></i></label>
-    </div>';
+      // Status checkbox
+      $feed_active_checked = ($agg_status == 'active') ? ' checked' : '';
+      echo '<br><br><label for="feed-status-'.$agg_id.'"><input type="checkbox" form="feed-edit-'.$agg_id.'" id="feed-status-'.$agg_id.'" name="feed-status" value="'.$agg_id.'"'.$feed_active_checked.'> <i><small>Active</small></i></label>';
+
+      // Delete checkbox
+      echo '<div id="delete-checkbox-'.$agg_id.'" style="display:none;">
+      <br><br><label for="feed-delete-'.$agg_id.'"><input type="checkbox" form="feed-edit-'.$agg_id.'" id="feed-delete-'.$agg_id.'" name="feed-delete" value="'.$agg_id.'"> <i><small class="red">Permanently delete feed</small></i></label>
+      </div>';
 
     echo '</td>';
 
@@ -293,6 +308,7 @@ if ($pdo->numrows > 0) {
           <table>
             <tr>
               <td id="mcv-'.$agg_id.'">
+                <div id="hide-edits-'.$agg_id.'" style="display:inline;">&nbsp;</div>
                 <div id="make-edits-'.$agg_id.'" style="display:none;">
                   <button id="change-cancel-'.$agg_id.'" type="button" class="postform link-button inline blue" onclick="showHideEdit('.$agg_id.');">change</button>
                   &nbsp;
@@ -303,18 +319,25 @@ if ($pdo->numrows > 0) {
             <tr>
               <td>
                 <div id="e_buttons_'.$agg_id.'" style="display:none;">
-                  <button type="button" onclick="feedSave('.$agg_id.');">Save</button>&nbsp;
+                  <button type="button" onclick="feedSave('.$agg_id.', \''.$blog_web_base.'\');">Save</button>&nbsp;
                   <button type="button" onclick="showHideEdit('.$agg_id.');">Cancel</button>
                 </div>
                 <div id="edit-message-'.$agg_id.'"></div>
               </td>
             </tr>
-          </table>
-          </td>';
+          </table>';
 
-    // Update interval
+          echo '</td>';
+
+    // Description
+    echo '<td id="sdv-'.$agg_id.'"><div style="display:flex;"><textarea cols="30" rows="5" form="feed-edit-'.$agg_id.'" id="input-description-'.$agg_id.'" name="agg_description">'.$agg_description.'</textarea></div></td>';
+    // <input type="text" form="feed-edit-'.$agg_id.'" id="input-description-'.$agg_id.'" name="agg_description" value="'.$agg_description.'"/>
+
+    // Update
     echo '<td id="smv-'.$agg_id.'">';
-
+    echo '<small><i class="gray">'.$agg_date_added.'</i> (added)</small><br>';
+    echo '<small><i class="gray">'.$agg_last_updated.'</i> (updated)</small><br><br>';
+    echo '<small>Update interval: (in minutes)</small><br><input type="number" form="feed-edit-'.$agg_id.'" id="input-update-'.$agg_id.'" name="agg_update_interval" required value="'.$agg_update_interval.'">';
     echo '</td>';
     echo '</tr>';
 

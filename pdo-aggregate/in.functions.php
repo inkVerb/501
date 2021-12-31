@@ -122,7 +122,7 @@ function checkPost($name, $value) {
       $check_err[$name] = 'Not a valid number of feed items! (1-500)';
     }
 
-  } elseif ($name == 'feed_name') {
+  } elseif ($name == 'agg_name') {
     $regex_match = '/[0-9a-zA-Z_ !@&#$%.,+-=\/|]{1,90}$/';
     $regex_replace = "/[^0-9a-zA-Z_ !@&#$%.,+-=\/|]/";
     $result = (preg_match($regex_match, $value))
@@ -131,7 +131,7 @@ function checkPost($name, $value) {
       $check_err[$name] = 'Not a valid nickname! (1-90 characters, special characters allowed: ! @ & # $ % - _ . , + - = / | )';
     }
 
-  } elseif ($name == 'feed_url') {
+  } elseif ($name == 'agg_source') {
     $result = ((filter_var($value,FILTER_VALIDATE_URL)) && (strlen($value) <= 128))
     ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $value),0,128) : '';
     if ($result == '') {
@@ -194,16 +194,16 @@ function formInput($name, $value, $errors) {
   } elseif ($name == 'blog_feed_items') {
     $result = '<input type="number" min="1" max="500" id="blog_feed_items" name="blog_feed_items" value="'.$value.'"';
 
-  } elseif ($name == 'feed_name') {
-    $result = '<input type="text" name="feed_name" form="new_feed" required';
+  } elseif ($name == 'agg_name') {
+    $result = '<input type="text" name="agg_name" form="new_feed" required';
     if (array_key_exists($name, $errors)) {
       $result .=  ' value="'.$value.'"';
     } else {
       $result .=  ' placeholder="Nickname"';
     }
 
-  } elseif ($name == 'feed_url') {
-    $result = '<input type="url" name="feed_url" form="new_feed" required';
+  } elseif ($name == 'agg_source') {
+    $result = '<input type="url" name="agg_source" form="new_feed" required';
     if (array_key_exists($name, $errors)) {
       $result .=  ' value="'.$value.'"';
     } else {

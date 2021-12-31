@@ -3,30 +3,31 @@
 include ('./in.db.php');
 include ('./in.logincheck.php');
 
-// Pro images filenames
-$upload_subdir = 'media/pro/';
-$file_size_limit = 1000000; // 1MB
-$podcast_size_limit = 10000000; // 10MB
-$pro_path = $upload_subdir;
-$pro_rss_name = 'series-rss.jpg';
-$pro_podcast_name = 'series-podcast.jpg';
-
 // Check & validate for what we need
-if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (filter_var($_POST['u_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) && (($_POST['u_id']) == (isset($_SESSION['user_id']))) ) {
+if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
+&& (!empty($_POST['u_id']))
+&& (filter_var($_POST['u_id'], FILTER_VALIDATE_INT))
+&& (isset($_SESSION['user_id']))
+&& (($_POST['u_id']) == (isset($_SESSION['user_id'])))
+&& (isset($_POST['f_id']))
+&& (filter_var($_POST['f_id'], FILTER_VALIDATE_INT)) ) {
 
   // Set our $u_id
   $u_id = preg_replace("/[^0-9]/"," ", $_POST['u_id']);
+
+  // Assign the media ID and sanitize as the same time
+  $f_id = preg_replace("/[^0-9]/"," ", $_POST['f_id']);
 
   // Create our AJAX response array
   $ajax_response = array();
 
     // Delete feed?
-    if ((isset($_POST['series-delete'])) && ($_POST['series-delete'] == 'delete')) {
+    if ((isset($_POST['feed-delete'])) && ($_POST['feed-delete'] == $f_id)) {
       $query = $database->prepare("DELETE FROM aggregation WHERE id=:id");
       $query->bindParam(':id', $f_id);
       $pdo->exec_($query);
       if ($pdo->change) { // Successful change
-        $ajax_response['message'] = '<span class="green notehide">Feed "'.$agg_name.'" deleted, refresh to see changes</span>';
+        $ajax_response['message'] = '<span class="red notehide">Feed deleted!</span>';
         $ajax_response['name'] = $agg_name;
         $ajax_response['source'] = $agg_source;
         $ajax_response['change'] = 'delete';
@@ -37,11 +38,16 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         $ajax_response['change'] = 'nochange';
       }
 
-    // Update Feed
-    } elseif ( (isset($_POST['feed_name'])) && (isset($_POST['feed_url'])) && (!empty($_POST['f_id'])) && (filter_var($_POST['f_id'], FILTER_VALIDATE_INT)) ) {
+      // We're done here
+      $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+      echo $json_response;
 
-      // Assign the media ID and sanitize as the same time
-      $f_id = preg_replace("/[^0-9]/"," ", $_POST['f_id']);
+    // Update Feed
+  } elseif ((isset($_POST['agg_name']))
+        && (isset($_POST['agg_source']))
+        && (isset($_POST['agg_series']))
+        && (isset($_POST['agg_description']))
+        && (isset($_POST['agg_update_interval']))) {
 
       // Set our reponse ID
       $ajax_response['f_id'] = $f_id;
@@ -116,16 +122,56 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         exit ();
       }
 
+      // Feed update interval
+      if (filter_var($_POST['agg_update_interval'], FILTER_VALIDATE_INT)) {
+        $result = preg_replace("/[^0-9]/"," ", $_POST['agg_update_interval']);
+        $agg_update_interval = $result;
+
+      } else {
+        $ajax_response['message'] = '<span class="red notehide">Must enter a valid update interval! (in minutes)</span>';
+        // We're done here
+        $json_response = json_encode($ajax_response, JSON_FORCE_OBJECT);
+        echo $json_response;
+        exit ();
+      }
+
+      // Feed description
+      if (isset($_POST['agg_description'])) {
+        $result = filter_var($_POST['agg_description'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = substr($result, 0, 255); // Limit to 255 characters
+        $agg_description = $result;
+        $agg_description = DB::trimspace($agg_description);
+
+      } // Optional, no response needed
+
+      // Feed status
+      $agg_status = ((isset($_POST['feed-status'])) && ($_POST['feed-status'] == $f_id)) ? 'active' : 'dormant';
+
       // SQL
-      $query = $database->prepare("UPDATE aggregation SET name=:name, source=:source WHERE id=:id");
+      $query = $database->prepare("UPDATE aggregation SET name=:name, source=:source, series=:series, description=:description, update_interval=:update_interval, status=:status WHERE id=:id");
       $query->bindParam(':name', $agg_name);
       $query->bindParam(':source', $agg_source);
+      $query->bindParam(':series', $agg_series);
+      $query->bindParam(':description', $agg_description);
+      $query->bindParam(':update_interval', $agg_update_interval);
+      $query->bindParam(':status', $agg_status);
       $query->bindParam(':id', $f_id);
       $pdo->exec_($query);
       if ($pdo->change) { // Successful change
+
+        // Fetch slug for updated series
+        $rowsc = $pdo->select('series', 'id', $agg_series, 'slug');
+        // Shoule be 1 row
+        if ($pdo->numrows == 1) {
+          foreach ($rowsc as $row) {
+            // Assign the values
+            $agg_slug = "$row->slug";
+          }
+        }
         $ajax_response['message'] = '<span class="green notehide">Saved, refresh to see changes</span>';
         $ajax_response['name'] = $agg_name;
         $ajax_response['source'] = $agg_source;
+        $ajax_response['slug'] = $agg_slug;
         $ajax_response['change'] = 'change';
       } else { // No changes
         $ajax_response['message'] = '<span class="orange notehide">No changes.</span>';
@@ -139,8 +185,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       echo $json_response;
 
     } // End UPDATE
-
-  } // End POST check
 
 } else { // End POST check
   exit ();

@@ -23,7 +23,7 @@
 <?php
 
 // Query the Serieses
-$query = "SELECT id, name FROM series";
+$query = "SELECT id, name FROM series ORDER BY name";
 $call = mysqli_query($database, $query);
 
 // Start the select input

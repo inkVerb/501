@@ -23,7 +23,7 @@
 <?php
 
 // Query the Serieses
-$rows = $pdo->exec_($database->prepare("SELECT id, name FROM series"));
+$rows = $pdo->exec_($database->prepare("SELECT id, name FROM series ORDER BY name"));
 
 // Start the select input
 // We need the div with our AJAX form inside so the input value is reset on success

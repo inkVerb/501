@@ -46,6 +46,12 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
     } else {
       x.style.display = "inline";
     }
+    var y = document.getElementById("hide-edits-"+f_id);
+    if (y.style.display === "inline") {
+      y.style.display = "none";
+    } else {
+      y.style.display = "inline";
+    }
   }
 
   // show/hide action link
@@ -101,15 +107,18 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
           document.getElementById("v_row_"+sID).classList.remove("shady");
           document.getElementById("v_row_"+sID).classList.remove("blues");
           document.getElementById("v_row_"+sID).classList.add("deleting");
+        } else if (jsonSeriesEditResponse["change"] == 'nochange') { // No changes
+          showHideEdit(sID); // Hide the Save/Cancel buttons
+          // Every scenario is considered, now update <div id="edit-message-ID"> with our AJAX response message
+          document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
         }
-        if (jsonSeriesEditResponse["new_rss"] == 'newrss') { // Hide the Save/Cancel buttons
+        if (jsonSeriesEditResponse["new_rss"] == 'newrss') {
            document.getElementById("rss-none-"+sID).innerHTML = "<i>refresh to see image</i>";
         }
-        if (jsonSeriesEditResponse["new_podcast"] == 'newpodcast') { // Hide the Save/Cancel buttons
+        if (jsonSeriesEditResponse["new_podcast"] == 'newpodcast') {
           document.getElementById("podcast-none-"+sID).innerHTML = "<i>refresh to see image</i>";
         }
-        // Every scenario is considered, not update <div id="edit-message-ID"> with our AJAX response message
-        document.getElementById("edit-message-"+sID).innerHTML = jsonSeriesEditResponse["message"]; // Message
+
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails

@@ -67,7 +67,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
 if (($series_form == 'edit_piece') || ($series_form == 'blog_settings') || ($series_form == 'new_feed')) {
 
   // Query the Serieses
-  $rows = $pdo->exec_($database->prepare("SELECT id, name FROM series"));
+  $rows = $pdo->exec_($database->prepare("SELECT id, name FROM series ORDER BY name"));
 
   // Start the select input
   echo '<select form="'.$series_form.'" name="p_series"';

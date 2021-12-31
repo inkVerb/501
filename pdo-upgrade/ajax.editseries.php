@@ -428,7 +428,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
         <br><br>
         <button id="edit-details-'.$series_id.'"type="button" class="postform link-button inline blue" onclick="detailsEditor('.$user_id.', '.$series_id.');">Edit podcast details</button>';
         if ($series_id != $blog_default_series) {
-          echo '<br><br><label for="series-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="series-delete-'.$series_id.'" name="series-delete" value="delete"> <i><small>Permanently delete series</small></i></label>
+          echo '<br><br><label for="series-delete-'.$series_id.'"><input type="checkbox" form="series-edit-'.$series_id.'" id="series-delete-'.$series_id.'" name="series-delete" value="delete"> <i><small class="red">Permanently delete series</small></i></label>
           </div>';
         } else {
           echo '</div>
@@ -442,6 +442,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
               <table>
                 <tr>
                   <td id="mcv-'.$series_id.'">
+                    <div id="hide-edits-'.$series_id.'" style="display:inline;">&nbsp;</div>
                     <div id="make-edits-'.$series_id.'" style="display:none;">
                       <button id="change-cancel-'.$series_id.'" type="button" class="postform link-button inline blue" onclick="showHideEdit('.$series_id.');">change</button>
                       &nbsp;
@@ -475,7 +476,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
             echo '<code id="rss-none-'.$series_id.'" style="max-width:50px; max-height:50px; display:inline;" class="gray"><i>no image</i></code>';
 
           }
-        echo '</p>';
+        echo '</p><br>';
         echo '<div id="message-'.$series_id.'" style="display:none;"></div>
         </td>';
         echo '<td id="smv-'.$series_id.'">';
