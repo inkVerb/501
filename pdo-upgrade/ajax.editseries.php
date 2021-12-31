@@ -316,6 +316,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
   } else {
     echo '<div id="series-editor-container">';
     echo '<h2 class="editor-title">Series Editor</h2>';
+    echo '<p class="gray"><small><i>Add a new series while editing any piece or in <a href="'.$blog_web_base.'/settings.php">Blog Settings</a>.</i></small></p>';
 
     // Series Details Message?
     $detail_message = (isset($_POST['m'])) ? $_POST['m'] : '';

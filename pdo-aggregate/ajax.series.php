@@ -61,10 +61,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
 
   // Check which form this is for
   $series_form = (isset($_POST['series_form'])) ? filter_var($_POST['series_form'], FILTER_SANITIZE_STRING) : false;
-  if (($series_form != 'edit_piece') && ($series_form != 'blog_settings')) {exit();}
+  if (($series_form != 'edit_piece') && ($series_form != 'blog_settings') && ($series_form != 'new_feed')) {exit();}
 
 // Recreate the select input for Editor or Blog Settings
-if (($series_form == 'edit_piece') || ($series_form == 'blog_settings')) {
+if (($series_form == 'edit_piece') || ($series_form == 'blog_settings') || ($series_form == 'new_feed')) {
 
   // Query the Serieses
   $rows = $pdo->exec_($database->prepare("SELECT id, name FROM series"));
@@ -81,7 +81,8 @@ if (($series_form == 'edit_piece') || ($series_form == 'blog_settings')) {
     $s_id = "$row->id";
     $s_name = "$row->name";
     $selected_yn = ((($p_series == $s_id) && ($series_form == 'edit_piece'))
-    || (($p_series == $s_id) && ($series_form == 'blog_settings'))) ? ' selected' : ''; // So 'selected' appears in the Series
+    || (($p_series == $s_id) && ($series_form == 'blog_settings'))
+    || (($p_series == $s_id) && ($series_form == 'new_feed'))) ? ' selected' : ''; // So 'selected' appears in the Series
     echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
   }
 

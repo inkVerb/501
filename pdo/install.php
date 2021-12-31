@@ -255,13 +255,12 @@ EOF;
       echo '<p>Could not create the series database table, quitting.</p>';
       exit ();
     }
-    $query = "CREATE TABLE IF NOT EXISTS `aggregations` (
+    $query = "CREATE TABLE IF NOT EXISTS `aggregation` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-      `series` INT UNSIGNED DEFAULT 1,
-      `source` TEXT DEFAULT NULL,
       `name` VARCHAR(90) NOT NULL,
+      `source` TEXT DEFAULT NULL,
+      `series` INT UNSIGNED DEFAULT 1,
       `description` TINYTEXT DEFAULT NULL,
-      `import_media` ENUM('link', 'download') NOT NULL,
       `update_interval` TINYTEXT DEFAULT '15',
       `status` ENUM('active', 'dormant', 'deleting') NOT NULL,
       `on_delete` ENUM('erase', 'convert') NOT NULL,

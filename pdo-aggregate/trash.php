@@ -154,7 +154,7 @@ if ($totalpages > 1) {
 }
 
 // Pieces link
-echo '<a class="blue" href="'.$blog_web_base.'/pieces.php">Back to Pieces</a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()">Purge all trash &rarr;</span> <a class="red" id="purge_all_trash" href="'.$blog_web_base.'/purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
+echo '<a class="blue" href="'.$blog_web_base.'/pieces.php"><small>Back to Pieces</small></a> | <span class="red" style="cursor: pointer;" onclick="showPurgeAll()"><small>Purge all trash &rarr;</small></span> <a class="red" id="purge_all_trash" href="'.$blog_web_base.'/purge_all_trash.php" style="display:none"><i>Yes! Purge all trash</i></a>';
 
 // Simple line
 echo '<br><hr><br>';

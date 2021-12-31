@@ -113,7 +113,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-        document.getElementById("edit-series-"+sID).innerHTML =  'Oops! Something went wrong.';
+        document.getElementById("edit-message-"+sID).innerHTML =  'Oops! Something went wrong.';
       } );
 
       AJAX.open("POST", "ajax.editseries.php");
@@ -166,7 +166,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       } );
 
       AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-        document.getElementById("edit-series-"+sID).innerHTML =  'Oops! Something went wrong.';
+        document.getElementById("edit-message-"+sID).innerHTML =  'Oops! Something went wrong.';
       } );
 
       AJAX.open("POST", "ajax.editseriesdetails.php");
