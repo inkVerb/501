@@ -46,7 +46,6 @@ if ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s'])) && ($_GET['s']
 
 } elseif ((isset($_GET['s'])) && (preg_match($regex_match, $_GET['s'])) && ($_GET['s'] == 0)) {
   // Blog Info
-  //$rows = $pdo->select('blog_settings', 'public', '1', 'blog_lang, blog_link, blog_author, blog_descr, blog_summary, blog_owner, blog_email, blog_copy, blog_keywords, blog_explicit, blog_cat1, blog_cat2, blog_cat3, blog_cat4, blog_cat5');
   $query = $database->prepare("SELECT blog_lang, blog_link, blog_author, blog_descr, blog_summary, blog_owner, blog_email, blog_copy, blog_keywords, blog_explicit, blog_cat1, blog_cat2, blog_cat3, blog_cat4, blog_cat5 FROM blog_settings");
   $rows = $pdo->exec_($query);
   foreach ($rows as $row) {

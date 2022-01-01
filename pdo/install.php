@@ -262,7 +262,7 @@ EOF;
       `series` INT UNSIGNED DEFAULT 1,
       `description` TINYTEXT DEFAULT NULL,
       `update_interval` TINYTEXT DEFAULT '15',
-      `status` ENUM('active', 'dormant', 'deleting') NOT NULL,
+      `status` ENUM('active', 'dormant', 'problematic', 'deleting') NOT NULL,
       `on_delete` ENUM('convert', 'erase') NOT NULL,
       `last_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `date_added` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

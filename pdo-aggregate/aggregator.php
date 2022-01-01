@@ -301,7 +301,9 @@ if ($pdo->numrows > 0) {
 
     // View items row (default shown)
     // Contents
-    echo '<tr class="pieces '."$table_row_color".'" id="v_row_'.$agg_id.'" onmouseover="showChangeButton('.$agg_id.');" onmouseout="showChangeButton('.$agg_id.');">';
+    // Highlight rows that don't update
+    $this_row_color = ($agg_status == 'problematic') ? 'renew' : $table_row_color;
+    echo '<tr class="pieces '."$this_row_color".'" id="v_row_'.$agg_id.'" onmouseover="showChangeButton('.$agg_id.');" onmouseout="showChangeButton('.$agg_id.');">';
 
     // Nickname
     echo '<td id="sne-'.$agg_id.'">
@@ -334,8 +336,12 @@ if ($pdo->numrows > 0) {
       echo '</select>';
 
       // Status checkbox
-      $feed_active_checked = ($agg_status == 'active') ? ' checked' : '';
-      echo '<br><br><label for="feed-status-'.$agg_id.'"><input type="checkbox" form="feed-edit-'.$agg_id.'" id="feed-status-'.$agg_id.'" name="feed-status" value="'.$agg_id.'"'.$feed_active_checked.'> <i><small>Active</small></i></label>';
+      if ($agg_status == 'problematic') {
+        echo '<br><br><b><small>Problematic feed! Try changing URL.</small></b>';
+      } else {
+        $feed_active_checked = ($agg_status == 'active') ? ' checked' : '';
+        echo '<br><br><label for="feed-status-'.$agg_id.'"><input type="checkbox" form="feed-edit-'.$agg_id.'" id="feed-status-'.$agg_id.'" name="feed-status" value="'.$agg_id.'"'.$feed_active_checked.'> <i><small>Active</small></i></label>';
+      }
 
       // Delete checkbox
       echo '<div id="delete-checkbox-'.$agg_id.'" style="display:none;">

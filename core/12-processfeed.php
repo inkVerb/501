@@ -13,12 +13,13 @@ foreach ($rss->channel->item as $item) {
   $dc = $item->children('http://purl.org/dc/elements/1.1/');
 
   echo '<p><b><a href="'.$item->link.'">'.$item->title."</a></b></p>";
-  echo "<p>$item->pubDate</p>";
-  echo "<p>$item->description</p>";
-  echo "<p>$itunes->author</p>";
+  echo "<p><small><i>$item->pubDate</i></small></p>";
+  echo "<p><b>$dc->creator</b></p>";
+  echo "<p><i>$item->description</i></p>";
   echo "<p>$content->encoded</p>";
-  echo "<p>$dc->creator</p>";
-  echo (isset($item->enclosure['url'])) ? '<p>'.$item->enclosure['url'].'</p>' : false;
+  echo "<p><code>$itunes->duration</code></p>";
+  echo '<p><code>'.$item->enclosure['url'].'</code></p>';
+  echo (isset($item->guid)) ? "<p><code><b>$item->guid</b></code></p>" : false;
 
 }
 
