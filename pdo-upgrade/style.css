@@ -341,7 +341,11 @@ div#editor-meta-bar {
 }
 
 div#media-insert-container,
-div#feature-insert-container {
+div#feature-insert-image-container,
+div#feature-insert-audio-container,
+div#feature-insert-video-container,
+div#feature-insert-document-container
+ {
 	background-color: #fff;
 	border-style: solid;
 	border-width: medium;
@@ -378,11 +382,29 @@ div#editor-meta-bar
 div#media-insert-container
 div#media-insert,
 div#editor-meta-bar
-div#feature-insert-container
-div#media-upload,
+div#feature-insert-image-container
+div#media-upload-image,
 div#editor-meta-bar
-div#feature-insert-container
-div#media-insert {
+div#feature-insert-image-container
+div#feature-insert-image,
+div#editor-meta-bar
+div#feature-insert-audio-container
+div#media-upload-audio,
+div#editor-meta-bar
+div#feature-insert-audio-container
+div#feature-insert-audio,
+div#editor-meta-bar
+div#feature-insert-video-container
+div#media-upload-video,
+div#editor-meta-bar
+div#feature-insert-video-container
+div#feature-insert-video,
+div#editor-meta-bar
+div#feature-insert-document-container
+div#media-upload-document,
+div#editor-meta-bar
+div#feature-insert-document-container
+div#feature-insert-document {
 	width: 95%;
 }
 
@@ -408,8 +430,20 @@ div#media-insert
 table#media-insert-table,
 
 div#editor-meta-bar
-div#feature-insert-container
-div#media-insert
+div#feature-insert-image-container
+div#feature-insert-image
+table#media-insert-table,
+div#editor-meta-bar
+div#feature-insert-audio-container
+div#feature-insert-audio
+table#media-insert-table,
+div#editor-meta-bar
+div#feature-insert-video-container
+div#feature-insert-video
+table#media-insert-table,
+div#editor-meta-bar
+div#feature-insert-document-container
+div#feature-insert-document
 table#media-insert-table {
 	width: 100%;
 	margin-right: 1em;

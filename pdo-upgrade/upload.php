@@ -224,12 +224,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
             $file_extension = ($file_extension == 'mov') ? 'mp4' : $file_extension;
             // Duration
             $file_duration = shell_exec('./bash.duration.sh '.$file_basename.' '.$file_extension);
+            $file_duration = trim($file_duration); // Remove a new line at the end of BASH output
 
           break;
           case 'aud':
             shell_exec('./bash.audioprocess.sh '.$file_basename.' '.$file_extension);
             // Duration
             $file_duration = shell_exec('./bash.duration.sh '.$file_basename.' '.$file_extension);
+            $file_duration = trim($file_duration); // Remove a new line at the end of BASH output
 
           break;
           case 'doc':

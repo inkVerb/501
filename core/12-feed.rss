@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="rss.xsl" ?>
+<rss version="2.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+  >
+<channel>
+	<title>501 Blog</title>
+	<link>http://localhost/web</link>
+	<image>
+		<url>media/pro/pro-rss.jpg</url>
+		<title>501 Blog</title>
+		<link>http://localhost/web</link>
+	</image>
+	<description>Blog Subtitle &amp; description</description>
+	<language>en</language>
+  <itunes:author>Jon Boy</itunes:author>
+	<itunes:summary>I am a summary</itunes:summary>
+	<itunes:subtitle>Blog Subtitle &amp; description</itunes:subtitle>
+  <itunes:owner>
+    <itunes:name>Johnny Boy</itunes:name>
+    <itunes:email>johnboy@verb.ink</itunes:email>
+  </itunes:owner>
+	<itunes:keywords>ice, ice, baby</itunes:keywords>
+	<itunes:image href="media/pro/pro-podcast.jpg"/>
+	<itunes:explicit>true</itunes:explicit><itunes:category text="Business"/><itunes:category text="Business"/><itunes:category text="Investing"/><itunes:category text="Arts"/><itunes:category text="Performing Arts"/><itunes:category text="Sports"/><itunes:category text="Golf"/><itunes:category text="Sports"/><pubDate>Tue, Nov 23 12:43:19 2021 UTC</pubDate>
+<lastBuildDate>Tue, Nov 30 15:45:12 2021 UTC</lastBuildDate>
+
+<item>
+  <title>Media Features</title>
+  <link>http://localhost/web/media-features</link>
+  <guid isPermaLink="false">4-media-features</guid>
+  <pubDate>Tue, Nov 30 15:45:12 2021 UTC</pubDate>
+  <author><![CDATA[Jon Boy]]></author>
+  <dc:creator><![CDATA[Jon Boy]]></dc:creator>
+  <category><![CDATA[Second]]></category>
+  <description></description>
+  <content:encoded><![CDATA[Lorem featurings here]]></content:encoded>
+  <itunes:subtitle></itunes:subtitle>
+  <itunes:summary></itunes:summary>
+  <itunes:author>Jon Boy</itunes:author>
+  <itunes:keywords></itunes:keywords>
+  <itunes:explicit>true</itunes:explicit>
+  <enclosure url="http://localhost/web/media/audio/audio-7.mp3" length="" type="audio/mpeg" />
+  <itunes:duration>0:00:03</itunes:duration>
+  <enclosure url="http://localhost/web/media/video/video.mp4" length="" type="video/mp4" />
+  <itunes:duration>0:00:05</itunes:duration>
+</item>
+
+<item>
+  <title>Third new piece</title>
+  <link>http://localhost/web/third-new-piece</link>
+  <guid isPermaLink="false">3-third-new-piece</guid>
+  <pubDate>Mon, Nov 29 9:27:52 2021 UTC</pubDate>
+  <author><![CDATA[Jon Boy]]></author>
+  <dc:creator><![CDATA[Jon Boy]]></dc:creator>
+  <category><![CDATA[Third]]></category>
+  <description></description>
+  <content:encoded><![CDATA[Lorem Ipsum Tres]]></content:encoded>
+  <itunes:subtitle></itunes:subtitle>
+  <itunes:summary></itunes:summary>
+  <itunes:author>Jon Boy</itunes:author>
+  <itunes:keywords></itunes:keywords>
+  <itunes:explicit>true</itunes:explicit>
+  <enclosure url="http://localhost/web/media/audio/audio-2.mp3" length="" type="audio/mpeg" />
+  <itunes:duration>0:00:03</itunes:duration>
+</item>
+
+<item>
+  <title>Second new piece</title>
+  <link>http://localhost/web/second-new-piece</link>
+  <guid isPermaLink="false">2-second-new-piece</guid>
+  <pubDate>Mon, Nov 29 9:27:30 2021 UTC</pubDate>
+  <author><![CDATA[Jon Boy]]></author>
+  <dc:creator><![CDATA[Jon Boy]]></dc:creator>
+  <category><![CDATA[Blog]]></category>
+  <description></description>
+  <content:encoded><![CDATA[Lorem Ipsum Deux]]></content:encoded>
+  <itunes:subtitle></itunes:subtitle>
+  <itunes:summary></itunes:summary>
+  <itunes:author>Jon Boy</itunes:author>
+  <itunes:keywords></itunes:keywords>
+  <itunes:explicit>true</itunes:explicit>
+</item>
+
+</channel>
+</rss>

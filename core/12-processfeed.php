@@ -1,13 +1,9 @@
 <?php
 
-// Include our config (with SQL) up near the top of our PHP file
-include ('./in.db.php');
+$rss = simplexml_load_file('http://localhost/web/feed.rss');
 
-// SQL for current server timestamp: SELECT CURRENT_TIMESTAMP;
-
-$rss = simplexml_load_file('http://localhost/web/blog.rss');
-
-echo $rss->channel->title;
+echo '<h1>'.$rss->channel->title.'</h1>';
+echo '<h2>'.$rss->channel->description.'</h2>';
 
 foreach ($rss->channel->item as $item) {
 
@@ -25,3 +21,5 @@ foreach ($rss->channel->item as $item) {
   echo (isset($item->enclosure['url'])) ? '<p>'.$item->enclosure['url'].'</p>' : false;
 
 }
+
+?>

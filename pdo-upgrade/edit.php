@@ -44,20 +44,72 @@ include ('./in.featuredmedia.php');
 </div>
 
 <!-- Div for featured media -->
-<div id="feature-insert-container" style="display:none;">
+<!-- Image -->
+<div id="feature-insert-image-container" style="display:none;">
   <!-- Close button -->
   <div id="feature-insert-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
   <!-- Dropzone -->
-  <div id="media-upload">
+  <div id="media-upload-image">
 
-    <form id="dropzone-uploader-media-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
+    <form id="dropzone-uploader-featured-media-image-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
 
     <!-- AJAX response from upload.php will go here-->
-    <div id="featureuploadresponse"></div>
+    <div id="featureuploadresponse-image"></div>
   </div>
   <br>
   <!-- AJAX mediaInsert HTML entity -->
-  <div id="feature-insert"></div>
+  <div id="feature-insert-image"></div>
+</div>
+
+<!-- Audio -->
+<div id="feature-insert-audio-container" style="display:none;">
+  <!-- Close button -->
+  <div id="feature-insert-audio-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
+  <!-- Dropzone -->
+  <div id="media-upload-audio">
+
+    <form id="dropzone-uploader-featured-media-audio-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
+
+    <!-- AJAX response from upload.php will go here-->
+    <div id="featureuploadresponse-audio"></div>
+  </div>
+  <br>
+  <!-- AJAX mediaInsert HTML entity -->
+  <div id="feature-insert-audio"></div>
+</div>
+
+<!-- Video -->
+<div id="feature-insert-video-container" style="display:none;">
+  <!-- Close button -->
+  <div id="feature-insert-video-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
+  <!-- Dropzone -->
+  <div id="media-upload-video">
+
+    <form id="dropzone-uploader-featured-media-video-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
+
+    <!-- AJAX response from upload.php will go here-->
+    <div id="featureuploadresponse-video"></div>
+  </div>
+  <br>
+  <!-- AJAX mediaInsert HTML entity -->
+  <div id="feature-insert-video"></div>
+</div>
+
+<!-- Document -->
+<div id="feature-insert-document-container" style="display:none;">
+  <!-- Close button -->
+  <div id="feature-insert-document-closer" onclick="mediaInsertHide();mediaFeatureHide();" title="close"><b>&#xd7;</b></div>
+  <!-- Dropzone -->
+  <div id="media-upload-document">
+
+    <form id="dropzone-uploader-featured-media-document-insert" class="dropzone ml" action="upload.php" method="post" enctype="multipart/form-data"></form>
+
+    <!-- AJAX response from upload.php will go here-->
+    <div id="featureuploadresponse-document"></div>
+  </div>
+  <br>
+  <!-- AJAX mediaInsert HTML entity -->
+  <div id="feature-insert-document"></div>
 </div>
 
 <!-- Sidebar for meta -->
@@ -205,20 +257,20 @@ include ('./in.featuredmedia.php');
 
   // Featured image
   echo '<p id="featured_image">'.pieceInput('p_feat_img', $feat_img_id);
-  echo 'Image: <code id="feat_img_file">'.$feat_img_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\')">remove</small>';
+  echo 'Image: <code id="feat_img_file">'.$feat_img_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow(\'image\');"><i>(change)</i></small>&nbsp;<small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\');onNavWarn();">remove</small>';
   echo '<img id="feat_img_thumb" style="display:'.$feat_img_thumb_showhide.';" max-width="'.$img_thum_max.'" max-height="'.$img_thum_max.'" title="'.$feat_img_file_title.'" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
   echo '</p>';
   // Featured audio
   echo '<p id="featured_audio">'.pieceInput('p_feat_aud', $feat_aud_id);
-  echo 'Audio: <code id="feat_aud_file">'.$feat_aud_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\')">remove</small>';
+  echo 'Audio: <code id="feat_aud_file">'.$feat_aud_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'AUDIO\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow(\'audio\');"><i>(change)</i></small>&nbsp;<small class="red" id="feat_aud_remove" style="display:'.$feat_aud_showhide.'; cursor:pointer;" onclick="clearFeature(\'AUDIO\');onNavWarn();">remove</small>';
   echo '</p>';
   // Featured video
   echo '<p id="featured_video">'.pieceInput('p_feat_vid', $feat_vid_id);
-  echo 'Video: <code id="feat_vid_file">'.$feat_vid_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\')">remove</small>';
+  echo 'Video: <code id="feat_vid_file">'.$feat_vid_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'VIDEO\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow(\'video\');"><i>(change)</i></small>&nbsp;<small class="red" id="feat_vid_remove" style="display:'.$feat_vid_showhide.'; cursor:pointer;" onclick="clearFeature(\'VIDEO\');onNavWarn();">remove</small>';
   echo '</p>';
   // Featured document
   echo '<p id="featured_document">'.pieceInput('p_feat_doc', $feat_doc_id);
-  echo 'Document: <code id="feat_doc_file">'.$feat_doc_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow();"><i>(change)</i></small>&nbsp;<small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\')">remove</small>';
+  echo 'Document: <code id="feat_doc_file">'.$feat_doc_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'DOCUMENT\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow(\'document\');"><i>(change)</i></small>&nbsp;<small class="red" id="feat_doc_remove" style="display:'.$feat_doc_showhide.'; cursor:pointer;" onclick="clearFeature(\'DOCUMENT\');onNavWarn();">remove</small>';
   echo '</p>';
 
   ?>
@@ -351,6 +403,7 @@ include ('./in.featuredmedia.php');
     document.getElementById("uploadresponse").innerHTML = '';
   }
   // Dropzone settings
+  // Media Insert
   Dropzone.options.dropzoneUploaderMediaInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
     dictDefaultMessage: 'Drop to upload!',
     paramName: "upload_file", // Becomes $_FILES['upload_file']; default: "file"
@@ -382,21 +435,165 @@ include ('./in.featuredmedia.php');
 
     } // End initialization
 
-  };
-  // End Dropzone settings
+  }; // End Dropzone Media Insert settings
+
+  // Featured Media Insert
+  // Image
+  Dropzone.options.dropzoneUploaderFeaturedMediaImageInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
+    dictDefaultMessage: 'Drop to upload!',
+    paramName: "upload_file", // Becomes $_FILES['upload_file']; default: "file"
+    maxFilesize: 100, // MB
+    uploadMultiple: true, // Default: false
+    maxFiles: 50,
+    parallelUploads: 1, // Default: 2
+    addRemoveLinks: true, // Default: false
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+
+    // File types ported over from upload.php, redundant but consistent:
+    acceptedFiles: "image/jpeg, image/png, image/gif, image/svg+xml, image/bmp, image/x-windows-bmp, image/x-ms-bmp",
+
+    // Initiation
+    init: function() {
+      // Refresh Dropzone box after upload
+      this.on("complete", function(file) {
+         this.removeAllFiles(true);
+      });
+
+      // Process AJAX success from upload.php
+      this.on('success', function(file) {
+
+        // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
+        mediaFeatureInsert('IMAGE', <?php echo $user_id; ?>);
+
+      });
+
+    } // End initialization
+
+  }; // End Dropzone Featured Media Insert settings
+  // Audio
+  Dropzone.options.dropzoneUploaderFeaturedMediaAudioInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
+    dictDefaultMessage: 'Drop to upload!',
+    paramName: "upload_file", // Becomes $_FILES['upload_file']; default: "file"
+    maxFilesize: 100, // MB
+    uploadMultiple: true, // Default: false
+    maxFiles: 50,
+    parallelUploads: 1, // Default: 2
+    addRemoveLinks: true, // Default: false
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+
+    // File types ported over from upload.php, redundant but consistent:
+    acceptedFiles: "audio/mpeg, audio/ogg, audio/x-wav, audio/wav, audio/x-flac, audio/flac",
+
+    // Initiation
+    init: function() {
+      // Refresh Dropzone box after upload
+      this.on("complete", function(file) {
+         this.removeAllFiles(true);
+      });
+
+      // Process AJAX success from upload.php
+      this.on('success', function(file) {
+
+        // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
+        mediaFeatureInsert('AUDIO', <?php echo $user_id; ?>);
+
+      });
+
+    } // End initialization
+
+  }; // End Dropzone Featured Media Insert settings
+  // Video
+  Dropzone.options.dropzoneUploaderFeaturedMediaVideoInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
+    dictDefaultMessage: 'Drop to upload!',
+    paramName: "upload_file", // Becomes $_FILES['upload_file']; default: "file"
+    maxFilesize: 100, // MB
+    uploadMultiple: true, // Default: false
+    maxFiles: 50,
+    parallelUploads: 1, // Default: 2
+    addRemoveLinks: true, // Default: false
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+
+    // File types ported over from upload.php, redundant but consistent:
+    acceptedFiles: "video/webm, video/x-theora+ogg, video/ogg, video/mp4, video/x-flv, video/x-msvideo, video/x-matroska, video/quicktime",
+
+    // Initiation
+    init: function() {
+      // Refresh Dropzone box after upload
+      this.on("complete", function(file) {
+         this.removeAllFiles(true);
+      });
+
+      // Process AJAX success from upload.php
+      this.on('success', function(file) {
+
+        // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
+        mediaFeatureInsert('VIDEO', <?php echo $user_id; ?>);
+
+      });
+
+    } // End initialization
+
+  }; // End Dropzone Featured Media Insert settings
+  // Document
+  Dropzone.options.dropzoneUploaderFeaturedMediaDocumentInsert = { // JS: .dropzoneUploader = HTML: id="dropzone-uploader"
+    dictDefaultMessage: 'Drop to upload!',
+    paramName: "upload_file", // Becomes $_FILES['upload_file']; default: "file"
+    maxFilesize: 100, // MB
+    uploadMultiple: true, // Default: false
+    maxFiles: 50,
+    parallelUploads: 1, // Default: 2
+    addRemoveLinks: true, // Default: false
+    dictCancelUpload: "cancel", // Cancel before upload starts text
+    dictRemoveFile: "hide", // We don't have this set to delete the file since we will manage that ourselves, but it can hide the message in the Dropzone area
+
+    // File types ported over from upload.php, redundant but consistent:
+    acceptedFiles: "text/plain, text/html, .md, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text, application/x-pdf, application/pdf",
+
+    // Initiation
+    init: function() {
+      // Refresh Dropzone box after upload
+      this.on("complete", function(file) {
+         this.removeAllFiles(true);
+      });
+
+      // Process AJAX success from upload.php
+      this.on('success', function(file) {
+
+        // Just AJAX-refresh the mini Media Library Insert list, no need to handle responses from upload.php
+        mediaFeatureInsert('DOCUMENT', <?php echo $user_id; ?>);
+
+      });
+
+    } // End initialization
+
+  }; // End Dropzone Featured Media Insert settings
 
   // Open the featured media insert, populate via AJAX
   function mediaFeatureInsert(thisMedia, uID, pageNum = 0) { // These arguments can be anything, same as used in this function
+
+    // Set the id= variable
+    if (thisMedia == 'IMAGE') {
+      var idtype = 'image';
+    } else if (thisMedia == 'AUDIO') {
+      var idtype = 'audio';
+    } else if (thisMedia == 'VIDEO') {
+      var idtype = 'video';
+    } else if (thisMedia == 'DOCUMENT') {
+      var idtype = 'document';
+    }
 
     // Bind a new event listener every time the <form> is changed:
     const AJAX = new XMLHttpRequest(); // AJAX handler
 
     AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
-      document.getElementById("feature-insert").innerHTML = event.target.responseText;
+      document.getElementById("feature-insert-"+idtype).innerHTML = event.target.responseText;
     } );
 
     AJAX.addEventListener( "error", function(event) { // This runs if AJAX fails
-      document.getElementById("feature-insert").innerHTML =  'Oops! Something went wrong.';
+      document.getElementById("feature-insert-"+idtype).innerHTML =  'Oops! Something went wrong.';
     } );
 
     AJAX.open("POST", "ajax.mediafeature.php");
@@ -406,12 +603,18 @@ include ('./in.featuredmedia.php');
   } // mediaFeatureInsert() function
   // Hide mediaFeatureInsert()
   function mediaFeatureHide() {
-    document.getElementById("feature-insert-container").style.display = "none";
-    document.getElementById("featureuploadresponse").innerHTML = '';
+    document.getElementById("feature-insert-image-container").style.display = "none";
+    document.getElementById("feature-insert-audio-container").style.display = "none";
+    document.getElementById("feature-insert-video-container").style.display = "none";
+    document.getElementById("feature-insert-document-container").style.display = "none";
+    document.getElementById("featureuploadresponse-image").innerHTML = '';
+    document.getElementById("featureuploadresponse-audio").innerHTML = '';
+    document.getElementById("featureuploadresponse-video").innerHTML = '';
+    document.getElementById("featureuploadresponse-document").innerHTML = '';
   }
   // Show mediaFeatureInsert()
-  function mediaFeatureShow() {
-    document.getElementById("feature-insert-container").style.display = "block";
+  function mediaFeatureShow(mediaType) {
+    document.getElementById("feature-insert-"+mediaType+"-container").style.display = "block";
   }
 
   // Show slug edit

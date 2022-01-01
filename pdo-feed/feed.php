@@ -232,6 +232,7 @@ foreach ($rows as $row) {
   // echo the <item>
 
 echo <<<EOF
+\n
 <item>
   <title>$p_title</title>
   <link>$blog_web_base/$p_slug</link>
@@ -252,7 +253,7 @@ EOF;
     if ($feat_img_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_img_url" length="$feat_img_file_size" type="$feat_img_mime" />
+\n  <enclosure url="$feat_img_url" length="$feat_img_file_size" type="$feat_img_mime" />
 EOF;
 
     }
@@ -260,39 +261,48 @@ EOF;
     if ($feat_aud_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="$feat_aud_mime" />
+\n  <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="$feat_aud_mime" />
 EOF;
 
-      echo ($feat_aud_mime == "audio/mpeg") ? "<itunes:duration>$feat_aud_duration</itunes:duration>" : "";
+      if ($feat_aud_mime == "audio/mpeg") {
+echo <<<EOF
+\n  <itunes:duration>$feat_aud_duration</itunes:duration>
+EOF;
+      }
 
     }
 
     if ($feat_vid_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="$feat_vid_mime" />
+\n  <enclosure url="$feat_vid_url" length="$feat_vid_file_size" type="$feat_vid_mime" />
 EOF;
 
-      echo ($feat_vid_mime == "video/mp4") ? "<itunes:duration>$feat_vid_duration</itunes:duration>" : "";
+      if ($feat_vid_mime == "video/mp4") {
+echo <<<EOF
+\n  <itunes:duration>$feat_vid_duration</itunes:duration>
+EOF;
+      }
 
     }
 
     if ($feat_doc_id != 0) {
 
 echo <<<EOF
-  <enclosure url="$feat_doc_url" length="$feat_vid_file_size" type="$feat_doc_mime" />
+\n  <enclosure url="$feat_doc_url" length="$feat_vid_file_size" type="$feat_doc_mime" />
 EOF;
 
     }
 
 echo <<<EOF
-</item>
+\n</item>
 EOF;
 
 } // Close feed item iteration
 
 // Close feed
 echo <<<EOF
+\n
 </channel>
 </rss>
 EOF;
