@@ -22,8 +22,12 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
   $ajax_response = array();
 
     // Delete feed?
-    if ((isset($_POST['feed-delete'])) && ($_POST['feed-delete'] == $f_id)) {
-      $query = $database->prepare("DELETE FROM aggregation WHERE id=:id");
+    if ((isset($_POST['feed-delete']))
+    && ($_POST['feed-delete'] == $f_id)
+    && (isset($_POST['agg_del_feed_posts']))) {
+      $on_delete = ($_POST['agg_del_feed_posts'] == 'erase') ? 'erase' : 'convert';
+      $query = $database->prepare("UPDATE aggregation SET status='deleting', on_delete=:on_delete WHERE id=:id");
+      $query->bindParam(':on_delete', $on_delete);
       $query->bindParam(':id', $f_id);
       $pdo->exec_($query);
       if ($pdo->change) { // Successful change

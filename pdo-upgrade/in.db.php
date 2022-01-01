@@ -57,7 +57,7 @@ class DB {
     global $database;
 
     // Sanitize
-    $cols = preg_replace("/[^0-9a-zA-Z_]/", "", $col);
+    $col = preg_replace("/[^0-9a-zA-Z_]/", "", $col);
     $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
 
     // Try the query

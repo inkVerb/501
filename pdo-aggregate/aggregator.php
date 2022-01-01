@@ -44,14 +44,14 @@ if ((isset($_POST['agg_name']))
 ?>
 <script>
 // show/hide action link
-function showChangeButton(f_id) {
-  var x = document.getElementById("make-edits-"+f_id);
+function showChangeButton(fID) {
+  var x = document.getElementById("make-edits-"+fID);
   if (x.style.display === "inline") {
     x.style.display = "none";
   } else {
     x.style.display = "inline";
   }
-  var y = document.getElementById("hide-edits-"+f_id);
+  var y = document.getElementById("hide-edits-"+fID);
   if (y.style.display === "inline") {
     y.style.display = "none";
   } else {
@@ -60,19 +60,18 @@ function showChangeButton(f_id) {
 }
 
 // show/hide action link
-// For the Default series, the "Permanently delete series" checkbox and <div> do not exist, so running a JavaScript action for it would break the above line also
 // So, we must check to see if the checkbox <div> even exists, only then we run the script action to change it
-function showHideEdit(f_id) {
-  var y = document.getElementById("e_buttons_"+f_id);
+function showHideEdit(fID) {
+  var y = document.getElementById("e_buttons_"+fID);
   if (y.style.display === "inline") {
-    document.getElementById("change-cancel-"+f_id).innerHTML = 'change';
+    document.getElementById("change-cancel-"+fID).innerHTML = 'change';
     y.style.display = "none";
   } else {
-    document.getElementById("change-cancel-"+f_id).innerHTML = 'cancel';
+    document.getElementById("change-cancel-"+fID).innerHTML = 'cancel';
     y.style.display = "inline";
   }
-  if (elementExists = document.getElementById("delete-checkbox-"+f_id)) {
-    var x = document.getElementById("delete-checkbox-"+f_id);
+  if (elementExists = document.getElementById("delete-checkbox-"+fID)) {
+    var x = document.getElementById("delete-checkbox-"+fID);
     if (x.style.display === "inline") {
       x.style.display = "none";
     } else {
@@ -117,7 +116,49 @@ function feedSave(fID, blog_web_base) { // These arguments can be anything, same
 
     AJAX.send(FD); // Data sent is from the form
 
+    // Hide and clear the delete options
+    hideDeleteFeedOptions(fID);
+
   } // feedSave() function
+
+  // Check/uncheck the box = hide/show the options
+  function showDeleteFeedOptionsBox(fID) {
+    var x = document.getElementById("deleteOptions-"+fID);
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
+  }
+  // Show options for deleting feed
+  // JavaScript does not allow onClick action for both the label and the checkbox
+  // So, we make the label open the delete options div AND check the box...
+  function showDeleteFeedOptions(fID) {
+    // Show the Date Live schedule div
+    var x = document.getElementById("deleteOptions-"+fID);
+    if (x.style.display === "inline") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "inline";
+    }
+    // Use JavaScript to check the box
+    var y = document.getElementById("feed-delete-"+fID);
+    if (y.checked === false) {
+      y.checked = true;
+    } else {
+      y.checked = false;
+    }
+  }
+  // Always-only hide delete options on "cancel"
+  function hideDeleteFeedOptions(fID) {
+    // Hide the options
+    document.getElementById("deleteOptions-"+fID).style.display = "none";
+    // Uncheck the Delete box
+    document.getElementById("feed-delete-"+fID).checked = false;
+    // Unset delete options radios
+    document.getElementById("erase-posts-"+fID).checked = false;
+    document.getElementById("convert-posts-"+fID).checked = false;
+  }
 
 </script>
 <?php
@@ -216,7 +257,7 @@ echo '</tr></tbody></table>';
 echo '<br><hr><br>';
 
 // Iterate the rows
-$query = $database->prepare("SELECT * FROM aggregation ORDER BY name LIMIT $itemskip,$pageitems");
+$query = $database->prepare("SELECT * FROM aggregation WHERE NOT status='deleting' ORDER BY name LIMIT $itemskip,$pageitems");
 $rows = $pdo->exec_($query);
 if ($pdo->numrows > 0) {
 
@@ -298,7 +339,15 @@ if ($pdo->numrows > 0) {
 
       // Delete checkbox
       echo '<div id="delete-checkbox-'.$agg_id.'" style="display:none;">
-      <br><br><label for="feed-delete-'.$agg_id.'"><input type="checkbox" form="feed-edit-'.$agg_id.'" id="feed-delete-'.$agg_id.'" name="feed-delete" value="'.$agg_id.'"> <i><small class="red">Permanently delete feed</small></i></label>
+      <br><br><input type="checkbox" onclick="showDeleteFeedOptionsBox('.$agg_id.');" form="feed-edit-'.$agg_id.'" id="feed-delete-'.$agg_id.'" name="feed-delete" value="'.$agg_id.'"><label onclick="showDeleteFeedOptions('.$agg_id.');"> <i><small class="red">Permanently delete feed</small></i></label>
+      </div>';
+
+      // Delete options
+      echo '<div id="deleteOptions-'.$agg_id.'" style="display:none;">
+      <br>Aggregated posts:<br>
+      <label for="convert-posts-'.$agg_id.'"><input type="radio" form="feed-edit-'.$agg_id.'" id="convert-posts-'.$agg_id.'" name="agg_del_feed_posts" value="convert"> <i><small class="green">Convert to editable pieces</small></i></label>
+      &nbsp;
+      <label for="erase-posts-'.$agg_id.'"><input type="radio" form="feed-edit-'.$agg_id.'" id="erase-posts-'.$agg_id.'" name="agg_del_feed_posts" value="erase"> <i><small class="red">Delete & erase forever</small></i></label>
       </div>';
 
     echo '</td>';
@@ -310,9 +359,9 @@ if ($pdo->numrows > 0) {
               <td id="mcv-'.$agg_id.'">
                 <div id="hide-edits-'.$agg_id.'" style="display:inline;">&nbsp;</div>
                 <div id="make-edits-'.$agg_id.'" style="display:none;">
-                  <button id="change-cancel-'.$agg_id.'" type="button" class="postform link-button inline blue" onclick="showHideEdit('.$agg_id.');">change</button>
+                  <button id="change-cancel-'.$agg_id.'" type="button" class="postform link-button inline blue" onclick="showHideEdit('.$agg_id.'); hideDeleteFeedOptions('.$agg_id.');">change</button>
                   &nbsp;
-                  <a id="view-series-'.$agg_id.'" class="green" target="_blank" href="'.$blog_web_base.'/series/'.$s_slug.'">view</a>
+                  <a id="view-series-'.$agg_id.'" class="purple" target="_blank" href="'.$blog_web_base.'/series/'.$s_slug.'">view</a>
                 </div>
               </td>
             </tr>
@@ -320,7 +369,7 @@ if ($pdo->numrows > 0) {
               <td>
                 <div id="e_buttons_'.$agg_id.'" style="display:none;">
                   <button type="button" onclick="feedSave('.$agg_id.', \''.$blog_web_base.'\');">Save</button>&nbsp;
-                  <button type="button" onclick="showHideEdit('.$agg_id.');">Cancel</button>
+                  <button type="button" onclick="showHideEdit('.$agg_id.'); hideDeleteFeedOptions('.$agg_id.');">Cancel</button>
                 </div>
                 <div id="edit-message-'.$agg_id.'"></div>
               </td>
