@@ -1,0 +1,29 @@
+RewriteEngine on
+
+# Relative path destination
+
+# Remove any trailing slash, but keep everything else
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} (.+)/$
+RewriteRule ^ %1 [R=301,L]
+
+# Disallow directory listing
+Options All -Indexes
+
+# Root to our blog
+DirectoryIndex blog.php
+
+# Feeds
+RewriteRule ^feed$ feed.php?s=0 [L]
+RewriteRule ^series/?([a-zA-Z0-9-]+)/feed$ feed.php?s=$1 [L]
+
+# Slugs to piece.php
+RewriteRule ^/?([a-zA-Z0-9_-]+)$ piece.php?s=$1 [L]
+
+# Blog main page
+RewriteRule ^/$ blog.php [L]
+RewriteRule ^/\?r=?([0-9]+)$ blog.php?r=$1 [L]
+
+# Series
+RewriteRule ^series/?([a-zA-Z0-9-]+)$ blog.php?s=$1 [L]
+RewriteRule ^series/?([a-zA-Z0-9-]+)/r=([0-9])$ blog.php?s=$1&r=$2 [L]

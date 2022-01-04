@@ -26,16 +26,32 @@ if ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
 
   $regex_replace = "/[^a-zA-Z0-9-]/"; // Sanitize all non-slug characters
   $result = strtolower(preg_replace($regex_replace,"-", $_GET['s'])); // Lowercase & sanitize
-  $series_slug = substr($result, 0, 100); // Limit to 100 characters as also in database
+  $series_slug = substr($result, 0, 90); // Limit to 90 characters as also in database
   $rows = $pdo->select('series', 'slug', $series_slug, 'id, name');
   // No such series found?
   if ($pdo->numrows == 0) { header("Location: $blog_web_base");}
   foreach ($rows as $row) { $series_name = $row->name; $series_id = $row->id; }
+
+// Aggregation
+} elseif ((isset($_GET['a'])) && (filter_var($_GET['a'], FILTER_VALIDATE_INT, array('min_range' => 1)))) {
+  $agg_id = preg_replace("/[^0-9]/","", $_GET['a']);
+  // Get the saggregation
+  $rows = $pdo->select('aggregation', 'id', $agg_id, 'name, source');
+  // No such aggregation found?
+  if ($pdo->numrows == 0) { header("Location: $blog_web_base");}
+  foreach ($rows as $row) { $agg_name = $row->name; $agg_source = $row->source; }
+  $series_name = "Aggregated - $agg_name";
+  $no_feed_link = true;
+  $aggregated_msg = "<p><small>Aggregation source: <code>$agg_source</code></small></p>";
 }
 
 $series_get = (isset($series_slug)) ? "series/$series_slug/" : "?"; // Set series GET string for pagination
 $head_title = (isset($series_name)) ? $blog_title . ' :: ' . $series_name : $blog_title; // Set a <title> name used next
+$feed_path = (isset($series_slug)) ? "/series/$series_slug/feed" : "/feed";
+$feed_link = (!isset($no_feed_link)) ? true : false;
 include ('./in.head.php');
+
+echo (isset($aggregated_msg)) ? $aggregated_msg : false;
 
 // Pagination
 // Valid the Pagination
@@ -54,6 +70,9 @@ $itemskip = $pageitems * ($paged - 1);
 if ((isset($_GET['s'])) && (isset($series_id))) {
   $query = $database->prepare("SELECT id FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC");
   $query->bindParam(':series', $series_id);
+} elseif ((isset($_GET['a'])) && (isset($agg_id))) {
+  $query = $database->prepare("SELECT id FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND aggregated=:aggregated ORDER BY date_live DESC");
+  $query->bindParam(':aggregated', $agg_id);
 } else {
   $query = $database->prepare("SELECT id FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC");
 }
@@ -75,6 +94,9 @@ $prevpaged = $paged - 1;
 if ((isset($_GET['s'])) && (isset($series_id))) {
   $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
   $query->bindParam(':series', $series_id);
+} elseif ((isset($_GET['a'])) && (isset($agg_id))) {
+  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND aggregated=:aggregated ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+  $query->bindParam(':aggregated', $agg_id);
 } else {
   $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
 }

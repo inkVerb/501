@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: webapp.php
+Disallow: logout.php
+Disallow: account.php
+Disallow: settings.php
+Disallow: edit.php
+Disallow: hist.php
+Disallow: medialibrary.php
+Disallow: pieces.php
+Disallow: piece.php
+Disallow: trash.php
+Disallow: in.*

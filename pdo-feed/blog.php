@@ -178,7 +178,7 @@ foreach ($rows as $row) {
 
   // Edit for logged-in users
   if (isset($user_id)) {
-    echo '<p><a href="edit.php?p='.$p_id.'">edit</a></p>';
+    echo '<p><a href="'.$blog_web_base.'/edit.php?p='.$p_id.'">edit</a></p>';
   }
 
   // End our hoverable <div>
