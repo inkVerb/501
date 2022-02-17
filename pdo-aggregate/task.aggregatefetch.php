@@ -12,7 +12,6 @@ $curr_time_php = strtotime($curr_time_sql);
 
 // Series info
 if ((isset($agg_id)) && ($process_action == true)) {
-  $query = $database->prepare("SELECT id, source, update_interval, status, last_updated, series FROM aggregation");
   $query = $database->prepare("SELECT id, name, source, update_interval, status, last_updated, series FROM aggregation WHERE id='$agg_id'");
 }
 $rows = $pdo->exec_($query);
