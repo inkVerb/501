@@ -45,8 +45,8 @@ foreach ($rows as $row) {
     || (!isset($rss->channel->title))
     || (!isset($rss->channel->link))
     || (!isset($rss->channel->lastBuildDate))
-    || (!isset($rss->channel->title))
-    || (!isset($rss->channel->title))) {
+    || (!isset($rss->channel->description))
+    || (!isset($rss->channel->itunes))) {
       // Set status to problematic
       $query = $database->prepare("UPDATE aggregation SET status='problematic' WHERE id=:id");
       $query->bindParam(':id', $f_id);
