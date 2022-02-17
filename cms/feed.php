@@ -193,8 +193,8 @@ foreach ($rows as $row) { $feed_build = "$row->date_live"; }
 
 // Pub & build dates
 $feed_timezone = date_default_timezone_get();
-$feed_pub = date("D, M j G:i:s Y", strtotime($feed_pub));
-$feed_build = date("D, M j G:i:s Y", strtotime($feed_build));
+$feed_pub = date("D, M j Y G:i:s", strtotime($feed_pub));
+$feed_build = date("D, M j Y G:i:s", strtotime($feed_build));
 echo <<<EOF
   <pubDate>$feed_pub $feed_timezone</pubDate>
   <lastBuildDate>$feed_build $feed_timezone</lastBuildDate>
@@ -243,7 +243,7 @@ foreach ($rows as $row) {
   }
 
   // Date
-  $p_date = date("D, M j G:i:s Y", strtotime($p_live));
+  $p_date = date("D, M j Y G:i:s", strtotime($p_live));
 
   // echo the <item>
 
