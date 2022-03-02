@@ -172,7 +172,19 @@ if (str_contains($feed_cat5, '::')) {
   <itunes:category text="'.$feed_cat5.'"/>';
 }
 echo '
-'; // Finish
+';
+
+// Pub & build dates
+$feed_timezone = date_default_timezone_get();
+$feed_pub = date("D, M j Y G:i:s", strtotime($feed_pub));
+$feed_build = date("D, M j Y G:i:s", strtotime($feed_build));
+echo <<<EOF
+  <pubDate>$feed_pub $feed_timezone</pubDate>
+  <lastBuildDate>$feed_build $feed_timezone</lastBuildDate>
+EOF;
+echo '
+'; // Finish head
+
 // Iterate each feed item entry
 if ((isset($_GET['s'])) && (isset($series_id))) {
   $query = $database->prepare("SELECT piece_id, title, subtitle, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $blog_feed_items");
@@ -190,16 +202,6 @@ $rows = $pdo->exec_($queryPub);
 foreach ($rows as $row) { $feed_pub = "$row->date_live"; }
 $rows = $pdo->exec_($queryBuild);
 foreach ($rows as $row) { $feed_build = "$row->date_live"; }
-
-// Pub & build dates
-$feed_timezone = date_default_timezone_get();
-$feed_pub = date("D, M j Y G:i:s", strtotime($feed_pub));
-$feed_build = date("D, M j Y G:i:s", strtotime($feed_build));
-echo <<<EOF
-  <pubDate>$feed_pub $feed_timezone</pubDate>
-  <lastBuildDate>$feed_build $feed_timezone</lastBuildDate>
-EOF;
-
 $rows = $pdo->exec_($query);
 // We have many entries, this will iterate one post per each
 foreach ($rows as $row) {
