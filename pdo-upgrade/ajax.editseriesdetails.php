@@ -234,7 +234,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series slug
     if (preg_replace('/\s+/', '', $_POST['series_slug']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-]/";
-      $result = filter_var($_POST['series_slug'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_slug']); // Remove any HTML tags
       $result = strtolower(preg_replace($regex_replace,"-", $result)); // Lowercase, all non-alnum to hyphen
       $result = substr($result, 0, 90); // Limit to 90 characters
       $clean_slug = $result;
@@ -264,7 +264,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
       }
     // Series name
     if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_name']); // Remove any HTML tags
       $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
       $result = str_replace(' -- ',' – ',$result); // to en-dash
       $result = str_replace('---','—',$result); // to em-dash
@@ -300,7 +300,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series language
     if (preg_replace('/\s+/', '', $_POST['series_lang']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-]/";
-      $result = filter_var($_POST['series_lang'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_lang']); // Remove any HTML tags
       $result = strtolower(preg_replace($regex_replace,"-", $result)); // Lowercase, remove non-accepted characters
       $result = substr($result, 0, 90); // Limit to 90 characters
       $series_lang = $result;
@@ -320,7 +320,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // Series author
     if (preg_replace('/\s+/', '', $_POST['series_author']) != '') {
-      $result = filter_var($_POST['series_author'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_author']); // Remove any HTML tags
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_author = $result;
       $series_author = DB::trimspace($series_author);
@@ -330,7 +330,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // Series description
     if (preg_replace('/\s+/', '', $_POST['series_descr']) != '') {
-      $result = filter_var($_POST['series_descr'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_descr']); // Remove any HTML tags
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_descr = $result;
       $series_descr = DB::trimspace($series_descr);
@@ -340,7 +340,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // Series summary
     if (preg_replace('/\s+/', '', $_POST['series_summary']) != '') {
-      $result = filter_var($_POST['series_summary'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_summary']); // Remove any HTML tags
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_summary = $result;
       $series_summary = DB::trimspace($series_summary);
@@ -350,7 +350,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // Series owner
     if (preg_replace('/\s+/', '', $_POST['series_owner']) != '') {
-      $result = filter_var($_POST['series_owner'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_owner']); // Remove any HTML tags
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_owner = $result;
       $series_owner = DB::trimspace($series_owner);
@@ -371,7 +371,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series keywords
     if (preg_replace('/\s+/', '', $_POST['series_keywords']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-, ]/";
-      $result = filter_var($_POST['series_keywords'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_keywords']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_keywords = $result;
@@ -385,7 +385,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     && ($_POST['series_explicit'] == 'true')
     || ($_POST['series_explicit'] == 'false')) {
       $regex_replace = "/[^truefals]/";
-      $result = filter_var($_POST['series_explicit'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_explicit']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
       $result = substr($result, 0, 5); // Limit to 5 characters
       $series_explicit = $result;
@@ -396,7 +396,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // Series copyright
     if (preg_replace('/\s+/', '', $_POST['series_copy']) != '') {
-      $result = filter_var($_POST['series_copy'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_copy']); // Remove any HTML tags
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_copy = $result;
       $series_copy = DB::trimspace($series_copy);
@@ -407,7 +407,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series category 1
     if (isset($_POST['series_cat1'])) {
       $regex_replace = "/[^a-zA-Z-&;: ]/";
-      $result = filter_var($_POST['series_cat1'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_cat1']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_cat1 = $result;
@@ -419,7 +419,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series category 2
     if (isset($_POST['series_cat2'])) {
       $regex_replace = "/[^a-zA-Z-&;: ]/";
-      $result = filter_var($_POST['series_cat2'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_cat2']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_cat2 = $result;
@@ -431,7 +431,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series category 3
     if (isset($_POST['series_cat3'])) {
       $regex_replace = "/[^a-zA-Z-&;: ]/";
-      $result = filter_var($_POST['series_cat3'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_cat3']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_cat3 = $result;
@@ -443,7 +443,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series category 4
     if (isset($_POST['series_cat4'])) {
       $regex_replace = "/[^a-zA-Z-&;: ]/";
-      $result = filter_var($_POST['series_cat4'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_cat4']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_cat4 = $result;
@@ -455,7 +455,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series category 5
     if (isset($_POST['series_cat5'])) {
       $regex_replace = "/[^a-zA-Z-&;: ]/";
-      $result = filter_var($_POST['series_cat5'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_cat5']); // Remove any HTML tags
       $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
       $result = substr($result, 0, 255); // Limit to 255 characters
       $series_cat5 = $result;

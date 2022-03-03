@@ -58,7 +58,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 
       // Feed name
       if (preg_replace('/\s+/', '', $_POST['agg_name']) != '') {
-        $result = filter_var($_POST['agg_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['agg_name']); // Remove any HTML tags
         $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
         $result = str_replace(' -- ',' – ',$result); // to en-dash
         $result = str_replace('---','—',$result); // to em-dash
@@ -141,7 +141,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 
       // Feed description
       if (isset($_POST['agg_description'])) {
-        $result = filter_var($_POST['agg_description'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['agg_description']); // Remove any HTML tags
         $result = substr($result, 0, 255); // Limit to 255 characters
         $agg_description = $result;
         $agg_description = DB::trimspace($agg_description);

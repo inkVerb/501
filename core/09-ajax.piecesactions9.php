@@ -17,7 +17,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['p'])) && (isset($
   // Validate & filter
   if (!filter_var($_POST['p'], FILTER_VALIDATE_INT)) {exit ();}
   $piece_id = $_POST['p'];
-  $action = filter_var($_POST['action'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+  $action = strip_tags($_POST['action']); // Remove any HTML tags
 
   // Run the action
   piecesaction($action, $piece_id);

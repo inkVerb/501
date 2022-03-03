@@ -21,7 +21,7 @@ function checkPiece($name, $value) {
 
   // Only sanitize, no errors
   if ($name == 'p_title') {
-    $result = filter_var($value, FILTER_SANITIZE_STRING); // Remove any HTML tags
+    $result = strip_tags($value); // Remove any HTML tags
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
@@ -55,7 +55,7 @@ function checkPiece($name, $value) {
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
-    $result = filter_var($result, FILTER_SANITIZE_STRING); // Remove any HTML tags
+    $result = strip_tags($result); // Remove any HTML tags
 
   // Meta
   } elseif ($name == 'p_tags') {

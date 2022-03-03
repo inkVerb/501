@@ -97,7 +97,7 @@ foreach ($rows as $row) {
       $f_excerpt = str_replace('-- ','—',$f_excerpt); // to em-dash
       $f_excerpt = str_replace('---','—',$f_excerpt); // to em-dash
       $f_excerpt = str_replace('--','—',$f_excerpt); // to em-dash
-      $f_excerpt = filter_var($f_excerpt, FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $f_excerpt = strip_tags($f_excerpt); // Remove any HTML tags
       $f_excerpt = substr($f_excerpt, 0, 65530); // Limit to 65,530 characters for TEXT datatype
       // Make sure our variables are not empty
       $f_excerpt = (isset($itunes->summary)) ? $f_excerpt : NULL;

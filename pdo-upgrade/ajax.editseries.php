@@ -163,7 +163,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     // Series slug
     if (preg_replace('/\s+/', '', $_POST['series_slug']) != '') {
       $regex_replace = "/[^a-zA-Z0-9-]/";
-      $result = filter_var($_POST['series_slug'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_slug']); // Remove any HTML tags
       $result = strtolower(preg_replace($regex_replace,"-", $result)); // Lowercase, all non-alnum to hyphen
       $result = substr($result, 0, 90); // Limit to 90 characters
       $clean_slug = $result;
@@ -188,7 +188,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
     }
     // Series name
     if (preg_replace('/\s+/', '', $_POST['series_name']) != '') {
-      $result = filter_var($_POST['series_name'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+      $result = strip_tags($_POST['series_name']); // Remove any HTML tags
       $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
       $result = str_replace(' -- ',' – ',$result); // to en-dash
       $result = str_replace('---','—',$result); // to em-dash

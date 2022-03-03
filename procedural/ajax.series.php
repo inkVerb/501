@@ -8,7 +8,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
   // Make sure we're not creating an empty Series
   if (preg_replace('/\s+/', '', $_POST['new_series']) != '') {
     // Series name
-    $result = filter_var($_POST['new_series'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+    $result = strip_tags($_POST['new_series']); // Remove any HTML tags
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash

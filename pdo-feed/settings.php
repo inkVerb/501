@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series language
       if (preg_replace('/\s+/', '', $_POST['blog_lang']) != '') {
         $regex_replace = "/[^a-zA-Z0-9-]/";
-        $result = filter_var($_POST['blog_lang'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_lang']); // Remove any HTML tags
         $result = strtolower(preg_replace($regex_replace,"-", $result)); // Lowercase, remove non-accepted characters
         $result = substr($result, 0, 90); // Limit to 90 characters
         $blog_lang = $result;
@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       // Series author
       if (preg_replace('/\s+/', '', $_POST['blog_author']) != '') {
-        $result = filter_var($_POST['blog_author'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_author']); // Remove any HTML tags
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_author = $result;
         $blog_author = DB::trimspace($blog_author);
@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       // Series description
       if (preg_replace('/\s+/', '', $_POST['blog_descr']) != '') {
-        $result = filter_var($_POST['blog_descr'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_descr']); // Remove any HTML tags
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_descr = $result;
         $blog_descr = DB::trimspace($blog_descr);
@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       // Series summary
       if (preg_replace('/\s+/', '', $_POST['blog_summary']) != '') {
-        $result = filter_var($_POST['blog_summary'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_summary']); // Remove any HTML tags
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_summary = $result;
         $blog_summary = DB::trimspace($blog_summary);
@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       // Series owner
       if (preg_replace('/\s+/', '', $_POST['blog_owner']) != '') {
-        $result = filter_var($_POST['blog_owner'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_owner']); // Remove any HTML tags
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_owner = $result;
         $blog_owner = DB::trimspace($blog_owner);
@@ -243,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series keywords
       if (preg_replace('/\s+/', '', $_POST['blog_keywords']) != '') {
         $regex_replace = "/[^a-zA-Z0-9-, ]/";
-        $result = filter_var($_POST['blog_keywords'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_keywords']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_keywords = $result;
@@ -257,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       && ($_POST['blog_explicit'] == 'true')
       || ($_POST['blog_explicit'] == 'false')) {
         $regex_replace = "/[^truefals]/";
-        $result = filter_var($_POST['blog_explicit'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_explicit']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"", $result); // Remove non-accepted characters
         $result = substr($result, 0, 5); // Limit to 5 characters
         $blog_explicit = $result;
@@ -268,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       // Series copyright
       if (preg_replace('/\s+/', '', $_POST['blog_copy']) != '') {
-        $result = filter_var($_POST['blog_copy'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_copy']); // Remove any HTML tags
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_copy = $result;
         $blog_copy = DB::trimspace($blog_copy);
@@ -279,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series category 1
       if (isset($_POST['blog_cat1'])) {
         $regex_replace = "/[^a-zA-Z-&;: ]/";
-        $result = filter_var($_POST['blog_cat1'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_cat1']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_cat1 = $result;
@@ -291,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series category 2
       if (isset($_POST['blog_cat2'])) {
         $regex_replace = "/[^a-zA-Z-&;: ]/";
-        $result = filter_var($_POST['blog_cat2'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_cat2']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_cat2 = $result;
@@ -303,7 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series category 3
       if (isset($_POST['blog_cat3'])) {
         $regex_replace = "/[^a-zA-Z-&;: ]/";
-        $result = filter_var($_POST['blog_cat3'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_cat3']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_cat3 = $result;
@@ -315,7 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series category 4
       if (isset($_POST['blog_cat4'])) {
         $regex_replace = "/[^a-zA-Z-&;: ]/";
-        $result = filter_var($_POST['blog_cat4'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_cat4']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_cat4 = $result;
@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Series category 5
       if (isset($_POST['blog_cat5'])) {
         $regex_replace = "/[^a-zA-Z-&;: ]/";
-        $result = filter_var($_POST['blog_cat5'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+        $result = strip_tags($_POST['blog_cat5']); // Remove any HTML tags
         $result = preg_replace($regex_replace,"-", $result); // Remove non-accepted characters
         $result = substr($result, 0, 255); // Limit to 255 characters
         $blog_cat5 = $result;

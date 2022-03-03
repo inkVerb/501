@@ -8,7 +8,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
   // Make sure we're not creating an empty Series
   if (preg_replace('/\s+/', '', $_POST['new_series']) != '') {
     // Series name
-    $result = filter_var($_POST['new_series'], FILTER_SANITIZE_STRING); // Remove any HTML tags
+    $result = strip_tags($_POST['new_series']); // Remove any HTML tags
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
@@ -60,7 +60,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
   } // End empty check
 
   // Check which form this is for
-  $series_form = (isset($_POST['series_form'])) ? filter_var($_POST['series_form'], FILTER_SANITIZE_STRING) : false;
+  $series_form = (isset($_POST['series_form'])) ? strip_tags($_POST['series_form']) : false;
   if (($series_form != 'edit_piece') && ($series_form != 'blog_settings')) {exit();}
 
 // Recreate the select input for Editor or Blog Settings
