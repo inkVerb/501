@@ -2,11 +2,6 @@
 // This is an XML document, say so first!
 header('Content-type: text/xml');
 
-// In case you want to show errors
-// ini_set('display_errors', '1');
-// ini_set('display_startup_errors', '1');
-// error_reporting(E_ALL);
-
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.db.php');
 
