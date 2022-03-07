@@ -45,6 +45,14 @@
             color: #444;
           }
 
+          div.date span.pubdate {
+            font-style: italic;
+          }
+
+          div.date span.duration {
+            font-style: bold;
+          }
+
           div.item div.description {
             font-size: 11pt;
           }
@@ -133,10 +141,10 @@
 
             <!-- Date -->
             <div class="date">
-              <span><i><xsl:value-of select="pubDate" /></i></span>
+              <span class="pubdate"><xsl:value-of select="pubDate" /></span>
               <xsl:if test="itunes:duration">
                 <xsl:text disable-output-escaping="yes"> &#x2022; </xsl:text>
-                <span><xsl:value-of select="itunes:duration" /></span>
+                <span class="duration"><xsl:value-of select="itunes:duration" /></span>
               </xsl:if>
             </div>
 
@@ -155,6 +163,7 @@
                     <xsl:value-of select="enclosure[@type='audio/mpeg']/@url"/>
                   </xsl:attribute>
                 </audio>
+                <br />
               </xsl:if>
 
               <!-- Video -->
@@ -164,6 +173,7 @@
                     <xsl:value-of select="enclosure[@type='video/mp4']/@url"/>
                   </xsl:attribute>
                 </video>
+                <br />
               </xsl:if>
 
             </xsl:if>

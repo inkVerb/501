@@ -4,6 +4,12 @@ include ('./in.db.php');
 
 // SQL for current server timestamp: SELECT CURRENT_TIMESTAMP;
 
+// Time duration function Thanks https://stackoverflow.com/a/48187008/10343144
+function validTime($time, $format='H:i:s') {
+ $d = DateTime::createFromFormat("Y-m-d $format", "2017-12-01 $time");
+ return $d && $d->format($format) == $time;
+}
+
 // Current time of SQL server
 $query = $database->prepare("SELECT CURRENT_TIMESTAMP;");
 $rows = $pdo->exec_($query);
@@ -45,8 +51,7 @@ foreach ($rows as $row) {
     || (!isset($rss->channel->title))
     || (!isset($rss->channel->link))
     || (!isset($rss->channel->lastBuildDate))
-    || (!isset($rss->channel->description))
-    || (!isset($rss->channel->itunes))) {
+    || (!isset($rss->channel->description))) {
       // Set status to problematic
       $query = $database->prepare("UPDATE aggregation SET status='problematic' WHERE id=:id");
       $query->bindParam(':id', $f_id);
@@ -123,6 +128,8 @@ foreach ($rows as $row) {
           case 'image/png':
           case 'image/gif':
             $f_feat_img = $enclosure['url'];
+            $f_feat_img_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
+            $f_feat_mime = $enclosure['type'];
             $f_feat_img = ((filter_var($f_feat_img,FILTER_VALIDATE_URL)) && (strlen($f_feat_img) <= 128))
             ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_img),0,128) : '';
           break;
@@ -134,7 +141,9 @@ foreach ($rows as $row) {
           case 'audio/x-flac':
           case 'audio/flac':
             $f_feat_aud = $enclosure['url'];
-            $f_feat_aud =  ((filter_var($f_feat_aud,FILTER_VALIDATE_URL)) && (strlen($f_feat_aud) <= 128))
+            $f_feat_aud_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
+            $f_feat_aud_mime = $enclosure['type'];
+            $f_feat_aud = ((filter_var($f_feat_aud,FILTER_VALIDATE_URL)) && (strlen($f_feat_aud) <= 128))
             ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_aud),0,128) : '';
           break;
 
@@ -147,7 +156,9 @@ foreach ($rows as $row) {
           case 'video/x-matroska':
           case 'video/quicktime':
             $f_feat_vid = $enclosure['url'];
-            $f_feat_vid =  ((filter_var($f_feat_vid,FILTER_VALIDATE_URL)) && (strlen($f_feat_vid) <= 128))
+            $f_feat_vid_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
+            $f_feat_vid_mime = $enclosure['type'];
+            $f_feat_vid = ((filter_var($f_feat_vid,FILTER_VALIDATE_URL)) && (strlen($f_feat_vid) <= 128))
             ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_vid),0,128) : '';
           break;
 
@@ -159,7 +170,9 @@ foreach ($rows as $row) {
           case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
           case 'application/vnd.oasis.opendocument.text':
             $f_feat_doc = $enclosure['url'];
-            $f_feat_doc =  ((filter_var($f_feat_doc,FILTER_VALIDATE_URL)) && (strlen($f_feat_doc) <= 128))
+            $f_feat_doc_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
+            $f_feat_doc_mime = $enclosure['type'];
+            $f_feat_doc = ((filter_var($f_feat_doc,FILTER_VALIDATE_URL)) && (strlen($f_feat_doc) <= 128))
             ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_doc),0,128) : '';
           break;
         } // switch
@@ -169,6 +182,14 @@ foreach ($rows as $row) {
       $f_feat_aud = (isset($f_feat_aud)) ? $f_feat_aud : '0';
       $f_feat_vid = (isset($f_feat_vid)) ? $f_feat_vid : '0';
       $f_feat_doc = (isset($f_feat_doc)) ? $f_feat_doc : '0';
+      $f_feat_img_length = (isset($f_feat_img_length)) ? $f_feat_img_length : '0';
+      $f_feat_aud_length = (isset($f_feat_aud_length)) ? $f_feat_aud_length : '0';
+      $f_feat_vid_length = (isset($f_feat_vid_length)) ? $f_feat_vid_length : '0';
+      $f_feat_doc_length = (isset($f_feat_doc_length)) ? $f_feat_doc_length : '0';
+      $f_feat_img_mime = (isset($f_feat_img_mime)) ? $f_feat_img_mime : '0';
+      $f_feat_aud_mime = (isset($f_feat_aud_mime)) ? $f_feat_aud_mime : '0';
+      $f_feat_vid_mime = (isset($f_feat_vid_mime)) ? $f_feat_vid_mime : '0';
+      $f_feat_doc_mime = (isset($f_feat_doc_mime)) ? $f_feat_doc_mime : '0';
 
       // Date live
       $f_live = $item->pubDate;
@@ -184,6 +205,9 @@ foreach ($rows as $row) {
       $f_tags = substr($f_tags, 0, 55530); // Limit to 55,530 characters to stay safe within TEXT datatype after JSON conversion
       $f_tags_json = json_encode(explode(', ', $f_tags)); // Convert into JSON objects
       $f_tags_sqljson = (json_decode($f_tags_json)) ? $f_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
+
+      // Duration
+      $f_duration = (validTime($itunes->duration)) ? $itunes->duration : 0;
 
       // Slug & GUID
       // Slug
@@ -260,19 +284,29 @@ foreach ($rows as $row) {
       $f_subtitle_trim = DB::trimspace($f_subtitle);
       $f_content_trim = DB::trimspace($f_content);
       $f_excerpt_trim = DB::trimspace($f_excerpt);
+      $f_duration_trim = DB::trimspace($f_duration);
       $f_guid_trim = DB::trimspace($f_guid);
       $f_feat_img_trim = DB::trimspace($f_feat_img);
       $f_feat_aud_trim = DB::trimspace($f_feat_aud);
       $f_feat_vid_trim = DB::trimspace($f_feat_vid);
       $f_feat_doc_trim = DB::trimspace($f_feat_doc);
+      $f_feat_img_length_trim = DB::trimspace($f_feat_img_length);
+      $f_feat_aud_length_trim = DB::trimspace($f_feat_aud_length);
+      $f_feat_vid_length_trim = DB::trimspace($f_feat_vid_length);
+      $f_feat_doc_length_trim = DB::trimspace($f_feat_doc_length);
+      $f_feat_img_mime_trim = DB::trimspace($f_feat_img_mime);
+      $f_feat_aud_mime_trim = DB::trimspace($f_feat_aud_mime);
+      $f_feat_vid_mime_trim = DB::trimspace($f_feat_vid_mime);
+      $f_feat_doc_mime_trim = DB::trimspace($f_feat_doc_mime);
       $f_live_trim = DB::trimspace($f_live_sql);
 
       // Update or new entry?
       if ((isset($pub_update)) && ($pub_update = true)) {
-        $query = $database->prepare("UPDATE publications SET type=:type, series=:series, title=:title, subtitle=:subtitle, slug=:slug, content=:content, excerpt=:excerpt, tags=:tags, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, date_live=:date_live WHERE guid=:guid AND aggregated=:aggregated");
+        $query = $database->prepare("UPDATE publications SET type=:type, series=:series, duration=:duration, title=:title, subtitle=:subtitle, slug=:slug, content=:content, excerpt=:excerpt, tags=:tags, feat_img=:feat_img, feat_aud=:feat_aud, feat_vid=:feat_vid, feat_doc=:feat_doc, feat_img=:feat_img_length, feat_aud=:feat_aud_length, feat_vid=:feat_vid_length, feat_doc=:feat_doc_length, feat_img=:feat_img_mime, feat_aud=:feat_aud_mime, feat_vid=:feat_vid_mime, feat_doc=:feat_doc_mime, date_live=:date_live WHERE guid=:guid AND aggregated=:aggregated");
       } else { // Insert into the database
         $query = $database->prepare("INSERT INTO publications
-          (piece_id, type, series, aggregated, title, subtitle, slug, content, excerpt, guid, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live) VALUES (0, :type, :series, :aggregated, :title, :subtitle, :slug, :content, :excerpt, :guid, :tags, :feat_img, :feat_aud, :feat_vid, :feat_doc, :date_live)");
+          (piece_id, type, series, aggregated, title, subtitle, slug, content, excerpt, duration, guid, tags, feat_img, feat_aud, feat_vid, feat_doc, feat_img_length, feat_aud_length, feat_vid_length, feat_doc_length, feat_img_mime, feat_aud_mime, feat_vid_mime, feat_doc_mime, date_live)
+          VALUES (0, :type, :series, :aggregated, :title, :subtitle, :slug, :content, :excerpt, :duration, :guid, :tags, :feat_img, :feat_aud, :feat_vid, :feat_doc, :feat_img_length, :feat_aud_length, :feat_vid_length, :feat_doc_length, :feat_img_mime, :feat_aud_mime, :feat_vid_mime, :feat_doc_mime, :date_live)");
       }
 
       // Run the query
@@ -284,12 +318,21 @@ foreach ($rows as $row) {
       $query->bindParam(':slug', $f_slug_trim);
       $query->bindParam(':content', $f_content_trim);
       $query->bindParam(':excerpt', $f_excerpt_trim);
+      $query->bindParam(':duration', $f_duration_trim);
       $query->bindParam(':guid', $f_guid_trim);
       $query->bindParam(':tags', $f_tags_sqljson);
       $query->bindParam(':feat_img', $f_feat_img);
       $query->bindParam(':feat_aud', $f_feat_aud);
       $query->bindParam(':feat_vid', $f_feat_vid);
       $query->bindParam(':feat_doc', $f_feat_doc);
+      $query->bindParam(':feat_img_length', $f_feat_img_length);
+      $query->bindParam(':feat_aud_length', $f_feat_aud_length);
+      $query->bindParam(':feat_vid_length', $f_feat_vid_length);
+      $query->bindParam(':feat_doc_length', $f_feat_doc_length);
+      $query->bindParam(':feat_img_mime', $f_feat_img_mime);
+      $query->bindParam(':feat_aud_mime', $f_feat_aud_mime);
+      $query->bindParam(':feat_vid_mime', $f_feat_vid_mime);
+      $query->bindParam(':feat_doc_mime', $f_feat_doc_mime);
       $query->bindParam(':date_live', $f_live_trim);
       $pdo->exec_($query);
 
@@ -297,6 +340,11 @@ foreach ($rows as $row) {
       if (!$pdo->ok) {
         // Set status to problematic
         $query = $database->prepare("UPDATE aggregation SET status='problematic' WHERE id=:id");
+        $query->bindParam(':id', $f_id);
+        $pdo->exec_($query);
+      } else {
+        // Note the update
+        $query = $database->prepare("UPDATE aggregation SET last_updated=NOW() WHERE id=:id");
         $query->bindParam(':id', $f_id);
         $pdo->exec_($query);
       }

@@ -357,7 +357,7 @@ if ($pdo->numrows > 0) {
       echo '<div id="deleteOptions-'.$agg_id.'" style="display:none;">
       <br>Aggregated posts:<br>
       <label for="convert-posts-'.$agg_id.'"><input type="radio" form="feed-edit-'.$agg_id.'" id="convert-posts-'.$agg_id.'" name="agg_del_feed_posts" value="convert"> <i><small class="green">Convert to editable pieces</small></i></label>
-      &nbsp;
+      <br>
       <label for="erase-posts-'.$agg_id.'"><input type="radio" form="feed-edit-'.$agg_id.'" id="erase-posts-'.$agg_id.'" name="agg_del_feed_posts" value="erase"> <i><small class="red">Delete & erase forever</small></i></label>
       </div>';
 

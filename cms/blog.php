@@ -92,13 +92,13 @@ $prevpaged = $paged - 1;
 
 // Check the database for published pieces
 if ((isset($_GET['s'])) && (isset($series_id))) {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, feat_img_length, feat_aud_length, feat_vid_length, feat_doc_length, feat_img_mime, feat_aud_mime, feat_vid_mime, feat_doc_mime, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND series=:series ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
   $query->bindParam(':series', $series_id);
 } elseif ((isset($_GET['a'])) && (isset($agg_id))) {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND aggregated=:aggregated ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, feat_img_length, feat_aud_length, feat_vid_length, feat_doc_length, feat_img_mime, feat_aud_mime, feat_vid_mime, feat_doc_mime, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() AND aggregated=:aggregated ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
   $query->bindParam(':aggregated', $agg_id);
 } else {
-  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
+  $query = $database->prepare("SELECT piece_id, title, slug, content, excerpt, series, tags, feat_img, feat_aud, feat_vid, feat_doc, date_live, feat_img_length, feat_aud_length, feat_vid_length, feat_doc_length, feat_img_mime, feat_aud_mime, feat_vid_mime, feat_doc_mime, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' AND date_live<=NOW() ORDER BY date_live DESC LIMIT $itemskip,$pageitems");
 }
 $rows = $pdo->exec_($query);
 // Start our show_div counter
@@ -117,6 +117,14 @@ foreach ($rows as $row) {
   $p_feat_aud = $row->feat_aud;
   $p_feat_vid = $row->feat_vid;
   $p_feat_doc = $row->feat_doc;
+  $p_feat_img_length = "$row->feat_img_length";
+  $p_feat_aud_length = "$row->feat_aud_length";
+  $p_feat_vid_length = "$row->feat_vid_length";
+  $p_feat_doc_length = "$row->feat_doc_length";
+  $p_feat_img_mime = "$row->feat_img_mime";
+  $p_feat_aud_mime = "$row->feat_aud_mime";
+  $p_feat_vid_mime = "$row->feat_vid_mime";
+  $p_feat_doc_mime = "$row->feat_doc_mime";
   $p_live = "$row->date_live";
   $p_update = "$row->date_updated";
 

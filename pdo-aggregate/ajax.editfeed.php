@@ -31,10 +31,14 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
       $query->bindParam(':id', $f_id);
       $pdo->exec_($query);
       if ($pdo->change) { // Successful change
-        $ajax_response['message'] = '<span class="red notehide">Feed deleted!</span>';
         $ajax_response['name'] = $agg_name;
         $ajax_response['source'] = $agg_source;
         $ajax_response['change'] = 'delete';
+
+        // Update now
+        include ("./act.processfetch.php?f=$f_id");
+
+
       } else { // Impossible fail to delete feed
         $ajax_response['message'] = '<span class="red">Strange database trouble deleting feed "'.$agg_name.'"!</span>';
         $ajax_response['name'] = $series_name_trim;
