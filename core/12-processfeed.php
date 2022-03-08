@@ -5,6 +5,14 @@ $rss = simplexml_load_file('http://localhost/web/feed.rss');
 echo '<h1>'.$rss->channel->title.'</h1>';
 echo '<h2>'.$rss->channel->description.'</h2>';
 
+$itunes = $item->children('http://www.itunes.com/dtds/podcast-1.0.dtd');
+$itunes_owner_name = $itunes->owner->name;
+echo "<p>$itunes_owner_name</p>";
+$itunes_owner_email = $itunes->owner->email;
+echo "<p>$itunes_owner_email</p>";
+$itunes_image_url = $itunes->image->attributes()['href'];
+echo "<p>$itunes_image_url</p>";
+
 foreach ($rss->channel->item as $item) {
 
   $itunes = $item->children('http://www.itunes.com/dtds/podcast-1.0.dtd');
