@@ -332,11 +332,9 @@ EOF;
 
 } // Close feed item iteration
 
-// Pub & build dates
-$feed_pub = date("D, M j Y G:i:s", strtotime($feed_pub));
+// Build dates
 $feed_build = date("D, M j Y G:i:s", strtotime($feed_build));
 echo <<<EOF
-  <pubDate>$feed_pub $feed_timezone</pubDate>
   <lastBuildDate>$feed_build $feed_timezone</lastBuildDate>
 EOF;
 echo '
