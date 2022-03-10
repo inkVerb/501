@@ -45,9 +45,11 @@
 
 	<itunes:explicit>false</itunes:explicit>
 
-        <itunes:category text="Religion &amp; Spirituality"/>
+        <itunes:category text="Religion &amp; Spirituality">
 
-				<itunes:category text="Christianity"/>
+          <itunes:category text="Christianity"/>
+					
+        </itunes:category>
 
 	<pubDate>17 Nov 2013 14:09:52 GMT</pubDate>
 

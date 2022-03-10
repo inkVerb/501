@@ -120,9 +120,9 @@ if (str_contains($feed_cat1, '::')) {
   $cat1 = strtok($feed_cat1, '::');
   $cat2 = preg_replace("/$cat1::/i", "", $feed_cat1);
   echo '
-  <itunes:category text="'.$cat1.'"/>';
-  echo '
-  <itunes:category text="'.$cat2.'"/>';
+  <itunes:category text="'.$cat1.'">
+    <itunes:category text="'.$cat2.'"/>
+  </itunes:category>';
 } elseif (($feed_cat1 != '') && ($feed_cat1 != NULL)) {
   echo '
   <itunes:category text="'.$feed_cat1.'"/>';
@@ -131,9 +131,9 @@ if (str_contains($feed_cat2, '::')) {
   $cat1 = strtok($feed_cat2, '::');
   $cat2 = preg_replace("/$cat1::/i", "", $feed_cat2);
   echo '
-  <itunes:category text="'.$cat1.'"/>';
-  echo '
-  <itunes:category text="'.$cat2.'"/>';
+  <itunes:category text="'.$cat1.'">
+    <itunes:category text="'.$cat2.'"/>
+  </itunes:category>';
 } elseif (($feed_cat2 != '') && ($feed_cat2 != NULL)) {
   echo '
   <itunes:category text="'.$feed_cat2.'"/>';
@@ -142,9 +142,9 @@ if (str_contains($feed_cat3, '::')) {
   $cat1 = strtok($feed_cat3, '::');
   $cat2 = preg_replace("/$cat1::/i", "", $feed_cat3);
   echo '
-  <itunes:category text="'.$cat1.'"/>';
-  echo '
-  <itunes:category text="'.$cat2.'"/>';
+  <itunes:category text="'.$cat1.'">
+    <itunes:category text="'.$cat2.'"/>
+  </itunes:category>';
 } elseif (($feed_cat3 != '') && ($feed_cat3 != NULL)) {
   echo '
   <itunes:category text="'.$feed_cat3.'"/>';
@@ -153,9 +153,9 @@ if (str_contains($feed_cat4, '::')) {
   $cat1 = strtok($feed_cat4, '::');
   $cat2 = preg_replace("/$cat1::/i", "", $feed_cat4);
   echo '
-  <itunes:category text="'.$cat1.'"/>';
-  echo '
-  <itunes:category text="'.$cat2.'"/>';
+  <itunes:category text="'.$cat1.'">
+    <itunes:category text="'.$cat2.'"/>
+  </itunes:category>';
 } elseif (($feed_cat4 != '') && ($feed_cat4 != NULL)) {
   echo '
   <itunes:category text="'.$feed_cat4.'"/>';
@@ -164,9 +164,9 @@ if (str_contains($feed_cat5, '::')) {
   $cat1 = strtok($feed_cat5, '::');
   $cat2 = preg_replace("/$cat1::/i", "", $feed_cat5);
   echo '
-  <itunes:category text="'.$cat1.'"/>';
-  echo '
-  <itunes:category text="'.$cat2.'"/>';
+  <itunes:category text="'.$cat1.'">
+    <itunes:category text="'.$cat2.'"/>
+  </itunes:category>';
 } elseif (($feed_cat5 != '') && ($feed_cat5 != NULL)) {
   echo '
   <itunes:category text="'.$feed_cat5.'"/>';
