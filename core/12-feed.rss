@@ -28,14 +28,14 @@
 	<itunes:explicit>true</itunes:explicit><itunes:category text="Business"/>
   <itunes:category text="Business">
     <itunes:category text="Investing"/>
-  </itunes:category text="Business">
+  </itunes:category>
   <itunes:category text="Marketing"/>
   <itunes:category text="Arts">
     <itunes:category text="Performing Arts"/>
-  </itunes:category text="Arts">
+  </itunes:category>
   <itunes:category text="Sports">
     <itunes:category text="Golf"/>
-  </itunes:category text="Sports">
+  </itunes:category>
   <lastBuildDate>Tue, Nov 30 15:45:12 2021 UTC</lastBuildDate>
 
 <item>
