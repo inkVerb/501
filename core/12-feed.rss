@@ -26,7 +26,7 @@
 	<itunes:keywords>ice, ice, baby</itunes:keywords>
 	<itunes:image href="media/pro/pro-podcast.jpg"/>
 	<itunes:explicit>true</itunes:explicit><itunes:category text="Business"/>
-  <itunes:category text="Business"/>
+  <itunes:category text="Business">
     <itunes:category text="Investing"/>
   </itunes:category text="Business">
   <itunes:category text="Marketing"/>
