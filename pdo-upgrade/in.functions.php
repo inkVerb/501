@@ -89,7 +89,7 @@ function checkPost($name, $value) {
     $result = (preg_match($regex_match, $value))
     ? preg_replace($regex_replace,"", $value) : '';
     if ($result == '') {
-      $check_err[$name] = 'Not a valid password! (1-500 characters, special characters allowed: ! @ & # $ % - _ . , + - = / | )';
+      $check_err[$name] = 'Not a valid description! (1-500 characters, special characters allowed: ! @ & # $ % - _ . , + - = / | )';
     }
 
   } elseif ($name == 'blog_keywords') {
@@ -98,7 +98,7 @@ function checkPost($name, $value) {
     $result = (preg_match($regex_match, $value))
     ? preg_replace($regex_replace,"", $value) : '';
     if ($result == '') {
-      $check_err[$name] = 'Not a valid password! (1-100 characters, a comma-separated list, hyphen and underscore allowed)';
+      $check_err[$name] = 'Not valid keywords! (1-100 characters, a comma-separated list, hyphen and underscore allowed)';
     }
 
   } elseif ($name == 'blog_summary_words') {
