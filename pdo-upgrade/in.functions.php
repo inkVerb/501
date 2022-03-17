@@ -214,11 +214,11 @@ function formInput($name, $value, $errors) {
     }
 
      $result .= '<option value="index"';
-     $result .= ($value == 'index') ? ' selected' : '';
+     $result .= ($value == 'index') ? ' selected="selected"' : '';
      $result .= '>index</option>';
 
      $result .= '<option value="noindex"';
-     $result .= ($value == 'noindex') ? ' selected' : '';
+     $result .= ($value == 'noindex') ? ' selected="selected"' : '';
      $result .= '>noindex</option>';
      $result .= '</select>';
 

@@ -335,7 +335,7 @@ if ($pdo->numrows > 0) {
       foreach ($rows as $row) {
         $opt_id = "$row->id";
         $opt_name = "$row->name";
-        $selected_yn = ($agg_series == $opt_id) ? ' selected' : ''; // So 'selected' appears in the Series
+        $selected_yn = ($agg_series == $opt_id) ? ' selected="selected"' : ''; // So 'selected="selected"' appears in the Series
         echo '<option value="'.$opt_id.'"'.$selected_yn.'>'.$opt_name.'</option>';
       }
       echo '</select>';

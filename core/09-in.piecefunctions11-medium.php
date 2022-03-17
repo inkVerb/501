@@ -234,18 +234,18 @@ function pieceInput($name, $value) {
     $value = ( $value == '' ) ? $p_live_mo_curr : $value;
     // Notice our string inline ternary statements from Lesson 1
       $result = '<select form="edit_piece" type="text" id="p_live_mo" name="p_live_mo" value="'.$value.'" onchange="onNavWarn();" onkeyup="onNavWarn();">
-        <option value="01"'.( $value == '01' ? ' selected>': '>').'01-Jan</option>
-        <option value="02"'.( $value == '02' ? ' selected>': '>').'02-Feb</option>
-        <option value="03"'.( $value == '03' ? ' selected>': '>').'03-Mar</option>
-        <option value="04"'.( $value == '04' ? ' selected>': '>').'04-Apr</option>
-        <option value="05"'.( $value == '05' ? ' selected>': '>').'05-May</option>
-        <option value="06"'.( $value == '06' ? ' selected>': '>').'06-Jun</option>
-        <option value="07"'.( $value == '07' ? ' selected>': '>').'07-Jul</option>
-        <option value="08"'.( $value == '08' ? ' selected>': '>').'08-Aug</option>
-        <option value="09"'.( $value == '09' ? ' selected>': '>').'09-Sep</option>
-        <option value="10"'.( $value == '10' ? ' selected>': '>').'10-Oct</option>
-        <option value="11"'.( $value == '11' ? ' selected>': '>').'11-Nov</option>
-        <option value="12"'.( $value == '12' ? ' selected>': '>').'12-Dec</option>
+        <option value="01"'.( $value == '01' ? ' selected="selected>"': '>').'01-Jan</option>
+        <option value="02"'.( $value == '02' ? ' selected="selected>"': '>').'02-Feb</option>
+        <option value="03"'.( $value == '03' ? ' selected="selected>"': '>').'03-Mar</option>
+        <option value="04"'.( $value == '04' ? ' selected="selected>"': '>').'04-Apr</option>
+        <option value="05"'.( $value == '05' ? ' selected="selected>"': '>').'05-May</option>
+        <option value="06"'.( $value == '06' ? ' selected="selected>"': '>').'06-Jun</option>
+        <option value="07"'.( $value == '07' ? ' selected="selected>"': '>').'07-Jul</option>
+        <option value="08"'.( $value == '08' ? ' selected="selected>"': '>').'08-Aug</option>
+        <option value="09"'.( $value == '09' ? ' selected="selected>"': '>').'09-Sep</option>
+        <option value="10"'.( $value == '10' ? ' selected="selected>"': '>').'10-Oct</option>
+        <option value="11"'.( $value == '11' ? ' selected="selected>"': '>').'11-Nov</option>
+        <option value="12"'.( $value == '12' ? ' selected="selected>"': '>').'12-Dec</option>
       </select>';
 
   } elseif ($name == 'p_live_day') {

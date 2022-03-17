@@ -14,116 +14,116 @@ $pro_podcast_name = 'series-podcast.jpg';
 
 // Function for iTunes categories
 function iTunesCat($series_cat) {
-  $cat = 'None'; $val = ''; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Arts'; $val = 'Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Books'; $val = 'Arts::Books'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Design'; $val = 'Arts::Design'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Fashion &amp; Beauty'; $val = 'Arts::Fashion &amp; Beauty'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Food'; $val = 'Arts::Food'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Performing Arts'; $val = 'Arts::Performing Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Visual Arts'; $val = 'Arts::Visual Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Business'; $val = 'Business'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Careers'; $val = 'Business::Careers'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Entrepreneurship'; $val = 'Business::Entrepreneurship'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Investing'; $val = 'Business::Investing'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Management'; $val = 'Business::Management'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Marketing'; $val = 'Business::Marketing'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Non-Profit'; $val = 'Business::Non-Profit'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Comedy'; $val = 'Comedy'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Comedy Interviews'; $val = 'Comedy::Comedy Interviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Improv'; $val = 'Comedy::Improv'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Stand-Up'; $val = 'Comedy::Stand-Up'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Education'; $val = 'Education'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Courses'; $val = 'Education::Courses'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- How To'; $val = 'Education::How To'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Language Learning'; $val = 'Education::Language Learning'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Self-Improvement'; $val = 'Education::Self-Improvement'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Fiction'; $val = 'Fiction'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Comedy Fiction'; $val = 'Fiction::Comedy Fiction'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Drama'; $val = 'Fiction::Drama'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Science Fiction'; $val = 'Fiction::Science Fiction'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Government'; $val = 'Government'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'History'; $val = 'History'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Health &amp; Fitness'; $val = 'Health &amp; Fitness'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Alternative Health'; $val = 'Health &amp; Fitness::Alternative Health'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Fitness'; $val = 'Health &amp; Fitness::Fitness'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Medicine'; $val = 'Health &amp; Fitness::Medicine'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Mental Health'; $val = 'Health &amp; Fitness::Mental Health'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Nutrition'; $val = 'Health &amp; Fitness::Nutrition'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Sexuality'; $val = 'Health &amp; Fitness::Sexuality'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Kids &amp; Family'; $val = 'Kids &amp; Family'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Education for Kids'; $val = 'Kids &amp; Family::Education for Kids'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Parenting'; $val = 'Kids &amp; Family::Parenting'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Pets &amp; Animals'; $val = 'Kids &amp; Family::Pets &amp; Animals'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Stories for Kids'; $val = 'Kids &amp; Family::Stories for Kids'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Leisure'; $val = 'Leisure'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Animation &amp; Manga'; $val = 'Leisure::Animation &amp; Manga'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Automotive'; $val = 'Leisure::Automotive'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Aviation'; $val = 'Leisure::Aviation'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Crafts'; $val = 'Leisure::Crafts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Games'; $val = 'Leisure::Games'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Hobbies'; $val = 'Leisure::Hobbies'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Home &amp; Garden'; $val = 'Leisure::Home &amp; Garden'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Video Games'; $val = 'Leisure::Video Games'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Music'; $val = 'Music'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Music Commentary'; $val = 'Music::Music Commentary'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Music History'; $val = 'Music::Music History'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Music Interviews'; $val = 'Music::Music Interviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'News'; $val = 'News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Business News'; $val = 'News::Business News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Daily News'; $val = 'News::Daily News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Entertainment News'; $val = 'News::Entertainment News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- News Commentary'; $val = 'News::News Commentary'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Politics'; $val = 'News::Politics'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Sports News'; $val = 'News::Sports News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Tech News'; $val = 'News::Tech News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Religion &amp; Spirituality'; $val = 'Religion &amp; Spirituality'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Buddhism'; $val = 'Religion &amp; Spirituality::Buddhism'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Christianity'; $val = 'Religion &amp; Spirituality::Christianity'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Hinduism'; $val = 'Religion &amp; Spirituality::Hinduism'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Islam'; $val = 'Religion &amp; Spirituality::Islam'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Judiasm'; $val = 'Religion &amp; Spirituality::Judiasm'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Religion'; $val = 'Religion &amp; Spirituality::Religion'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Spirituality'; $val = 'Religion &amp; Spirituality::Spirituality '; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Science'; $val = 'Science'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Astronomy'; $val = 'Science::Astronomy'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Chemistry'; $val = 'Science::Chemistry'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Earth Sciences'; $val = 'Science::Earth Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Life Sciences'; $val = 'Science::Life Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Mathematics'; $val = 'Science::Mathematics'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Natural Sciences'; $val = 'Science::Natural Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Nature'; $val = 'Science::Nature'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Physics'; $val = 'Science::Physics'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Social Sciences'; $val = 'Science::Social Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Society &amp; Culture'; $val = 'Society &amp; Culture'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Documentary'; $val = 'Society &amp; Culture::Documentary'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Personal Journals'; $val = 'Society &amp; Culture::Personal Journals'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Philosophy'; $val = 'Society &amp; Culture::Philosophy'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Places &amp; Travel'; $val = 'Society &amp; Culture::Places &amp; Travel'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Relationships'; $val = 'Society &amp; Culture::Relationships'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Sports'; $val = 'Sports'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Baseball'; $val = 'Sports::Baseball'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Basketball'; $val = 'Sports::Basketball'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Cricket'; $val = 'Sports::Cricket'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Fantasy Sports'; $val = 'Sports::Fantasy Sports'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Football'; $val = 'Sports::Football'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Golf'; $val = 'Sports::Golf'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Hockey'; $val = 'Sports::Hockey'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Rugby'; $val = 'Sports::Rugby'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Soccer'; $val = 'Sports::Soccer'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Swimming'; $val = 'Sports::Swimming'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Tennis'; $val = 'Sports::Tennis'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Volleyball'; $val = 'Sports::Volleyball'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Wilderness'; $val = 'Sports::Wilderness'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Wrestling'; $val = 'Sports::Wrestling'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'Technology'; $val = 'Technology'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'True Crime'; $val = 'True Crime'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = 'TV &amp; Film'; $val = 'TV &amp; Film'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- After Shows'; $val = 'TV &amp; Film::After Shows'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Film History'; $val = 'TV &amp; Film::Film History'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Film Interviews'; $val = 'TV &amp; Film::Film Interviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- Film Reviews'; $val = 'TV &amp; Film::Film Reviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
-  $cat = '- TV Reviews'; $val = 'TV &amp; Film::TV Reviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected' : ''; echo '>'.$cat.'</option>';
+  $cat = 'None'; $val = ''; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Arts'; $val = 'Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Books'; $val = 'Arts::Books'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Design'; $val = 'Arts::Design'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Fashion &amp; Beauty'; $val = 'Arts::Fashion &amp; Beauty'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Food'; $val = 'Arts::Food'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Performing Arts'; $val = 'Arts::Performing Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Visual Arts'; $val = 'Arts::Visual Arts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Business'; $val = 'Business'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Careers'; $val = 'Business::Careers'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Entrepreneurship'; $val = 'Business::Entrepreneurship'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Investing'; $val = 'Business::Investing'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Management'; $val = 'Business::Management'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Marketing'; $val = 'Business::Marketing'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Non-Profit'; $val = 'Business::Non-Profit'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Comedy'; $val = 'Comedy'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Comedy Interviews'; $val = 'Comedy::Comedy Interviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Improv'; $val = 'Comedy::Improv'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Stand-Up'; $val = 'Comedy::Stand-Up'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Education'; $val = 'Education'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Courses'; $val = 'Education::Courses'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- How To'; $val = 'Education::How To'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Language Learning'; $val = 'Education::Language Learning'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Self-Improvement'; $val = 'Education::Self-Improvement'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Fiction'; $val = 'Fiction'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Comedy Fiction'; $val = 'Fiction::Comedy Fiction'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Drama'; $val = 'Fiction::Drama'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Science Fiction'; $val = 'Fiction::Science Fiction'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Government'; $val = 'Government'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'History'; $val = 'History'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Health &amp; Fitness'; $val = 'Health &amp; Fitness'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Alternative Health'; $val = 'Health &amp; Fitness::Alternative Health'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Fitness'; $val = 'Health &amp; Fitness::Fitness'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Medicine'; $val = 'Health &amp; Fitness::Medicine'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Mental Health'; $val = 'Health &amp; Fitness::Mental Health'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Nutrition'; $val = 'Health &amp; Fitness::Nutrition'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Sexuality'; $val = 'Health &amp; Fitness::Sexuality'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Kids &amp; Family'; $val = 'Kids &amp; Family'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Education for Kids'; $val = 'Kids &amp; Family::Education for Kids'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Parenting'; $val = 'Kids &amp; Family::Parenting'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Pets &amp; Animals'; $val = 'Kids &amp; Family::Pets &amp; Animals'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Stories for Kids'; $val = 'Kids &amp; Family::Stories for Kids'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Leisure'; $val = 'Leisure'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Animation &amp; Manga'; $val = 'Leisure::Animation &amp; Manga'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Automotive'; $val = 'Leisure::Automotive'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Aviation'; $val = 'Leisure::Aviation'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Crafts'; $val = 'Leisure::Crafts'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Games'; $val = 'Leisure::Games'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Hobbies'; $val = 'Leisure::Hobbies'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Home &amp; Garden'; $val = 'Leisure::Home &amp; Garden'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Video Games'; $val = 'Leisure::Video Games'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Music'; $val = 'Music'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Music Commentary'; $val = 'Music::Music Commentary'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Music History'; $val = 'Music::Music History'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Music Interviews'; $val = 'Music::Music Interviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'News'; $val = 'News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Business News'; $val = 'News::Business News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Daily News'; $val = 'News::Daily News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Entertainment News'; $val = 'News::Entertainment News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- News Commentary'; $val = 'News::News Commentary'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Politics'; $val = 'News::Politics'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Sports News'; $val = 'News::Sports News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Tech News'; $val = 'News::Tech News'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Religion &amp; Spirituality'; $val = 'Religion &amp; Spirituality'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Buddhism'; $val = 'Religion &amp; Spirituality::Buddhism'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Christianity'; $val = 'Religion &amp; Spirituality::Christianity'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Hinduism'; $val = 'Religion &amp; Spirituality::Hinduism'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Islam'; $val = 'Religion &amp; Spirituality::Islam'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Judiasm'; $val = 'Religion &amp; Spirituality::Judiasm'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Religion'; $val = 'Religion &amp; Spirituality::Religion'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Spirituality'; $val = 'Religion &amp; Spirituality::Spirituality '; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Science'; $val = 'Science'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Astronomy'; $val = 'Science::Astronomy'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Chemistry'; $val = 'Science::Chemistry'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Earth Sciences'; $val = 'Science::Earth Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Life Sciences'; $val = 'Science::Life Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Mathematics'; $val = 'Science::Mathematics'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Natural Sciences'; $val = 'Science::Natural Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Nature'; $val = 'Science::Nature'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Physics'; $val = 'Science::Physics'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Social Sciences'; $val = 'Science::Social Sciences'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Society &amp; Culture'; $val = 'Society &amp; Culture'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Documentary'; $val = 'Society &amp; Culture::Documentary'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Personal Journals'; $val = 'Society &amp; Culture::Personal Journals'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Philosophy'; $val = 'Society &amp; Culture::Philosophy'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Places &amp; Travel'; $val = 'Society &amp; Culture::Places &amp; Travel'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Relationships'; $val = 'Society &amp; Culture::Relationships'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Sports'; $val = 'Sports'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Baseball'; $val = 'Sports::Baseball'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Basketball'; $val = 'Sports::Basketball'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Cricket'; $val = 'Sports::Cricket'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Fantasy Sports'; $val = 'Sports::Fantasy Sports'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Football'; $val = 'Sports::Football'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Golf'; $val = 'Sports::Golf'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Hockey'; $val = 'Sports::Hockey'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Rugby'; $val = 'Sports::Rugby'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Soccer'; $val = 'Sports::Soccer'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Swimming'; $val = 'Sports::Swimming'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Tennis'; $val = 'Sports::Tennis'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Volleyball'; $val = 'Sports::Volleyball'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Wilderness'; $val = 'Sports::Wilderness'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Wrestling'; $val = 'Sports::Wrestling'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'Technology'; $val = 'Technology'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'True Crime'; $val = 'True Crime'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = 'TV &amp; Film'; $val = 'TV &amp; Film'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- After Shows'; $val = 'TV &amp; Film::After Shows'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Film History'; $val = 'TV &amp; Film::Film History'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Film Interviews'; $val = 'TV &amp; Film::Film Interviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- Film Reviews'; $val = 'TV &amp; Film::Film Reviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
+  $cat = '- TV Reviews'; $val = 'TV &amp; Film::TV Reviews'; echo '<option value="'.$val.'"'; echo ($series_cat == $val) ? ' selected="selected"' : ''; echo '>'.$cat.'</option>';
 }
 
 // Check & validate for what we need
@@ -655,56 +655,56 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (fil
           <br><br>
             <label for="input-lang">Language: </label>
             <select id="input-lang" name="series_lang" form="series-details">
-              <option value="af"'; echo ($series_lang == "af") ? ' selected' : ''; echo '>Afrikaans</option>
-              <option value="sq"'; echo ($series_lang == "sq") ? ' selected' : ''; echo '>Albanian</option>
-              <option value="ar"'; echo ($series_lang == "ar") ? ' selected' : ''; echo '>Arabic</option>
-              <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
-              <option value="bn"'; echo ($series_lang == "bn") ? ' selected' : ''; echo '>Bengali</option>
-              <option value="cs"'; echo ($series_lang == "cs") ? ' selected' : ''; echo '>Czech</option>
-              <option value="zh"'; echo ($series_lang == "zh") ? ' selected' : ''; echo '>Chinese</option>
-              <option value="nl"'; echo ($series_lang == "nl") ? ' selected' : ''; echo '>Dutch</option>
-              <option value="en"'; echo ($series_lang == "en") ? ' selected' : ''; echo '>English</option>
-              <option value="fr"'; echo ($series_lang == "fr") ? ' selected' : ''; echo '>French</option>
-              <option value="ka"'; echo ($series_lang == "ka") ? ' selected' : ''; echo '>Georgian</option>
-              <option value="de"'; echo ($series_lang == "de") ? ' selected' : ''; echo '>German</option>
-              <option value="el"'; echo ($series_lang == "el") ? ' selected' : ''; echo '>Greek</option>
-              <option value="gu"'; echo ($series_lang == "gu") ? ' selected' : ''; echo '>Gujarati</option>
-              <option value="ha"'; echo ($series_lang == "ha") ? ' selected' : ''; echo '>Hausa</option>
-              <option value="he"'; echo ($series_lang == "he") ? ' selected' : ''; echo '>Hebrew</option>
-              <option value="hi"'; echo ($series_lang == "hi") ? ' selected' : ''; echo '>Hindi</option>
-              <option value="ga"'; echo ($series_lang == "ga") ? ' selected' : ''; echo '>Irish</option>
-              <option value="id"'; echo ($series_lang == "id") ? ' selected' : ''; echo '>Indonesian</option>
-              <option value="it"'; echo ($series_lang == "it") ? ' selected' : ''; echo '>Italian</option>
-              <option value="ja"'; echo ($series_lang == "ja") ? ' selected' : ''; echo '>Japanese</option>
-              <option value="jv"'; echo ($series_lang == "jv") ? ' selected' : ''; echo '>Javanese</option>
-              <option value="ko"'; echo ($series_lang == "ko") ? ' selected' : ''; echo '>Korean</option>
-              <option value="ml"'; echo ($series_lang == "ml") ? ' selected' : ''; echo '>Malay</option>
-              <option value="mr"'; echo ($series_lang == "mr") ? ' selected' : ''; echo '>Marathi</option>
-              <option value="nn"'; echo ($series_lang == "nn") ? ' selected' : ''; echo '>Norwegian</option>
-              <option value="fa"'; echo ($series_lang == "fa") ? ' selected' : ''; echo '>Persian</option>
-              <option value="pl"'; echo ($series_lang == "pl") ? ' selected' : ''; echo '>Polish</option>
-              <option value="pt"'; echo ($series_lang == "pt") ? ' selected' : ''; echo '>Portuguese</option>
-              <option value="pa"'; echo ($series_lang == "pa") ? ' selected' : ''; echo '>Punjabi</option>
-              <option value="ro"'; echo ($series_lang == "ro") ? ' selected' : ''; echo '>Romanian</option>
-              <option value="ru"'; echo ($series_lang == "ru") ? ' selected' : ''; echo '>Russian</option>
-              <option value="sm"'; echo ($series_lang == "sm") ? ' selected' : ''; echo '>Samoan</option>
-              <option value="sd"'; echo ($series_lang == "sd") ? ' selected' : ''; echo '>Sindhi</option>
-              <option value="es"'; echo ($series_lang == "es") ? ' selected' : ''; echo '>Spanish</option>
-              <option value="su"'; echo ($series_lang == "su") ? ' selected' : ''; echo '>Sundanese</option>
-              <option value="sw"'; echo ($series_lang == "sw") ? ' selected' : ''; echo '>Swahili</option>
-              <option value="ty"'; echo ($series_lang == "ty") ? ' selected' : ''; echo '>Tahitian</option>
-              <option value="ta"'; echo ($series_lang == "ta") ? ' selected' : ''; echo '>Tamil</option>
-              <option value="te"'; echo ($series_lang == "te") ? ' selected' : ''; echo '>Telugu</option>
-              <option value="bo"'; echo ($series_lang == "bo") ? ' selected' : ''; echo '>Tibetan</option>
-              <option value="th"'; echo ($series_lang == "th") ? ' selected' : ''; echo '>Thai</option>
-              <option value="sk"'; echo ($series_lang == "sk") ? ' selected' : ''; echo '>Slovak</option>
-              <option value="sv"'; echo ($series_lang == "sv") ? ' selected' : ''; echo '>Swedish</option>
-              <option value="uk"'; echo ($series_lang == "uk") ? ' selected' : ''; echo '>Ukrainian</option>
-              <option value="ur"'; echo ($series_lang == "ur") ? ' selected' : ''; echo '>Urdu</option>
-              <option value="ug"'; echo ($series_lang == "ug") ? ' selected' : ''; echo '>Uyghur</option>
-              <option value="vi"'; echo ($series_lang == "vi") ? ' selected' : ''; echo '>Vietnamese</option>
-              <option value="yo"'; echo ($series_lang == "yo") ? ' selected' : ''; echo '>Yoruba</option>
-              <option value="zu"'; echo ($series_lang == "zu") ? ' selected' : ''; echo '>Zulu</option>
+              <option value="af"'; echo ($series_lang == "af") ? ' selected="selected"' : ''; echo '>Afrikaans</option>
+              <option value="sq"'; echo ($series_lang == "sq") ? ' selected="selected"' : ''; echo '>Albanian</option>
+              <option value="ar"'; echo ($series_lang == "ar") ? ' selected="selected"' : ''; echo '>Arabic</option>
+              <option value="en"'; echo ($series_lang == "en") ? ' selected="selected"' : ''; echo '>English</option>
+              <option value="bn"'; echo ($series_lang == "bn") ? ' selected="selected"' : ''; echo '>Bengali</option>
+              <option value="cs"'; echo ($series_lang == "cs") ? ' selected="selected"' : ''; echo '>Czech</option>
+              <option value="zh"'; echo ($series_lang == "zh") ? ' selected="selected"' : ''; echo '>Chinese</option>
+              <option value="nl"'; echo ($series_lang == "nl") ? ' selected="selected"' : ''; echo '>Dutch</option>
+              <option value="en"'; echo ($series_lang == "en") ? ' selected="selected"' : ''; echo '>English</option>
+              <option value="fr"'; echo ($series_lang == "fr") ? ' selected="selected"' : ''; echo '>French</option>
+              <option value="ka"'; echo ($series_lang == "ka") ? ' selected="selected"' : ''; echo '>Georgian</option>
+              <option value="de"'; echo ($series_lang == "de") ? ' selected="selected"' : ''; echo '>German</option>
+              <option value="el"'; echo ($series_lang == "el") ? ' selected="selected"' : ''; echo '>Greek</option>
+              <option value="gu"'; echo ($series_lang == "gu") ? ' selected="selected"' : ''; echo '>Gujarati</option>
+              <option value="ha"'; echo ($series_lang == "ha") ? ' selected="selected"' : ''; echo '>Hausa</option>
+              <option value="he"'; echo ($series_lang == "he") ? ' selected="selected"' : ''; echo '>Hebrew</option>
+              <option value="hi"'; echo ($series_lang == "hi") ? ' selected="selected"' : ''; echo '>Hindi</option>
+              <option value="ga"'; echo ($series_lang == "ga") ? ' selected="selected"' : ''; echo '>Irish</option>
+              <option value="id"'; echo ($series_lang == "id") ? ' selected="selected"' : ''; echo '>Indonesian</option>
+              <option value="it"'; echo ($series_lang == "it") ? ' selected="selected"' : ''; echo '>Italian</option>
+              <option value="ja"'; echo ($series_lang == "ja") ? ' selected="selected"' : ''; echo '>Japanese</option>
+              <option value="jv"'; echo ($series_lang == "jv") ? ' selected="selected"' : ''; echo '>Javanese</option>
+              <option value="ko"'; echo ($series_lang == "ko") ? ' selected="selected"' : ''; echo '>Korean</option>
+              <option value="ml"'; echo ($series_lang == "ml") ? ' selected="selected"' : ''; echo '>Malay</option>
+              <option value="mr"'; echo ($series_lang == "mr") ? ' selected="selected"' : ''; echo '>Marathi</option>
+              <option value="nn"'; echo ($series_lang == "nn") ? ' selected="selected"' : ''; echo '>Norwegian</option>
+              <option value="fa"'; echo ($series_lang == "fa") ? ' selected="selected"' : ''; echo '>Persian</option>
+              <option value="pl"'; echo ($series_lang == "pl") ? ' selected="selected"' : ''; echo '>Polish</option>
+              <option value="pt"'; echo ($series_lang == "pt") ? ' selected="selected"' : ''; echo '>Portuguese</option>
+              <option value="pa"'; echo ($series_lang == "pa") ? ' selected="selected"' : ''; echo '>Punjabi</option>
+              <option value="ro"'; echo ($series_lang == "ro") ? ' selected="selected"' : ''; echo '>Romanian</option>
+              <option value="ru"'; echo ($series_lang == "ru") ? ' selected="selected"' : ''; echo '>Russian</option>
+              <option value="sm"'; echo ($series_lang == "sm") ? ' selected="selected"' : ''; echo '>Samoan</option>
+              <option value="sd"'; echo ($series_lang == "sd") ? ' selected="selected"' : ''; echo '>Sindhi</option>
+              <option value="es"'; echo ($series_lang == "es") ? ' selected="selected"' : ''; echo '>Spanish</option>
+              <option value="su"'; echo ($series_lang == "su") ? ' selected="selected"' : ''; echo '>Sundanese</option>
+              <option value="sw"'; echo ($series_lang == "sw") ? ' selected="selected"' : ''; echo '>Swahili</option>
+              <option value="ty"'; echo ($series_lang == "ty") ? ' selected="selected"' : ''; echo '>Tahitian</option>
+              <option value="ta"'; echo ($series_lang == "ta") ? ' selected="selected"' : ''; echo '>Tamil</option>
+              <option value="te"'; echo ($series_lang == "te") ? ' selected="selected"' : ''; echo '>Telugu</option>
+              <option value="bo"'; echo ($series_lang == "bo") ? ' selected="selected"' : ''; echo '>Tibetan</option>
+              <option value="th"'; echo ($series_lang == "th") ? ' selected="selected"' : ''; echo '>Thai</option>
+              <option value="sk"'; echo ($series_lang == "sk") ? ' selected="selected"' : ''; echo '>Slovak</option>
+              <option value="sv"'; echo ($series_lang == "sv") ? ' selected="selected"' : ''; echo '>Swedish</option>
+              <option value="uk"'; echo ($series_lang == "uk") ? ' selected="selected"' : ''; echo '>Ukrainian</option>
+              <option value="ur"'; echo ($series_lang == "ur") ? ' selected="selected"' : ''; echo '>Urdu</option>
+              <option value="ug"'; echo ($series_lang == "ug") ? ' selected="selected"' : ''; echo '>Uyghur</option>
+              <option value="vi"'; echo ($series_lang == "vi") ? ' selected="selected"' : ''; echo '>Vietnamese</option>
+              <option value="yo"'; echo ($series_lang == "yo") ? ' selected="selected"' : ''; echo '>Yoruba</option>
+              <option value="zu"'; echo ($series_lang == "zu") ? ' selected="selected"' : ''; echo '>Zulu</option>
             </select>
             &nbsp;
             <label for="explicit-true"><input type="radio" id="explicit-true" name="series_explicit" value="true" form="series-details"'; echo ($series_explicit == "true") ? ' checked' : ''; echo '> explicit</label>

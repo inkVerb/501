@@ -36,7 +36,7 @@ echo '
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   $s_id = "$row[0]";
   $s_name = "$row[1]";
-  $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the current Series
+  $selected_yn = ($p_series == $s_id) ? ' selected="selected"' : ''; // So 'selected="selected"' appears in the current Series
   echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
 }
 

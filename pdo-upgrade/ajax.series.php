@@ -81,7 +81,7 @@ if (($series_form == 'edit_piece') || ($series_form == 'blog_settings')) {
     $s_id = "$row->id";
     $s_name = "$row->name";
     $selected_yn = ((($p_series == $s_id) && ($series_form == 'edit_piece'))
-    || (($p_series == $s_id) && ($series_form == 'blog_settings'))) ? ' selected' : ''; // So 'selected' appears in the Series
+    || (($p_series == $s_id) && ($series_form == 'blog_settings'))) ? ' selected="selected"' : ''; // So 'selected="selected"' appears in the Series
     echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
   }
 

@@ -35,7 +35,7 @@ echo '
 foreach ($rows as $row) {
   $s_id = "$row->id";
   $s_name = "$row->name";
-  $selected_yn = ($p_series == $s_id) ? ' selected' : ''; // So 'selected' appears in the current Series
+  $selected_yn = ($p_series == $s_id) ? ' selected="selected"' : ''; // So 'selected="selected"' appears in the current Series
   echo '<option value="'.$s_id.'"'.$selected_yn.'>'.$s_name.'</option>';
 }
 
