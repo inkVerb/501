@@ -280,6 +280,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (fil
         $media_type_pretty .= 'FLAC';
         break;
       case 'audio/mpeg':
+      case 'audio/mpeg3':
+      case 'audio/x-mpeg':
+      case 'audio/x-mpeg-3':
         $media_type_pretty .= 'MP3';
         break;
       case 'audio/ogg':

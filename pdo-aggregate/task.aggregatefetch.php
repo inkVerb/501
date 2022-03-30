@@ -81,13 +81,8 @@ foreach ($rows as $row) {
       // Refresh action?
       echo ((isset($agg_id)) && ($process_action == true)) ? '<pre>'.$f_title.'</pre>' : false;
 
-      // Subtitle / Description
-      // <description> gets priority, if empty check <itunes:subtitle>
-      if ((!isset($item->description)) || ($item->description == '')) {
-        $f_subtitle = ((isset($itunes->subtitle)) && ($itunes->subtitle != '')) ? $itunes->subtitle : '';
-      } else {
-        $f_subtitle = $item->description;
-      }
+      // <description> gets priority
+      $f_subtitle = $item->description;
       $regex_replace = "/[^0-9a-zA-Z_ !@&#$%.,+-=\/|]/";
       $f_subtitle = preg_replace($regex_replace,"", $f_subtitle);
       // Make sure our variables are not empty
@@ -130,8 +125,8 @@ foreach ($rows as $row) {
             $f_feat_img = $enclosure['url'];
             $f_feat_img_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
             $f_feat_mime = $enclosure['type'];
-            $f_feat_img = ((filter_var($f_feat_img,FILTER_VALIDATE_URL)) && (strlen($f_feat_img) <= 128))
-            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_img),0,128) : '';
+            $f_feat_img = ((filter_var($f_feat_img,FILTER_VALIDATE_URL)) && (strlen($f_feat_img) <= 2048))
+            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_img),0,2048) : '';
           break;
 
           case 'audio/mpeg':
@@ -143,8 +138,8 @@ foreach ($rows as $row) {
             $f_feat_aud = $enclosure['url'];
             $f_feat_aud_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
             $f_feat_aud_mime = $enclosure['type'];
-            $f_feat_aud = ((filter_var($f_feat_aud,FILTER_VALIDATE_URL)) && (strlen($f_feat_aud) <= 128))
-            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_aud),0,128) : '';
+            $f_feat_aud = ((filter_var($f_feat_aud,FILTER_VALIDATE_URL)) && (strlen($f_feat_aud) <= 2048))
+            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_aud),0,2048) : '';
           break;
 
           case 'video/mp4':
@@ -158,8 +153,8 @@ foreach ($rows as $row) {
             $f_feat_vid = $enclosure['url'];
             $f_feat_vid_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
             $f_feat_vid_mime = $enclosure['type'];
-            $f_feat_vid = ((filter_var($f_feat_vid,FILTER_VALIDATE_URL)) && (strlen($f_feat_vid) <= 128))
-            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_vid),0,128) : '';
+            $f_feat_vid = ((filter_var($f_feat_vid,FILTER_VALIDATE_URL)) && (strlen($f_feat_vid) <= 2048))
+            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_vid),0,2048) : '';
           break;
 
           case 'application/pdf':
@@ -172,8 +167,8 @@ foreach ($rows as $row) {
             $f_feat_doc = $enclosure['url'];
             $f_feat_doc_length = (filter_var($enclosure['length'], FILTER_VALIDATE_INT, array('min_range' => 1))) ? $enclosure['length'] : 0;
             $f_feat_doc_mime = $enclosure['type'];
-            $f_feat_doc = ((filter_var($f_feat_doc,FILTER_VALIDATE_URL)) && (strlen($f_feat_doc) <= 128))
-            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_doc),0,128) : '';
+            $f_feat_doc = ((filter_var($f_feat_doc,FILTER_VALIDATE_URL)) && (strlen($f_feat_doc) <= 2048))
+            ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $f_feat_doc),0,2048) : '';
           break;
         } // switch
       } // foreach

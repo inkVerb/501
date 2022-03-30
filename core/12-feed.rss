@@ -14,11 +14,10 @@
 		<title>501 Blog</title>
 		<link>http://localhost/web</link>
 	</image>
-	<description>Blog Subtitle &amp; description</description>
+	<description>Blog description</description>
 	<language>en</language>
   <itunes:author>Jon Boy</itunes:author>
 	<itunes:summary>I am a summary</itunes:summary>
-	<itunes:subtitle>Blog Subtitle &amp; description</itunes:subtitle>
   <itunes:owner>
     <itunes:name>Johnny Boy</itunes:name>
     <itunes:email>johnboy@verb.ink</itunes:email>
@@ -48,7 +47,6 @@
   <category><![CDATA[Second]]></category>
   <description>Media has features in the description</description>
   <content:encoded><![CDATA[Lorem featurings here]]></content:encoded>
-  <itunes:subtitle></itunes:subtitle>
   <itunes:summary></itunes:summary>
   <itunes:author>Jon Boy</itunes:author>
   <itunes:keywords>media, features, bloggers, vloggers</itunes:keywords>
@@ -69,7 +67,6 @@
   <category><![CDATA[Third]]></category>
   <description></description>
   <content:encoded><![CDATA[Lorem Ipsum Tres]]></content:encoded>
-  <itunes:subtitle>Third new piece as iTunes subtitle</itunes:subtitle>
   <itunes:summary>I am a summary</itunes:summary>
   <itunes:author>Johnson Bobby</itunes:author>
   <itunes:keywords></itunes:keywords>
@@ -88,7 +85,6 @@
   <category><![CDATA[Blog]]></category>
   <description>Second piece description</description>
   <content:encoded><![CDATA[Lorem Ipsum Deux]]></content:encoded>
-  <itunes:subtitle>Second piece iTunes subtitle</itunes:subtitle>
   <itunes:summary>Excerpt and summary in iTunes field</itunes:summary>
   <itunes:author>Jonny Boy</itunes:author>
   <itunes:keywords></itunes:keywords>

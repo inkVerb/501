@@ -148,11 +148,6 @@
               </xsl:if>
             </div>
 
-            <!-- Applies only if iTunes elements are present (RSS doesn't have subtitle, only iTunes) -->
-            <xsl:if test="itunes:subtitle">
-              <h3><xsl:value-of select="itunes:subtitle" /></h3>
-            </xsl:if>
-
             <!-- Duration is also an iTunes-only RSS element, not normal in many other podcast feeds -->
             <xsl:if test="itunes:duration">
 

@@ -105,7 +105,6 @@ echo <<<EOF
 	<language>$feed_lang</language>
   <itunes:author>$feed_author</itunes:author>
 	<itunes:summary>$feed_summary</itunes:summary>
-	<itunes:subtitle>$feed_descr</itunes:subtitle>
   <itunes:owner>
     <itunes:name>$feed_owner</itunes:name>
     <itunes:email>$feed_email</itunes:email>
@@ -260,7 +259,6 @@ echo <<<EOF
   <category><![CDATA[$p_series]]></category>
   <description>$p_subtitle</description>
   <content:encoded><![CDATA[$p_content]]></content:encoded>
-  <itunes:subtitle>$p_subtitle</itunes:subtitle>
   <itunes:summary>$p_excerpt</itunes:summary>
   <itunes:author>$feed_author</itunes:author>
   <itunes:keywords>$p_tags</itunes:keywords>

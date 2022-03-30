@@ -105,7 +105,6 @@ echo <<<EOF
 	<language>$feed_lang</language>
   <itunes:author>$feed_author</itunes:author>
 	<itunes:summary>$feed_summary</itunes:summary>
-	<itunes:subtitle>$feed_descr</itunes:subtitle>
   <itunes:owner>
     <itunes:name>$feed_owner</itunes:name>
     <itunes:email>$feed_email</itunes:email>
@@ -265,7 +264,6 @@ echo <<<EOF
   <category><![CDATA[$p_series]]></category>
   <description>$p_subtitle</description>
   <content:encoded><![CDATA[$p_content]]></content:encoded>
-  <itunes:subtitle>$p_subtitle</itunes:subtitle>
   <itunes:summary>$p_excerpt</itunes:summary>
   <itunes:author>$feed_author</itunes:author>
   <itunes:keywords>$p_tags</itunes:keywords>
@@ -290,7 +288,7 @@ echo <<<EOF
 \n  <enclosure url="$feat_aud_url" length="$feat_aud_file_size" type="$feat_aud_mime" />
 EOF;
 
-      if ($feat_aud_mime == "audio/mpeg") {
+      if (($feat_aud_mime == "audio/mpeg") || ($feat_aud_mime == "audio/mpeg3") || ($feat_aud_mime == "audio/x-mpeg") || ($feat_aud_mime == "audio/x-mpeg-3")) {
         $feat_duration = (($p_aggregated_id != 0) && ($p_duration == 0)) ? $feat_aud_duration : $p_duration;
 echo <<<EOF
 \n  <itunes:duration>$feat_duration</itunes:duration>

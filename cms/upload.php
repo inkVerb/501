@@ -120,6 +120,9 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
     // Audio formats
     } elseif ( (($file_extension == 'mp3') && ($file_mime == 'audio/mpeg'))
+          ||   (($file_extension == 'mp3') && ($file_mime == 'audio/mpeg3'))
+          ||   (($file_extension == 'mp3') && ($file_mime == 'audio/x-mpeg'))
+          ||   (($file_extension == 'mp3') && ($file_mime == 'audio/x-mpeg-3'))
           ||   (($file_extension == 'ogg') && ($file_mime == 'audio/ogg'))
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/x-wav')) // WAV files can have different interpretations of mime types
           ||   (($file_extension == 'wav') && ($file_mime == 'audio/wav'))

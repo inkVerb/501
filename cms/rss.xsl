@@ -140,19 +140,35 @@
               </xsl:if>
             </div>
 
-            <!-- Applies only if iTunes elements are present (RSS doesn't have subtitle, only iTunes) -->
-            <xsl:if test="itunes:subtitle">
-              <h3><xsl:value-of select="itunes:subtitle" /></h3>
-            </xsl:if>
-
             <!-- Duration is also an iTunes-only RSS element, not normal in many other podcast feeds -->
             <xsl:if test="itunes:duration">
 
-              <!-- Audio -->
+              <!-- Audio - one for each mp3 mime type-->
               <xsl:if test="enclosure[@type='audio/mpeg']">
                 <audio controls="true" preload="none">
                   <xsl:attribute name="src">
                     <xsl:value-of select="enclosure[@type='audio/mpeg']/@url"/>
+                  </xsl:attribute>
+                </audio>
+              </xsl:if>
+              <xsl:if test="enclosure[@type='audio/mpeg3']">
+                <audio controls="true" preload="none">
+                  <xsl:attribute name="src">
+                    <xsl:value-of select="enclosure[@type='audio/mpeg3']/@url"/>
+                  </xsl:attribute>
+                </audio>
+              </xsl:if>
+              <xsl:if test="enclosure[@type='audio/x-mpeg']">
+                <audio controls="true" preload="none">
+                  <xsl:attribute name="src">
+                    <xsl:value-of select="enclosure[@type='audio/x-mpeg']/@url"/>
+                  </xsl:attribute>
+                </audio>
+              </xsl:if>
+              <xsl:if test="enclosure[@type='audio/x-mpeg-3']">
+                <audio controls="true" preload="none">
+                  <xsl:attribute name="src">
+                    <xsl:value-of select="enclosure[@type='audio/x-mpeg-3']/@url"/>
                   </xsl:attribute>
                 </audio>
               </xsl:if>
