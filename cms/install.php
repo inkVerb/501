@@ -76,11 +76,11 @@ EOF;
 
 
     // Include our config file (which includes the newly-written SQL config) if it exists
-    if (!file_exists('./in.sql.php')) {
+    if (!file_exists('./in.conf.php')) {
       echo '<p>Could not create the database config file, quitting.</p>';
       exit ();
     } else {
-      require_once ('./in.db.php');
+      require_once ('./in.conf.php');
     } // Now we have a database connection and we can begin making queries
 
     // Set the character settings in the database
