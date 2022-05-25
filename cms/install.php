@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ( ((filter_var($_POST['db_host'],FILTER_VALIDATE_URL)) && (substr($_POST['db_host'], 0, 8) === "https://"))
     || ($_POST['db_host'] == 'localhost') )
   ? $_POST['db_host'] : '';
-  if ($db_user == '') {
+  if ($db_host == '') {
     echo '<p class="error">Not a valid database host!</p>';
     $no_db_cred_errors = false;
   }

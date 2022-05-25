@@ -56,7 +56,7 @@ function metaeditform($name, $p_id) {
   }
 
   $result = '
-  <form method="post" id="pa_'.$slug.'_'.$p_id.'" action="act.piecesactions.php" style="float: '.$float_.';" class="postform inline">
+  <form method="post" id="pa_'.$slug.'_'.$p_id.'" action="ajax.piecesactions.php" style="float: '.$float_.';" class="postform inline">
     <input type="hidden" name="p" value="'.$p_id.'">
     <input type="hidden" name="action" value="'.$name.'">
     <input type="submit" class="postform inline link-button '.$color_class.'" value="'.$name.'">

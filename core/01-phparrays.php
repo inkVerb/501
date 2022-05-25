@@ -5,12 +5,20 @@
 <?php
 
 // Auto-indexed array
+// Old way, safer
 $autoArray = array(
   'value_1',
   "second value",
   "triplets",
   'fourthly'
 );
+// New way, simple
+$autoArray = [
+  'value_1',
+  "second value",
+  "triplets",
+  'fourthly'
+];
 
 echo "<b>Auto-indexed array:</b><br>";
 echo $autoArray[0];
