@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['password'] == $_POST['password2']) {
       $password = checkPost('password',$_POST['password']);
     } else { // Error if no match for double-check password
-      $check_err['password2'] = 'Passwords much match!';
+      $check_err['password2'] = 'Passwords must match!';
     }
   } else { // Error if empty
     $check_err['password'] = 'Enter a password!';

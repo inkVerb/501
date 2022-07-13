@@ -27,7 +27,7 @@
   // Test only to see if passwords match
   if ((!empty($_POST['password2'])) && (!empty($_POST['password']))) {
     if ($_POST['password'] != $_POST['password2']) {
-      $check_err['password2'] = 'Passwords much match!';
+      $check_err['password2'] = 'Passwords must match!';
     }
   }
 
