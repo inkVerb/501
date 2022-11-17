@@ -14,7 +14,7 @@ function vip_error($e_number, $e_message, $e_file, $e_line) {
 	$message .= "<pre>" .print_r(debug_backtrace(), 1) . "</pre>\n";
 
 
-	if ($live == false) {
+	if ($live != true) {
 		echo nl2br($message); // This is "new line to break", so lines will be seen in HTML
 	  // nl2br($string) : \n --> <br>
 	}
