@@ -136,8 +136,7 @@ EOF;
     }
 
   } else {
-    echo '<p>Serious error.</p>';
-    exit ();
+    echo '<p class="error">Error.</p>';
   }
 
 } // Finish POST if
