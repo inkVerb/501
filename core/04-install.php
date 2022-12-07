@@ -61,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Heredoc:
     $sqlConfigFile = <<<EOF
-    <?php
-    DEFINE ('DB_NAME', '$db_name');
-    DEFINE ('DB_USER', '$db_user');
-    DEFINE ('DB_PASSWORD', '$db_pass');
-    DEFINE ('DB_HOST', '$db_host');
+<?php
+DEFINE ('DB_NAME', '$db_name');
+DEFINE ('DB_USER', '$db_user');
+DEFINE ('DB_PASSWORD', '$db_pass');
+DEFINE ('DB_HOST', '$db_host');
 EOF;
 
     // Write the file:
