@@ -1,7 +1,5 @@
 <?php
 
-$ajax_token = $_SESSION['ajax_token'];
-
 // Single actions
 function metaeditform($name, $p_id) {
 
@@ -156,6 +154,7 @@ if ($name == 'delete') { // Pieces
               }';
 } // End action if
 
+  $ajax_token = $_SESSION['ajax_token']; // AJAX Token
   $result .= '
         form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
         listenToForm'.$slug.$p_id.'();

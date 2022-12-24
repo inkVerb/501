@@ -129,6 +129,11 @@ function iTunesCat($series_cat) {
 // Check & validate for what we need
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['u_id'])) && (filter_var($_POST['u_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) && (($_POST['u_id']) == (isset($_SESSION['user_id']))) ) {
 
+  // AJAX token check
+  if ( $_POST['ajax_token'] !== $_SESSION['ajax_token'] ) {
+    exit();
+  }
+
   // Set our $u_id
   $u_id = preg_replace("/[^0-9]/"," ", $_POST['u_id']);
 

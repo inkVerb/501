@@ -18,6 +18,11 @@ function human_file_size($size, $unit="") {
 // Check & validate for what we need
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_POST['m_id'])) && (filter_var($_POST['m_id'], FILTER_VALIDATE_INT)) && (isset($_SESSION['user_id'])) ) {
 
+  // AJAX token check
+  if ( $_POST['ajax_token'] !== $_SESSION['ajax_token'] ) {
+    exit();
+  }
+
   // Assign the media ID and sanitize as the same time
   $m_id = preg_replace("/[^0-9]/"," ", $_POST['m_id']);
 

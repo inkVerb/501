@@ -14,6 +14,7 @@ $nologin_allowed = false; // Login required?
 $series_editor_yn = true; // Series editor
 include ('./in.logincheck.php');
 include ('./in.head.php');
+$ajax_token = $_SESSION['ajax_token'];
 
 // Include our POST processor
 include ('./in.editprocess.php');
@@ -394,7 +395,7 @@ include ('./in.featuredmedia.php');
 
     AJAX.open("POST", "ajax.mediainsert.php");
     AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    AJAX.send("u_id="+uID+"&r="+pageNum); // Data as could be sent in a <form>
+    AJAX.send("u_id="+uID+"&r="+pageNum+"&ajax_token=<?php echo $ajax_token; ?>"); // Data as could be sent in a <form>
 
   } // mediaInsert() function
   // Hide media-insert-container
@@ -598,7 +599,7 @@ include ('./in.featuredmedia.php');
 
     AJAX.open("POST", "ajax.mediafeature.php");
     AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    AJAX.send("u_id="+uID+"&feature_type="+thisMedia+"&r="+pageNum); // Data as could be sent in a <form>
+    AJAX.send("u_id="+uID+"&feature_type="+thisMedia+"&r="+pageNum+"&ajax_token=<?php echo $ajax_token; ?>"); // Data as could be sent in a <form>
 
   } // mediaFeatureInsert() function
   // Hide mediaFeatureInsert()
@@ -664,7 +665,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const FD = new FormData(FORM); // Bind to-send data to form element
+      var formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById(ajaxLoad).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxLoad is the JS argument in the function
@@ -676,7 +677,8 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      AJAX.send(FD); // Data sent is from the form
+      formData.append('ajax_token', <?php echo $ajax_token; ?>);
+      AJAX.send(formData); // Data sent is from the form
 
     } // mediaEdit() function
 
@@ -686,7 +688,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("media-edit-form"); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const FD = new FormData(FORM); // Bind to-send data to form element
+      var formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         // Parse our response
@@ -709,7 +711,7 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      AJAX.send(FD); // Data sent is from the form
+      AJAX.send(formData); // Data sent is from the form
 
     } // mediaSave() function
 
@@ -719,7 +721,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("name-change-form"); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const FD = new FormData(FORM); // Bind to-send data to form element
+      var formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         // Parse our response
@@ -743,7 +745,8 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      AJAX.send(FD); // Data sent is from the form
+      formData.append('ajax_token', <?php echo $ajax_token; ?>);
+      AJAX.send(formData); // Data sent is from the form
 
     } // nameChange() function
 
@@ -1024,7 +1027,7 @@ if (isset($piece_id)) {
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById("edit_piece");
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const FD = new FormData(FORM); // Bind to-send data to form element
+        var formData = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
 
@@ -1050,7 +1053,8 @@ if (isset($piece_id)) {
 
         AJAX.open("POST", "ajax.edit.php");
 
-        AJAX.send(FD); // Data sent is from the form
+        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        AJAX.send(formData); // Data sent is from the form
 
       } // ajaxSaveDraft() function
 

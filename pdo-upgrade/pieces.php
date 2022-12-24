@@ -9,6 +9,7 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 $series_editor_yn = true; // Series editor
 include ('./in.logincheck.php');
 include ('./in.head.php');
+$ajax_token = $_SESSION['ajax_token'];
 
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
@@ -163,7 +164,7 @@ function toggle(source) {
       // POST to the AJAX source and get the actual <form>
       ajaxHandler.open("POST", "ajax.metaedit.php", true);
       ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      ajaxHandler.send("p_id="+p_id);
+      ajaxHandler.send("p_id="+p_id+"&ajax_token=<?php echo $ajax_token; ?>");
 
     } // End clicking to open
   } // End editMeta()
@@ -172,7 +173,7 @@ function toggle(source) {
   function sendEditMetaData(p_id) {
     var form = document.getElementById('meta_edit_form_'+p_id);
     var AJAX = new XMLHttpRequest();
-    var FD = new FormData(form);
+    var formData = new FormData(form);
     AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
       // Parse our response
       var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
@@ -196,7 +197,9 @@ function toggle(source) {
       document.getElementById("changed_"+p_id).style.display = "inline"; // Show our "changed indicator"
     } );
     AJAX.open("POST", "ajax.metaedit.php");
-    AJAX.send(FD);
+    $ajax_token = $_SESSION['ajax_token'];
+    formData.append('ajax_token', <?php echo $ajax_token; ?>);
+    AJAX.send(formData);
   }
 
   // Capture submit button for AJAX

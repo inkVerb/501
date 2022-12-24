@@ -16,6 +16,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 && (isset($_SESSION['user_id']))
 && ($_SESSION['user_id'] == $_POST['u_id']) ) {
 
+// AJAX token check
+if ( $_POST['ajax_token'] !== $_SESSION['ajax_token'] ) {
+  exit();
+}
+
 $m_basic_type = $_POST['feature_type'];
 
 ?>

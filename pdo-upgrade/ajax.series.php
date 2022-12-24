@@ -5,6 +5,11 @@ include ('./in.logincheck.php');
 
 if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) {
 
+  // AJAX token check
+  if ( $_POST['ajax_token'] !== $_SESSION['ajax_token'] ) {
+    exit();
+  }
+
   // Make sure we're not creating an empty Series
   if (preg_replace('/\s+/', '', $_POST['new_series']) != '') {
     // Series name

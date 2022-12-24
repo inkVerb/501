@@ -55,11 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<h1>Random string to recover login:</h1>";
     echo "SESSION count: $count (times reloaded, not AJAXed)<br>";
 
-    // Our AJAX messages
-    echo "<p>Below is an AJAX section of the page...</p>";
+    // Our recovery message
+    echo "<p>Get a link to recover your account...</p>";
     echo "<hr><br>";
 
     // echo our AJAX JavaScript
+    $ajax_token = $_SESSION['ajax_token'];
     echo '  <!-- AJAX JavaScript code included as <script> -->
       <script>
         function vipAjax() { // vipAjax can be anything

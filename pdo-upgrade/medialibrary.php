@@ -8,6 +8,7 @@ $head_title = 'Media Library'; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.logincheck.php');
 include ('./in.head.php');
+$ajax_token = $_SESSION['ajax_token'];
 
 // Pagination
 // Valid the Pagination
@@ -127,7 +128,7 @@ $prevpaged = $paged - 1;
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const FD = new FormData(FORM); // Bind to-send data to form element
+        var formData = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
           document.getElementById(ajaxUpdate).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxUpdate is the JS argument in the function
@@ -139,7 +140,8 @@ $prevpaged = $paged - 1;
 
         AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-        AJAX.send(FD); // Data sent is from the form
+        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        AJAX.send(formData); // Data sent is from the form
 
       } // mediaEdit() function
 
@@ -149,7 +151,7 @@ $prevpaged = $paged - 1;
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById("media-edit-form"); // <form> by ID to access, formID is the JS argument in the function
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const FD = new FormData(FORM); // Bind to-send data to form element
+        var formData = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
           // Parse our response
@@ -172,7 +174,8 @@ $prevpaged = $paged - 1;
 
         AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-        AJAX.send(FD); // Data sent is from the form
+        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        AJAX.send(formData); // Data sent is from the form
 
       } // mediaSave() function
 
@@ -182,7 +185,7 @@ $prevpaged = $paged - 1;
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById("name-change-form"); // <form> by ID to access, formID is the JS argument in the function
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const FD = new FormData(FORM); // Bind to-send data to form element
+        var formData = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
           // Parse our response
@@ -206,7 +209,8 @@ $prevpaged = $paged - 1;
 
         AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-        AJAX.send(FD); // Data sent is from the form
+        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        AJAX.send(formData); // Data sent is from the form
 
       } // nameChange() function
 

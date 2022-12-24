@@ -12,6 +12,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST')
 && (isset($_POST['f_id']))
 && (filter_var($_POST['f_id'], FILTER_VALIDATE_INT)) ) {
 
+  // AJAX token check
+  if ( $_POST['ajax_token'] !== $_SESSION['ajax_token'] ) {
+    exit();
+  }
+
   // Set our $u_id
   $u_id = preg_replace("/[^0-9]/"," ", $_POST['u_id']);
 
