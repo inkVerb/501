@@ -16,6 +16,9 @@ echo "<hr><br><br>";
 
 }
 
+$srm = $_SERVER['REQUEST_METHOD'];
+echo "<pre>\$_SERVER['REQUEST_METHOD'] = $srm</pre><br>";
+
 echo '
 <form action="phppost.php" method="post">
   Go: <input type="text" name="go" placeholder="Go where?"><br><br>
