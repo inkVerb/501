@@ -230,25 +230,25 @@ if ($totalpages > 1) {
 					<td>
 						<a class=\"paginate";
 						if ($paged == 1) {echo " disabled";}
-						echo "\" title=\"Page 1\" href=\"$blog_web_base/${series_get}r=1\">&laquo;</a>
+						echo "\" title=\"Page 1\" href=\"$blog_web_base/{$series_get}r=1\">&laquo;</a>
 					</td>
 					<td>
 						<a class=\"paginate";
             if ($paged == 1) {echo " disabled";}
-           echo "\" title=\"Previous\" href=\"$blog_web_base/${series_get}r=$prevpaged\">&lsaquo;&nbsp;</a>
+           echo "\" title=\"Previous\" href=\"$blog_web_base/{$series_get}r=$prevpaged\">&lsaquo;&nbsp;</a>
 					</td>
 					<td>
-						<a class=\"paginate current\" title=\"Next\" href=\"$blog_web_base/${series_get}r=$paged\">Page $paged ($totalpages)</a>
+						<a class=\"paginate current\" title=\"Next\" href=\"$blog_web_base/{$series_get}r=$paged\">Page $paged ($totalpages)</a>
 					</td>
 					<td>
 						<a class=\"paginate";
             if ($paged == $totalpages) {echo " disabled";}
-           echo "\" title=\"Next\" href=\"$blog_web_base/${series_get}r=$nextpaged\">&nbsp;&rsaquo;</a>
+           echo "\" title=\"Next\" href=\"$blog_web_base/{$series_get}r=$nextpaged\">&nbsp;&rsaquo;</a>
 					</td>
 					 <td>
 						 <a class=\"paginate";
 						 if ($paged == $totalpages) {echo " disabled";}
-	 					echo "\" title=\"Last Page\" href=\"$blog_web_base/${series_get}r=$totalpages\">&raquo;</a>
+	 					echo "\" title=\"Last Page\" href=\"$blog_web_base/{$series_get}r=$totalpages\">&raquo;</a>
 					 </td>
 		 		</tr>
 			</table>

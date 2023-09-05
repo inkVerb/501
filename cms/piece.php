@@ -21,7 +21,7 @@ if ((isset($_SESSION['user_id'])) && (isset($_GET['preview']))) {
 if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
 
   $p_id = preg_replace("/[^0-9]/"," ", $_GET['p']); // Set $p_id via sanitize non-numbers
-  $query = $database->prepare("SELECT title, slug, content, after, series, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM ${from_where}id=:id");
+  $query = $database->prepare("SELECT title, slug, content, after, series, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live, date_updated FROM {$from_where}id=:id");
   $query->bindParam(':id', $p_id);
 } elseif ((isset($_GET['s'])) && (preg_match('/[a-zA-Z0-9-]{1,90}$/i', $_GET['s']))) {
 
