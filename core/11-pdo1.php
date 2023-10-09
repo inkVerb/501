@@ -30,7 +30,7 @@ try {
     `color` VARCHAR(90) DEFAULT NULL,
     `locale` VARCHAR(90) DEFAULT NULL,
     `market` VARCHAR(90) DEFAULT NULL,
-    `date_updated` TIMESTAMP NOT NULL,
+    `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
   ";

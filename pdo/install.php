@@ -103,7 +103,7 @@ EOF;
       `favnumber` TINYINT DEFAULT NULL,
       `pass` VARCHAR(255) DEFAULT NULL,
       `type` ENUM('member', 'contributor', 'writer', 'editor', 'admin') NOT NULL,
-      `date_updated` TIMESTAMP NOT NULL,
+      `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);

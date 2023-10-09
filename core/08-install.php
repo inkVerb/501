@@ -98,22 +98,27 @@ EOF;
       `favnumber` TINYINT DEFAULT NULL,
       `pass` VARCHAR(255) DEFAULT NULL,
       `type` ENUM('member', 'contributor', 'writer', 'editor', 'admin') NOT NULL,
-      `date_updated` TIMESTAMP NOT NULL,
+      `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-    CREATE TABLE IF NOT EXISTS `strings` (
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
+    $call = mysqli_query($database, $query);
+    if (!$call) {
+      echo '<p>Could not create the necessary database tables, quitting.</p>';
+      exit ();
+    }
+    $query = "CREATE TABLE IF NOT EXISTS `strings` (
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
       `userid` INT UNSIGNED NOT NULL,
       `random_string` VARCHAR(255) DEFAULT NULL,
       `usable` ENUM('live', 'dead') NOT NULL,
       `date_expires` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-    GRANT ALL PRIVILEGES ON webapp_db.* TO webapp_db_user@localhost IDENTIFIED BY 'webappdbpassword';
-    FLUSH PRIVILEGES;";
-    $call = mysqli_query($database, $query);
-    if (!$call) {
-      echo '<p>Could not create the necessary database tables, quitting.</p>';
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
+    $statement = $database->query($query);
+    if ($statement) {
+      $installrun = true;
+    } else {
+      echo '<p>Could not create the strings database table, quitting.</p>';
       exit ();
     }
 
