@@ -110,7 +110,7 @@ EOF;
       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
       `userid` INT UNSIGNED NOT NULL,
       `random_string` VARCHAR(255) DEFAULT NULL,
-      `usable` ENUM('live', 'dead') NOT NULL,
+      `usable` ENUM('live', 'cookie_login', 'dead') NOT NULL,
       `date_expires` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
