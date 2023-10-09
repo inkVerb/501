@@ -74,7 +74,7 @@ function checkPiece($name, $value) {
   } elseif ($name == 'p_live_yr') {
     $regex = '/[0-9]{4}$/i';
     // Our date range is from the creation of the Gutenberg press through the millenium of Christ
-    $result = (((preg_match($regex, $value)) && (1500 <= $value) && (3300 >= $max)) && (p_live_schedule == true))
+    $result = (((preg_match($regex, $value)) && (1500 <= $value) && (3300 >= $value)) && (p_live_schedule == true))
     ? $value : $p_live_yr_curr;
     define ('limit_day_yr', $result); // Define a constant for date-range so it edures multiple function calls
     // lowercase because it won't be used everywhere in our app

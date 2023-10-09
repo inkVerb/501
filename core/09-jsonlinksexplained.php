@@ -132,13 +132,10 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!preg_match('/([\]\[\\{\}\$\*]+
       $part = explode(";;", $line); // Split by unquoted whitespace
 
       // Assign the first three items
-      $part3 = trim($part[2]);
-      $part2 = trim($part[1]);
-      $part1 = trim($part[0]);
-
-      $part3 = trim($part[2]);
-      $part2 = trim($part[1]);
-      $part1 = trim($part[0]);
+      // Test these with ternary statements because they could be empty and that's not allowed
+      $part3 = (empty($part[2])) ? '' : trim($part[2]);
+      $part2 = (empty($part[1])) ? '' : trim($part[1]);
+      $part1 = (empty($part[0])) ? '' : trim($part[0]);
 
       // Process 3 parts in reverse order
       // Running last things first, assign values based on the remaining possible outcomes

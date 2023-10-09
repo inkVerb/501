@@ -184,7 +184,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $callu = mysqli_query($database, $query);
           $publication_message = 'Piece published!';
         } elseif ( ($p_status == 'update') || ($pubstatus = 'published') || ($pubstatus = 'redrafting') ) {
-          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', , title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
+          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
           $callp = mysqli_query($database, $query);
           $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, date_live, date_updated) VALUES ('$piece_id_sqlesc', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
