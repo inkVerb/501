@@ -15,13 +15,22 @@ mysqli_set_charset($database, 'utf8mb4');
 // Function to escape for SQL
 function escape_sql($data) {
 
-  // Database connection $database variable is needed here
-	global $database;
+  // Make sure the data is not null
+  if (is_null($data)) {
 
-  // Remove whitespace
-  $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
+    return '';
+    
+  } else {
 
-	// Apply mysqli_real_escape_string()
-	return mysqli_real_escape_string($database, $trimmed_data);
+    // Database connection $database variable is needed here
+    global $database;
+
+    // Remove whitespace
+    $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
+
+    // Apply mysqli_real_escape_string()
+    return mysqli_real_escape_string($database, $trimmed_data);
+
+  }
 
 }

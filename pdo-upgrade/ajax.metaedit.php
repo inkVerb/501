@@ -80,7 +80,7 @@ if ( (isset($_POST['edit_piece']))
   }
 
   // Date-time Live
-  $p_live_schedule = checkPiece('p_live_schedule',$_POST['p_live_schedule']);
+  $p_live_schedule = (isset($_POST['p_live_schedule'])) ? checkPiece('p_live_schedule',$_POST['p_live_schedule']) : false ;
   if ($p_live_schedule == true) {
     $p_live_yr = checkPiece('p_live_yr',$_POST['p_live_yr']);
     $p_live_mo = checkPiece('p_live_mo',$_POST['p_live_mo']);
