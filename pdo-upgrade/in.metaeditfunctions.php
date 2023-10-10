@@ -196,7 +196,7 @@ function piecesaction($action, $p_id) {
   // Choose the action
   switch ($action) {
     case 'unpublish':
-      $query = $database->prepare("UPDATE publications SET pubstatus='redrafting' WHERE id=:id");
+      $query = $database->prepare("UPDATE publications SET pubstatus='redrafting' WHERE piece_id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $call = $pdo->ok;
@@ -210,7 +210,7 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'republish':
-      $query = $database->prepare("UPDATE publications SET pubstatus='published' WHERE id=:id");
+      $query = $database->prepare("UPDATE publications SET pubstatus='published' WHERE piece_id=:id");
       $query->bindParam(':id', $p_id);
       $pdo->exec_($query);
       $call = $pdo->ok;

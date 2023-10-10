@@ -193,7 +193,7 @@ function piecesaction($action, $p_id) {
   // Choose the action
   switch ($action) {
     case 'unpublish':
-      $query = "UPDATE publications SET pubstatus='redrafting' WHERE id='$p_id'";
+      $query = "UPDATE publications SET pubstatus='redrafting' WHERE piece_id='$p_id'";
       $call = mysqli_query($database, $query);
       if ($call) {
         $piecesactionsuccess = true;
@@ -205,7 +205,7 @@ function piecesaction($action, $p_id) {
 
       break;
     case 'republish':
-      $query = "UPDATE publications SET pubstatus='published' WHERE id='$p_id'";
+      $query = "UPDATE publications SET pubstatus='published' WHERE piece_id='$p_id'";
       $call = mysqli_query($database, $query);
       if ($call) {
         $piecesactionsuccess = true;

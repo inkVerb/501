@@ -12,7 +12,8 @@ if ((isset($_POST['p'])) && (filter_var($_POST['p'], FILTER_VALIDATE_INT))) {
   // Set $piece_id via sanitize non-numbers
   $piece_id = preg_replace("/[^0-9]/"," ", $_POST['p']);
 
-  $query = "UPDATE publications SET pubstatus='redrafting' WHERE id='$piece_id'";
+  $query = "UPDATE publications SET pubstatus='redrafting' WHERE piece_id='$piece_id'";
+  echo $query; exit;
   $call = mysqli_query($database, $query);
   if ($call) {
     exit (header("Location: pieces.php"));

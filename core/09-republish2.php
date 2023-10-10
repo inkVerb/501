@@ -16,7 +16,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   exit (header("Location: blog.php"));
 }
 
-$query = "UPDATE publications SET pubstatus='published' WHERE id='$piece_id'";
+$query = "UPDATE publications SET pubstatus='published' WHERE piece_id='$piece_id'";
 $call = mysqli_query($database, $query);
 if ($call) {
   exit (header("Location: pieces.php"));
