@@ -124,13 +124,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
   $p_links_sqljson = (json_decode($p_links_json)) ? $p_links_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
-  // Process tags for use in HTML
-  $p_tags = implode(', ', json_decode($p_tags_json, true));
-  //echo "<pre>\$p_tags_sqljson: $p_tags_sqljson</pre>"; // uncomment to see the values
-  //echo "<pre>\$p_tags: $p_tags</pre>"; // uncomment to see the
+  // Process tags for use in HTML if is not empty in any way
+  $p_tags = (($p_tags_json = '[""]') || ($p_tags_json = '') || (empty($p_tags_json))) ? '' : implode(', ', json_decode($p_tags_json, true));
 
-  // Process links for use in HTML
-  if ($p_links_sqljson != '[""]') {$links_array = json_decode($p_links_sqljson);}
+  // Process links for use in HTML if is not empty in any way
+  $links_array = (($p_links_json = '[""]') || ($p_links_json = '') || (empty($p_links_json))) ? '' : json_decode($p_links_json);
   // Only if we actually have links
   if (!empty($links_array)) {
     $links = ''; // Start the $links set
@@ -468,11 +466,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       // Indicate a historical edit
       echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
 
-      // Process tags for use in HTML
-      $p_tags = implode(', ', json_decode($p_tags_json, true));
+      // Process tags for use in HTML if is not empty in any way
+      $p_tags = (($p_tags_json = '[""]') || ($p_tags_json = '') || (empty($p_tags_json))) ? '' : implode(', ', json_decode($p_tags_json, true));
 
-      // Process links for use in HTML
-      if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
+      // Process links for use in HTML if is not empty in any way
+      $links_array = (($p_links_json = '[""]') || ($p_links_json = '') || (empty($p_links_json))) ? '' : json_decode($p_links_json);
       // Only if we actually have links
       if (!empty($links_array)) {
         $links = ''; // Start the $links set
@@ -541,11 +539,11 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $p_links_json = "$row->links";
           $p_live = "$row->date_live";
 
-          // Process tags for use in HTML
-          $p_tags = implode(', ', json_decode($p_tags_json, true));
+          // Process tags for use in HTML if is not empty in any way
+        $p_tags = (($p_tags_json = '[""]') || ($p_tags_json = '') || (empty($p_tags_json))) ? '' : implode(', ', json_decode($p_tags_json, true));
 
-          // Process links for use in HTML
-          if ($p_links_json != '[""]') {$links_array = json_decode($p_links_json);}
+        // Process links for use in HTML if is not empty in any way
+        $links_array = (($p_links_json = '[""]') || ($p_links_json = '') || (empty($p_links_json))) ? '' : json_decode($p_links_json);
           // Only if we actually have links
           if (!empty($links_array)) {
             $links = ''; // Start the $links set

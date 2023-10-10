@@ -102,8 +102,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_after_sqlesc = escape_sql($p_after);
   $p_tags_sqljson = (json_decode($p_tags_json)) ? $p_tags_json : NULL; // We need JSON as is, no SQL-escape; run an operation, keep value if true, set NULL if false
 
-  // Process tags for use in HTML
-  $p_tags = implode(', ', json_decode($p_tags_json, true));
+  // Process tags for use in HTML if is not empty in any way
+  $p_tags = (($p_tags_json = '[""]') || ($p_tags_json = '') || (empty($p_tags_json))) ? '' : implode(', ', json_decode($p_tags_json, true));
   //echo "<pre>\$p_tags_sqljson: $p_tags_sqljson</pre>"; // uncomment to see the values
   //echo "<pre>\$p_tags: $p_tags</pre>"; // uncomment to see the
 
@@ -206,7 +206,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
           $callu = mysqli_query($database, $query);
           $publication_message = 'Piece published!';
         } elseif ( ($p_status == 'update') || ($pubstatus = 'published') || ($pubstatus = 'redrafting') ) {
-          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
+          $query = "UPDATE publications SET type='$p_type_sqlesc', pubstatus='published', , title='$p_title_sqlesc', slug='$p_slug_sqlesc', content='$p_content_sqlesc', after='$p_after_sqlesc', tags='$p_tags_sqljson', date_live='$p_live_sqlesc', date_updated=NOW() WHERE piece_id='$piece_id_sqlesc'";
           $callp = mysqli_query($database, $query);
           $query = "INSERT INTO publication_history (piece_id, type, title, slug, content, after, tags, date_live, date_updated) VALUES ('$piece_id_sqlesc', '$p_type_sqlesc', '$p_title_sqlesc', '$p_slug_sqlesc', '$p_content_sqlesc', '$p_after_sqlesc', '$p_tags_sqljson', '$p_live_sqlesc', NOW())";
           $callh = mysqli_query($database, $query);
@@ -303,7 +303,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         echo '<h2><code class="orange">Reverting to: </code><code class="gray">'.$p_live.'</code></h2>';
 
         // Process tags for use in HTML
-        $p_tags = implode(', ', json_decode($p_tags_json, true));
+        $p_tags = (($p_tags_json = '[""]') || ($p_tags_json = '') || (empty($p_tags_json))) ? '' : implode(', ', json_decode($p_tags_json, true));
 
         $query = "SELECT status FROM pieces WHERE id='$piece_id'";
         $call = mysqli_query($database, $query);
@@ -358,7 +358,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
         $p_live = "$row[7]";
 
         // Process tags for use in HTML
-        $p_tags = implode(', ', json_decode($p_tags_json, true));
+        $p_tags = (($p_tags_json = '[""]') || ($p_tags_json = '') || (empty($p_tags_json))) ? '' : implode(', ', json_decode($p_tags_json, true));
 
       // We are editing a piece that has been saved, publication is allowed
       $editing_existing_piece = true;

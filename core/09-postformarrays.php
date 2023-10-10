@@ -1,10 +1,10 @@
 <?php
 
-echo '<form action="postformarrays.php" method="post" id="apply2all">
+echo '
+<form action="postformarrays.php" method="post" id="apply2all">
   <input type="submit" name="all" value="Blue all">
   <input type="submit" name="all" value="Red all">
 </form>
-
 
 <table>
   <tr>
@@ -53,9 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Assign from which button
   if ($_POST['all'] == 'Blue all') {
-    $press_button = 'blue';
+    $pressed_button = 'blue button';
   } elseif ($_POST['all'] == 'Red all') {
-    $press_button = 'red';
+    $pressed_button = 'red button';
   }
 
   // We don't want [all] in our foreach($_POST) loop
@@ -65,10 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   foreach($_POST as $item) {
     echo '<pre>';
 
-    echo $press_button.' '.$item; // echo in this example
+    echo $pressed_button.' -- '.$item; // echo in this example
     // or do anything else here...
-    //some_function($item, $press_button);
-    //include('some_file.php?a=$item&b=$press_button');
+    //some_function($item, $pressed_button);
+    //include('some_file.php?a=$item&b=$pressed_button');
 
     echo '</pre>';
   }
