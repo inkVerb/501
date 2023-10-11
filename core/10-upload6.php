@@ -4,7 +4,7 @@
 include ('./in.config.php');
 
 // Include our login cluster
-$head_title = 'Upload form example'; // Set a <title> name used next
+$head_title = 'Upload form example: image, video, audio & docs'; // Set a <title> name used next
 $edit_page_yn = false; // Include JavaScript for TinyMCE?
 include ('./in.logincheck.php');
 include ('./in.head.php');
