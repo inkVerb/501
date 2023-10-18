@@ -50,7 +50,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
       $image_dimensions = $imageinfo[3];
       if (getimagesize($temp_file)) {
         $info_message .= '<span class="blue">Image type: <code>'.$image_type.'</code><br>Dimensions: <code>'.$image_dimensions.'</code></span><br>';
-        $upload_dir = $upload_dir_base.'images/';
+        $upload_location = 'images';
+        $basic_type = 'IMAGE';
       } else {
         $errors .= '<span class="error">Not an image</span><br><br>';
       }
@@ -58,7 +59,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
     // SVG image
     } elseif (($file_extension == 'svg')  && ($file_mime == 'image/svg+xml')) {
       $info_message .= '<span class="blue">Image type: <code>'.$file_mime.'</code></span><br><br>';
-      $upload_dir = $upload_dir_base.'images/';
       $upload_location = 'images';
       $basic_type = 'IMAGE';
 

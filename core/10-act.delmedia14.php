@@ -22,7 +22,7 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
     $query = "SELECT file_base, basic_type, file_extension, location FROM media_library WHERE id='$m_id'";
     $call = mysqli_query($database, $query);
 
-    while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
+    $row = mysqli_fetch_array($call, MYSQLI_NUM);
       $m_file_base = "$row[0]";
       $m_basic_type = "$row[1]";
       $m_file_extension = "$row[2]";
@@ -119,8 +119,6 @@ if ($_POST['deleteaction'] == 'confirm delete forever') {
       } else {
         exit ('<pre class="error">Could not delete file from server: '.$m_location.'/'.$m_file_base.'.'.$m_file_extension.' id: '.$m_id.'</pre>');
       }
-
-    } // End file
 
   } // for loop
 
