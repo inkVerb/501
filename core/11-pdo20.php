@@ -23,7 +23,7 @@ function pdo_error($query, $error_message) {
 
 // Populate the table
 try {
-  $multiquery  = "
+  $multiquery = "
   START TRANSACTION;
   INSERT INTO fruit (name) VALUES ('apple');
   INSERT INTO fruit (name) VALUES ('kiwi');

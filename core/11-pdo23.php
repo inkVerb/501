@@ -22,7 +22,7 @@ function pdo_error($query, $error_message) {
 }
 
 // 1 SELECT rows (use numbered)
-echo "<h4>1 SELECT (use numbered)</h4>";
+echo "<h4>1 SELECT (Numbered Array)</h4>";
 try {
   $query = "SELECT * FROM fruit";
   $statement = $database->query($query);
@@ -40,7 +40,7 @@ while ($row = $statement->fetch()) {
 }
 
 // 2 SELECT rows (use associative)
-echo "<h4>2 SELECT (use associative)</h4>";
+echo "<h4>2 SELECT (Associative Array)</h4>";
 try {
   $query = "SELECT * FROM fruit";
   $statement = $database->query($query);
@@ -58,7 +58,7 @@ while ($row = $statement->fetch()) {
 }
 
 // 3 SELECT rows (use both)
-echo "<h4>3 SELECT (use both)</h4>";
+echo "<h4>3 SELECT (both)</h4>";
 try {
   $query = "SELECT * FROM fruit";
   $statement = $database->query($query);
@@ -82,7 +82,7 @@ while ($row = $statement->fetch()) {
 }
 
 // 4 SELECT rows (use object)
-echo "<h4>4 SELECT (use object)</h4>";
+echo "<h4>4 SELECT (Object)</h4>";
 try {
   $query = "SELECT * FROM fruit";
   $statement = $database->query($query);
