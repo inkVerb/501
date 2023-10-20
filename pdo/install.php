@@ -8,6 +8,7 @@
 
 <?php
 
+
 // Include our functions
 include ('./in.functions.php');
 
@@ -74,13 +75,12 @@ EOF;
     // Write the file:
     file_put_contents('./in.conf.php', $configFile);
 
-
     // Include our config file (which includes the newly-written SQL config) if it exists
     if (!file_exists('./in.conf.php')) {
       echo '<p>Could not create the database config file, quitting.</p>';
       exit ();
     } else {
-      require_once ('./in.conf.php');
+      require_once ('./in.db.php');
     } // Now we have a database connection and we can begin making queries
 
     // Set the character settings in the database
@@ -242,7 +242,7 @@ EOF;
       `series_cat2` VARCHAR(255) DEFAULT NULL,
       `series_cat3` VARCHAR(255) DEFAULT NULL,
       `series_cat4` VARCHAR(255) DEFAULT NULL,
-      `series_cat5` VARCHAR(255) DEFAULT NULL
+      `series_cat5` VARCHAR(255) DEFAULT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);
@@ -385,7 +385,8 @@ EOF;
       echo '<h1>All set!</h1>';
       echo '<p>Everything is ready for you to login!</p>
       <p>Username: '.$username.'</p>
-      <p>Password: <i>(Whatever password you just used)</i></p>';
+      <p>Password: <i>(Whatever password you just used)</i></p>
+      <p><b><a href="webapp.php">Login</a></b></p>';
       exit (); // Finish
 
     } else {
@@ -400,18 +401,23 @@ EOF;
 
 } // Finish POST if
 
+// Installing
+
+// Database options already set?
+if (file_exists('./in.conf.php')) {
+  include ('./in.conf.php');
+}
 
 // Our actual signup page
-
 echo '<h1>Admin signup</h1>';
 echo '
 <form action="install.php" method="post">';
 
 echo '<b>Database info</b><br><br>
-Database name: <input type="text" name="db_name"><br><br>
-Database username: <input type="text" name="db_user"><br><br>
-Database password: <input type="text" name="db_pass"><br><br>
-Database host: <input type="text" name="db_host" value="localhost"> (leave as <i>localhost</i> unless told otherwise)<br><br>
+Database name: <input type="text" name="db_name" value="'.$db_name.'"><br><br>
+Database username: <input type="text" name="db_user" value="'.$db_user.'"><br><br>
+Database password: <input type="text" name="db_pass" value="'.$db_pass.'"><br><br>
+Database host: <input type="text" name="db_host" value="localhost" value="'.$db_host.'"> (leave as <i>localhost</i> unless told otherwise)<br><br>
 <br><br>
 <b>Admin user</b><br><br>';
 

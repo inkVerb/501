@@ -16,42 +16,61 @@ and the web user
 www
 ```
 
+**Create the webapp folder we will use** :$
+
+```console
+sudo mkdir -p /srv/www/html/webappfolder
+```
+
 These may be different on your system
 
 2. Install Linux packages
 
 - `ffmpeg`
 - `pandoc`
-- `texlive-core`
+- `texlive-`
 - `imagemagick`
+- `lame`
+- `xmlstarlet`
 
 
 | **Arch/Manjaro** :$
 
 ```console
-sudo pacman -S --noconfirm libxml2 xmlstarlet imagemagick ffmpeg pandoc texlive-core
+sudo pacman -S --noconfirm libxml2 xmlstarlet imagemagick ffmpeg lame pandoc texlive-core texlive-latex texlive-fontsrecommended texlive-latexrecommended
 ```
 
 | **Debian/Ubuntu** :$
 
 ```console
-sudo apt install -y libxml2-utils xmlstarlet imagemagick ffmpeg pandoc
+sudo apt install -y libxml2-utils xmlstarlet imagemagick ffmpeg libmp3lame0 pandoc texlive-latex-base texlive-fonts-recommended texlive-latex-recommended
 ```
+
+- *On Debian, a more up-to-date alternative to `libmp3lame0` is: `libavcodec-extra57`*
+  - *If `libavcodec-extra57` is not available, find the right number with: `sudo apt-cache search libavcodec-extra`*
 
 3. Create a database and user
 
-| **Create database** : (if using terminal)
+**This guide assumes** : 
+
+```
+Database name: blog_db
+Database username: blog_db_user
+Database password: blogdbpassword
+Database host: localhost
+```
+
+| **Create database** :> (modify if different, for use in terminal)
 
 ```sql
 CREATE DATABASE blog_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 GRANT ALL PRIVILEGES ON blog_db.* TO blog_db_user@localhost IDENTIFIED BY 'blogdbpassword';
 FLUSH PRIVILEGES;
-QUIT;
 ```
 
 4. Create directories
 
-| **Create directories** : (if using terminal)
+| **Create directories** :$ (for use in terminal)
 
 ```console
 sudo mkdir -p media/docs media/audio media/video media/images media/uploads media/original/images media/original/video media/original/audio media/original/docs media/pro
@@ -101,12 +120,14 @@ sudo vim /etc/cron.d/webapp
 
 6. Put the contents of "cms/" into the same webfolder
 
-| **Copy web files** : (if using terminal)
+| **Copy web files** :$ (for use in terminal)
 
 ```console
 sudo cp cms/* /srv/www/html/webappfolder/
 sudo chown -R www:www /srv/www/html/webappfolder
 ```
+
+Optional: edit webappfolder/in.conf.php to contain the database name and user info, otherwise configure it on the Install page...
 
 7. Install
 

@@ -13,7 +13,6 @@ require_once ('./in.conf.php');
 
 // Database connection
 $nameHostChar = "mysql:host=$db_host; dbname=$db_name; charset=utf8mb4";
-
 $opt = [
   PDO::ATTR_EMULATE_PREPARES => false,
   PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -57,7 +56,7 @@ class DB {
     global $database;
 
     // Sanitize
-    $cols = preg_replace("/[^0-9a-zA-Z_]/", "", $col);
+    $col = preg_replace("/[^0-9a-zA-Z_]/", "", $col);
     $table = preg_replace("/[^0-9a-zA-Z_]/", "", $table);
 
     // Try the query
@@ -80,7 +79,8 @@ class DB {
   // SELECT method
   public function select($table, $wcol, $vcol, $cols='*') {
     // Usage $pdo = new DB;
-    // $val = $pdo->select($table, $where_col, $where_value, $columns='*');
+    // $rows = $pdo->select($table, $where_col, $where_value, $columns='*');
+    // foreach ($rows as $row) ...
     // Then, column names are objects: $fruit = $val->fruit; $rock = $val->rock;
 
     global $database;
@@ -244,9 +244,9 @@ class DB {
     // Usage $pdo = new DB;
     // $query = $database->prepare($sql_statement);
     // $query->bindParam(...);
-    // $rows = DB::exec_($query);
-    // if ($query->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
-    // if (DB::$numrows > 0) {do something}
+    // $rows = $pdo->exec_($query);
+    // if ($pdo->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
+    // if ($pdo->$numrows > 0) {do something}
 
     global $database;
 

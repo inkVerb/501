@@ -13,7 +13,6 @@ require_once ('./in.conf.php');
 
 // Database connection
 $nameHostChar = "mysql:host=$db_host; dbname=$db_name; charset=utf8mb4";
-
 $opt = [
   PDO::ATTR_EMULATE_PREPARES => false,
   PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -45,7 +44,7 @@ class DB {
 
   // PDO error handler
   protected function pdo_error($query, $error_message) {
-    echo "SQL error from <pre></pre><br>$error_message";
+    echo "SQL error from <pre>$query</pre><br>$error_message";
     exit ();
   } // pdo_error()
 

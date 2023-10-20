@@ -27,13 +27,13 @@ if (isset($_COOKIE['user_key'])) {
     $call = mysqli_query($database, $query);
     if (!$call) { // It doesn't matter if the key is there or not, just that SQL is working
       echo '<p class="error">SQL key error!</p>';
-    } else {
-      $_SESSION = array(); // Reset the `_SESSION` array
-      session_destroy();
-      setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
-      unset($_COOKIE['user_key']);
-      setcookie('user_key', null, 86401);
     }
+    // Destroy the session regardless
+    $_SESSION = array(); // Reset the `_SESSION` array
+    session_destroy();
+    setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
+    unset($_COOKIE['user_key']);
+    setcookie('user_key', null, 86401);
     // exit and redirect in one line
     exit (header("Location: blog.php"));
   }
