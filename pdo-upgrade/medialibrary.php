@@ -140,7 +140,7 @@ $prevpaged = $paged - 1;
 
         AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        formData.append('ajax_token', '<?php echo $ajax_token; ?>');
         AJAX.send(formData); // Data sent is from the form
 
       } // mediaEdit() function
@@ -174,7 +174,7 @@ $prevpaged = $paged - 1;
 
         AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        formData.append('ajax_token', '<?php echo $ajax_token; ?>');
         AJAX.send(formData); // Data sent is from the form
 
       } // mediaSave() function
@@ -209,7 +209,7 @@ $prevpaged = $paged - 1;
 
         AJAX.open("POST", "ajax.mediainfo.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        formData.append('ajax_token', '<?php echo $ajax_token; ?>');
         AJAX.send(formData); // Data sent is from the form
 
       } // nameChange() function

@@ -18,7 +18,7 @@
 
     AJAX.open( "POST", "ajax.series.php" ); // Send data, ajax.series.php can be any file or URL
 
-    formData.append('ajax_token', <?php echo $ajax_token; ?>);
+    formData.append('ajax_token', '<?php echo $ajax_token; ?>');
     AJAX.send(formData); // Data sent is from the form
   } // newSeries() function
 </script>

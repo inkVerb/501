@@ -677,7 +677,7 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      formData.append('ajax_token', <?php echo $ajax_token; ?>);
+      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
       AJAX.send(formData); // Data sent is from the form
 
     } // mediaEdit() function
@@ -745,7 +745,7 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      formData.append('ajax_token', <?php echo $ajax_token; ?>);
+      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
       AJAX.send(formData); // Data sent is from the form
 
     } // nameChange() function
@@ -1053,7 +1053,7 @@ if (isset($piece_id)) {
 
         AJAX.open("POST", "ajax.edit.php");
 
-        formData.append('ajax_token', <?php echo $ajax_token; ?>);
+        formData.append('ajax_token', '<?php echo $ajax_token; ?>');
         AJAX.send(formData); // Data sent is from the form
 
       } // ajaxSaveDraft() function

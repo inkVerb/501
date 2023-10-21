@@ -198,7 +198,7 @@ function toggle(source) {
     } );
     AJAX.open("POST", "ajax.metaedit.php");
     $ajax_token = $_SESSION['ajax_token'];
-    formData.append('ajax_token', <?php echo $ajax_token; ?>);
+    formData.append('ajax_token', '<?php echo $ajax_token; ?>');
     AJAX.send(formData);
   }
 

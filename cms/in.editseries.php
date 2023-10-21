@@ -129,7 +129,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       AJAX.open("POST", "ajax.editseries.php");
 
       global $ajax_token; // AJAX Token
-      formData.append('ajax_token', <?php echo $ajax_token; ?>);
+      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
       AJAX.send(formData); // Data sent is from the form
 
     } // seriesSave() function
@@ -184,7 +184,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       AJAX.open("POST", "ajax.editseriesdetails.php");
 
       global $ajax_token; // AJAX Token
-      formData.append('ajax_token', <?php echo $ajax_token; ?>);
+      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
       AJAX.send(formData); // Data sent is from the form
 
     } // detailsSave() function
