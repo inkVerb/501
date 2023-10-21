@@ -60,7 +60,7 @@ if (!isset($_SESSION['count'])) {
 
 $count = $_SESSION['count'];
 
-echo "SESSION count: $count<br>";
+echo "\$_SESSION['count']: $count<br>";
 
 ?>
   <div id="some_thing">Here always</div>

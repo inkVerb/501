@@ -53,7 +53,7 @@ $count = $_SESSION['count'];
 </head>
 <body>
 
-<?php echo 'SESSION count: '.$count.'<br>'; ?>
+<?php echo '$_SESSION[\'count\']: '.$count.'<br>'; ?>
 
 <div id="some_thing">Here always</div>
 <div id="ajax_changes">Replace me with AJAX</div>

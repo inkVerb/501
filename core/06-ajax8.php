@@ -6,6 +6,18 @@
 </head>
 <body>
 
+<?php
+// Start a SESSION before our AJAX JavaScript function so we can use it
+session_start();
+
+// AJAX Token
+if ( empty($_SESSION["token"]) ) {
+  $ajax_token = bin2hex(random_bytes(64));
+  $_SESSION['ajax_token'] = $ajax_token;
+}
+
+?>
+
   <script>
     function ajaxFormData(formID, postTo, ajaxUpdate) { // These arguments can be anything, same as used in this function
       // Bind a new event listener every time the <form> is changed:
@@ -21,7 +33,11 @@
         document.getElementById(ajaxUpdate).innerHTML =  'Oops! Something went wrong.';
       } );
 
+      // OPEN before setRequestHeader
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
+
+      // Add token header
+      AJAX.setRequestHeader("ajax-token", "<?php echo $_SESSION['ajax_token']; ?>");
 
       AJAX.send(FD); // Data sent is from the form
 
@@ -29,9 +45,6 @@
   </script>
 
 <?php
-// Start a SESSION to survive page reloads
-session_start();
-
 // Start a counter first time
 if (!isset($_SESSION['count'])) {
   $_SESSION['count'] = 1;
@@ -42,8 +55,11 @@ if (!isset($_SESSION['count'])) {
 }
 
 $count = $_SESSION['count'];
+$ajax_token = $_SESSION['ajax_token'];
 
 echo "\$_SESSION['count']: $count<br>";
+
+echo "\$_SESSION['ajax_token']: $ajax_token<br>";
 
 ?>
   <div id="some_thing">Here always</div>
