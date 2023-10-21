@@ -20,14 +20,16 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   if ( (isset($_POST['piece_id'])) && (filter_var($_POST['piece_id'], FILTER_VALIDATE_INT)) ) { // Updating piece
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['piece_id']);
     $piece_id_sqlesc = escape_sql($piece_id);
-  }
 
-  // Check for existing publication
-  $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id_sqlesc'";
-  $call = mysqli_query($database, $query);
-  if (mysqli_num_rows($call) == 1) {
-    $row = mysqli_fetch_array($call, MYSQLI_NUM);
-      $pubstatus = "$row[0]";
+    // Check for existing publication
+    $query = "SELECT pubstatus FROM publications WHERE piece_id='$piece_id_sqlesc'";
+    $call = mysqli_query($database, $query);
+    if (mysqli_num_rows($call) == 1) {
+      $row = mysqli_fetch_array($call, MYSQLI_NUM);
+        $pubstatus = "$row[0]";
+    } else {
+      $pubstatus = 'none';
+    }
   } else {
     $pubstatus = 'none';
   }
@@ -93,7 +95,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_after = checkPiece('p_after',$_POST['p_after']);
 
   // Prepare our database values for entry
-  $piece_id_sqlesc = escape_sql($piece_id);
   $p_type_sqlesc = escape_sql($p_type);
   $p_title_sqlesc = escape_sql($p_title);
   $p_slug_sqlesc = escape_sql($p_slug);
@@ -102,6 +103,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
   // New or update?
   if (isset($piece_id)) { // Editing piece
+    $piece_id_sqlesc = escape_sql($piece_id); // Only prepare $piece_id if there is one, not in the cluster just above
 
     // Make sure there are no duplicates, we don't need a revision history where no changes were made
     $query = "SELECT date_live FROM pieces WHERE BINARY id='$piece_id_sqlesc' AND BINARY type='$p_type_sqlesc' AND BINARY title='$p_title_sqlesc' AND BINARY slug='$p_slug_sqlesc' AND BINARY content='$p_content_sqlesc' AND BINARY after='$p_after_sqlesc'";

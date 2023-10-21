@@ -25,13 +25,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   if ( (isset($_POST['piece_id'])) && (filter_var($_POST['piece_id'], FILTER_VALIDATE_INT)) ) { // Updating piece
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['piece_id']);
     $piece_id_trim = DB::trimspace($piece_id);
-  }
 
-  // Check for existing publication
-  $rows = $pdo->select('publications', 'piece_id', $piece_id_trim, 'pubstatus');
-  if ($pdo->numrows == 1) {
-    foreach ($rows as $row) {
-      $pubstatus = "$row->pubstatus";
+    // Check for existing publication
+    $rows = $pdo->select('publications', 'piece_id', $piece_id_trim, 'pubstatus');
+    if ($pdo->numrows == 1) {
+      foreach ($rows as $row) {
+        $pubstatus = "$row->pubstatus";
+      }
+    } else {
+      $pubstatus = 'none';
     }
   } else {
     $pubstatus = 'none';
@@ -139,7 +141,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_feat_doc = checkPiece('p_feat_doc',$_POST['p_feat_doc']);
 
   // Prepare our database values for entry
-  $piece_id_trim = DB::trimspace($piece_id);
   $p_type_trim = DB::trimspace($p_type);
   $p_series_trim = DB::trimspace($p_series);
   $p_title_trim = DB::trimspace($p_title);
@@ -171,6 +172,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
   // New or update?
   if (isset($piece_id)) { // Editing piece
+    $piece_id_trim = DB::trimspace($piece_id);
 
     // Prepare the query to update the old piece, adjusting for the proposed live date
     if ( ($p_status == 'draft') && ($p_live_schedule != true) ) { // No empty live date for publishing pieces
@@ -453,7 +455,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     if ($p_live_schedule == false){
       // It is easier to create two separate queries because "NULL" must not be in quotes when entered as the NULL value into SQL
       $p_live = NULL; // Keep it invalid, we won't use it
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_doc, NULL)");
+      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, feat_doc, date_live) VALUES (:type, false, :series, :title, :subtitle, :slug, :content, :after, :excerpt, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_doc, NULL)");
       $query->bindParam(':type', $p_type_trim);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);
@@ -471,7 +473,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     } elseif ($p_live_schedule == true) {
       $p_live = "$p_live_yr-$p_live_mo-$p_live_day $p_live_hr:$p_live_min:$p_live_sec";
       $p_live_trim = DB::trimspace($p_live);
-      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, subtitle, slug, content, after, excerpt, tags, feat_img, feat_aud, feat_vid, links, date_live) VALUES (:type, false, :series, :title, :slug, :content, :after, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_vid, :date_live)");
+      $query = $database->prepare("INSERT INTO pieces (type, pub_yn, series, title, subtitle, slug, content, after, excerpt, tags, links, feat_img, feat_aud, feat_vid, date_live) VALUES (:type, false, :series, :title, :subtitle, :slug, :content, :after, :excerpt, :tags, :links, :feat_img, :feat_aud, :feat_vid, :feat_vid, :date_live)");
       $query->bindParam(':type', $p_type_trim);
       $query->bindParam(':series', $p_series_trim);
       $query->bindParam(':title', $p_title_trim);

@@ -20,13 +20,15 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   if ( (isset($_POST['piece_id'])) && (filter_var($_POST['piece_id'], FILTER_VALIDATE_INT)) ) { // Updating piece
     $piece_id = preg_replace("/[^0-9]/"," ", $_POST['piece_id']);
     $piece_id_trim = DB::trimspace($piece_id);
-  }
 
-  // Check for existing publication
-  $rows = $pdo->select('publications', 'piece_id', $piece_id_trim, 'pubstatus');
-  if ($pdo->numrows == 1) {
-    foreach ($rows as $row) {
-      $pubstatus = "$row->pubstatus";
+    // Check for existing publication
+    $rows = $pdo->select('publications', 'piece_id', $piece_id_trim, 'pubstatus');
+    if ($pdo->numrows == 1) {
+      foreach ($rows as $row) {
+        $pubstatus = "$row->pubstatus";
+      }
+    } else {
+      $pubstatus = 'none';
     }
   } else {
     $pubstatus = 'none';
@@ -114,7 +116,6 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   $p_links_json = checkPiece('p_links',$_POST['p_links']);
 
   // Prepare our database values for entry
-  $piece_id_trim = DB::trimspace($piece_id);
   $p_type_trim = DB::trimspace($p_type);
   $p_series_trim = DB::trimspace($p_series);
   $p_title_trim = DB::trimspace($p_title);
@@ -144,6 +145,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
 
   // New or update?
   if (isset($piece_id)) { // Editing piece
+    $piece_id_trim = DB::trimspace($piece_id);
 
     // Prepare the query to update the old piece, adjusting for the proposed live date
     if ( ($p_status == 'draft') && ($p_live_schedule != true) ) { // No empty live date for publishing pieces
