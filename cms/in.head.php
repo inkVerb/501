@@ -10,14 +10,6 @@
     echo ( (isset($piece_title)) && ($piece_title != '') ) ? $p_title . ' :: ' . $p_series . ' | ' . $blog_title : $browser_title;
   ?></title>
 
-  <!-- AJAX Token -->
-  <?php
-    if ( empty($_SESSION["token"]) ) {
-      $ajax_token = bin2hex(random_bytes(64));
-      $_SESSION["token"] = $ajax_token;
-    }
-  ?>
-
   <!-- SEO -->
   <?php
   if ($seo_inf == true) {

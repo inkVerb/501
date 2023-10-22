@@ -1,7 +1,5 @@
-<?php
-$ajax_token = $_SESSION['ajax_token'];
-// JavaScript for series editor
-?>
+<?php $ajax_token = $_SESSION['ajax_token']; ?>
+
 <script>
 // Show/hide the edit-series div
 function seriesEditorShowHide() {
@@ -83,7 +81,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("series-edit-"+sID);
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      var formData = new FormData(FORM); // Bind to-send data to form element
+      const formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
@@ -166,7 +164,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("series-details");
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      var formData = new FormData(FORM); // Bind to-send data to form element
+      const formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById("edit-series").innerHTML = event.target.responseText;

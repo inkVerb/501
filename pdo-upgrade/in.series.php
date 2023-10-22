@@ -6,7 +6,7 @@
     // Bind a new event listener every time the <form> is changed:
     const FORM = document.getElementById("add_new_series");
     const AJAX = new XMLHttpRequest(); // AJAX handler
-    var formData = new FormData(FORM); // Bind to-send data to form element
+    const formData = new FormData(FORM); // Bind to-send data to form element
 
     AJAX.addEventListener( "load", function(event) {
       document.getElementById("p_series").innerHTML = event.target.responseText;

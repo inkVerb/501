@@ -14,7 +14,6 @@ $nologin_allowed = false; // Login required?
 $series_editor_yn = true; // Series editor
 include ('./in.logincheck.php');
 include ('./in.head.php');
-$ajax_token = $_SESSION['ajax_token'];
 
 // Include our POST processor
 include ('./in.editprocess.php');
@@ -665,7 +664,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      var formData = new FormData(FORM); // Bind to-send data to form element
+      const formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById(ajaxLoad).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxLoad is the JS argument in the function
@@ -688,7 +687,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("media-edit-form"); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      var formData = new FormData(FORM); // Bind to-send data to form element
+      const formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         // Parse our response
@@ -722,7 +721,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("name-change-form"); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      var formData = new FormData(FORM); // Bind to-send data to form element
+      const formData = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         // Parse our response
@@ -864,7 +863,7 @@ if (isset($piece_id)) {
     <script>
       // Autosave
       function pieceAutoSave() {
-        var formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
+        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
         var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object
         var as_json = {}; // Create our JSON save-as object
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)
@@ -1028,7 +1027,7 @@ if (isset($piece_id)) {
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById("edit_piece");
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        var formData = new FormData(FORM); // Bind to-send data to form element
+        const formData = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
 

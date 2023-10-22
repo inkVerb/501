@@ -60,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<hr><br>";
 
     // echo our AJAX JavaScript
-    $ajax_token = $_SESSION['ajax_token'];
     echo '  <!-- AJAX JavaScript code included as <script> -->
       <script>
         function vipAjax() { // vipAjax can be anything

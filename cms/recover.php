@@ -11,7 +11,6 @@
 // Include our config (with SQL) up near the top of our PHP file
 include ('./in.db.php');
 include ('./in.head.php');
-$ajax_token = $_SESSION['ajax_token'];
 
 // Include our functions
 include ('./in.functions.php');

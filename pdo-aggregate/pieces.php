@@ -9,7 +9,6 @@ $edit_page_yn = false; // Include JavaScript for TinyMCE?
 $series_editor_yn = true; // Series editor
 include ('./in.logincheck.php');
 include ('./in.head.php');
-$ajax_token = $_SESSION['ajax_token'];
 
 // Include our pieces functions
 include ('./in.metaeditfunctions.php');
@@ -173,7 +172,7 @@ function toggle(source) {
   function sendEditMetaData(p_id) {
     const FORM = document.getElementById('meta_edit_form_'+p_id);
     const AJAX = new XMLHttpRequest();
-    var formData = new FormData(FORM);
+    const formData = new FormData(FORM);
     AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
       // Parse our response
       var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"

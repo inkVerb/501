@@ -69,7 +69,7 @@ function metaeditform($name, $p_id) {
   window.addEventListener( "load", function () {
     function sendData() {
       const AJAX = new XMLHttpRequest();
-      var formData = new FormData( form );
+      const formData = new FormData( form );
       AJAX.addEventListener( "load", function(event) {
         document.getElementById("changed_'.$p_id.'").style.display = "inline";';
 

@@ -4,9 +4,17 @@
 session_start();
 
 // In case you want to show errors
-// ini_set('display_errors', '1');
-// ini_set('display_startup_errors', '1');
-// error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+// Set our AJAX token
+if ( empty($_SESSION["ajax_token"]) ) {
+  $ajax_token = bin2hex(random_bytes(64));
+  $_SESSION['ajax_token'] = $ajax_token;
+} else {
+  $ajax_token = $_SESSION['ajax_token'];
+}
 
 // MySQLi config
 require_once ('./in.conf.php');

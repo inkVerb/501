@@ -250,7 +250,7 @@ if (isset($piece_id)) {
     <script>
       // Autosave
       function pieceAutoSave() {
-        var formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
+        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
         var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object
         var as_json = {}; // Create our JSON save-as object
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)

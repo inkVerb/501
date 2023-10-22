@@ -1,4 +1,5 @@
 <?php
+$ajax_token = $_SESSION['ajax_token'];
 
 // Single actions
 function metaeditform($name, $p_id) {
@@ -67,7 +68,7 @@ function metaeditform($name, $p_id) {
   window.addEventListener( "load", function () {
     function sendData() {
       const AJAX = new XMLHttpRequest();
-      var formData = new FormData( form );
+      const formData = new FormData( form );
       AJAX.addEventListener( "load", function(event) {
         document.getElementById("changed_'.$p_id.'").style.display = "inline";';
 
@@ -154,7 +155,6 @@ if ($name == 'delete') { // Pieces
               }';
 } // End action if
 
-  $ajax_token = $_SESSION['ajax_token']; // AJAX Token
   $result .= '
         form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
         listenToForm'.$slug.$p_id.'();
