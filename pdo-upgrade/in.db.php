@@ -4,12 +4,12 @@
 session_start();
 
 // In case you want to show errors
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 
 // Set our AJAX token
-if ( empty($_SESSION["ajax_token"]) ) {
+if ( empty($_SESSION['ajax_token']) ) {
   $ajax_token = bin2hex(random_bytes(64));
   $_SESSION['ajax_token'] = $ajax_token;
 } else {
@@ -46,6 +46,9 @@ class DB {
   static function trimspace($data) {
     // Usage $pdo = new DB;
     // $val = DB::trimspace($string);
+
+    // Don't process null or empty $data
+    if ( (is_null($data)) || ($data == '') ) { return ''; }
 
     $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
     return $trimmed_data;
@@ -255,7 +258,7 @@ class DB {
     // $query->bindParam(...);
     // $rows = $pdo->exec_($query);
     // if ($pdo->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
-    // if ($pdo->$numrows > 0) {do something}
+    // if ($pdo->numrows > 0) {do something}
 
     global $database;
 

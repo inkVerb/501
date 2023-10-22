@@ -1,6 +1,6 @@
 <?php
 
-DEFINE ('DB_NAME', 'database');
-DEFINE ('DB_USER', 'dbaseuser');
-DEFINE ('DB_PASSWORD', 'dbasepass');
+DEFINE ('DB_NAME', 'blog_db');
+DEFINE ('DB_USER', 'blog_db_user');
+DEFINE ('DB_PASSWORD', 'blogdbpassword');
 DEFINE ('DB_HOST', 'localhost');

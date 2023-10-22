@@ -1,7 +1,4 @@
-<?php
-$ajax_token = $_SESSION['ajax_token'];
-// JavaScript for series editor
-?>
+<!-- JavaScript for series editor -->
 <script>
 // Show/hide the edit-series div
 function seriesEditorShowHide() {
@@ -83,7 +80,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("series-edit-"+sID);
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const formData = new FormData(FORM); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
@@ -128,8 +125,8 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
 
       AJAX.open("POST", "ajax.editseries.php");
 
-      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-      AJAX.send(formData); // Data sent is from the form
+      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+      AJAX.send(FD); // Data sent is from the form
 
     } // seriesSave() function
 
@@ -165,7 +162,7 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("series-details");
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const formData = new FormData(FORM); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById("edit-series").innerHTML = event.target.responseText;
@@ -182,8 +179,8 @@ function seriesEditor(uID, pageNum = 0, detailMessage = '') { // These arguments
 
       AJAX.open("POST", "ajax.editseriesdetails.php");
 
-      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-      AJAX.send(formData); // Data sent is from the form
+      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+      AJAX.send(FD); // Data sent is from the form
 
     } // detailsSave() function
 

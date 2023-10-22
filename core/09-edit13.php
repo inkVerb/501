@@ -257,8 +257,8 @@ if (isset($piece_id)) {
     <script>
       // Autosave
       function pieceAutoSave() {
-        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
-        var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object
+        const FD = new FormData(document.getElementById("edit_piece")); // Get data from our form
+        var edit_piece_json = Object.fromEntries(FD); // Put our form data into a JSON object
         var as_json = {}; // Create our JSON save-as object
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)
           as_json["piece_id"] = edit_piece_json["piece_id"];
@@ -321,8 +321,8 @@ if (isset($piece_id)) {
       autoSaveTimer.stop(); // Stop it right away, just in case we don't want it running yet
       // Run this when the page loads: check for inconsistency with current edit_piece form and last autosave
       window.addEventListener( "load", function () {
-        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
-        var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object just to get the Piece ID
+        const FD = new FormData(document.getElementById("edit_piece")); // Get data from our form
+        var edit_piece_json = Object.fromEntries(FD); // Put our form data into a JSON object just to get the Piece ID
         const as_id = 'as_'+edit_piece_json["piece_id"]; // Set our localStorage autosave name
         // Function to escape our diff because it will pass through an HTML <form>
         function htmlchars(string) {

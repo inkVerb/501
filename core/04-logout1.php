@@ -6,7 +6,7 @@ session_start();
 // Logout with Session Destroy Team Three
 $_SESSION = array(); // Reset the `_SESSION` array
 session_destroy(); // Destroy the session itself
-setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
+setcookie(session_name(), '', 86401); // Set any _SESSION cookies to expire in Jan 1970
 
 // This message won't show because of PHP Rule #1: PHP renders HTML **after**
 echo "<p>Waiting 5 seconds</p>";

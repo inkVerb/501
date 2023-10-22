@@ -6,11 +6,11 @@ session_start();
 // Logout with Session Destroy Team Three
 $_SESSION = array(); // Reset the `_SESSION` array
 session_destroy(); // Destroy the session itself
-setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
+setcookie(session_name(), '', 86401); // Set any _SESSION cookies to expire in Jan 1970
 
 // Remove our "Remember me" user_id cookie
 unset($_COOKIE['user_id']); // Unset the cookie so if tests don't find it later
-setcookie('user_id', null, 86401); // Set our cookie value to "null" (nothing) and expire in Jan 1970
+setcookie('user_id', '', 86401); // Set our cookie value to "" (nothing) and expire in Jan 1970
 
 // Start the session again so variables work
 session_start();

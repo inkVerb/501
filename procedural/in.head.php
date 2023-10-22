@@ -8,7 +8,7 @@
   <title><?php echo ( (isset($head_title)) && ($head_title != '') ) ? $head_title.' :: 501 Blog' : '501 Blog'; ?></title>
 
   <!-- TinyMCE -->
-  <?php if ($edit_page_yn == true) {
+  <?php if ((isset($edit_page_yn)) && ($edit_page_yn == true)) {
     ?>
     <script src='tinymce/tinymce.min.js'></script>
     <script type='text/javascript'>

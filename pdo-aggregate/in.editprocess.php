@@ -13,6 +13,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
   // Subtitle after title
   if ( (isset($_POST['p_subtitle'])) && ($_POST['p_subtitle'] != '') ) {
     $p_subtitle = checkPiece('p_subtitle',$_POST['p_subtitle']);
+  } else {
+    $p_subtitle = '';
   }
 
   // Apply Title to Slug if empty
@@ -694,9 +696,20 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
     echo '<p class="green">Saved!</p>';
   }
 
-
-// New piece message
+// New piece
 } else {
+  // Message
   echo '<p class="blue">New piece</p>';
+
+  // No unset variables
+  $p_title = (!isset($p_title)) ? '' : $p_title;
+  $p_content = (!isset($p_content)) ? '' : $p_content;
+  $p_after = (!isset($p_after)) ? '' : $p_after;
+  $p_links = (!isset($p_links)) ? '' : $p_links;
+  $p_excerpt = (!isset($p_excerpt)) ? '' : $p_excerpt;
+  $p_subtitle = (!isset($p_subtitle)) ? '' : $p_subtitle;
+  $p_type = (!isset($p_type)) ? '' : $p_type;
+  $p_tags = (!isset($p_tags)) ? '' : $p_tags;
+  $p_live_schedule = (!isset($p_live_schedule)) ? '' : $p_live_schedule;
 
 } // Finish POST/GET/new if

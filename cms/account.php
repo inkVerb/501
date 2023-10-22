@@ -79,6 +79,11 @@ if ($pdo->numrows == 1) {
     $email = "$row->email";
     $favnumber = "$row->favnumber";
   }
+
+  // No empty password variables
+  $password = (!isset($password)) ? '' : $password;
+  $password2 = (!isset($password2)) ? '' : $password2;
+
   // Our actual settings page
 
   // Settings form

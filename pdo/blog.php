@@ -26,7 +26,7 @@ function preview_text($text, $limit, $lid) {
 $query = $database->prepare("SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC");
 $rows = $pdo->exec_($query);
 
-if ($pdo->$numrows > 0) {
+if ((isset($pdo->numrows)) && ($pdo->numrows > 0)) {
   // Start our show_div counter
   $show_div_count = 1;
   // We have many entries, this will iterate one post per each

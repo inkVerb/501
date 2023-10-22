@@ -11,9 +11,11 @@
 session_start();
 
 // AJAX Token
-if ( empty($_SESSION["token"]) ) {
+if ( empty($_SESSION['ajax_token']) ) {
   $ajax_token = bin2hex(random_bytes(64));
   $_SESSION['ajax_token'] = $ajax_token;
+} else {
+  $ajax_token = $_SESSION['ajax_token'];
 }
 
 ?>
@@ -37,7 +39,7 @@ if ( empty($_SESSION["token"]) ) {
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
 
       // Add token header
-      AJAX.setRequestHeader("ajax-token", "<?php echo $_SESSION['ajax_token']; ?>");
+      AJAX.setRequestHeader("ajax-token", "<?php echo $ajax_token; ?>");
 
       AJAX.send(FD); // Data sent is from the form
 

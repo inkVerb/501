@@ -80,7 +80,7 @@ if ((isset($_GET['s'])) && (isset($series_id))) {
 }
 $rows = $pdo->exec_($query);
 
-if ($pdo->$numrows > 0) {
+if ((isset($pdo->numrows)) && ($pdo->numrows > 0)) {
   // Start our show_div counter
   $show_div_count = 1;
   // We have many entries, this will iterate one post per each

@@ -46,6 +46,9 @@ class DB {
     // Usage $pdo = new DB;
     // $val = DB::trimspace($string);
 
+    // Don't process null or empty $data
+    if ( (is_null($data)) || ($data == '') ) { return ''; }
+
     $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
     return $trimmed_data;
   } // trimspace()
@@ -254,7 +257,7 @@ class DB {
     // $query->bindParam(...);
     // $rows = $pdo->exec_($query);
     // if ($pdo->numrows) { foreach ($rows as $row) {$p_type = "$row->type";} }
-    // if ($pdo->$numrows > 0) {do something}
+    // if ($pdo->numrows > 0) {do something}
 
     global $database;
 

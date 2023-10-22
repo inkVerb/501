@@ -25,6 +25,9 @@ function escape_sql($data) {
     // Database connection $database variable is needed here
     global $database;
 
+    // Don't process null or empty $data
+    if ( (is_null($data)) || ($data == '') ) { return ''; }
+
     // Remove whitespace
     $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));
 

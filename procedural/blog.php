@@ -25,7 +25,7 @@ function preview_text($text, $limit, $lid) {
 // Check the database for published pieces
 $query = "SELECT piece_id, title, slug, content, tags, date_live, date_updated FROM publications WHERE type='post' AND status='live' AND pubstatus='published' ORDER BY date_live DESC";
 $call = mysqli_query($database, $query);
-if (mysqli_num_rows($call) > 0) {
+if (mysqli_num_rows($call) != 0) {
   // Start our show_div counter
   $show_div_count = 1;
   // We have many entries, this will iterate one post per each

@@ -682,11 +682,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Show the "Save changes" button prominently
   echo '<h2>Save all changes</h2>';
-  echo '
-    <input type="submit" value="Save changes" form="blog_settings"><br><br>
-    <label for="pro-confirm-delete"><input type="checkbox" form="blog_settings" id="pro-confirm-delete" name="pro-confirm-delete" value="delete"> <i><small>Confirm image delete</small></i></label>
-  ';
-
+  echo '<input type="submit" value="Save changes" form="blog_settings"><br><br>';
+  if ( (file_exists($pro_favicon_path)) || (file_exists($pro_logo_path)) || (file_exists($pro_seo_path)) || (file_exists($pro_rss_path)) || (file_exists($pro_podcast_path)) ) {
+    echo '<label for="pro-confirm-delete"><input type="checkbox" form="blog_settings" id="pro-confirm-delete" name="pro-confirm-delete" value="delete"> <i><small>Confirm image delete</small></i></label>';
+  }
+  
   // Site pro images
   echo '<h2>Site Images</h2>';
 

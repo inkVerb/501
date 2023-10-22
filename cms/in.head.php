@@ -12,7 +12,7 @@
 
   <!-- SEO -->
   <?php
-  if ($seo_inf == true) {
+  if ((isset($seo_inf)) && ($seo_inf == true)) {
     $media_base = "$blog_web_base/media/pro/";
     $seo_image = (file_exists("$media_base/pro-seo.jpg")) ? "pro-seo.jpg" : "" ;
     $favicon = (file_exists("$media_base/pro-favicon.png")) ? "pro-favicon.png" : "" ;
@@ -113,7 +113,7 @@ if ( (isset($user_id)) && (isset($fullname)) ) {
 }
 
 // Series editor?
-if ($series_editor_yn) {
+if ((isset(($series_editor_yn))) && ($series_editor_yn)) {
   include ('./in.editseriesdiv.php');
 }
 

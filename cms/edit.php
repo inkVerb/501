@@ -258,7 +258,9 @@ include ('./in.featuredmedia.php');
   // Featured image
   echo '<p id="featured_image">'.pieceInput('p_feat_img', $feat_img_id);
   echo 'Image: <code id="feat_img_file">'.$feat_img_file_link.'</code><br><small class="gray" style="cursor:pointer;" onclick="mediaFeatureInsert(\'IMAGE\', '.$user_id.'); mediaInsertHide(); mediaFeatureShow(\'image\');"><i>(change)</i></small>&nbsp;<small class="red" id="feat_img_remove" style="display:'.$feat_img_showhide.'; cursor:pointer;" onclick="clearFeature(\'IMAGE\');onNavWarn();">remove</small>';
-  echo '<img id="feat_img_thumb" style="display:'.$feat_img_thumb_showhide.';" max-width="'.$img_thum_max.'" max-height="'.$img_thum_max.'" title="'.$feat_img_file_title.'" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
+  if ($feat_img_id != '0') {
+    echo '<img id="feat_img_thumb" style="display:'.$feat_img_thumb_showhide.';" max-width="'.$img_thum_max.'" max-height="'.$img_thum_max.'" title="'.$feat_img_file_title.'" alt="'.$feat_img_file_alt.'" src="'.$feat_file_basepath.$feat_img_file_location.'/'.$feat_img_thumb.'">';
+  }
   echo '</p>';
   // Featured audio
   echo '<p id="featured_audio">'.pieceInput('p_feat_aud', $feat_aud_id);
@@ -664,7 +666,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const formData = new FormData(FORM); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById(ajaxLoad).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxLoad is the JS argument in the function
@@ -676,8 +678,8 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-      AJAX.send(formData); // Data sent is from the form
+      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+      AJAX.send(FD); // Data sent is from the form
 
     } // mediaEdit() function
 
@@ -687,7 +689,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("media-edit-form"); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const formData = new FormData(FORM); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         // Parse our response
@@ -710,8 +712,8 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-      AJAX.send(formData); // Data sent is from the form
+      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+      AJAX.send(FD); // Data sent is from the form
 
     } // mediaSave() function
 
@@ -721,7 +723,7 @@ include ('./in.featuredmedia.php');
       // Bind a new event listener every time the <form> is changed:
       const FORM = document.getElementById("name-change-form"); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const formData = new FormData(FORM); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         // Parse our response
@@ -745,8 +747,8 @@ include ('./in.featuredmedia.php');
 
       AJAX.open("POST", "ajax.mediainfoinsert.php"); // Send data, postTo is the .php destination file, from the JS argument in the function
 
-      formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-      AJAX.send(formData); // Data sent is from the form
+      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+      AJAX.send(FD); // Data sent is from the form
 
     } // nameChange() function
 
@@ -863,8 +865,8 @@ if (isset($piece_id)) {
     <script>
       // Autosave
       function pieceAutoSave() {
-        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
-        var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object
+        const FD = new FormData(document.getElementById("edit_piece")); // Get data from our form
+        var edit_piece_json = Object.fromEntries(FD); // Put our form data into a JSON object
         var as_json = {}; // Create our JSON save-as object
         // Add each item to the as_json object (we don't need everything in the form, but we also need the time)
           as_json["piece_id"] = edit_piece_json["piece_id"];
@@ -933,8 +935,8 @@ if (isset($piece_id)) {
       autoSaveTimer.stop(); // Stop it right away, just in case we don't want it running yet
       // Run this when the page loads: check for inconsistency with current edit_piece form and last autosave
       window.addEventListener( "load", function () {
-        const formData = new FormData(document.getElementById("edit_piece")); // Get data from our form
-        var edit_piece_json = Object.fromEntries(formData); // Put our form data into a JSON object just to get the Piece ID
+        const FD = new FormData(document.getElementById("edit_piece")); // Get data from our form
+        var edit_piece_json = Object.fromEntries(FD); // Put our form data into a JSON object just to get the Piece ID
         const as_id = 'as_'+edit_piece_json["piece_id"]; // Set our localStorage autosave name
         // Function to escape our diff
         function htmlchars(string) {
@@ -1027,7 +1029,7 @@ if (isset($piece_id)) {
         // Bind a new event listener every time the <form> is changed:
         const FORM = document.getElementById("edit_piece");
         const AJAX = new XMLHttpRequest(); // AJAX handler
-        const formData = new FormData(FORM); // Bind to-send data to form element
+        const FD = new FormData(FORM); // Bind to-send data to form element
 
         AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
 
@@ -1053,8 +1055,8 @@ if (isset($piece_id)) {
 
         AJAX.open("POST", "ajax.edit.php");
 
-        formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-        AJAX.send(formData); // Data sent is from the form
+        FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+        AJAX.send(FD); // Data sent is from the form
 
       } // ajaxSaveDraft() function
 

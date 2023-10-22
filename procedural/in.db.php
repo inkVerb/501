@@ -4,9 +4,9 @@
 session_start();
 
 // In case you want to show errors
-//ini_set('display_errors', '1');
-//ini_set('display_startup_errors', '1');
-//error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
 // MySQLi config
 require_once ('./in.sql.php');
@@ -22,6 +22,9 @@ function escape_sql($data) {
 
   // Database connection $database variable is needed here
 	global $database;
+
+  // Don't process null or empty $data
+  if ( (is_null($data)) || ($data == '') ) { return ''; }
 
   // Remove whitespace
   $trimmed_data = trim(preg_replace('/\s+/', ' ', $data));

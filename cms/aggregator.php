@@ -86,7 +86,7 @@ function feedSave(fID, blog_web_base) { // These arguments can be anything, same
     // Bind a new event listener every time the <form> is changed:
     const FORM = document.getElementById("feed-edit-"+fID);
     const AJAX = new XMLHttpRequest(); // AJAX handler
-    const formData = new FormData(FORM); // Bind to-send data to form element
+    const FD = new FormData(FORM); // Bind to-send data to form element
 
     AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
       var jsonSeriesEditResponse = JSON.parse(event.target.responseText); // For contents from the form
@@ -119,7 +119,7 @@ function feedSave(fID, blog_web_base) { // These arguments can be anything, same
 
     AJAX.open("POST", "ajax.editfeed.php");
 
-    AJAX.send(formData); // Data sent is from the form
+    AJAX.send(FD); // Data sent is from the form
 
     // Hide and clear the delete options
     hideDeleteFeedOptions(fID);

@@ -172,7 +172,7 @@ function toggle(source) {
   function sendEditMetaData(p_id) {
     var form = document.getElementById('meta_edit_form_'+p_id);
     var AJAX = new XMLHttpRequest();
-    const formData = new FormData(form);
+    const FD = new FormData(form);
     AJAX.addEventListener( "load", function(event) { // Hear back with AJAX success
       // Parse our response
       var jsonMetaEditResponse = JSON.parse(event.target.responseText); // For "title" and "changed"
@@ -196,8 +196,8 @@ function toggle(source) {
       document.getElementById("changed_"+p_id).style.display = "inline"; // Show our "changed indicator"
     } );
     AJAX.open("POST", "ajax.metaedit.php");
-    formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-    AJAX.send(formData);
+    FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+    AJAX.send(FD);
   }
 
   // Capture submit button for AJAX

@@ -72,6 +72,10 @@ if (mysqli_num_rows($call) == 1) {
     $email = "$row[2]";
     $favnumber = "$row[3]";
 
+    // No empty password variables
+    $password = (!isset($password)) ? '' : $password;
+    $password2 = (!isset($password2)) ? '' : $password2;
+
   // Our actual settings page
 
   // Settings form

@@ -1,9 +1,9 @@
 <?php
 
-$ajax_token = $_SESSION['ajax_token'];
-
 // Single actions
 function metaeditform($name, $p_id) {
+  // We need our $ajax_token inside this function
+  global $ajax_token;
 
   // Validate the $p_id
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit ();}
@@ -69,7 +69,7 @@ function metaeditform($name, $p_id) {
   window.addEventListener( "load", function () {
     function sendData() {
       const AJAX = new XMLHttpRequest();
-      const formData = new FormData( form );
+      const FD = new FormData( form );
       AJAX.addEventListener( "load", function(event) {
         document.getElementById("changed_'.$p_id.'").style.display = "inline";';
 
@@ -168,8 +168,8 @@ if ($name == 'delete') { // Pieces
         document.getElementById("changed_'.$p_id.'").style.display = "inline";
       } );
       AJAX.open("POST", "ajax.piecesactions.php");
-      formData.append("ajax_token", '.$ajax_token.');
-      AJAX.send(formData);
+      FD.append("ajax_token", "'.$ajax_token.'");
+      AJAX.send(FD);
     }
     var form = document.getElementById("pa_'.$slug.'_'.$p_id.'");
     function listenToForm'.$slug.$p_id.'(){
@@ -190,6 +190,7 @@ function piecesaction($action, $p_id) {
   // We need our $database inside this function
   global $database;
   global $pdo;
+  global $ajax_token;
 
   // Validate the $p_id
   if (!filter_var($p_id, FILTER_VALIDATE_INT)) {exit ();}

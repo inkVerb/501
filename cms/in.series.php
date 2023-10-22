@@ -5,7 +5,7 @@
     // Bind a new event listener every time the <form> is changed:
     const FORM = document.getElementById("add_new_series");
     const AJAX = new XMLHttpRequest(); // AJAX handler
-    const formData = new FormData(FORM); // Bind to-send data to form element
+    const FD = new FormData(FORM); // Bind to-send data to form element
 
     AJAX.addEventListener( "load", function(event) {
       document.getElementById("p_series").innerHTML = event.target.responseText;
@@ -17,8 +17,8 @@
 
     AJAX.open( "POST", "ajax.series.php" ); // Send data, ajax.series.php can be any file or URL
 
-    formData.append('ajax_token', '<?php echo $ajax_token; ?>');
-    AJAX.send(formData); // Data sent is from the form
+    FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+    AJAX.send(FD); // Data sent is from the form
   } // newSeries() function
 </script>
 

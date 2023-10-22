@@ -11,9 +11,11 @@
 session_start();
 
 // AJAX Token
-if ( empty($_SESSION["ajax_token"]) ) {
+if ( empty($_SESSION['ajax_token']) ) {
   $ajax_token = bin2hex(random_bytes(64));
   $_SESSION['ajax_token'] = $ajax_token;
+} else {
+  $ajax_token = $_SESSION['ajax_token'];
 }
 
 ?>
@@ -34,7 +36,7 @@ if ( empty($_SESSION["ajax_token"]) ) {
       } );
 
       // Append another item in the _POST array keyed 'ajax_token'
-      FD.append('ajax_token', '<?php echo $_SESSION['ajax_token']; ?>');
+      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
 
       // OPEN after FD.append
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function

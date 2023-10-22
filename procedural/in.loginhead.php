@@ -31,9 +31,9 @@ if (isset($_COOKIE['user_key'])) {
     // Destroy the session regardless
     $_SESSION = array(); // Reset the `_SESSION` array
     session_destroy();
-    setcookie(session_name(), null, 86401); // Set any _SESSION cookies to expire in Jan 1970
+    setcookie(session_name(), '', 86401); // Set any _SESSION cookies to expire in Jan 1970
     unset($_COOKIE['user_key']);
-    setcookie('user_key', null, 86401);
+    setcookie('user_key', '', 86401);
     // exit and redirect in one line
     exit (header("Location: blog.php"));
   }
