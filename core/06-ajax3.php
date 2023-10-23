@@ -18,7 +18,6 @@
         if (ajaxHandler.readyState == 4 && ajaxHandler.status == 200) {
 
           // ajax_changes can be anything, it also is the HTML id
-
           document.getElementById("ajax_changes").innerHTML = ajaxHandler.responseText;
         }
       }

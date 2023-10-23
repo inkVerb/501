@@ -3,8 +3,6 @@
 <head>
   <!-- CSS file included as <link> -->
   <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
 
 <?php
 // Start a SESSION before our AJAX JavaScript function
@@ -18,7 +16,11 @@ if ( empty($_SESSION['ajax_token']) ) {
   $ajax_token = $_SESSION['ajax_token'];
 }
 
+// <head> ends down here so we can add the token in our meta element
 ?>
+<meta name="ajax_token" content="<?php echo $ajax_token; ?>" />
+</head>
+<body>
 
   <script>
     function ajaxFormData(formID, postTo, ajaxUpdate) { // These arguments can be anything, same as used in this function
@@ -26,6 +28,9 @@ if ( empty($_SESSION['ajax_token']) ) {
       const FORM = document.getElementById(formID); // <form> by ID to access, formID is the JS argument in the function
       const AJAX = new XMLHttpRequest(); // AJAX handler
       const FD = new FormData(FORM); // Bind to-send data to form element
+
+      // Get our token from the HTML <head><meta>
+      const TOKEN = document.querySelector('meta[name="ajax_token"]').content;
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById(ajaxUpdate).innerHTML = event.target.responseText; // HTML element by ID to update, ajaxUpdate is the JS argument in the function
@@ -37,10 +42,13 @@ if ( empty($_SESSION['ajax_token']) ) {
 
       // FD.append() before or after AJAX.open()
       // Append another item in the _POST array keyed 'ajax_token'
-      FD.append('ajax_token', '<?php echo $ajax_token; ?>');
+      FD.append('ajax_token', TOKEN);
 
       // OPEN before or after FD.append()
       AJAX.open("POST", postTo); // Send data, postTo is the .php destination file, from the JS argument in the function
+
+      // Create our token header
+      AJAX.setRequestHeader("ajax-token", TOKEN);
 
       AJAX.send(FD); // Data sent is from the form
 
