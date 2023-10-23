@@ -22,7 +22,7 @@
 
   <xs:element name="visitor">
     <xs:complexType>
-      <xs:attribute name="attr" type="xs:string" default="user"/>
+      <xs:attribute name="level" type="xs:string" default="user"/>
       <xs:sequence>
         <xs:element name="name" type="xs:string"/>
         <xs:element name="login" type="xs:string"/>

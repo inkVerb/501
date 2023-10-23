@@ -20,7 +20,7 @@
             <th>Year</th>
             <th>Level</th>
           </tr>
-          <xsl:apply-templates select="root/visitor"/>
+          <xsl:apply-templates select="root/visitors"/>
         </table>
       </body>
     </html>
@@ -72,7 +72,7 @@
   </xsl:template>
 
   <!-- Table template -->
-  <xsl:template match="root/visitor">
+  <xsl:template match="root/visitors/visitor">
 
       <xsl:for-each select=".">
         <xsl:sort select="name"/> <!-- Comment to remove sorting -->

@@ -120,7 +120,7 @@ if ((isset(($series_editor_yn))) && ($series_editor_yn)) {
 // Title the page only if there is a $heading argument
 $heading = (isset($heading)) ? $heading : $head_title;
 echo ( (isset($heading)) && ($heading != '') ) ? '<h1>'.$heading.'</h1>' : false;
-echo ($feed_link == true) ? '<p><small><a target="_blank" href="'.$blog_web_base.$feed_path.'">RSS</a></small></p>' : false;
+echo ( (isset($feed_link)) &&($feed_link == true) ) ? '<p><small><a target="_blank" href="'.$blog_web_base.$feed_path.'">RSS</a></small></p>' : false;
 ?>
 
 </header>

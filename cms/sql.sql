@@ -78,6 +78,20 @@ CREATE TABLE IF NOT EXISTS `series` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 INSERT INTO series (name, slug) VALUES ('Blog', 'blog');
 
+CREATE TABLE IF NOT EXISTS `aggregation` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(90) NOT NULL,
+  `source` TEXT DEFAULT NULL,
+  `series` INT UNSIGNED DEFAULT 1,
+  `description` TINYTEXT DEFAULT NULL,
+  `update_interval` TINYTEXT DEFAULT '15',
+  `status` ENUM('active', 'dormant', 'problematic', 'deleting') NOT NULL,
+  `on_delete` ENUM('convert', 'erase') NOT NULL,
+  `last_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_added` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `media_library` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `size` BIGINT UNSIGNED DEFAULT 1,

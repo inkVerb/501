@@ -119,6 +119,7 @@ function feedSave(fID, blog_web_base) { // These arguments can be anything, same
 
     AJAX.open("POST", "ajax.editfeed.php");
 
+    FD.append('ajax_token', '<?php echo $ajax_token; ?>');
     AJAX.send(FD); // Data sent is from the form
 
     // Hide and clear the delete options
@@ -286,7 +287,6 @@ if ($pdo->numrows > 0) {
     $agg_series = "$row->series";
     $agg_name = "$row->name";
     $agg_description = "$row->description";
-    $agg_import_media = "$row->import_media";
     $agg_update_interval = "$row->update_interval";
     $agg_status = "$row->status";
     $agg_last_updated = "$row->last_updated";
@@ -385,7 +385,7 @@ if ($pdo->numrows > 0) {
             <tr>
               <td>
                 <div id="e_buttons_'.$agg_id.'" style="display:none;">
-                  <button type="button" onclick="feedSave('.$agg_id.', \''.$blog_web_base.'\');">Save</button>&nbsp;
+                  <button type="button" onclick="feedSave('.$agg_id.', \''.$blog_web_base.'\'); showHideEdit('.$agg_id.');">Save</button>&nbsp;
                   <button type="button" onclick="showHideEdit('.$agg_id.'); hideDeleteFeedOptions('.$agg_id.');">Cancel</button>
                 </div>
                 <div id="edit-message-'.$agg_id.'"></div>

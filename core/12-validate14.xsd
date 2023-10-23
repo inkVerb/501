@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<xs:schema  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
   <xs:simpleType name="sportattrlist">
     <xs:restriction base="xs:string">
@@ -12,7 +12,7 @@
 
   <xs:element name="visitor">
     <xs:complexType>
-      <xs:attribute name="attr" type="xs:string" default="user"/>
+      <xs:attribute name="level" type="xs:string" default="user"/>
       <xs:sequence>
         <xs:element name="name" type="xs:string"/>
         <xs:element name="login" type="xs:string"/>

@@ -4,12 +4,12 @@
   header('Content-type: text/xml'); // Comment to break //
 
   // Prepare special characters variable
-  $special_chars = '" < > &';
-  $special_chars_raw = $special_chars;
+  $special_chars_raw = '" < > &';
 
   // Convert to HTML entities
-  $special_chars = htmlentities($special_chars); // Comment to break //
-  // Now, $special_chars = '&quot; &lt; &gt; &amp;';
+  $special_chars = htmlentities($special_chars_raw); // Comment to break //
+  // $special_chars = $special_chars_raw;
+  // $special_chars = '&quot; &lt; &gt; &amp;';
 
   // Prepare the XML document
   $xml_text = <<<EOF

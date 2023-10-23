@@ -69,7 +69,7 @@
   <content:encoded><![CDATA[Lorem Ipsum Tres]]></content:encoded>
   <itunes:summary>I am a summary</itunes:summary>
   <itunes:author>Johnson Bobby</itunes:author>
-  <itunes:keywords></itunes:keywords>
+  <itunes:keywords>lorem, ipsum</itunes:keywords>
   <itunes:explicit>true</itunes:explicit>
   <enclosure url="http://localhost/web/media/audio/audio.mp3" length="37761" type="audio/mpeg" />
   <itunes:duration>0:00:03</itunes:duration>
@@ -87,7 +87,7 @@
   <content:encoded><![CDATA[Lorem Ipsum Deux]]></content:encoded>
   <itunes:summary>Excerpt and summary in iTunes field</itunes:summary>
   <itunes:author>Jonny Boy</itunes:author>
-  <itunes:keywords></itunes:keywords>
+  <itunes:keywords>podcast, second</itunes:keywords>
   <itunes:explicit>true</itunes:explicit>
   <enclosure url="http://localhost/web/media/docs/document.pdf" length="859" type="text/html" />
 </item>
