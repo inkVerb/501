@@ -26,8 +26,8 @@
       AJAX.send(FD); // Data sent is from the form
     } // sendData() function
 
-    const form = document.getElementById("ajaxForm"); // Access <form id="ajaxForm">, id="ajaxForm" can be anything
-    form.addEventListener( "submit", function(event) { // Takeover <input type="submit">
+    const FORM = document.getElementById("ajaxForm"); // Access <form id="ajaxForm">, id="ajaxForm" can be anything
+    FORM.addEventListener( "submit", function(event) { // Takeover <input type="submit">
       event.preventDefault();
       sendData();
     } );

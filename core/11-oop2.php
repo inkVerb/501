@@ -42,15 +42,15 @@ $BASH = new Topic;
 $PHP = new Topic;
 
 // Set values for "Topic" object via methods
-$Shell->setCourse("Shell 101");
+$Shell->setCourse("Linux 101");
 $Shell->setWebsite("verb.vip/101");
 $Shell->setSlogan("Learn the Linux Shell");
 
-$BASH->setCourse("BASH 401");
+$BASH->setCourse("Linux 401");
 $BASH->setWebsite("verb.vip/401");
 $BASH->setSlogan("Learn the Linux BASH");
 
-$PHP->setCourse("PHP 501");
+$PHP->setCourse("Linux 501");
 $PHP->setWebsite("verb.vip/501");
 $PHP->setSlogan("Learn the PHP Linux stack");
 
