@@ -92,10 +92,10 @@ foreach ($rows as $row) {
       $f_excerpt = $itunes->summary;
       $f_excerpt = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$f_excerpt); // Proper noun range to en-dash
       $f_excerpt = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$f_excerpt); // number range to en-dash
+      $f_excerpt = str_replace('---','—',$f_excerpt); // to em-dash
       $f_excerpt = str_replace(' -- ',' – ',$f_excerpt); // to en-dash
       $f_excerpt = str_replace(' --','—',$f_excerpt); // to em-dash
       $f_excerpt = str_replace('-- ','—',$f_excerpt); // to em-dash
-      $f_excerpt = str_replace('---','—',$f_excerpt); // to em-dash
       $f_excerpt = str_replace('--','—',$f_excerpt); // to em-dash
       $f_excerpt = strip_tags($f_excerpt); // Remove any HTML tags
       $f_excerpt = substr($f_excerpt, 0, 65530); // Limit to 65,530 characters for TEXT datatype
@@ -106,10 +106,10 @@ foreach ($rows as $row) {
       $f_content = $content->encoded;
       $f_content = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$f_content); // Proper noun range to en-dash
       $f_content = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$f_content); // number range to en-dash
+      $f_content = str_replace('---','—',$f_content); // to em-dash
       $f_content = str_replace(' -- ',' – ',$f_content); // to en-dash
       $f_content = str_replace(' --','—',$f_content); // to em-dash
       $f_content = str_replace('-- ','—',$f_content); // to em-dash
-      $f_content = str_replace('---','—',$f_content); // to em-dash
       $f_content = str_replace('--','—',$f_content); // to em-dash
       $f_content = htmlspecialchars($f_content); // Convert HTML tags to their HTML entities
       $f_content = substr($f_content, 0, 4294967290); // Limit to 4,294,967,290 characters for LONGTEXT datatype

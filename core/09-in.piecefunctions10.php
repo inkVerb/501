@@ -23,8 +23,8 @@ function checkPiece($name, $value) {
   if ($name == 'p_title') {
     $result = strip_tags($value); // Remove any HTML tags
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-    $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
+    $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('--','—',$result); // to em-dash
     $result = substr($result, 0, 90); // Limit to 90 characters
 
@@ -46,10 +46,10 @@ function checkPiece($name, $value) {
   } elseif ($name == 'p_content') {
     $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
+    $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace(' --','—',$result); // to em-dash
     $result = str_replace('-- ','—',$result); // to em-dash
-    $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
     $result = htmlspecialchars($result); // Convert HTML tags to their HTML entities
 
@@ -57,10 +57,10 @@ function checkPiece($name, $value) {
   } elseif ($name == 'p_after') {
     $result = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$value); // Proper noun range to en-dash
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // number range to en-dash
+    $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace(' --','—',$result); // to em-dash
     $result = str_replace('-- ','—',$result); // to em-dash
-    $result = str_replace('---','—',$result); // to em-dash
     $result = str_replace('--','—',$result); // to em-dash
     $result = strip_tags($result); // Remove any HTML tags
 
@@ -74,10 +74,10 @@ function checkPiece($name, $value) {
     $p_links_check = preg_replace('/([\]\[\\{\}\$\*]+)/','',$value); // No hacker input
     $p_links_check = preg_replace('/([A-Z].[a-z]+)-([A-Z].[a-z]+)/','$1–$2',$p_links_check); // Proper noun range to en-dash
     $p_links_check = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$p_links_check); // number range to en-dash
+    $p_links_check = str_replace('---','—',$p_links_check); // to em-dash
     $p_links_check = str_replace(' -- ',' – ',$p_links_check); // to en-dash
     $p_links_check = str_replace(' --','—',$p_links_check); // to em-dash
     $p_links_check = str_replace('-- ','—',$p_links_check); // to em-dash
-    $p_links_check = str_replace('---','—',$p_links_check); // to em-dash
     $p_links_check = str_replace('--','—',$p_links_check); // to em-dash
     include ('./in.jsonlinks.php');
     $result = $p_links_json_in;

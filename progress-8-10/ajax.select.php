@@ -8,8 +8,8 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series']))) {
   // Series name
   $result = strip_tags($_POST['new_series']); // Remove any HTML tags
   $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-  $result = str_replace(' -- ',' – ',$result); // to en-dash
   $result = str_replace('---','—',$result); // to em-dash
+  $result = str_replace(' -- ',' – ',$result); // to en-dash
   $result = str_replace('--','—',$result); // to em-dash
   $result = substr($result, 0, 90); // Limit to 90 characters
   $new_series = $result;

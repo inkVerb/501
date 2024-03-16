@@ -9,12 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $fullname = ( (isset($_POST['fullname']))
   // Validate: preg_match RegEx
            &&   (preg_match('/^[a-zA-Z ]{6,32}$/i', $_POST['fullname'])) )
-  // preg_replace all non-web address characters with nothing
+  // preg_replace non-accepted characters with nothing
   ? preg_replace("/[^a-zA-Z ]/","", $_POST['fullname']) : 'Not a valid name!';
 
   $username = ( (isset($_POST['username']))
   // Validate: preg_match RegEx
-           &&   (preg_match('/[a-zA-Z0-9_]{6,32}$/i', $_POST['username'])) )
+           &&   (preg_match('/^[a-zA-Z0-9_]{6,32}$/i', $_POST['username'])) )
   // Sanitize: preg_replace & strtolower
   ? preg_replace("/[^a-zA-Z0-9_]/","", strtolower($_POST['username'])) : 'Not a valid username!';
 
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // strlen truncate after 128 characters
           &&  ((filter_var($_POST['website'],FILTER_VALIDATE_URL)) && (strlen($value) <= 128)) )
   // Sanitize:
-    // preg_replace
+    // preg_replace all non-web address characters with nothing
     // substr truncate length at 128 characters
   ? substr(preg_replace("/[^a-zA-Z0-9-_:\/.]/","", $_POST['website']),0,128) : 'Not a website!';
 

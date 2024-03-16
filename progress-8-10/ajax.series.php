@@ -10,8 +10,8 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['new_series'])) ) 
     // Series name
     $result = strip_tags($_POST['new_series']); // Remove any HTML tags
     $result = preg_replace('/([0-9]$)+-+([0-9])/','$1–$2',$result); // to en-dash
-    $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('---','—',$result); // to em-dash
+    $result = str_replace(' -- ',' – ',$result); // to en-dash
     $result = str_replace('--','—',$result); // to em-dash
     $result = substr($result, 0, 60); // Limit to 60 characters
     $new_series = $result;
@@ -69,7 +69,7 @@ $call = mysqli_query($database, $query);
 // We need the div with our AJAX form inside so the input value is reset on success
 echo '
 <div id="p_series">
-<select form="edit_piece" name="p_series" onchange="onNavWarn();" onkeyup="onNavWarn();" onclick="onNavWarn();">';
+<select form="edit_piece" name="p_series">';
 
 // Iterate each Series
 while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {

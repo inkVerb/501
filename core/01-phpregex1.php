@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ? $_POST['email'] : 'Not an email!';
 
   $number = ( (isset($_POST['number']))
-         &&   (preg_match('/^[0-9]{1,32}$/i', $_POST['number'])) )
+         &&   (preg_match('/^[0-9]{1,32}$/', $_POST['number'])) )
   //(filter_var($_POST['variable'], FILTER_VALIDATE_INT)) )
   //(filter_var($_POST['variable'], FILTER_VALIDATE_INT, array("options"=>array('min_range'=>0, 'max_range'=>100)))) )
   ? $_POST['number'] : 'Not a valid number!';
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ? $_POST['fullname'] : 'Not a valid name!';
 
   $username = ( (isset($_POST['username']))
-           &&   (preg_match('/[a-zA-Z0-9_]$/i', $_POST['username'])) )
+           &&   (preg_match('/^[a-zA-Z0-9_]$/i', $_POST['username'])) )
   ? $_POST['username'] : 'Not a valid username!';
 
   $password = ( (isset($_POST['password']))
