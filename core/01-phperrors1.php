@@ -7,8 +7,7 @@ function vip_error($e_number, $e_message, $e_file, $e_line) {
 	$message = "<p style='color:red'>Hey, silly! Error in '$e_file' on line $e_line:\n<b>$e_message</b>\n</p>";
 
 	// Add the backtrace
-	$message .= "<pre style='color:magenta'>" .print_r(debug_backtrace(), 1) . "</pre>\n";
-
+	$message .= "<p style='color:magenta'>" .print_r(debug_backtrace(), 1) . "</p>";
 
 	echo nl2br($message); // This is "new line to break", so lines will be seen in HTML
   // nl2br($string) : \n --> <br>
