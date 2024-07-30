@@ -91,6 +91,8 @@ function formInput($name, $value, $errors, $updateid) { // Add the extra argumen
      ( ((!empty($_POST['newfruit'])) && ($updateid == "new")) || ((!empty($check_err['fruitid'])) && ($updateid == $check_err['fruitid'])) ) ) {
   // if (array_key_exists($name, $errors)) { // uncomment, then comment the top two lines to see the $updateid stop filtering
     $result = $result.' class="error"> <span class="error">'.$errors[$name].'</span>';
+  } elseif ((array_key_exists($name, $errors)) && ($name == 'prepared')) {
+    $result = $result.' class="error">';
   } else {
     $result = $result.'>';
   }
@@ -112,6 +114,10 @@ function formInput($name, $value, $errors, $updateid) { // Add the extra argumen
     <label for="have">Yes<input type="radio" id="have" name="have" value="true"'.(($value == true) ? ' checked' : '').'></label><br>
     <label for="have">No<input type="radio" id="have" name="have" value="false"'.(($value == false) ? ' checked' : '').'></label><br>
     </div>';
+  }
+  
+  if ((array_key_exists($name, $errors)) && ($name == 'prepared')) {
+    $result = $result.' <span class="error">'.$errors[$name].'</span>';
   }
 
 

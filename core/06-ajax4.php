@@ -44,8 +44,8 @@ $count = $_SESSION['count'];
         }
       }
 
-      ajaxHandler.open("POST", "ajax_responder.php", true); // GET changed to POST
-      ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      ajaxHandler.open("POST", "ajax_responder.php", true); // POST could be GET
+      ajaxHandler.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // Needed to contruct our own <form> on next line
       ajaxHandler.send(<?php echo '"foo='.$post_foo.'&bar='.$post_bar.'"'; ?>);
     }
   </script>

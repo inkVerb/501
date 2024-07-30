@@ -63,6 +63,15 @@ function formInput($name, $value, $errors) {
   }
 
   // Finish the form for the Prepared dropdown
+  if ((array_key_exists($name, $errors)) && ($name != 'prepared')) {
+    $result = $result.' class="error"> <span class="error">'.$errors[$name].'</span>';
+  } elseif ((array_key_exists($name, $errors)) && ($name == 'prepared')) {
+    $result = $result.' class="error">';
+  } else {
+    $result = $result.'>';
+  }
+
+  // Finish the form for the Prepared dropdown
   if ($name == 'prepared') {
     $result .= '
       <option selected hidden disabled>Choose a preparation...</option>
@@ -71,6 +80,10 @@ function formInput($name, $value, $errors) {
       <option value="cooked">Cooked</option>
       <option value="NA">NA</option>
     </select>';
+  }
+
+  if ((array_key_exists($name, $errors)) && ($name == 'prepared')) {
+    $result = $result.' <span class="error">'.$errors[$name].'</span>';
   }
 
   $result .= '<br><br>';
