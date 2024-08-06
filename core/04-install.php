@@ -81,7 +81,7 @@ EOF;
 
 
     // Set the character settings in the database
-    $query = "ALTER DATABASE webapp_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+    $query = "ALTER DATABASE $db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
     $call = mysqli_query($database, $query);
     if (!$call) {
       echo '<p>Could not update the database, quitting.</p>';
