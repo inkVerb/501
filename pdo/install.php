@@ -8,7 +8,6 @@
 
 <?php
 
-
 // Include our functions
 include ('./in.functions.php');
 
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ( ((filter_var($_POST['db_host'],FILTER_VALIDATE_URL)) && (substr($_POST['db_host'], 0, 8) === "https://"))
     || ($_POST['db_host'] == 'localhost') )
   ? $_POST['db_host'] : '';
-  if ($db_user == '') {
+  if ($db_host == '') {
     echo '<p class="error">Not a valid database host!</p>';
     $no_db_cred_errors = false;
   }
@@ -80,7 +79,7 @@ EOF;
       echo '<p>Could not create the database config file, quitting.</p>';
       exit ();
     } else {
-      require_once ('./in.db.php');
+      require_once ('./in.conf.php');
     } // Now we have a database connection and we can begin making queries
 
     // Set the character settings in the database
@@ -104,7 +103,8 @@ EOF;
       `pass` VARCHAR(255) DEFAULT NULL,
       `type` ENUM('member', 'contributor', 'writer', 'editor', 'admin') NOT NULL,
       `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (`id`)
+      PRIMARY KEY (`id`),
+      UNIQUE INDEX `username` (`username`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);
     if ($statement) {
@@ -246,7 +246,7 @@ EOF;
       `series_cat2` VARCHAR(255) DEFAULT NULL,
       `series_cat3` VARCHAR(255) DEFAULT NULL,
       `series_cat4` VARCHAR(255) DEFAULT NULL,
-      `series_cat5` VARCHAR(255) DEFAULT NULL,
+      `series_cat5` VARCHAR(255) DEFAULT NULL
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $statement = $database->query($query);
@@ -358,6 +358,23 @@ EOF;
     $statement = $database->query($query);
     if ($statement) {
       $installrun = true;
+
+      // Heredoc with DB_CONFIGURED:
+      $configFile = <<<EOF
+<?php
+\$db_name = '$db_name';
+\$db_user = '$db_user';
+\$db_pass = '$db_pass';
+\$db_host = '$db_host';
+\$blog_web_base = '$web_base';
+
+// This disables the installer
+DEFINE ('DB_CONFIGURED', true);
+EOF;
+    
+      // Re-write the file wtih DB_CONFIGURED since the installation is complete:
+      file_put_contents('./in.conf.php', $configFile);
+
     } else {
       echo '<p>Could not create the blog_settings database table, quitting.</p>';
       exit ();
@@ -380,28 +397,70 @@ EOF;
     $email_trim = DB::trimspace($email);
     $favnumber_trim = DB::trimspace($favnumber);
 
-    // Run the query
-    $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
-    VALUES ('$fullname_trim', '$username_trim', '$email_trim', '$favnumber_trim', '$password_hashed', 'admin')";
-		// inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
-    $statement = $database->query($query);
-    if ($statement) {
-      echo '<h1>All set!</h1>';
-      echo '<p>Everything is ready for you to login!</p>
-      <p>Username: '.$username.'</p>
-      <p>Password: <i>(Whatever password you just used)</i></p>
-      <p><b><a href="webapp.php">Login</a></b></p>';
-      exit (); // Finish
-
+    // Check for existing username
+    $username_trim = DB::trimspace($username);
+    $query = $database->prepare("SELECT id FROM users WHERE username=:username");
+    $query->bindParam(':username', $username_trim);
+    $rows = $pdo->exec_($query);
+    if ($pdo->numrows != 0) {
+      $check_err['username'] = 'Username already taken!';
     } else {
-      echo '<p>Could not run the installer.</p>';
-      exit ();
+
+      // Run the query
+      $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
+      VALUES ('$fullname_trim', '$username_trim', '$email_trim', '$favnumber_trim', '$password_hashed', 'admin')";
+		  // inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+      $statement = $database->query($query);
+      if ($statement) {
+        echo '<h1>All set!</h1>';
+        echo '<p>Everything is ready for you to login!</p>
+        <p>Username: '.$username.'</p>
+        <p>Password: <i>(Whatever password you just used)</i></p>
+        <p><b><a href="webapp.php">Login</a></b></p>';
+        exit (); // Finish
+      
+      } else {
+        echo '<p>Could not run the installer.</p>';
+        exit ();
+      }
     }
 
   } else {
     echo '<p>Serious error.</p>';
     exit ();
   }
+
+// Installed already, so in.sql.php already exists?
+} elseif (file_exists('./in.conf.php'))  {
+
+  // Include the file we know we have
+  require_once ('./in.conf.php');
+
+  // Configured?
+  if ((DB_CONFIGURED == true ) && (isset($blog_web_base))) {
+
+    exit (header("Location: $blog_web_base")); // exit to the set blog home
+
+  } elseif (DB_CONFIGURED == true ) {
+
+    exit (); // exit regardless
+
+  }
+
+  // Database variables
+  $db_name = DB_NAME;
+  $db_user = DB_USER;
+  $db_pass = DB_PASSWORD;
+  $db_host = DB_HOST;
+
+// Don't let those variables be empty
+} else { 
+  
+  // Blank database variables
+  $db_name = '';
+  $db_user = '';
+  $db_pass = '';
+  $db_host = '';
 
 } // Finish POST if
 

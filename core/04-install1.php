@@ -99,7 +99,8 @@ EOF;
       `pass` VARCHAR(255) DEFAULT NULL,
       `type` ENUM('member', 'contributor', 'writer', 'editor', 'admin') NOT NULL,
       `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (`id`)
+      PRIMARY KEY (`id`),
+      UNIQUE INDEX `username` (`username`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4";
     $call = mysqli_query($database, $query);
     if (!$call) {
@@ -118,28 +119,44 @@ EOF;
     $email_sqlesc = escape_sql($email);
     $favnumber_sqlesc = escape_sql($favnumber);
 
-    // Run the query
-    $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
-    VALUES ('$fullname_sqlesc', '$username_sqlesc', '$email_sqlesc', '$favnumber_sqlesc', '$password_hashed', 'admin')";
-		// inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+    // Check for existing username
+    $query = "SELECT id FROM users WHERE username='$username_sqlesc'";
     $call = mysqli_query($database, $query);
-    if (mysqli_affected_rows($database) == 1) {
-      echo '<h1>All set!</h1>';
-      echo '<p>Everything is ready for you to login!</p>
-      <p>Username: '.$username.'</p>
-      <p>Password: <i>(Whatever password you just used)</i></p>';
-      exit (); // Finish
-
+    if (mysqli_num_rows($call) != 0) {
+      $check_err['username'] = 'Username already taken!';
     } else {
-      echo '<p>Could not run the installer.</p>';
-      exit ();
+    
+      // Run the query
+      $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
+      VALUES ('$fullname_sqlesc', '$username_sqlesc', '$email_sqlesc', '$favnumber_sqlesc', '$password_hashed', 'admin')";
+		  // inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+      $call = mysqli_query($database, $query);
+      if (mysqli_affected_rows($database) == 1) {
+        echo '<h1>All set!</h1>';
+        echo '<p>Everything is ready for you to login!</p>
+        <p>Username: '.$username.'</p>
+        <p>Password: <i>(Whatever password you just used)</i></p>';
+        exit (); // Finish
+      
+        } else {
+        echo '<p>Could not run the installer.</p>';
+        exit ();
+      }
     }
 
   } else {
     echo '<p class="error">Error.</p>';
   }
 
-} // Finish POST if
+} else { 
+  
+  // Blank database variables
+  $db_name = '';
+  $db_user = '';
+  $db_pass = '';
+  $db_host = '';
+
+} // Finish POST/installed if
 
 
 // Our actual signup page
@@ -149,10 +166,10 @@ echo '
 <form action="install.php" method="post">';
 
 echo '<b>Database info</b><br><br>
-Database name: <input type="text" name="db_name"><br><br>
-Database username: <input type="text" name="db_user"><br><br>
-Database password: <input type="text" name="db_pass"><br><br>
-Database host: <input type="text" name="db_host" value="localhost"> (leave as <i>localhost</i> unless told otherwise)<br><br>
+Database name: <input type="text" name="db_name" value="'.$db_name.'"><br><br>
+Database username: <input type="text" name="db_user" value="'.$db_user.'"><br><br>
+Database password: <input type="text" name="db_pass" value="'.$db_pass.'"><br><br>
+Database host: <input type="text" name="db_host"  value="'.$db_host.'"> (leave as <i>localhost</i> unless told otherwise)<br><br>
 <br><br>
 <b>Admin user</b><br><br>';
 
