@@ -2,7 +2,9 @@
 
 1. LAMP stack
 
-You need a LAMP web server
+You need a LAMP web server (using MariaDB, not MySQL)
+
+For the native LAMP server for this web app, see the [LAMP Desktop](https://github.com/inkVerb/vip/blob/master/Cheat-Sheets/LAMP-Desktop.md) cheat sheet
 
 These instructions use the web directory
 
