@@ -132,8 +132,56 @@ sudo chown -R www:www /srv/www/html/webappfolder
 
 Optional: edit webappfolder/in.conf.php to contain the database name and user info, otherwise configure it on the Install page...
 
-7. Install
+7. Create the proper database
+  - This can be done from the command line using `sudo` or as an SQL administrator from the SQL terminal:
+
+| **Create database via BASH CLI** :$
+
+```console
+sudo mariadb -e "
+CREATE DATABASE IF NOT EXISTS blog_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+GRANT ALL PRIVILEGES ON blog_db.* TO 'blog_db_user'@'localhost' IDENTIFIED BY 'blogdbpassword';
+FLUSH PRIVILEGES;"
+```
+
+| **Create database via SQL admin prompt** :>
+
+```console
+CREATE DATABASE IF NOT EXISTS blog_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+GRANT ALL PRIVILEGES ON blog_db.* TO 'blog_db_user'@'localhost' IDENTIFIED BY 'blogdbpassword';
+FLUSH PRIVILEGES;
+```
+
+8. Install
 
 ```console
 webappfolder/install.php
+```
+
+9. **Optional:** Backup/export database if needed
+  - If you ever need, this command should back up your database
+
+```console
+sudo mariadb-dump blog_db > /etc/501webapp/blog_db.sql
+```
+
+10. **Optional: CAUTION!** Delete your database forever if needed
+  - If you ever need, this command should delete your database forever
+  - This can be done from the command line using `sudo` or as an SQL administrator from the SQL terminal:
+
+| **Forever delete database via BASH CLI** :$
+
+```console
+sudo mariadb -e "
+DROP USER IF EXISTS 'blog_db_user'@'localhost';
+DROP DATABASE IF EXISTS blog_db;
+FLUSH PRIVILEGES;"
+```
+
+| **Forever delete via SQL admin prompt** :>
+
+```console
+DROP USER IF EXISTS 'blog_db_user'@'localhost';
+DROP DATABASE IF EXISTS blog_db;
+FLUSH PRIVILEGES;
 ```
