@@ -158,7 +158,7 @@ EOF;
   require_once ('./in.sql.php');
 
   // Configured?
-  if (DB_CONFIGURED == true ) {
+  if ((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) {
     exit (header("Location: webapp.php"));
   }
 

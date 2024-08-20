@@ -14,6 +14,14 @@ define ('WEBSITE_SLOGAN', 'Ink is a verb, get inking.');
 // Define a variable
 $variable = "some variable value";
 
+if (isset($variable)) {
+  echo "isset() $variable <br>";
+}
+
+if (defined('CONSTANT_ONE')) {
+  echo "defined() ".CONSTANT_ONE." <br>";
+}
+
 // Make a simple function to use the constants
 function echoConstants() {
   //global $variable; // Uncomment to see it work

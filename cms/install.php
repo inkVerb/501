@@ -437,11 +437,11 @@ EOF;
   require_once ('./in.conf.php');
 
   // Configured?
-  if ((DB_CONFIGURED == true ) && (isset($blog_web_base))) {
+  if (((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) && (isset($blog_web_base))) {
 
     exit (header("Location: $blog_web_base")); // exit to the set blog home
 
-  } elseif (DB_CONFIGURED == true ) {
+  } elseif ((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) {
 
     exit (); // exit regardless
 
