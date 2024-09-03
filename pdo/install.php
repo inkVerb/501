@@ -7,6 +7,23 @@
 <body>
 
 <?php
+// Redirect if already configured
+if (file_exists('./in.conf.php'))  {
+
+  // Include the file we know we have
+  require_once ('./in.conf.php');
+
+  // Configured?
+  if (((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) && (isset($blog_web_base))) {
+
+    exit (header("Location: $blog_web_base")); // exit to the set blog home
+
+  } elseif ((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) {
+
+    exit (); // exit regardless
+
+  }
+}
 
 // Include our functions
 include ('./in.functions.php');
@@ -390,72 +407,65 @@ EOF;
 
     // Add the first admin user
 
-    // Prepare our database values for entry
-    $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    $fullname_trim = DB::trimspace($fullname);
-    $username_trim = DB::trimspace($username);
-    $email_trim = DB::trimspace($email);
-    $favnumber_trim = DB::trimspace($favnumber);
+    // Check proper user form submission
+    if (
+      (isset($fullname)) && (! array_key_exists('fullname', $check_err))
+      (isset($username)) && (! array_key_exists('username', $check_err))
+      (isset($email)) && (! array_key_exists('email', $check_err))
+      (isset($favnumber)) && (! array_key_exists('favnumber', $check_err))
+      (isset($password)) && (! array_key_exists('password', $check_err))
+    ) {
 
-    // Check for existing username
-    $username_trim = DB::trimspace($username);
-    $query = $database->prepare("SELECT id FROM users WHERE username=:username");
-    $query->bindParam(':username', $username_trim);
-    $rows = $pdo->exec_($query);
-    if ($pdo->numrows != 0) {
-      $check_err['username'] = 'Username already taken!';
-    } else {
-
-      // Run the query
-      $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
-      VALUES ('$fullname_trim', '$username_trim', '$email_trim', '$favnumber_trim', '$password_hashed', 'admin')";
-		  // inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
-      $statement = $database->query($query);
-      if ($statement) {
-        echo '<h1>All set!</h1>';
-        echo '<p>Everything is ready for you to login!</p>
-        <p>Username: '.$username.'</p>
-        <p>Password: <i>(Whatever password you just used)</i></p>
-        <p><b><a href="webapp.php">Login</a></b></p>';
-        exit (); // Finish
-      
+      // Prepare our database values for entry
+      $password_hashed = password_hash($password, PASSWORD_BCRYPT);
+      $fullname_trim = DB::trimspace($fullname);
+      $username_trim = DB::trimspace($username);
+      $email_trim = DB::trimspace($email);
+      $favnumber_trim = DB::trimspace($favnumber);
+  
+      // Check for existing username
+      $username_trim = DB::trimspace($username);
+      $query = $database->prepare("SELECT id FROM users WHERE username=:username");
+      $query->bindParam(':username', $username_trim);
+      $rows = $pdo->exec_($query);
+      if ($pdo->numrows != 0) {
+        $check_err['username'] = 'Username already taken!';
       } else {
-        echo '<p>Could not run the installer.</p>';
-        exit ();
+  
+        // Run the query
+        $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
+        VALUES ('$fullname_trim', '$username_trim', '$email_trim', '$favnumber_trim', '$password_hashed', 'admin')";
+  		  // inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+        $statement = $database->query($query);
+        if ($statement) {
+          echo '<h1>All set!</h1>';
+          echo '<p>Everything is ready for you to login!</p>
+          <p>Username: '.$username.'</p>
+          <p>Password: <i>(Whatever password you just used)</i></p>
+          <p><b><a href="webapp.php">Login</a></b></p>';
+          exit (); // Finish
+        
+        } else {
+          echo '<p>Could not run the installer.</p>';
+          exit ();
+        }
+      }
+    } else { // Check proper user form submission
+      // Check for existing admin
+      $query = $database->prepare("SELECT id FROM users WHERE type=:type");
+      $query->bindParam(':type', 'admin');
+      $rows = $pdo->exec_($query);
+      if ($pdo->numrows == 0) {
+        echo '<p>No admin user in database, you need to create one!</p>';
       }
     }
-
   } else {
-    echo '<p>Serious error.</p>';
-    exit ();
+    echo '<p class="error">Error in database credentials.</p>';
   }
 
-// Installed already, so in.sql.php already exists?
-} elseif (file_exists('./in.conf.php'))  {
+// Installed already, database credentials already set, otherwise don't let the variables be empty
+} elseif (! file_exists('./in.conf.php'))  {
 
-  // Include the file we know we have
-  require_once ('./in.conf.php');
-
-  // Configured?
-  if (((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) && (isset($blog_web_base))) {
-
-    exit (header("Location: $blog_web_base")); // exit to the set blog home
-
-  } elseif ((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) {
-
-    exit (); // exit regardless
-
-  }
-
-  // Database variables
-  $db_name = DB_NAME;
-  $db_user = DB_USER;
-  $db_pass = DB_PASSWORD;
-  $db_host = DB_HOST;
-
-// Don't let those variables be empty
-} else { 
-  
   // Blank database variables
   $db_name = '';
   $db_user = '';

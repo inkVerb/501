@@ -8,6 +8,18 @@
 
 <?php
 
+// Redirect if already configured
+if (file_exists('./in.sql.php'))  {
+
+  // Include the file we know we have
+  require_once ('./in.sql.php');
+
+  // Configured?
+  if ((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) {
+    exit (header("Location: webapp.php"));
+  }
+}
+
 // Include our functions
 include ('./in.functions.php');
 
@@ -113,54 +125,67 @@ EOF;
 
     // Add the first admin user
 
-    // Prepare our database values for entry
-    $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-    // mysqli_real_escape_string() prepares it for security
-    $fullname_sqlesc = mysqli_real_escape_string($database, $fullname);
-    $username_sqlesc = mysqli_real_escape_string($database, $username);
-    // Our config function escape_sql() does the same thing, but better
-    $email_sqlesc = escape_sql($email);
-    $favnumber_sqlesc = escape_sql($favnumber);
+    // Check proper user form submission
+    if (
+      (isset($fullname)) && (! array_key_exists('fullname', $check_err))
+      (isset($username)) && (! array_key_exists('username', $check_err))
+      (isset($email)) && (! array_key_exists('email', $check_err))
+      (isset($favnumber)) && (! array_key_exists('favnumber', $check_err))
+      (isset($password)) && (! array_key_exists('password', $check_err))
+    ) {
 
-    // Check for existing username
-    $query = "SELECT id FROM users WHERE username='$username_sqlesc'";
-    $call = mysqli_query($database, $query);
-    if (mysqli_num_rows($call) != 0) {
-      $check_err['username'] = 'Username already taken!';
-    } else {
-    
-      // Run the query
-      $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
-      VALUES ('$fullname_sqlesc', '$username_sqlesc', '$email_sqlesc', '$favnumber_sqlesc', '$password_hashed', 'admin')";
-		  // inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+      // Prepare our database values for entry
+      $password_hashed = password_hash($password, PASSWORD_BCRYPT);
+      // mysqli_real_escape_string() prepares it for security
+      $fullname_sqlesc = mysqli_real_escape_string($database, $fullname);
+      $username_sqlesc = mysqli_real_escape_string($database, $username);
+      // Our config function escape_sql() does the same thing, but better
+      $email_sqlesc = escape_sql($email);
+      $favnumber_sqlesc = escape_sql($favnumber);
+  
+      // Check for existing username
+      $query = "SELECT id FROM users WHERE username='$username_sqlesc'";
       $call = mysqli_query($database, $query);
-      if (mysqli_affected_rows($database) == 1) {
-        echo '<h1>All set!</h1>';
-        echo '<p>Everything is ready for you to login!</p>
-        <p>Username: '.$username.'</p>
-        <p>Password: <i>(Whatever password you just used)</i></p>';
-        exit (); // Finish
+      if (mysqli_num_rows($call) != 0) {
+        $check_err['username'] = 'Username already taken!';
+      } else {
       
-        } else {
-        echo '<p>Could not run the installer.</p>';
-        exit ();
+        // Run the query
+        $query = "INSERT INTO users (fullname, username, email, favnumber, pass, type)
+        VALUES ('$fullname_sqlesc', '$username_sqlesc', '$email_sqlesc', '$favnumber_sqlesc', '$password_hashed', 'admin')";
+  		  // inline password hash: $query = "INSERT INTO users (name, username, email, pass, type) VALUES ('$fullname', '$username', '$email', '"  .  password_hash($password, PASSWORD_BCRYPT) .  "', 'admin')";
+        $call = mysqli_query($database, $query);
+        if (mysqli_affected_rows($database) == 1) {
+          echo '<h1>All set!</h1>';
+          echo '<p>Everything is ready for you to login!</p>
+          <p>Username: '.$username.'</p>
+          <p>Password: <i>(Whatever password you just used)</i></p>';
+          exit (); // Finish
+        
+          } else {
+          echo '<p>Could not run the installer.</p>';
+          exit ();
+        }
       }
+    } else { // Check proper user form submission
+      // Check for existing admin
+      $query = "SELECT id FROM users WHERE type='admin'";
+      $call = mysqli_query($database, $query);
+      if (mysqli_num_rows($call) == 0) {
+        echo '<p>No admin user in database, you need to create one!</p>';
+      }
+
     }
-
   } else {
-    echo '<p class="error">Error.</p>';
+    echo '<p class="error">Error in database credentials.</p>';
   }
 
-// Installed already, so in.sql.php already exists?
-} elseif (file_exists('./in.sql.php'))  {
-
-  // Include the file we know we have
-  require_once ('./in.sql.php');
-
-  // Configured?
-  if ((defined('DB_CONFIGURED')) && (DB_CONFIGURED == true)) {
-    exit (header("Location: webapp.php"));
-  }
+// Installed already, so in.sql.php already exists, but not DB_CONFIGURED?
+} elseif ( (file_exists('./in.sql.php'))
+ && (defined('DB_NAME'))
+ && (defined('DB_USER'))
+ && (defined('DB_PASSWORD'))
+ && (defined('DB_HOST')) )  {
 
   // Database variables
   $db_name = DB_NAME;

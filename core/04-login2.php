@@ -42,7 +42,7 @@ if ((isset($_SESSION['user_id'])) && (isset($_SESSION['full_name']))) {
 
     // if SELECT: Query user info from the database if everything checks out
     $username_sqlesc = escape_sql($username);
-    $password_to_check = escape_sql($password);
+    $password_to_check = $password;
     $query = "SELECT id, fullname, pass FROM users WHERE username='$username_sqlesc'";
     $call = mysqli_query($database, $query);
     // Check to see that our SQL query returned exactly 1 row

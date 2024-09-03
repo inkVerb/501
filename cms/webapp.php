@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // if SELECT: Query user info from the database if everything checks out
     $username_trim = DB::trimspace($username);
-    $password_to_check = DB::trimspace($password);
+    $password_to_check = $password;
     $rows = $pdo->select('users', 'username', $username_trim, 'id, fullname, pass');
     // Check to see that our SQL query returned exactly 1 row
     if ($pdo->numrows == 1) {
