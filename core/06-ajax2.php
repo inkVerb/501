@@ -21,6 +21,7 @@
           document.getElementById("ajax_changes").innerHTML = ajaxHandler.responseText;
         }
       }
+      
       ajaxHandler.open("GET", "ajax_responder.php", true); // GET could be POST
       ajaxHandler.send();
     }

@@ -11,7 +11,7 @@
   window.addEventListener( "load", function () {
     function sendData() {
       const AJAX = new XMLHttpRequest(); // AJAX handler
-      const FD = new FormData(form); // Bind to-send data to form element
+      const FD = new FormData(FORM); // Bind to-send data to form element
 
       AJAX.addEventListener( "load", function(event) { // This runs when AJAX responds
         document.getElementById("ajax_changes").innerHTML = event.target.responseText;
