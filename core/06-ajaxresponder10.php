@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   echo $_SESSION["ajax_token"].'<br>';
 
   echo ($ajax_referer) ? 'AJAX $_SERVER["HTTP_REFERER"] is legit: ' : 'AJAX $_SERVER["HTTP_REFERER"] not from us: '."http://$server_name/$ajax_sending_page".' vs ';
-  echo $_SERVER['HTTP_REFERER'].'<br>';
+  echo $_SERVER['HTTP_REFERER']." vs http://$server_name/$ajax_sending_page".'<br>';
 
   echo '
   <form id="ajaxForm">
