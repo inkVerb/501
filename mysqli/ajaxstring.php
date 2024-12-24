@@ -25,12 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  // Get the time 30 seconds from now
-  $date_expires = date("Y-m-d H:i:s", time() + 20);
-
   // Add the string to the database
   $userID_sqlesc = escape_sql($userID); // SQL espace just in case, even though it is not user input
-  $query = "INSERT INTO strings (userid, random_string, date_expires) VALUES ('$userID_sqlesc', '$random_string', '$date_expires')";
+  $query = "INSERT INTO strings (userid, random_string, date_expires) VALUES ('$userID_sqlesc', '$random_string', NOW() + INTERVAL '20' SECOND)";
   $call = mysqli_query($database, $query);
 
   // Database error or success?
