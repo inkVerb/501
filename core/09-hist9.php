@@ -213,25 +213,26 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   if (isset($prev_piece)) {
 
     // Retain previous values
-    $o_id = $p_id;
+    $c_id = $h_id;
+    $c_update = $h_update;
 
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $h_id = "$row[0]";
+    $h_update = "$row[1]";
 
     // echo a link to the past publications
-    echo '<pre><i><a href="hist.php?h='.$p_id.'&c='.$o_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="hist.php?h='.$h_id.'&c='.$c_id.'">'.$c_update.'</a></i></pre>';
 
   } else {
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $h_id = "$row[0]"; // We need this in the next loop iteration
+    $h_update = "$row[1]";
 
     // Don't do this else again
     $prev_piece = true;
 
     // echo a link to the most recent publication
-    echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$h_update.'</a></i></pre>';
   }
 
 }

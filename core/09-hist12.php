@@ -380,14 +380,19 @@ echo '
     <div class="col">';
     // Editing a current draft?
     if (($diff_type == 'p') && ($p_id = "draft_")) {
-      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
+      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>
+      <pre><h3>'.$p_update.'<br>(latest draft)</h3></pre>';
     } elseif ($diff_type == 'as') {
-      echo '<code><input form="restore_autosave" type="submit" class="green postform link-button" value="restore this autosave"></code>';
-    } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
-      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>';
+      echo '<code><input form="restore_autosave" type="submit" class="green postform link-button" value="restore this autosave"></code>
+      <pre><h3>'.$p_update.'<br>(autosave)</h3></pre>';
+    } elseif ($diff_type == 'ch') {
+      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>
+      <pre><h3>'.$p_update.'<br>(later)</h3></pre>';
+    } elseif ($diff_type == 'r') {
+      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>
+      <pre><h3>'.$p_update.'<br>(current publication)</h3></pre>';
     }
 echo '
-      <pre><h3>'.$p_update.'<br>(latest)</h3></pre>
       <div class="card" id="outputCur"></div>
     </div>
   </div>
@@ -422,25 +427,26 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
   if (isset($prev_piece)) {
 
     // Retain previous values
-    $o_id = $p_id;
+    $c_id = $h_id;
+    $c_update = $h_update;
 
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $h_id = "$row[0]";
+    $h_update = "$row[1]";
 
     // echo a link to the past publications
-    echo '<pre><i><a href="hist.php?h='.$p_id.'&c='.$o_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="hist.php?h='.$h_id.'&c='.$c_id.'">'.$c_update.'</a></i></pre>';
 
   } else {
     // Assign the values
-    $p_id = "$row[0]";
-    $p_update = "$row[1]";
+    $h_id = "$row[0]"; // We need this in the next loop iteration
+    $h_update = "$row[1]";
 
     // Don't do this else again
     $prev_piece = true;
 
     // echo a link to the most recent publication
-    echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$h_update.'</a></i></pre>';
   }
 
 }
