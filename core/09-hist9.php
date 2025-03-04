@@ -173,12 +173,16 @@ echo '
     <div class="col">';
     // Editing a current draft?
     if (($diff_type == 'p') && ($p_id = "draft_")) {
-      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
-    } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
-      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>';
+      echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>
+      <pre><h3>'.$p_update.'<br>(latest draft)</h3></pre>';
+    } elseif ($diff_type == 'ch') {
+      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>
+      <pre><h3>'.$p_update.'<br>(later)</h3></pre>';
+    } elseif ($diff_type == 'r') {
+      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>
+      <pre><h3>'.$p_update.'<br>(current publication)</h3></pre>';
     }
 echo '
-      <pre><h3>'.$p_update.'<br>(latest)</h3></pre>
       <div class="card" id="outputCur"></div>
     </div>
   </div>
