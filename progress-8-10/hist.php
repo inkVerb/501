@@ -65,6 +65,7 @@ if ((isset($_GET['p'])) && (filter_var($_GET['p'], FILTER_VALIDATE_INT))) {
   // Values
   $row = mysqli_fetch_array($call_p, MYSQLI_NUM);
     // Assign the values
+    $piece_id = "$row[0]"; // We still need this
     $piece_id_p = "$row[0]";
     $p_title = "$row[1]";
     $p_slug = "$row[2]";
@@ -255,7 +256,7 @@ echo '
     if (($diff_type == 'p') && ($p_id = "draft_")) {
       echo '<code><a class="green" href="edit.php?p='.$piece_id.'">edit current draft</a></code>';
     } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
-      echo '<code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>';
+      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>';
     }
 echo '
       <pre><h3>'.$p_update.'<br>(latest)</h3></pre>
@@ -300,13 +301,15 @@ while ($row = mysqli_fetch_array($call, MYSQLI_NUM)) {
     $p_update = "$row[1]";
 
     // echo a link to the past publications
-    echo '<pre><i><a href="hist.php?h='.$o_id.'&c='.$p_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="hist.php?h='.$p_id.'&c='.$o_id.'">'.$p_update.'</a></i></pre>';
 
   } else {
-    $prev_piece = true;
     // Assign the values
     $p_id = "$row[0]";
     $p_update = "$row[1]";
+
+    // Don't do this else again
+    $prev_piece = true;
 
     // echo a link to the most recent publication
     echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';

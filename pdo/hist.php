@@ -166,6 +166,7 @@ if (isset($_POST['as_json'])) {
       $o_id = $piece_id_o;
     }
     // Assign the values
+    $piece_id = $as_diff_array["piece_id"]; // We still need this
     $piece_id_p = $as_diff_array["piece_id"];
     $p_title = $as_diff_array["p_title"];
     $p_slug = $as_diff_array["p_slug"];
@@ -206,6 +207,7 @@ if (isset($_POST['as_json'])) {
   $rows_p = $pdo->exec_($query_p);
     foreach ($rows_p as $row_p) {
       // Assign the values
+      $piece_id = "$row_p->piece_id"; // We still need this
       $piece_id_p = "$row_p->piece_id";
       $p_title = "$row_p->title";
       $p_slug = "$row_p->slug";
@@ -407,7 +409,7 @@ echo '
     } elseif ($diff_type == 'as') {
       echo '<code><input form="restore_autosave" type="submit" class="green postform link-button" value="restore this autosave"></code>';
     } elseif (($diff_type == 'ch') || ($diff_type == 'r')) {
-      echo '<code><a class="orange" href="edit.php?h='.$o_id.'">revert</a></code>';
+      echo '<code><a class="orange" href="edit.php?h='.$p_id.'">revert</a></code>';
     }
 echo '
       <pre><h3>'.$p_update.'<br>(latest)</h3></pre>
@@ -453,13 +455,15 @@ foreach ($rows as $row) {
     $p_update = "$row->date_updated";
 
     // echo a link to the past publications
-    echo '<pre><i><a href="hist.php?h='.$o_id.'&c='.$p_id.'">'.$p_update.'</a></i></pre>';
+    echo '<pre><i><a href="hist.php?h='.$p_id.'&c='.$o_id.'">'.$p_update.'</a></i></pre>';
 
   } else {
-    $prev_piece = true;
     // Assign the values
-    $p_id = "$row->id";
-    $p_update = "$row->date_updated";
+    $p_id = "$row[0]";
+    $p_update = "$row[1]";
+
+    // Don't do this else again
+    $prev_piece = true;
 
     // echo a link to the most recent publication
     echo '<pre><i><a href="hist.php?r='.$piece_id.'">'.$p_update.'</a></i></pre>';

@@ -11,7 +11,7 @@ require_once ('./in.sql.php');
 $database = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 // Run the SQL query
-$query = "DELETE FROM strings WHERE date_expires < NOW()";
+$query = "DELETE FROM strings WHERE usable NOT LIKE 'live' OR date_expires < NOW()";
 $call = mysqli_query($database, $query);
 // Check to see that our SQL query returned exactly 1 row
 if ($call) {

@@ -412,7 +412,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       if ($pdo->change) {
         $_SESSION['new_just_saved'] = true;
         // Get the last added ID
-        $piece_id  = $pdo->lastid;
+        $piece_id = $pdo->lastid;
         // Redirect so we have the GET argument in the URL
         header("Location: edit.php?p=$piece_id");
         exit ();

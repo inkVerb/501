@@ -302,7 +302,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (isset($_POST['piece'])) ) {
       if (mysqli_affected_rows($database) == 1) {
         $_SESSION['new_just_saved'] = true;
         // Get the last added ID
-        $piece_id  = $database->insert_id;
+        $piece_id = $database->insert_id;
         // Redirect so we have the GET argument in the URL
         header("Location: edit.php?p=$piece_id");
         exit ();
