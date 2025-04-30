@@ -354,7 +354,7 @@ if (isset($piece_id)) {
           var old_as_json = JSON.parse(old_as); // Make it a JSON-readable Object
           var old_as_time = old_as_json["as_time"];
           delete old_as_json["as_time"]; // Get rid of the time
-          old_as = JSON.stringify(old_as_json);// Reset the string
+          old_as = JSON.stringify(old_as_json); // Reset the string
           var edit_piece = JSON.stringify(old_as_json);
           // See if different
           if (old_as === curr) {
