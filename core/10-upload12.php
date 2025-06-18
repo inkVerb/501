@@ -95,7 +95,7 @@ if ( ($_SERVER['REQUEST_METHOD'] === 'POST') && (!empty($_FILES)) && ($_FILES['u
 
     // Not allowed
     } else { // Not an accepted extension
-      $errors .= '<span class="error">Type: '.$file_mime.' Allowed file types<br>
+      $errors .= '<span class="error">Type: '.$file_mime.'<br><br>Allowed file types<br>
       Image:<code> .jpg, .jpeg, .png, .gif</code><br>
       Video:<code> .webm, .ogg, .mp4</code><br>
       Audio:<code> .mp3, .ogg, .wav</code><br>
