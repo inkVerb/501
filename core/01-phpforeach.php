@@ -12,11 +12,20 @@ $autoArray = array(
   'fourthly'
 );
 
-echo "foreach autoArray:<br>";
+echo "foreach autoArray as \$item:<br>";
 
 foreach ($autoArray as $item) {
 
   echo $item.'<br>';
+
+}
+
+// Both key and value for each item
+echo "<br>foreach autoArray as \$key => \$value:<br>";
+
+foreach ($autoArray as $key => $value) {
+
+  echo 'autoArray['.$key.']: '.$value.'<br>';
 
 }
 
@@ -27,19 +36,11 @@ $assocArray['key_one'] = "Donuts";
 $assocArray['twokeys'] = "Coffee";
 $assocArray['badBoys'] = "Whatcha gonna do";
 
-echo "<br>foreach assocArray:<br>";
+echo "<br>foreach assocArray as \$key => \$value:<br>";
 
-foreach ($assocArray as $item) {
+foreach ($assocArray as $key => $value) {
 
-  echo $item.'<br>';
-
-}
-
-echo "<br>foreach assocArray with keys:<br>";
-
-foreach ($assocArray as $key => $item) {
-
-  echo 'loopArray['.$key.']: '.$item.'<br>';
+  echo 'assocArray['.$key.']: '.$value.'<br>';
 
 }
 
