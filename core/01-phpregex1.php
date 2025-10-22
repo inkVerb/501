@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ? $_POST['fullname'] : 'Not a valid name!';
 
   $username = ( (isset($_POST['username']))
-           &&   (preg_match('/^[a-zA-Z0-9_]$/i', $_POST['username'])) )
+           &&   (preg_match('/^[a-zA-Z0-9_]{1,128}$/i', $_POST['username'])) )
   ? $_POST['username'] : 'Not a valid username!';
 
   $password = ( (isset($_POST['password']))
