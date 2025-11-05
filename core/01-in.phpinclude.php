@@ -36,7 +36,7 @@ function checkPost($name, $value) {
 
   } elseif ($name == 'fullname') {
     $result = (preg_match('/^[a-zA-Z ]{6,32}$/i', $value))
-    ? preg_replace("/[^a-zA-Z]/","", $value) : '';
+    ? preg_replace("/[^a-zA-Z ]/","", $value) : '';
     // Add an entry to $check_err array if there is an error
     if ($result == '') {
       $check_err[$name] = 'Not a valid name!';
