@@ -36,7 +36,7 @@ echo "<br>..<br>";
 echo '<code>staticDemo::set_answer("Hello there, valued world!");</code>';
 staticDemo::set_answer("Hello there, valued world!");
 echo "<br><br>";
-echo '<code>staticDemo::$answer</code> ' . staticDemo::$answer;
+echo '<code>staticDemo::$answer;</code> ' . staticDemo::$answer;
 
 echo "<h1>Non-Static Demo: Instantiated</h1>";
 echo '<code>$NonStaticDemo = new nonStaticDemo;</code>';
@@ -46,6 +46,6 @@ echo "<br>..<br>";
 echo '<code>$NonStaticDemo->set_answer("Hello there, valued world!");</code>';
 $NonStaticDemo->set_answer("Hello there, valued world!");
 echo "<br><br>";
-echo '<code>$NonStaticDemo->$answer</code> ' . $NonStaticDemo->$answer;
+echo '<code>$NonStaticDemo->$answer;</code> ' . $NonStaticDemo->$answer;
 
 ?>
