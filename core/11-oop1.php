@@ -5,7 +5,7 @@ class Topic {
 
   // Methods
   function course() {
-    return "VIP Linux";
+    return "Codia";
   }
 
   function website() {

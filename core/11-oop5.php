@@ -5,7 +5,7 @@ class Topic {
 
   // Methods
   function course() {
-    return "VIP Linux";
+    return "Codia";
   }
 
   function slogan() {
@@ -20,7 +20,7 @@ class Topic {
 
   function __construct() {
     echo $this->slogan();
-    echo "<br> That's VIP Linux!";
+    echo "<br> That's Codia!";
   }
 
 }

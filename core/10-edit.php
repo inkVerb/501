@@ -202,7 +202,7 @@ include ('./in.editprocess.php');
 
   // Links
   $string1 = htmlspecialchars('<a href="https://inkisaverb.com">Ink is a verb.</a>');
-  $string2 = htmlspecialchars('<a href="https://verb.vip">Get inking. // VIP Linux</a>');
+  $string2 = htmlspecialchars('<a href="https://verb.vip">Get inking. // Codia</a>');
   $string3 = htmlspecialchars('<a href="http://poetryiscode.com">Poetry is code. | piC</a>');
   $a_tag = htmlspecialchars('<a>');
   $infomsg =

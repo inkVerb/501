@@ -8,7 +8,7 @@
 
 // Define our constants
 define ('CONSTANT_ONE', 'I am first and I am one!');
-define ('WEBSITE_TITLE', 'VIP Linux :: inkVerb');
+define ('WEBSITE_TITLE', 'Codia :: inkVerb');
 define ('WEBSITE_SLOGAN', 'Ink is a verb, get inking.');
 
 // Define a variable
@@ -43,7 +43,7 @@ echo "<h2>WEBSITE_SLOGAN</h2>"; // Wrong
 
 echo "<h1>".WEBSITE_TITLE."</h1>";
 
-define ('WEBSITE_TITLE', 'VIP Linux :: inkVerb'); // Re-define existing constant
+define ('WEBSITE_TITLE', 'Codia :: inkVerb'); // Re-define existing constant
 
 echo "<h1>".WEBSITE_TITLE."</h1>"; // Constant is unchanged
 

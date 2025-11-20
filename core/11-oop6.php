@@ -4,7 +4,7 @@
 class Topic {
 
   function course() {
-    return "VIP Linux (course)<br>";
+    return "Codia (course)<br>";
   }
 
   function slogan() {

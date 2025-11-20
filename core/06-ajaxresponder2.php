@@ -1,3 +1,3 @@
 <?php
-  echo "VIP Linux AJAX is here for you!";
+  echo "Codia AJAX is here for you!";
 ?>
