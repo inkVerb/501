@@ -1,6 +1,6 @@
 <?php
 
-$live = true;
+// $live = true;
 
 // Create our error handler to print errors
 function vip_error($e_number, $e_message, $e_file, $e_line) {
@@ -8,10 +8,10 @@ function vip_error($e_number, $e_message, $e_file, $e_line) {
 	global $live;
 
 	// Build the error message
-	$message = "<pre style='color:red'>Hey, silly! Error in '$e_file' on line $e_line:<br>$e_message<pre>";
+	$message = "<p style='color:red'>Hey, silly! Error in '$e_file' on line $e_line:<br><pre><b>$e_message</b></pre></p>";
 
 	// Add the backtrace
-	$message .= "<pre style='color:red'>" . print_r(debug_backtrace(), 1) . "</pre>";
+	$message .= "<pre style='color:magenta'>" . print_r(debug_backtrace(), 1) . "</pre>";
 
 	if ($live != true) {
 		echo $message;
