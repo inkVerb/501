@@ -39,7 +39,7 @@ echo ($statement) ? "\$statement success" : "\$statement fail: $statement";
 
 // Check the actual database
 try { // apple
-  $query = "SELECT * FROM fruit WHERE  name = 'apple'";
+  $query = "SELECT * FROM fruit WHERE name = 'apple'";
   $statement = $database->query($query);
   $success = ($statement->rowCount() > 0) ? true : false; // Success?
 } catch (PDOException $error) {
@@ -47,7 +47,7 @@ try { // apple
 }
 
 if ($success) try { // kiwi
-  $query = "SELECT * FROM fruit WHERE  name = 'kiwi'";
+  $query = "SELECT * FROM fruit WHERE name = 'kiwi'";
   $statement = $database->query($query);
   $success = ($statement->rowCount() > 0) ? true : false; // Success?
 } catch (PDOException $error) {

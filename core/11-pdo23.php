@@ -93,6 +93,13 @@ try {
 echo "object:<br>";
 while ($row = $statement->fetch(PDO::FETCH_OBJ)) { // Specified different from our option setting
   echo "Name: $row->name Color: $row->color Farm: $row->locale Sold in: $row->market<br>";
+
+  // PDO doesn't need this longer version:
+  // $f_name = "$row->name";
+  // $f_color = "$row->color";
+  // $f_locale = "$row->locale";
+  // $f_market = "$row->market";
+  // echo "Name: $f_name Color: $f_color Farm: $f_locale Sold in: $f_market<br><br>";
 }
 
 ?>

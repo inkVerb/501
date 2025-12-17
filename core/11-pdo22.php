@@ -35,7 +35,7 @@ echo ($statement) ? "\$statement 'apple' success" : "\$statement fail: $statemen
 // If it worked, show another message
 if ($statement) {
   echo "<br><br>
-  Updated row using <code>exec()</code> for this query:<br><code>$query</code><br><br>
+  Updated row using <code>query()</code> for this query:<br><code>$query</code><br><br>
   Affected rows: ".$statement->rowCount()."<br>
   <hr><br>";
 }
@@ -54,7 +54,7 @@ echo ($statement) ? "\$statement 'kiwi' success" : "\$statement fail: $statement
 // If it worked, show another message
 if ($statement) {
   echo "<br><br>
-  Updated row using <code>exec()</code> for this query:<br><code>$query</code><br><br>
+  Updated row using <code>query()</code> for this query:<br><code>$query</code><br><br>
   Affected rows: ".$statement->rowCount()."<br>
   <hr><br>";
 }
