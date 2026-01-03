@@ -169,7 +169,7 @@ $pdo->insert('fruit', 'name, color, locale, market', "'banana', 'green', 'Thaila
 echo "Last new ID: $pdo->lastid<br>";
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
-// SELECT updated row
+// SELECT inserted row
 echo "<br>After INSERT:<br>";
 $val = $pdo->select('fruit', 'name', 'banana');
 echo "Name: $val->name Color: $val->color Locale: $val->locale Market: $val->market<br><hr><br>";
@@ -179,7 +179,7 @@ echo "DELETE<br>";
 $pdo->delete('fruit', 'name', 'banana');
 echo ($pdo->change) ? "PDO reports rows changed<br><br>" : "No change<br><br>";
 
-// SELECT updated row again
+// SELECT deleted row again
 echo "<br>After DELETE:<br>";
 $val = $pdo->select('fruit', 'name', 'banana');
 echo "Name: $val->name Color: $val->color Locale: $val->locale Market: $val->market<br><hr><br>";
